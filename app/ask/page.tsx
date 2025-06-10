@@ -464,10 +464,12 @@ export default function AskPage() {
                             <Scale className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="prose prose-sm sm:prose prose-slate max-w-none">
+                            <div className="prose prose-sm sm:prose prose-slate max-w-none text-xs sm:text-sm leading-relaxed">
                               <ReactMarkdown 
                                 remarkPlugins={[remarkGfm]}
-                                className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap break-words"
+                                components={{
+                                  p: ({ children }) => <p className="whitespace-pre-wrap break-words">{children}</p>
+                                }}
                               >
                                 {message.answer}
                               </ReactMarkdown>
