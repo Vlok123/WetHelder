@@ -22,41 +22,50 @@ export function Navigation() {
 
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center space-x-4">
+      <div className="container mx-auto px-3 sm:px-4">
+        <div className="flex h-14 sm:h-16 items-center justify-between">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <Link href="/" className="flex items-center space-x-2">
-              <Scale className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold">WetHelder</span>
+              <Scale className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+              <span className="text-lg sm:text-xl font-bold">WetHelder</span>
             </Link>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-4">
             {status === 'loading' ? (
               <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
             ) : session ? (
               // Logged in user
               <>
-                <div className="flex items-center space-x-2 text-sm">
-                  <span className="text-muted-foreground">Welkom,</span>
-                  <span className="font-medium">{session.user.name}</span>
+                <div className="hidden sm:flex items-center space-x-2 text-sm mr-2">
+                  <span className="text-muted-foreground hidden lg:inline">Welkom,</span>
+                  <span className="font-medium truncate max-w-20 sm:max-w-none">{session.user.name}</span>
                   {session.user.role === 'PREMIUM' ? (
-                    <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-300">
+                    <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-300 text-xs">
                       <Crown className="h-3 w-3 mr-1" />
-                      Premium
+                      <span className="hidden sm:inline">Premium</span>
                     </Badge>
                   ) : (
-                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
+                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300 text-xs">
                       <Gift className="h-3 w-3 mr-1" />
-                      Gratis
+                      <span className="hidden sm:inline">Gratis</span>
                     </Badge>
                   )}
                 </div>
 
-                <Link href="/dashboard">
-                  <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                {/* Mobile user indicator */}
+                <div className="sm:hidden flex items-center">
+                  {session.user.role === 'PREMIUM' ? (
+                    <Crown className="h-4 w-4 text-yellow-600" />
+                  ) : (
+                    <Gift className="h-4 w-4 text-green-600" />
+                  )}
+                </div>
+
+                <Link href="/dashboard" className="shrink-0">
+                  <Button variant="ghost" size="sm" className="flex items-center space-x-1 sm:space-x-2 h-9 px-2 sm:px-3">
                     <User className="h-4 w-4" />
-                    <span>Dashboard</span>
+                    <span className="hidden sm:inline">Dashboard</span>
                   </Button>
                 </Link>
 
@@ -64,37 +73,39 @@ export function Navigation() {
                   variant="ghost" 
                   size="sm" 
                   onClick={() => signOut({ callbackUrl: '/' })}
-                  className="flex items-center space-x-2"
+                  className="flex items-center space-x-1 sm:space-x-2 h-9 px-2 sm:px-3 shrink-0"
                 >
                   <LogOut className="h-4 w-4" />
-                  <span>Uitloggen</span>
+                  <span className="hidden lg:inline">Uitloggen</span>
                 </Button>
               </>
             ) : (
               // Not logged in
               <>
-                <div className="hidden md:flex items-center text-xs text-muted-foreground mr-2">
+                <div className="hidden lg:flex items-center text-xs text-muted-foreground mr-2">
                   <Gift className="h-3 w-3 mr-1" />
                   Tijdelijk gratis onbeperkt!
                 </div>
 
-                <Link href="/auth/signin">
-                  <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                <Link href="/auth/signin" className="shrink-0">
+                  <Button variant="ghost" size="sm" className="flex items-center space-x-1 sm:space-x-2 h-9 px-2 sm:px-3">
                     <LogIn className="h-4 w-4" />
-                    <span>Inloggen</span>
+                    <span className="hidden sm:inline">Inloggen</span>
                   </Button>
                 </Link>
 
-                <Link href="/auth/signup">
-                  <Button size="sm" className="flex items-center space-x-2 bg-green-600 hover:bg-green-700">
+                <Link href="/auth/signup" className="shrink-0">
+                  <Button size="sm" className="flex items-center space-x-1 sm:space-x-2 bg-green-600 hover:bg-green-700 h-9 px-2 sm:px-3">
                     <Star className="h-4 w-4" />
-                    <span>Gratis Account</span>
+                    <span className="text-xs sm:text-sm">Account</span>
                   </Button>
                 </Link>
               </>
             )}
 
-            <ThemeToggle />
+            <div className="shrink-0">
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </div>

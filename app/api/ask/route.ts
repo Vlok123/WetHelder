@@ -8,129 +8,218 @@ import { prisma } from '@/lib/prisma'
 
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions'
 
-const SYSTEM_PROMPT = `Je bent WetHelder, een professionele Nederlandse juridische AI-assistent.
+const SYSTEM_PROMPT = `Je bent WetHelder, een ervaren Nederlandse juridische AI-assistent die gebruikers helpt met vragen over Nederlandse wetgeving.
 
-HOOFDREGEL: Schrijf ALTIJD in correct, helder Nederlands met volledige zinnen.
+BRONNEN EN KENNIS:
+- Je hebt toegang tot alle officiële documenten op wetten.overheid.nl
+- Inclusief wetten, AMvB's, ministeriële regelingen, reglementen en richtlijnen
+- Bijvoorbeeld: Reglement verkeersregels en verkeerstekens (RVV), branchrichtlijnen, professionele gedragscodes
+- Ook Europese wetgeving, verdragen en jurisprudentie van rechtspraak.nl
+- Dekking van alle rechtsgebieden: straf-, civiel-, bestuurs-, arbeids-, belasting-, omgevingsrecht, etc.
 
-JE DOEL:
-- Geef accurate, begrijpelijke antwoorden op Nederlandse juridische vragen
-- Gebruik uitsluitend officiële Nederlandse bronnen
-- Structureer antwoorden duidelijk en logisch
+GESPREKSSTIJL:
+- Praat natuurlijk en conversationeel, alsof je een ervaren jurist bent
+- Geef directe, heldere antwoorden zonder denkproces te tonen
+- Gebruik een warme, behulpzame toon
+- Vermijd technische jargon tenzij nodig
+- Maak complexe juridische concepten begrijpelijk
 
-VEREISTE ANTWOORDFORMAT:
-## [Hoofdonderwerp]
+CORRECTE JURIDISCHE FEITEN:
+- Artikel 8 Wegenverkeerswet: RIJDEN ONDER INVLOED van alcohol/drugs
+- Artikel 107 Wegenverkeerswet: Bij zich hebben van rijbewijs tijdens besturen
+- Artikel 5 Wegenverkeerswet: Rijbewijs vereist voor besturen motorrijtuig
+- Artikel 72-80 Wegenverkeerswet: Technische eisen voertuigen (APK, etc.)
 
-**Kort antwoord:**
-[Direct antwoord in 1-2 zinnen]
+ANTWOORDSTRUCTUUR:
+1. Geef een helder, direct antwoord
+2. Verwijs naar relevante wetgeving, reglementen en jurisprudentie 
+3. Voeg praktische context toe
+4. Sluit af met vervolgvragen of tips
 
-**Wettelijke basis:**
-- [Relevant wetsartikel met exacte bronvermelding]
-- [Link naar wetten.overheid.nl indien beschikbaar]
+GEEN TECHNISCHE DETAILS:
+- Vermijd checkmarks (✅) of technische zoekstrings
+- Geen site: operators of URL's tonen
+- Focus op het juridische antwoord, niet het zoekproces
 
-**Belangrijke punten:**
-- [Kernpunt 1]
-- [Kernpunt 2]
-- [Kernpunt 3]
+BRONVERMELDING:
+- Vermeld wetgeving, reglementen en richtlijnen natuurlijk in de tekst
+- Verwijs naar relevante artikelen zonder technische formatting
+- Geef praktische voorbeelden
+- Noem specifieke documenten waar relevant (bijv. RVV, AMvB's, branchrichtlijnen)
 
-**Bronnen:**
-- [Officiële bronvermelding]
+Antwoord altijd in helder Nederlands met een vriendelijke, professionele toon.`
 
-SCHRIJFREGELS:
-✓ Gebruik complete, grammaticaal correcte zinnen
-✓ Vermijd afkortingen en samenvoegingen
-✓ Gebruik duidelijke koppen en bullet points
-✓ Schrijf voor mensen, niet voor machines
-✓ Controleer spelfouten en interpunctie
-
-✗ NOOIT fragmenten of gebroken tekst
-✗ NOOIT samenvoegingen zoals "artikel159V199"
-✗ NOOIT weggelaten spaties of leestekens
-✗ NOOIT onduidelijke afkortingen
-
-BRONNEN:
-- Alleen wetten.overheid.nl en rechtspraak.nl
-- Vermeld altijd exacte artikelnummers
-- Geef werkende links waar mogelijk`
-
-async function searchSources(question: string): Promise<string[]> {
+async function searchOfficialSources(question: string): Promise<string[]> {
   const sources: string[] = []
   const lowerQuestion = question.toLowerCase()
   
-  // Verkeer en voertuigen
-  if (lowerQuestion.includes('verkeer') || lowerQuestion.includes('auto') || lowerQuestion.includes('rijden') || lowerQuestion.includes('snelheid') || lowerQuestion.includes('overtreding')) {
+  // VERKEER EN VERVOER - Uitgebreid
+  if (lowerQuestion.includes('verkeer') || lowerQuestion.includes('wegenverkeerswet') || 
+      lowerQuestion.includes('wvw') || lowerQuestion.includes('rijden') || 
+      lowerQuestion.includes('auto') || lowerQuestion.includes('rijbewijs') ||
+      lowerQuestion.includes('motorrijtuig') || lowerQuestion.includes('verkeersregel') ||
+      lowerQuestion.includes('verkeersteken') || lowerQuestion.includes('rvv') ||
+      lowerQuestion.includes('reglement verkeersregels') || lowerQuestion.includes('voertuig')) {
     sources.push('https://wetten.overheid.nl/BWBR0006622/') // Wegenverkeerswet
-    sources.push('https://wetten.overheid.nl/BWBR0004825/') // Reglement verkeersregels en verkeerstekens
+    sources.push('https://wetten.overheid.nl/BWBR0004825/') // Reglement verkeersregels en verkeerstekens (RVV)
+    sources.push('https://wetten.overheid.nl/BWBR0006746/') // Wegenverkeerswet uitvoeringsregeling
+    sources.push('https://wetten.overheid.nl/BWBR0009047/') // Kentekenreglement
+    sources.push('https://juridischloket.nl/verkeer-en-vervoer/')
   }
   
-  // Strafrecht
-  if (lowerQuestion.includes('strafrecht') || lowerQuestion.includes('misdaad') || lowerQuestion.includes('delict') || lowerQuestion.includes('gevangenis') || lowerQuestion.includes('boete')) {
+  // RIJDEN ONDER INVLOED - Specifiek
+  if (lowerQuestion.includes('artikel 8') || lowerQuestion.includes('art 8') || 
+      lowerQuestion.includes('art. 8') || lowerQuestion.includes('onder invloed') ||
+      lowerQuestion.includes('alcohol') || lowerQuestion.includes('drugs') ||
+      lowerQuestion.includes('promillage') || lowerQuestion.includes('ademanalyse')) {
+    sources.push('https://wetten.overheid.nl/BWBR0006622/2024-01-01/#Hoofdstuk2')
+    sources.push('https://juridischloket.nl/verkeer-en-vervoer/alcohol-en-drugs-in-het-verkeer/')
+  }
+
+  // STRAFRECHT EN STRAFVORDERING
+  if (lowerQuestion.includes('strafrecht') || lowerQuestion.includes('strafbaar') ||
+      lowerQuestion.includes('wetboek van strafrecht') || lowerQuestion.includes('sr') ||
+      lowerQuestion.includes('strafvordering') || lowerQuestion.includes('sv') ||
+      lowerQuestion.includes('aanhouding') || lowerQuestion.includes('inverzekeringstelling')) {
     sources.push('https://wetten.overheid.nl/BWBR0001854/') // Wetboek van Strafrecht
     sources.push('https://wetten.overheid.nl/BWBR0001903/') // Wetboek van Strafvordering
+    sources.push('https://juridischloket.nl/misdaad-en-criminaliteit/')
   }
-  
-  // Burgerlijk recht
-  if (lowerQuestion.includes('eigendom') || lowerQuestion.includes('contract') || lowerQuestion.includes('huur') || lowerQuestion.includes('koop') || lowerQuestion.includes('schade')) {
-    sources.push('https://wetten.overheid.nl/BWBR0005289/') // Burgerlijk Wetboek Boek 3
-    sources.push('https://wetten.overheid.nl/BWBR0005290/') // Burgerlijk Wetboek Boek 6
+
+  // BURGERLIJK RECHT
+  if (lowerQuestion.includes('burgerlijk') || lowerQuestion.includes('contract') ||
+      lowerQuestion.includes('bw') || lowerQuestion.includes('eigendom') ||
+      lowerQuestion.includes('verbintenis') || lowerQuestion.includes('onrechtmatige daad')) {
+    sources.push('https://wetten.overheid.nl/BWBR0005289/') // Burgerlijk Wetboek
+    sources.push('https://wetten.overheid.nl/BWBR0005290/') // Burgerlijk Wetboek Boek 3
+    sources.push('https://juridischloket.nl/wonen-en-buren/')
   }
-  
-  // Arbeidsrecht
-  if (lowerQuestion.includes('werk') || lowerQuestion.includes('ontslag') || lowerQuestion.includes('arbeids') || lowerQuestion.includes('loon') || lowerQuestion.includes('vakantie')) {
-    sources.push('https://wetten.overheid.nl/BWBR0024821/') // Arbeidsomstandighedenwet
-    sources.push('https://wetten.overheid.nl/BWBR0011823/') // Arbeidstijdenwet
+
+  // ARBEIDSRECHT EN SOCIALE ZEKERHEID
+  if (lowerQuestion.includes('werk') || lowerQuestion.includes('arbeids') || 
+      lowerQuestion.includes('ontslag') || lowerQuestion.includes('wwz') ||
+      lowerQuestion.includes('cao') || lowerQuestion.includes('arbeidstijd') ||
+      lowerQuestion.includes('ziektewet') || lowerQuestion.includes('ww') ||
+      lowerQuestion.includes('sociale zekerheid')) {
+    sources.push('https://wetten.overheid.nl/BWBR0024821/') // Wet werk en zekerheid
+    sources.push('https://wetten.overheid.nl/BWBR0019057/') // Arbeidsomstandighedenwet
+    sources.push('https://wetten.overheid.nl/BWBR0001888/') // Ziektewet
+    sources.push('https://wetten.overheid.nl/BWBR0004045/') // Werkloosheidswet
+    sources.push('https://juridischloket.nl/werk-en-inkomen/')
   }
-  
-  // Belastingrecht
-  if (lowerQuestion.includes('belasting') || lowerQuestion.includes('btw') || lowerQuestion.includes('inkomsten') || lowerQuestion.includes('aangifte')) {
+
+  // POLITIE EN HANDHAVING
+  if (lowerQuestion.includes('politie') || lowerQuestion.includes('handhaving') ||
+      lowerQuestion.includes('politiewet') || lowerQuestion.includes('bevoegdheid') ||
+      lowerQuestion.includes('geweldsmiddel') || lowerQuestion.includes('staandehouding') ||
+      lowerQuestion.includes('fouillering') || lowerQuestion.includes('surveillance')) {
+    sources.push('https://wetten.overheid.nl/BWBR0031788/') // Politiewet 2012
+    sources.push('https://wetten.overheid.nl/BWBR0006299/') // Ambtsinstructie voor de politie
+    sources.push('https://wetten.overheid.nl/BWBR0027466/') // Besluit bewapening en uitrusting politie
+    sources.push('https://juridischloket.nl/politie-en-justitie/')
+  }
+
+  // BELASTINGRECHT
+  if (lowerQuestion.includes('belasting') || lowerQuestion.includes('btw') ||
+      lowerQuestion.includes('inkomstenbelasting') || lowerQuestion.includes('awb') ||
+      lowerQuestion.includes('bezwaar') || lowerQuestion.includes('beroep')) {
+    sources.push('https://wetten.overheid.nl/BWBR0002320/') // Algemene wet bestuursrecht
     sources.push('https://wetten.overheid.nl/BWBR0002471/') // Wet inkomstenbelasting
-    sources.push('https://wetten.overheid.nl/BWBR0002629/') // Wet op de omzetbelasting
+    sources.push('https://wetten.overheid.nl/BWBR0002629/') // Wet omzetbelasting
+    sources.push('https://juridischloket.nl/belasting/')
   }
-  
-  // Bestuurrecht
-  if (lowerQuestion.includes('gemeente') || lowerQuestion.includes('vergunning') || lowerQuestion.includes('bezwaar') || lowerQuestion.includes('awb')) {
-    sources.push('https://wetten.overheid.nl/BWBR0005537/') // Algemene wet bestuursrecht
+
+  // BOUW EN OMGEVING
+  if (lowerQuestion.includes('bouw') || lowerQuestion.includes('omgevingswet') ||
+      lowerQuestion.includes('vergunning') || lowerQuestion.includes('ruimtelijke ordening') ||
+      lowerQuestion.includes('milieu') || lowerQuestion.includes('wabo')) {
+    sources.push('https://wetten.overheid.nl/BWBR0024779/') // Wet algemene bepalingen omgevingsrecht
+    sources.push('https://wetten.overheid.nl/BWBR0044337/') // Omgevingswet
+    sources.push('https://wetten.overheid.nl/BWBR0003245/') // Wet ruimtelijke ordening
+    sources.push('https://juridischloket.nl/wonen-en-buren/verbouwen/')
   }
-  
-  // Politie en handhaving
-  if (lowerQuestion.includes('politie') || lowerQuestion.includes('aanhouding') || lowerQuestion.includes('handhaving')) {
-    sources.push('https://wetten.overheid.nl/BWBR0011468/') // Politiewet
-    sources.push('https://www.politie.nl/informatie/')
+
+  // ONDERWIJSRECHT
+  if (lowerQuestion.includes('onderwijs') || lowerQuestion.includes('school') ||
+      lowerQuestion.includes('universiteit') || lowerQuestion.includes('hbo') ||
+      lowerQuestion.includes('student') || lowerQuestion.includes('leerpicht')) {
+    sources.push('https://wetten.overheid.nl/BWBR0003420/') // Wet op het primair onderwijs
+    sources.push('https://wetten.overheid.nl/BWBR0002399/') // Wet op het hoger onderwijs
+    sources.push('https://wetten.overheid.nl/BWBR0030060/') // Leerplichtwet
+    sources.push('https://juridischloket.nl/onderwijs/')
   }
-  
-  // Grondwet en grondrechten
-  if (lowerQuestion.includes('grondrecht') || lowerQuestion.includes('vrijheid') || lowerQuestion.includes('discriminatie') || lowerQuestion.includes('privacy')) {
+
+  // GEZONDHEIDSZORG
+  if (lowerQuestion.includes('zorg') || lowerQuestion.includes('medisch') ||
+      lowerQuestion.includes('arts') || lowerQuestion.includes('ziekenhuis') ||
+      lowerQuestion.includes('farmaceutisch') || lowerQuestion.includes('big') ||
+      lowerQuestion.includes('wkkgz') || lowerQuestion.includes('zvw')) {
+    sources.push('https://wetten.overheid.nl/BWBR0018906/') // Wet op de beroepen in de individuele gezondheidszorg
+    sources.push('https://wetten.overheid.nl/BWBR0018450/') // Zorgverzekeringswet
+    sources.push('https://wetten.overheid.nl/BWBR0002084/') // Wet op de geneesmiddelenvoorziening
+    sources.push('https://juridischloket.nl/zorg-en-gezondheid/')
+  }
+
+  // COMMUNICATIE EN PRIVACY
+  if (lowerQuestion.includes('privacy') || lowerQuestion.includes('avg') ||
+      lowerQuestion.includes('gdpr') || lowerQuestion.includes('persoonsgegevens') ||
+      lowerQuestion.includes('telecommunicatie') || lowerQuestion.includes('internet')) {
+    sources.push('https://wetten.overheid.nl/BWBR0040940/') // Algemene verordening gegevensbescherming implementatiewet
+    sources.push('https://wetten.overheid.nl/BWBR0009950/') // Telecommunicatiewet
+    sources.push('https://juridischloket.nl/internet-telefoon-tv/privacy-op-internet/')
+  }
+
+  // FINANCIEEL RECHT
+  if (lowerQuestion.includes('bank') || lowerQuestion.includes('financieel') ||
+      lowerQuestion.includes('verzekering') || lowerQuestion.includes('wft') ||
+      lowerQuestion.includes('afm') || lowerQuestion.includes('toezicht')) {
+    sources.push('https://wetten.overheid.nl/BWBR0020368/') // Wet op het financieel toezicht
+    sources.push('https://wetten.overheid.nl/BWBR0003066/') // Wet op het verzekeringsbedrijf
+    sources.push('https://juridischloket.nl/geld-en-schulden/')
+  }
+
+  // BRANCHRICHTLIJNEN EN PROFESSIONELE REGELGEVING
+  if (lowerQuestion.includes('branchrichtlijn') || lowerQuestion.includes('beroepsregel') ||
+      lowerQuestion.includes('tuchtrecht') || lowerQuestion.includes('gedragscode') ||
+      lowerQuestion.includes('kwaliteitsstandaard') || lowerQuestion.includes('certificering')) {
+    // Voeg algemene beroepsregelgeving toe
+    sources.push('https://wetten.overheid.nl/BWBR0002061/') // Advocatenwet
+    sources.push('https://wetten.overheid.nl/BWBR0002394/') // Gerechtsdeurwaarderswet
+    sources.push('https://wetten.overheid.nl/BWBR0018906/') // Wet BIG (ook voor brancherichtlijnen)
+  }
+
+  // EUROPEES RECHT EN VERDRAGEN
+  if (lowerQuestion.includes('europa') || lowerQuestion.includes('evrm') ||
+      lowerQuestion.includes('eu') || lowerQuestion.includes('verdrag') ||
+      lowerQuestion.includes('grondrechten') || lowerQuestion.includes('mensenrechten')) {
+    sources.push('https://wetten.overheid.nl/BWBV0001000/') // Europees Verdrag voor de Rechten van de Mens
     sources.push('https://wetten.overheid.nl/BWBR0001840/') // Grondwet
+    sources.push('https://juridischloket.nl/discriminatie/')
   }
-  
-  // Altijd rechtspraak.nl toevoegen voor jurisprudentie
-  sources.push('https://www.rechtspraak.nl/')
-  
-  // Algemene wettendatabase
+
+  // Voeg altijd algemene bronnen toe voor bredere dekking
   sources.push('https://wetten.overheid.nl/')
+  sources.push('https://rechtspraak.nl/')
+  sources.push('https://juridischloket.nl/')
   
-  return Array.from(new Set(sources)) // Remove duplicates
+  return Array.from(new Set(sources))
 }
 
 // GET handler for Vercel build compatibility
 export async function GET() {
   return new Response(JSON.stringify({ 
     message: 'WetHelder API is running',
-    version: '1.0.0',
-    endpoints: {
-      POST: 'Send a legal question in JSON format: { "question": "your question" }'
-    }
+    version: '2.0.0',
+    features: ['conversational-ai', 'thinking-process', 'profession-specific']
   }), {
     status: 200,
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' }
   })
 }
 
 // Rate limiting helper
 async function checkRateLimit(userId?: string): Promise<{ allowed: boolean; remaining: number; role: string }> {
   if (!userId) {
-    // Anonymous users get 1 free question per session
     return { allowed: true, remaining: 0, role: 'ANONYMOUS' }
   }
 
@@ -143,26 +232,14 @@ async function checkRateLimit(userId?: string): Promise<{ allowed: boolean; rema
     return { allowed: false, remaining: 0, role: 'UNKNOWN' }
   }
 
-  // PREMIUM users have unlimited access
   if (user.role === 'PREMIUM') {
     return { allowed: true, remaining: -1, role: user.role }
   }
 
-  // FREE users have 3 queries per day
-  const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD
-  
+  const today = new Date().toISOString().split('T')[0]
   const dailyUsage = await prisma.dailyUsage.upsert({
-    where: {
-      userId_date: {
-        userId,
-        date: today
-      }
-    },
-    create: {
-      userId,
-      date: today,
-      count: 0
-    },
+    where: { userId_date: { userId, date: today } },
+    create: { userId, date: today, count: 0 },
     update: {},
     select: { count: true }
   })
@@ -174,11 +251,328 @@ async function checkRateLimit(userId?: string): Promise<{ allowed: boolean; rema
   return { allowed, remaining, role: user.role }
 }
 
+function getProfessionContext(profession?: string): string {
+  switch (profession) {
+    case 'aspirant':
+      return `
+DOELGROEP: Aspirant (politie/justitie)
+
+ANTWOORDSTIJL:
+- Uitgebreide uitleg met praktijkvoorbeelden
+- Stapsgewijze procedures en protocollen
+- Verwijs naar relevante handboeken en instructies
+- Leg de juridische basis uit maar focus op praktische toepassing
+- Geef context over rechtsstatelijke principes
+- Voeg tips toe voor de dagelijkse praktijk
+
+STRUCTUUR ANTWOORD:
+1. Korte juridische basis
+2. Praktische uitwerking
+3. Voorbeelden uit de praktijk
+4. Relevante procedures
+5. Aandachtspunten voor aspiranten
+
+TOON: Educatief, ondersteunend, praktijkgericht`
+
+    case 'student':
+      return `
+DOELGROEP: Student (Rechten/Criminologie)
+
+ANTWOORDSTIJL:
+- Diepgaande theoretische achtergrond
+- Relevante jurisprudentie en rechtspraak
+- Academische bronnen en verwijzingen
+- Historische ontwikkeling van het recht
+- Rechtsvergelijkende aspecten waar relevant
+- Discussiepunten en verschillende juridische meningen
+
+STRUCTUUR ANTWOORD:
+1. Juridische grondslag en theorie
+2. Relevante jurisprudentie
+3. Academische discussie
+4. Praktische implicaties
+5. Vervolgonderzoek suggesties
+
+TOON: Academisch, analytisch, onderzoekend`
+
+    case 'politieagent':
+      return `
+DOELGROEP: Politieagent
+
+ANTWOORDSTIJL:
+- Kernpunten voor directe handhaving
+- Praktische bevoegdheden en grenzen daarvan
+- Snelle checklists en geheugensteuntjes
+- Operationele procedures
+- Wat wel/niet toegestaan is in de praktijk
+- Verwijs naar relevante artikelen Wetboek van Strafvordering
+
+STRUCTUUR ANTWOORD:
+1. Kernpunt: Wat mag ik doen?
+2. Wettelijke basis (kort)
+3. Praktische uitvoering
+4. Aandachtspunten/valkuilen
+5. Vervolgstappen
+
+TOON: Direct, praktisch, operationeel gericht`
+
+    case 'boa':
+      return `
+DOELGROEP: BOA (Buitengewoon Opsporingsambtenaar)
+
+ANTWOORDSTIJL:
+- Focus op APV-handhaving en specifieke BOA-bevoegdheden
+- Duidelijke grenzen van de eigen bevoegdheden
+- Wanneer doorverwijzen naar politie
+- Praktische handhavingssituaties
+- Verschil tussen domein 1, 2 en 3 BOA's
+- Contactprocedures met politie en OM
+
+STRUCTUUR ANTWOORD:
+1. BOA-bevoegdheid: Wat mag ik als BOA?
+2. Wettelijke basis (APV/bijzondere wetgeving)
+3. Praktische handhaving
+4. Grenzen en doorverwijzing
+5. Rapportage en vervolgstappen
+
+TOON: Praktisch, duidelijk over bevoegdheidsgrenzen, procedureel`
+
+    case 'beveiliger':
+      return `
+DOELGROEP: Beveiliger
+
+ANTWOORDSTIJL:
+- Private beveiligingsbevoegdheden vs. publieke handhaving
+- Wat mag wel/niet zonder politiebevoegdheid
+- Eigendomsrecht en huisrecht
+- Aanhouding bij heterdaad
+- Samenwerking met politie en autoriteiten
+- Beveiligingsprotocollen en escalatieprocedures
+
+STRUCTUUR ANTWOORD:
+1. Beveiligingsbevoegdheid: Wat mag ik als beveiliger?
+2. Juridische basis (huisrecht, eigendomsrecht)
+3. Praktische uitvoering en protocollen
+4. Wanneer politie inschakelen
+5. Rapportage en documentatie
+
+TOON: Praktisch, duidelijk over bevoegdheidsgrenzen, veiligheid voorop`
+
+    case 'rechter':
+      return `
+DOELGROEP: Rechter/Magistraat
+
+ANTWOORDSTIJL:
+- Jurisprudentie en precedentwerking
+- Rechterlijke beoordelingsvrijheid
+- Procesrechtelijke aspecten
+- Motiveringsplichten
+- Verschillende rechtsmachten en bevoegdheden
+- Constitutionele en Europese kaders
+
+STRUCTUUR ANTWOORD:
+1. Juridische normen en toetsingskaders
+2. Relevante jurisprudentie en precedenten
+3. Beoordelingsvrijheid en motivering
+4. Processuele aspecten
+5. Rechtsmacht en bevoegdheidsverdeling
+
+TOON: Juridisch precies, rechtsstatelijk, procedure-bewust`
+
+    case 'officier':
+      return `
+DOELGROEP: Officier van Justitie
+
+ANTWOORDSTIJL:
+- Vervolgingsbeleid en opportuniteitsbeginsel
+- Strafvorderlijke bevoegdheden
+- Samenwerking met politie en andere partners
+- Transacties en sepots
+- Rechtsmacht en competentieverdeling
+- Slachtoffer- en daderbelangen
+
+STRUCTUUR ANTWOORD:
+1. Vervolgingsaspect en opsporingsindicaties
+2. Strafvorderlijke mogelijkheden
+3. Beleidsmatige overwegingen
+4. Processuele stappen
+5. Samenwerking en coördinatie
+
+TOON: Strategisch, vervolgingsgericht, beleidsmatig`
+
+    case 'notaris':
+      return `
+DOELGROEP: Notaris
+
+ANTWOORDSTIJL:
+- Notariële authentieke akten en formaliteiten
+- Controle- en zorgplichten
+- Familierecht, ondernemingsrecht, goederenrecht
+- Fiscale aspecten en gevolgen
+- Conflictpreventie en onpartijdigheid
+- Registratie en publiciteit
+
+STRUCTUUR ANTWOORD:
+1. Notariële aspecten en formaliteiten
+2. Wettelijke vereisten en controles
+3. Praktische uitvoering en procedure
+4. Fiscale en juridische gevolgen
+5. Risico's en aandachtspunten
+
+TOON: Precies, formaliteit-bewust, preventief`
+
+    case 'deurwaarder':
+      return `
+DOELGROEP: Gerechtsdeurwaarder
+
+ANTWOORDSTIJL:
+- Executieprocedures en beslagmogelijkheden
+- Betekening en exploten
+- Incassoprocedures en dwangmiddelen
+- Bescherming van schuldenaren
+- Samenwerking met rechtbank en crediteuren
+- Tarieven en kosten
+
+STRUCTUUR ANTWOORD:
+1. Executiemogelijkheden en procedures
+2. Wettelijke vereisten en termijnen
+3. Praktische uitvoering
+4. Rechten van schuldenaren
+5. Kosten en vervolgstappen
+
+TOON: Procedureel, executiegericht, schuldenaarsbescherming-bewust`
+
+    case 'belastingadviseur':
+      return `
+DOELGROEP: Belastingadviseur
+
+ANTWOORDSTIJL:
+- Fiscale wetgeving en jurisprudentie
+- Belastingplanning en optimalisatie
+- Bezwaar- en beroepsprocedures
+- Verschillende belastingsoorten
+- Administratieve verplichtingen
+- Risicomanagement en compliance
+
+STRUCTUUR ANTWOORD:
+1. Fiscale regels en toepassingen
+2. Belastingconsequenties
+3. Planningsopties en risico's
+4. Procedurele aspecten
+5. Praktische implementatie
+
+TOON: Fiscaal-technisch, planningsgericht, compliance-bewust`
+
+    case 'gemeenteambtenaar':
+      return `
+DOELGROEP: Gemeenteambtenaar
+
+ANTWOORDSTIJL:
+- Bestuursrecht en lokale regelgeving
+- Vergunningverlening en handhaving
+- APV en lokale verordeningen
+- Bezwaar- en beroepsprocedures
+- Bestuurlijke boetes en sancties
+- Samenwerking met andere overheden
+
+STRUCTUUR ANTWOORD:
+1. Bestuurlijke bevoegdheden en procedures
+2. Lokale regelgeving en toepassingen
+3. Praktische uitvoering
+4. Rechtsbescherming en procedures
+5. Samenwerking en coördinatie
+
+TOON: Bestuurlijk, procedureel, service-gericht`
+
+    case 'verzekeringsexpert':
+      return `
+DOELGROEP: Verzekeringsexpert
+
+ANTWOORDSTIJL:
+- Verzekeringscontractenrecht
+- Polisvoorwaarden en uitsluitingen
+- Schadeafwikkeling en expertise
+- Verzekeringsplicht en dekking
+- Fraudepreventie en -detectie
+- Sectorspecifieke regelgeving
+
+STRUCTUUR ANTWOORD:
+1. Verzekeringsrechtelijke aspecten
+2. Polisvoorwaarden en dekking
+3. Schadeafwikkeling procedures
+4. Risico's en uitsluitingen
+5. Praktische afhandeling
+
+TOON: Verzekeringstechnisch, risicoanalytisch, klantgericht`
+
+    case 'hrprofessional':
+      return `
+DOELGROEP: HR Professional
+
+ANTWOORDSTIJL:
+- Arbeidsrecht en CAO-bepalingen
+- Personeelsbeleid en procedures
+- Arbeidsomstandigheden en veiligheid
+- Discriminatie en gelijke behandeling
+- Reorganisatie en ontslag
+- Privacy en gegevensbescherming
+
+STRUCTUUR ANTWOORD:
+1. Arbeidsrechtelijke kaders
+2. HR-beleid en procedures
+3. Praktische implementatie
+4. Risico's en compliance
+5. Medewerkerscommunicatie
+
+TOON: HR-gericht, beleidsmatig, medewerker-bewust`
+
+    case 'advocaat':
+      return `
+DOELGROEP: Advocaat/Jurist
+
+ANTWOORDSTIJL:
+- Juridische precisie en volledigheid
+- Relevante jurisprudentie met uitspraaknummers
+- Processuele aspecten en termijnen
+- Risico's en juridische valkuilen
+- Strategische overwegingen
+- Verwijzingen naar specifieke artikelen en regelgeving
+
+STRUCTUUR ANTWOORD:
+1. Juridische kern en toepasselijk recht
+2. Relevante jurisprudentie
+3. Processuele aspecten
+4. Praktische juridische gevolgen
+5. Strategische overwegingen
+
+TOON: Precies, professioneel, strategisch`
+
+    default:
+      return `
+DOELGROEP: Algemeen publiek
+
+ANTWOORDSTIJL:
+- Begrijpelijke taal zonder juridisch jargon
+- Focus op praktische gevolgen voor dagelijks leven
+- Concrete voorbeelden en situaties
+- Wat betekent dit voor mij?
+- Heldere uitleg van complexe juridische concepten
+- Praktische tips en vervolgstappen
+
+STRUCTUUR ANTWOORD:
+1. Wat betekent dit in gewone woorden?
+2. Praktische gevolgen voor u
+3. Concrete voorbeelden
+4. Wat kunt u doen?
+5. Waar kunt u terecht voor hulp?
+
+TOON: Toegankelijk, behulpzaam, empathisch`
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
-    // Validate environment variables
     if (!process.env.DEEPSEEK_API_KEY) {
-      console.error('DEEPSEEK_API_KEY not configured')
       return new Response(JSON.stringify({ error: 'API configuration error' }), { 
         status: 500,
         headers: { 'Content-Type': 'application/json' }
@@ -194,62 +588,22 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Get user session
     const session = await getServerSession(authOptions)
     const userId = session?.user?.id
-
-    // Check rate limiting
     const { allowed, remaining, role } = await checkRateLimit(userId)
     
     if (!allowed) {
       return new Response(JSON.stringify({ 
         error: 'Dagelijkse limiet bereikt', 
         message: 'Gratis gebruikers kunnen 3 vragen per dag stellen. Upgrade naar premium voor onbeperkt gebruik.',
-        remaining: 0,
-        role
+        remaining: 0, role
       }), { 
         status: 429,
         headers: { 'Content-Type': 'application/json' }
       })
     }
 
-    // Customize system prompt based on profession
-    const getProfessionPrompt = (prof: string) => {
-      const basePrompt = SYSTEM_PROMPT;
-      
-      switch (prof) {
-        case 'advocaat':
-          return basePrompt + '\n\nSPECIFIEK VOOR ADVOCATEN:\n- Focus op procedurele aspecten en procesrecht\n- Vermeld relevante termijnen en formaliteiten\n- Geef jurisprudentie met ECLI-nummers waar mogelijk\n- Bekijk mogelijke rechtsmiddelen en beroepsprocedures'
-        
-        case 'politie':
-          return basePrompt + '\n\nSPECIFIEK VOOR POLITIE:\n- Focus op handhaving en opsporingsbevoegdheden\n- Vermeld relevante artikelen uit Wetboek van Strafvordering\n- Geef duidelijke procedures voor verschillende situaties\n- Bekijk dwangmiddelen en hun voorwaarden'
-        
-        case 'aspirant_politie':
-          return basePrompt + '\n\nSPECIFIEK VOOR ASPIRANT-POLITIE:\n- Geef UITGEBREIDE uitleg van de praktische uitvoering van politietaken\n- Leg de achtergrond uit waarom bepaalde regels bestaan\n- Beschrijf stap-voor-stap procedures en protocollen\n- Vermeld veelvoorkomende situaties uit de politiepraktijk\n- Geef context over wanneer en hoe bepaalde bevoegdheden worden toegepast\n- Leg verbanden met de politieopleiding en training\n- Behandel zowel juridische als operationele aspecten\n- Geef voorbeelden van concrete toepassingen in het veld\n- Vermeld relevante artikelen uit:\n  * Wetboek van Strafvordering (strafrecht)\n  * Politiewet 2012 (organisatie en taken)\n  * Wegenverkeerswet (verkeer)\n  * Algemene Plaatselijke Verordening (openbare orde)\n- Focus op competentieontwikkeling en professionalisering'
-        
-        case 'boa':
-          return basePrompt + '\n\nSPECIFIEK VOOR BOA\'s:\n- Focus op bijzondere opsporingsbevoegdheden\n- Vermeld welke overtredingen u kunt bekeuren\n- Geef duidelijke procedures en bevoegdheidsgrenzen\n- Bekijk samenwerking met politie en OM'
-        
-        case 'rechter':
-          return basePrompt + '\n\nSPECIFIEK VOOR RECHTERS:\n- Focus op jurisprudentie en rechtsontwikkeling\n- Geef uitgebreide bronvermelding met ECLI-nummers\n- Vermeld verschillende rechtspraak en trends\n- Bekijk hogere rechtspraak en cassatie'
-        
-        case 'notaris':
-          return basePrompt + '\n\nSPECIFIEK VOOR NOTARISSEN:\n- Focus op civielrecht en vermogensrecht\n- Vermeld relevante artikelen uit BW en registratiewetten\n- Geef praktische aspecten voor aktes en procedures\n- Bekijk fiscale implicaties waar relevant'
-        
-        case 'juridisch_adviseur':
-          return basePrompt + '\n\nSPECIFIEK VOOR JURIDISCH ADVISEURS:\n- Focus op bedrijfsjuridische aspecten\n- Vermeld compliance en risicomanagement aspecten\n- Geef praktische implementatieadviezen\n- Bekijk zowel juridische als business impact'
-        
-        case 'student':
-          return basePrompt + '\n\nSPECIFIEK VOOR RECHTENSTUDENTEN:\n- Geef uitgebreide uitleg van juridische concepten\n- Vermeld de achtergrond en ontwikkeling van de wet\n- Leg verbanden met andere rechtsgebieden\n- Geef voorbeelden ter verduidelijking'
-        
-        default: // burger
-          return basePrompt + '\n\nSPECIFIEK VOOR BURGERS:\n- Gebruik begrijpelijke, niet-juridische taal\n- Leg juridische termen uit\n- Focus op praktische gevolgen en vervolgstappen\n- Verwijs naar relevante instanties voor hulp'
-      }
-    }
-
-    const customPrompt = getProfessionPrompt(profession)
-    const sources = await searchSources(question)
-
+    const sources = await searchOfficialSources(question)
     const encoder = new TextEncoder()
     let fullAnswer = ''
 
@@ -267,19 +621,21 @@ export async function POST(request: NextRequest) {
               messages: [
                 {
                   role: 'system',
-                  content: customPrompt,
+                  content: SYSTEM_PROMPT + '\n\n' + getProfessionContext(profession),
                 },
                 {
                   role: 'user',
-                  content: `Beantwoord deze juridische vraag in helder Nederlands: ${question}`,
+                  content: `Hoi! Ik heb een juridische vraag voor je:
+
+${question}
+
+Kun je me hierover helpen? Geef me een direct, helder antwoord.`,
                 },
               ],
               stream: true,
-              max_tokens: 1500,
-              temperature: 0.0,
-              top_p: 0.8,
-              frequency_penalty: 0.0,
-              presence_penalty: 0.0,
+              max_tokens: 2000,
+              temperature: 0.3,
+              top_p: 0.9,
             }),
           })
 
@@ -304,7 +660,7 @@ export async function POST(request: NextRequest) {
             buffer += chunk
             
             const lines = buffer.split('\n')
-            buffer = lines.pop() || '' // Keep incomplete line in buffer
+            buffer = lines.pop() || ''
 
             for (const line of lines) {
               if (line.startsWith('data: ')) {
@@ -316,7 +672,6 @@ export async function POST(request: NextRequest) {
                   const content = parsed.choices?.[0]?.delta?.content || ''
                   
                   if (content) {
-                    // Clean and validate content before adding
                     const cleanContent = content.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
                     if (cleanContent.trim()) {
                       fullAnswer += cleanContent
@@ -333,22 +688,21 @@ export async function POST(request: NextRequest) {
             }
           }
 
-          // Send sources
+          // Send sources at the end
           if (sources.length > 0) {
+            const sourcesText = `\n\n**📖 Nuttige bronnen:**\n${sources.map(url => `• ${url}`).join('\n')}`
             const sourcesChunk = encoder.encode(
-              `data: ${JSON.stringify({ sources })}\n\n`
+              `data: ${JSON.stringify({ content: sourcesText })}\n\n`
             )
             controller.enqueue(sourcesChunk)
           }
 
-          // Send done signal
           const doneChunk = encoder.encode('data: [DONE]\n\n')
           controller.enqueue(doneChunk)
 
-          // Save to database and update usage (with safe error handling)
+          // Save to database
           try {
             if (prisma && prisma.query) {
-              // Save the query
               await prisma.query.create({
                 data: {
                   question,
@@ -359,39 +713,24 @@ export async function POST(request: NextRequest) {
                 }
               })
 
-              // Update daily usage for logged-in FREE users
               if (userId && role === 'FREE') {
                 const today = new Date().toISOString().split('T')[0]
                 await prisma.dailyUsage.upsert({
-                  where: {
-                    userId_date: {
-                      userId,
-                      date: today
-                    }
-                  },
-                  create: {
-                    userId,
-                    date: today,
-                    count: 1
-                  },
-                  update: {
-                    count: {
-                      increment: 1
-                    }
-                  }
+                  where: { userId_date: { userId, date: today } },
+                  create: { userId, date: today, count: 1 },
+                  update: { count: { increment: 1 } }
                 })
               }
             }
           } catch (dbError) {
             console.error('Database error (non-critical):', dbError)
-            // Don't fail the request if database save fails
           }
 
         } catch (error) {
           console.error('Stream error:', error)
           const errorChunk = encoder.encode(
             `data: ${JSON.stringify({ 
-              content: 'Er is een fout opgetreden. Probeer opnieuw.' 
+              content: 'Sorry, er ging iets mis. Kun je je vraag opnieuw proberen?' 
             })}\n\n`
           )
           controller.enqueue(errorChunk)
