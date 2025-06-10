@@ -364,7 +364,7 @@ export default function AskPage() {
                   Antwoorden worden aangepast aan uw professie.
                 </p>
                 <div className="text-sm text-slate-500">
-                  <p>Voorbeelden: "Artikel 8 WVW uitleg" • "Procedure bij rijden onder invloed"</p>
+                  <p>Voorbeelden: &ldquo;Artikel 8 WVW uitleg&rdquo; • &ldquo;Procedure bij rijden onder invloed&rdquo;</p>
                 </div>
               </div>
             )}
