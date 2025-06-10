@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useSession, signIn, signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -97,7 +98,7 @@ export default function ModernLegalChat() {
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([])
   const [showSettings, setShowSettings] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
 
   // Mock chat history - in real app this would come from database
   useEffect(() => {
@@ -650,23 +651,40 @@ export default function ModernLegalChat() {
                 className="flex gap-3"
               >
                 <div className="flex-1 relative">
-                  <Input
+                  <Textarea
                     ref={inputRef}
                     value={currentQuestion}
-                    onChange={(e) => setCurrentQuestion(e.target.value)}
-                    placeholder="Stel uw juridische vraag..."
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCurrentQuestion(e.target.value)}
+                    onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault()
+                        handleSubmit()
+                      }
+                    }}
+                    placeholder="Stel uw juridische vraag... (Enter = verzenden, Shift+Enter = nieuwe regel)"
                     disabled={isLoading}
-                    className={`pr-12 py-3 text-base ${
+                    rows={1}
+                    className={`pr-12 min-h-[44px] resize-none text-base ${
                       darkMode 
                         ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
                         : 'bg-gray-50 border-gray-300'
                     }`}
+                    style={{
+                      height: 'auto',
+                      minHeight: '44px',
+                      maxHeight: '120px'
+                    }}
+                    onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
+                      const target = e.target as HTMLTextAreaElement
+                      target.style.height = 'auto'
+                      target.style.height = Math.min(target.scrollHeight, 120) + 'px'
+                    }}
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-1 top-1/2 transform -translate-y-1/2"
+                    className="absolute right-1 top-2"
                   >
                     <Mic className="h-4 w-4" />
                   </Button>
