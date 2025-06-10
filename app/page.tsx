@@ -406,12 +406,15 @@ export default function ModernLegalChat() {
               <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
             
-            <div className="flex items-center gap-1 sm:gap-2">
+            <button 
+              onClick={() => window.location.href = '/'}
+              className="flex items-center gap-1 sm:gap-2 hover:opacity-80 transition-opacity cursor-pointer"
+            >
               <Scale className={`h-6 w-6 sm:h-8 sm:w-8 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
               <span className={`text-lg sm:text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                 WetHelder
               </span>
-            </div>
+            </button>
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2">
@@ -631,15 +634,37 @@ export default function ModernLegalChat() {
 
                   {/* Account Benefits Section */}
                   {!session && (
-                    <div className={`mx-4 mb-8 p-6 rounded-lg border ${
+                    <div className={`mx-3 sm:mx-4 mb-6 sm:mb-8 p-4 sm:p-6 rounded-lg border ${
                       darkMode ? 'bg-blue-900/20 border-blue-800' : 'bg-blue-50 border-blue-200'
                     }`}>
-                      <h3 className={`text-lg font-semibold mb-4 ${
+                      <h3 className={`text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-center ${
                         darkMode ? 'text-blue-300' : 'text-blue-800'
                       }`}>
                         ✅ Waarom een gratis account aanmaken?
                       </h3>
-                      <div className={`grid md:grid-cols-2 gap-3 text-sm ${
+                      
+                      {/* Hoofdvoordeel - gepersonaliseerde antwoorden */}
+                      <div className={`mb-4 p-3 sm:p-4 rounded-lg ${
+                        darkMode ? 'bg-blue-800/30' : 'bg-blue-100'
+                      }`}>
+                        <div className="flex items-start gap-2 mb-2">
+                          <span className="text-lg">👤</span>
+                          <div>
+                            <h4 className={`font-semibold text-sm sm:text-base ${
+                              darkMode ? 'text-blue-200' : 'text-blue-800'
+                            }`}>
+                              Gepersonaliseerde antwoorden voor uw beroep
+                            </h4>
+                            <p className={`text-xs sm:text-sm mt-1 ${
+                              darkMode ? 'text-blue-300' : 'text-blue-700'
+                            }`}>
+                              Als advocaat, politieagent, BOA, notaris of andere professional krijgt u antwoorden afgestemd op uw specifieke werkgebied en verantwoordelijkheden.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className={`grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm ${
                         darkMode ? 'text-blue-200' : 'text-blue-700'
                       }`}>
                         <div className="flex items-start gap-2">
@@ -659,12 +684,17 @@ export default function ModernLegalChat() {
                           <span><strong>Persoonlijke vragen stellen</strong> over jouw situatie – direct zoeken in de wet</span>
                         </div>
                       </div>
-                      <p className={`mt-4 text-sm ${
-                        darkMode ? 'text-blue-300' : 'text-blue-800'
+                      
+                      <div className={`mt-4 p-3 text-center rounded-lg ${
+                        darkMode ? 'bg-green-900/30' : 'bg-green-50'
                       }`}>
-                        Je hoeft geen jurist te zijn – wij maken wetten begrijpelijk.<br/>
-                        <strong>Meld je gratis aan</strong> en ontdek wat de wet echt zegt – in gewone taal.
-                      </p>
+                        <p className={`text-xs sm:text-sm ${
+                          darkMode ? 'text-green-300' : 'text-green-800'
+                        }`}>
+                          Je hoeft geen jurist te zijn – wij maken wetten begrijpelijk voor jouw beroep.<br/>
+                          <strong>Meld je gratis aan</strong> en krijg antwoorden die aansluiten bij jouw werkgebied.
+                        </p>
+                      </div>
                     </div>
                   )}
 
