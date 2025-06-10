@@ -1,3 +1,7 @@
+// Force dynamic rendering for Vercel
+export const runtime = 'edge'
+export const dynamic = 'force-dynamic'
+
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/db'
 
@@ -206,7 +210,7 @@ export async function POST(request: NextRequest) {
                   question,
                   answer: fullAnswer,
                   sources: JSON.stringify(sources),
-                },
+                } as any,
               })
             }
           } catch (dbError) {
