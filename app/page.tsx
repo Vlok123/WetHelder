@@ -34,6 +34,7 @@ import {
   Plus,
   ChevronRight
 } from 'lucide-react'
+import { formatTextWithLinks, formatSourcesWithLinks } from '@/lib/textFormatter'
 
 // Available professions with their specific contexts
 const PROFESSIONS = [
@@ -461,16 +462,8 @@ export default function ModernLegalChat() {
                                   </div>
                                 ) : (
                                   <>
-                                    <div className={`prose max-w-none ${
-                                      darkMode ? 'prose-invert' : ''
-                                    }`}>
-                                      {message.answer.split('\n').map((line, index) => (
-                                        <p key={index} className={`${
-                                          darkMode ? 'text-gray-200' : 'text-gray-800'
-                                        }`}>
-                                          {line}
-                                        </p>
-                                      ))}
+                                    <div className="max-w-none">
+                                      {formatTextWithLinks(message.answer, darkMode)}
                                     </div>
                                     
                                     {message.sources.length > 0 && (
@@ -478,17 +471,9 @@ export default function ModernLegalChat() {
                                         <p className={`text-sm font-medium mb-2 ${
                                           darkMode ? 'text-gray-300' : 'text-gray-700'
                                         }`}>
-                                          Bronnen:
+                                          📖 Nuttige bronnen:
                                         </p>
-                                        <div className="space-y-1">
-                                          {message.sources.map((source, index) => (
-                                            <p key={index} className={`text-sm ${
-                                              darkMode ? 'text-gray-400' : 'text-gray-600'
-                                            }`}>
-                                              • {source}
-                                            </p>
-                                          ))}
-                                        </div>
+                                        {formatSourcesWithLinks(message.sources, darkMode)}
                                       </div>
                                     )}
                                   </>

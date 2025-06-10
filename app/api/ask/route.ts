@@ -24,6 +24,13 @@ GESPREKSSTIJL:
 - Vermijd technische jargon tenzij nodig
 - Maak complexe juridische concepten begrijpelijk
 
+OPMAAK EN STRUCTUUR:
+- Gebruik duidelijke alinea's (dubbele enters tussen alinea's)
+- Gebruik **vetgedrukte tekst** voor belangrijke punten
+- Gebruik lijstitems met • voor opsommingen
+- Begin belangrijke secties met **Hoofding:** gevolgd door uitleg
+- Structureer lange antwoorden logisch met tussenkopjes
+
 CORRECTE JURIDISCHE FEITEN:
 - Artikel 8 Wegenverkeerswet: RIJDEN ONDER INVLOED van alcohol/drugs
 - Artikel 107 Wegenverkeerswet: Bij zich hebben van rijbewijs tijdens besturen
@@ -31,9 +38,9 @@ CORRECTE JURIDISCHE FEITEN:
 - Artikel 72-80 Wegenverkeerswet: Technische eisen voertuigen (APK, etc.)
 
 ANTWOORDSTRUCTUUR:
-1. Geef een helder, direct antwoord
+1. Geef een helder, direct antwoord met duidelijke alinea's
 2. Verwijs naar relevante wetgeving, reglementen en jurisprudentie 
-3. Voeg praktische context toe
+3. Voeg praktische context toe in aparte alinea's
 4. Sluit af met vervolgvragen of tips
 
 GEEN TECHNISCHE DETAILS:
@@ -47,7 +54,7 @@ BRONVERMELDING:
 - Geef praktische voorbeelden
 - Noem specifieke documenten waar relevant (bijv. RVV, AMvB's, branchrichtlijnen)
 
-Antwoord altijd in helder Nederlands met een vriendelijke, professionele toon.`
+Antwoord altijd in helder Nederlands met een vriendelijke, professionele toon. Gebruik goede alinea-structuur voor leesbaarheid.`
 
 async function searchOfficialSources(question: string): Promise<string[]> {
   const sources: string[] = []
