@@ -6,7 +6,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
-const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions'
+const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
 
 const SYSTEM_PROMPT = `Je bent WetHelder, een ervaren Nederlandse juridische AI-assistent die gebruikers helpt met vragen over Nederlandse wetgeving.
 
@@ -572,7 +572,7 @@ TOON: Toegankelijk, behulpzaam, empathisch`
 
 export async function POST(request: NextRequest) {
   try {
-    if (!process.env.DEEPSEEK_API_KEY) {
+    if (!process.env.OPENAI_API_KEY) {
       return new Response(JSON.stringify({ error: 'API configuration error' }), { 
         status: 500,
         headers: { 'Content-Type': 'application/json' }
@@ -610,14 +610,14 @@ export async function POST(request: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          const response = await fetch(DEEPSEEK_API_URL, {
+          const response = await fetch(OPENAI_API_URL, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`,
+              'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
             },
             body: JSON.stringify({
-              model: 'deepseek-chat',
+              model: 'gpt-4o',
               messages: [
                 {
                   role: 'system',
