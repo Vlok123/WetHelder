@@ -76,6 +76,8 @@ interface ChatHistory {
   lastMessage: string
   timestamp: Date
   messageCount: number
+  answer?: string
+  profession?: string
 }
 
 // Quick action suggestions
@@ -135,34 +137,42 @@ export default function ModernLegalChat() {
     }
   }, [])
 
-  // Mock chat history - in real app this would come from database
+  // Fetch real chat history from database
   useEffect(() => {
-    if (session) {
-      const mockHistory: ChatHistory[] = [
-        {
-          id: '1',
-          title: 'Huurrecht vraag',
-          lastMessage: 'Wat zijn mijn rechten als huurder?',
-          timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
-          messageCount: 3
-        },
-        {
-          id: '2', 
-          title: 'Arbeidscontract',
-          lastMessage: 'Hoe stel ik een contract op?',
-          timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-          messageCount: 5
-        },
-        {
-          id: '3',
-          title: 'Verkeersboete',
-          lastMessage: 'Kan ik bezwaar maken tegen een boete?',
-          timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
-          messageCount: 2
+    const fetchChatHistory = async () => {
+      if (!session?.user?.email) return
+      
+      try {
+        const response = await fetch('/api/chat-history')
+        if (response.ok) {
+          const data = await response.json()
+          setChatHistory(data.queries.map((q: any) => ({
+            id: q.id,
+            title: q.question.length > 50 ? q.question.substring(0, 50) + '...' : q.question,
+            lastMessage: q.question,
+            timestamp: new Date(q.createdAt),
+            messageCount: 1,
+            answer: q.answer,
+            profession: q.profession
+          })))
         }
-      ]
-      setChatHistory(mockHistory)
+      } catch (error) {
+        console.error('Failed to fetch chat history:', error)
+        // Fallback to mock data during development/database issues
+        const mockHistory: ChatHistory[] = [
+          {
+            id: '1',
+            title: 'Huurrecht vraag',
+            lastMessage: 'Wat zijn mijn rechten als huurder?',
+            timestamp: new Date(Date.now() - 1000 * 60 * 30),
+            messageCount: 3
+          }
+        ]
+        setChatHistory(mockHistory)
+      }
     }
+
+    fetchChatHistory()
   }, [session])
 
   const scrollToBottom = () => {
@@ -286,6 +296,26 @@ export default function ModernLegalChat() {
     setMessages([])
     setCurrentQuestion('')
     inputRef.current?.focus()
+  }
+
+  const continueChat = (chat: ChatHistory) => {
+    // Add the previous Q&A to messages
+    const previousMessage: Message = {
+      id: 'continued-' + Date.now().toString(),
+      question: chat.lastMessage,
+      answer: (chat as any).answer || '',
+      sources: [],
+      profession: (chat as any).profession || selectedProfession,
+      timestamp: chat.timestamp
+    }
+    
+    setMessages([previousMessage])
+    setSelectedProfession((chat as any).profession || selectedProfession)
+    
+    // Focus input for immediate continuation
+    setTimeout(() => {
+      inputRef.current?.focus()
+    }, 100)
   }
 
   return (
@@ -467,6 +497,7 @@ export default function ModernLegalChat() {
                         className={`w-full justify-start text-left h-auto p-3 ${
                           darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
                         }`}
+                        onClick={() => continueChat(chat)}
                       >
                         <div className="flex-1 min-w-0">
                           <p className={`font-medium text-sm truncate ${
