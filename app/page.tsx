@@ -89,7 +89,7 @@ const QUICK_ACTIONS = [
   { text: "Wat zijn mijn rechten als huurder?", category: "Huurrecht" },
   { text: "Hoe stel ik een arbeidscontract op?", category: "Arbeidsrecht" },
   { text: "Wat is het verschil tussen eigendom en erfpacht?", category: "Vastgoedrecht" },
-  { text: "Welke stappen moet ik nemen bij echtscheiding?", category: "Familierecht" },
+  { text: "Wanneer is er sprake van mishandeling volgens de wet?", category: "Strafrecht" },
 ]
 
 // Feature cards
@@ -119,8 +119,9 @@ export default function ModernLegalChat() {
     role: string;
   } | null>(null)
   const [advancedMode, setAdvancedMode] = useState(false) // Voor "Wet & Uitleg" functionaliteit
+  const [conversationHistory, setConversationHistory] = useState<string[]>([]) // Voor conversatie context
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   // Check for continued chat from sessionStorage
   useEffect(() => {
@@ -224,9 +225,11 @@ export default function ModernLegalChat() {
     e.preventDefault()
     if (!currentQuestion.trim() || isLoading) return
 
+    const questionToSubmit = currentQuestion.trim()
+    
     const userMessage: Message = {
       id: Date.now().toString(),
-      question: currentQuestion,
+      question: questionToSubmit,
       answer: '',
       sources: [],
       profession: selectedProfession,
@@ -245,9 +248,10 @@ export default function ModernLegalChat() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          question: currentQuestion,
+          question: questionToSubmit,
           profession: selectedProfession,
           advancedMode: advancedMode,
+          conversationHistory: conversationHistory,
         }),
       })
 
@@ -305,6 +309,9 @@ export default function ModernLegalChat() {
         }
       }
 
+      // Update conversation history
+      setConversationHistory(prev => [...prev, questionToSubmit, fullAnswer])
+
       // Update rate limit status after successful question
       if (rateLimitStatus) {
         setRateLimitStatus({
@@ -358,6 +365,7 @@ export default function ModernLegalChat() {
   const newChat = () => {
     setMessages([])
     setCurrentQuestion('')
+    setConversationHistory([])
     inputRef.current?.focus()
   }
 
@@ -493,18 +501,18 @@ export default function ModernLegalChat() {
             {/* Premium Mode Toggle (alleen voor ingelogde gebruikers) */}
             {session && (
               <div className={`mb-4 sm:mb-6 p-3 rounded-lg border ${
-                darkMode ? 'bg-gradient-to-r from-blue-900/30 to-purple-900/30 border-blue-700' : 'bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200'
+                darkMode ? 'bg-gradient-to-r from-blue-900/40 to-purple-900/40 border-blue-600' : 'bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200'
               }`}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <span className="text-sm">🧠</span>
                     <span className={`text-xs sm:text-sm font-medium ${
-                      darkMode ? 'text-blue-300' : 'text-blue-800'
+                      darkMode ? 'text-blue-200' : 'text-blue-800'
                     }`}>
                       Wet & Uitleg
                     </span>
                     <Badge variant="outline" className={`text-xs ${
-                      darkMode ? 'border-purple-400 text-purple-300' : 'border-purple-500 text-purple-700'
+                      darkMode ? 'border-purple-300 text-purple-200' : 'border-purple-500 text-purple-700'
                     }`}>
                       Premium
                     </Badge>
@@ -515,19 +523,19 @@ export default function ModernLegalChat() {
                     onClick={() => setAdvancedMode(!advancedMode)}
                     className={`p-1 ${
                       advancedMode 
-                        ? darkMode ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
-                        : darkMode ? 'text-gray-400' : 'text-gray-500'
+                        ? darkMode ? 'bg-blue-500 text-white' : 'bg-blue-500 text-white'
+                        : darkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-800'
                     }`}
                   >
-                    <span className="text-xs">
+                    <span className="text-xs font-medium">
                       {advancedMode ? 'AAN' : 'UIT'}
                     </span>
                   </Button>
                 </div>
                 <p className={`text-xs ${
-                  darkMode ? 'text-blue-200' : 'text-blue-700'
+                  darkMode ? 'text-blue-100' : 'text-blue-700'
                 }`}>
-                  Diepgaande juridische uitleg met jurisprudentie en praktijkvoorbeelden
+                  Voor complexe juridische diepgang met jurisprudentie. Niet voor algemene vragen.
                 </p>
               </div>
             )}
@@ -590,7 +598,7 @@ export default function ModernLegalChat() {
                   </h1>
                   
                   <p className={`text-base sm:text-lg mb-6 sm:mb-8 px-4 ${
-                    darkMode ? 'text-gray-300' : 'text-gray-600'
+                    darkMode ? 'text-gray-200' : 'text-gray-700'
                   }`}>
                     Uw persoonlijke juridische kennisplatform voor betrouwbare juridische informatie
                   </p>
@@ -677,38 +685,7 @@ export default function ModernLegalChat() {
                     ))}
                   </div>
 
-                  {/* Quick Actions */}
-                  <div className="grid grid-cols-1 gap-3 sm:gap-4 mb-6 sm:mb-8 px-4">
-                    {QUICK_ACTIONS.map((action, index) => (
-                      <Card
-                        key={index}
-                        className={`cursor-pointer transition-all duration-200 hover:scale-105 ${
-                          darkMode 
-                            ? 'bg-gray-800 border-gray-700 hover:bg-gray-750' 
-                            : 'bg-white hover:bg-gray-50'
-                        }`}
-                        onClick={() => handleQuickAction(action.text)}
-                      >
-                        <CardContent className="p-3 sm:p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="text-left">
-                              <p className={`font-medium text-sm sm:text-base ${
-                                darkMode ? 'text-white' : 'text-gray-900'
-                              }`}>
-                                {action.text}
-                              </p>
-                              <Badge variant="secondary" className="mt-1 sm:mt-2 text-xs">
-                                {action.category}
-                              </Badge>
-                            </div>
-                            <ChevronRight className={`h-4 w-4 sm:h-5 sm:w-5 ${
-                              darkMode ? 'text-gray-400' : 'text-gray-400'
-                            }`} />
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
+
                 </div>
               ) :
                 // Messages
@@ -762,7 +739,16 @@ export default function ModernLegalChat() {
                                   <ReactMarkdown 
                                     remarkPlugins={[remarkGfm]}
                                     components={{
-                                      p: ({ children }) => <p className="whitespace-pre-wrap break-words">{children}</p>
+                                      p: ({ children }) => <p className="mb-4 leading-relaxed whitespace-pre-wrap break-words">{children}</p>,
+                                      br: () => <br className="mb-2" />,
+                                      h1: ({ children }) => <h1 className="text-xl font-bold mb-4 mt-6">{children}</h1>,
+                                      h2: ({ children }) => <h2 className="text-lg font-semibold mb-3 mt-5">{children}</h2>,
+                                      h3: ({ children }) => <h3 className="text-base font-medium mb-2 mt-4">{children}</h3>,
+                                      ul: ({ children }) => <ul className="mb-4 pl-4 space-y-1">{children}</ul>,
+                                      ol: ({ children }) => <ol className="mb-4 pl-4 space-y-1">{children}</ol>,
+                                      li: ({ children }) => <li className="mb-1">{children}</li>,
+                                      strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                                      em: ({ children }) => <em className="italic">{children}</em>
                                     }}
                                   >
                                     {message.answer}
@@ -775,17 +761,19 @@ export default function ModernLegalChat() {
                       </div>
                     </div>
                   ))}
+                  <div ref={messagesEndRef} />
                 </div>
               }
             </div>
           </div>
 
           {/* Input Area */}
-          <div className="border-t p-3 sm:p-4">
-            <div className="max-w-4xl mx-auto">
-              <form onSubmit={handleSubmit} className="flex gap-2 sm:gap-4">
+          <div className={`border-t p-3 sm:p-4 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+            <div className="max-w-4xl mx-auto space-y-4">
+              <form onSubmit={handleSubmit} className="flex gap-2 sm:gap-3">
                 <div className="flex-1">
                   <Input
+                    ref={inputRef}
                     value={currentQuestion}
                     onChange={(e) => setCurrentQuestion(e.target.value)}
                     placeholder={
@@ -794,13 +782,36 @@ export default function ModernLegalChat() {
                         : `Stel uw vraag over Nederlandse wetgeving...`
                     }
                     disabled={isLoading}
-                    className="w-full text-sm sm:text-base py-2 sm:py-3"
+                    className={`w-full text-sm sm:text-base py-3 sm:py-4 ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                    }`}
                   />
                 </div>
+                
+                {/* Wet & Uitleg Toggle Button */}
+                {session && (
+                  <Button
+                    type="button"
+                    variant={advancedMode ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setAdvancedMode(!advancedMode)}
+                    className={`px-3 py-3 sm:py-4 whitespace-nowrap ${
+                      advancedMode 
+                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0' 
+                        : darkMode 
+                          ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
+                          : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="text-xs sm:text-sm">🧠</span>
+                    <span className="hidden sm:inline ml-1 text-xs">Wet & Uitleg</span>
+                  </Button>
+                )}
+                
                 <Button 
                   type="submit" 
                   disabled={isLoading || !currentQuestion.trim()}
-                  className="px-4 sm:px-6 py-2 sm:py-3"
+                  className="px-4 sm:px-6 py-3 sm:py-4"
                 >
                   {isLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -809,9 +820,54 @@ export default function ModernLegalChat() {
                   )}
                 </Button>
               </form>
+
+              {/* Quick Actions below input - only when no messages */}
+              {messages.length === 0 && (
+                <div className="space-y-3">
+                  <p className={`text-xs text-center ${
+                    darkMode ? 'text-gray-400' : 'text-gray-600'
+                  }`}>
+                    Of kies een van deze voorbeeldvragen:
+                  </p>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {QUICK_ACTIONS.map((action, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleQuickAction(action.text)}
+                        className={`text-left p-3 rounded-lg border text-sm transition-all duration-200 hover:scale-[1.02] ${
+                          darkMode 
+                            ? 'bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-650' 
+                            : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
+                        }`}
+                      >
+                        <div className="font-medium">{action.text}</div>
+                        <div className={`text-xs mt-1 ${
+                          darkMode ? 'text-gray-400' : 'text-gray-500'
+                        }`}>
+                          {action.category}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Wet & Uitleg Info */}
+              {session && advancedMode && (
+                <div className={`text-xs p-3 rounded-lg ${
+                  darkMode ? 'bg-blue-900/30 text-blue-200 border border-blue-700' : 'bg-blue-50 text-blue-700 border border-blue-200'
+                }`}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span>🧠</span>
+                    <span className="font-medium">Wet & Uitleg modus actief</span>
+                  </div>
+                  <p>Voor diepgaande juridische analyse met jurisprudentie. Ideaal voor complexe rechtsvragen en professioneel gebruik.</p>
+                </div>
+              )}
               
-              <p className={`text-xs text-center mt-2 px-4 ${
-                darkMode ? 'text-gray-400' : 'text-gray-500'
+              <p className={`text-xs text-center px-4 ${
+                darkMode ? 'text-gray-500' : 'text-gray-400'
               }`}>
                 WetHelder kan fouten maken. Controleer belangrijke informatie altijd.
               </p>

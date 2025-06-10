@@ -603,7 +603,7 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    const { question, profession = 'burger', advancedMode = false } = await request.json()
+    const { question, profession = 'burger', advancedMode = false, conversationHistory = [] } = await request.json()
     
     if (!question || typeof question !== 'string') {
       return new Response(JSON.stringify({ error: 'Ongeldige vraag' }), { 
@@ -663,9 +663,16 @@ export async function POST(request: NextRequest) {
                   role: 'system',
                   content: (advancedMode ? ADVANCED_SYSTEM_PROMPT : SYSTEM_PROMPT) + '\n\n' + getProfessionContext(profession),
                 },
+                // Add conversation history
+                ...conversationHistory.map((msg: string, index: number) => ({
+                  role: index % 2 === 0 ? 'user' : 'assistant',
+                  content: msg
+                })),
                 {
                   role: 'user',
-                  content: `Hoi! Ik heb een juridische vraag voor je:
+                  content: conversationHistory.length > 0 
+                    ? question  // Direct question if conversation exists
+                    : `Hoi! Ik heb een juridische vraag voor je:
 
 ${question}
 
