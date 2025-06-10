@@ -37,6 +37,7 @@ const PROFESSIONS = [
   { value: 'burger', label: 'Burger', icon: '👤', description: 'Algemene juridische informatie' },
   { value: 'advocaat', label: 'Advocaat', icon: '⚖️', description: 'Juridische analyse en procedurele aspecten' },
   { value: 'politie', label: 'Politie', icon: '👮', description: 'Handhaving en strafrecht focus' },
+  { value: 'aspirant_politie', label: 'Aspirant-Politie', icon: '👮‍♂️', description: 'Diepgaande uitleg met praktische context' },
   { value: 'boa', label: 'BOA', icon: '🛡️', description: 'Bijzondere opsporingsbevoegdheden' },
   { value: 'rechter', label: 'Rechter', icon: '👨‍⚖️', description: 'Jurisprudentie en rechtspraak' },
   { value: 'notaris', label: 'Notaris', icon: '📜', description: 'Civielrecht en aktes' },

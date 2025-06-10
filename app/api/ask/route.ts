@@ -157,6 +157,9 @@ export async function POST(request: NextRequest) {
         case 'politie':
           return basePrompt + '\n\nSPECIFIEK VOOR POLITIE:\n- Focus op handhaving en opsporingsbevoegdheden\n- Vermeld relevante artikelen uit Wetboek van Strafvordering\n- Geef duidelijke procedures voor verschillende situaties\n- Bekijk dwangmiddelen en hun voorwaarden'
         
+        case 'aspirant_politie':
+          return basePrompt + '\n\nSPECIFIEK VOOR ASPIRANT-POLITIE:\n- Geef UITGEBREIDE uitleg van de praktische uitvoering van politietaken\n- Leg de achtergrond uit waarom bepaalde regels bestaan\n- Beschrijf stap-voor-stap procedures en protocollen\n- Vermeld veelvoorkomende situaties uit de politiepraktijk\n- Geef context over wanneer en hoe bepaalde bevoegdheden worden toegepast\n- Leg verbanden met de politieopleiding en training\n- Behandel zowel juridische als operationele aspecten\n- Geef voorbeelden van concrete toepassingen in het veld\n- Vermeld relevante artikelen uit:\n  * Wetboek van Strafvordering (strafrecht)\n  * Politiewet 2012 (organisatie en taken)\n  * Wegenverkeerswet (verkeer)\n  * Algemene Plaatselijke Verordening (openbare orde)\n- Focus op competentieontwikkeling en professionalisering'
+        
         case 'boa':
           return basePrompt + '\n\nSPECIFIEK VOOR BOA\'s:\n- Focus op bijzondere opsporingsbevoegdheden\n- Vermeld welke overtredingen u kunt bekeuren\n- Geef duidelijke procedures en bevoegdheidsgrenzen\n- Bekijk samenwerking met politie en OM'
         
