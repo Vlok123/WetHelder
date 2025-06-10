@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useSession, signIn, signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
@@ -32,7 +33,10 @@ import {
   Moon,
   Mic,
   Plus,
-  ChevronRight
+  ChevronRight,
+  LogIn,
+  LogOut,
+  Trash2
 } from 'lucide-react'
 import { formatTextWithLinks, formatSourcesWithLinks } from '@/lib/textFormatter'
 
@@ -62,6 +66,15 @@ interface Message {
   sources: string[]
   profession: string
   isLoading?: boolean
+  timestamp?: Date
+}
+
+interface ChatHistory {
+  id: string
+  title: string
+  lastMessage: string
+  timestamp: Date
+  messageCount: number
 }
 
 // Quick action suggestions
@@ -72,16 +85,8 @@ const QUICK_ACTIONS = [
   { text: "Welke stappen moet ik nemen bij echtscheiding?", category: "Familierecht" },
 ]
 
-const LEGAL_CATEGORIES = [
-  { name: "Arbeidsrecht", icon: "👔", count: 245 },
-  { name: "Huurrecht", icon: "🏠", count: 189 },
-  { name: "Familierecht", icon: "👨‍👩‍👧‍👦", count: 156 },
-  { name: "Strafrecht", icon: "⚖️", count: 134 },
-  { name: "Ondernemingsrecht", icon: "💼", count: 98 },
-  { name: "Vastgoedrecht", icon: "🏢", count: 87 },
-]
-
 export default function ModernLegalChat() {
+  const { data: session, status } = useSession()
   const [messages, setMessages] = useState<Message[]>([])
   const [currentQuestion, setCurrentQuestion] = useState('')
   const [selectedProfession, setSelectedProfession] = useState('algemeen')
@@ -89,8 +94,40 @@ export default function ModernLegalChat() {
   const [leftSidebarOpen, setLeftSidebarOpen] = useState(false)
   const [rightSidebarOpen, setRightSidebarOpen] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
+  const [chatHistory, setChatHistory] = useState<ChatHistory[]>([])
+  const [showSettings, setShowSettings] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // Mock chat history - in real app this would come from database
+  useEffect(() => {
+    if (session) {
+      const mockHistory: ChatHistory[] = [
+        {
+          id: '1',
+          title: 'Huurrecht vraag',
+          lastMessage: 'Wat zijn mijn rechten als huurder?',
+          timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
+          messageCount: 3
+        },
+        {
+          id: '2', 
+          title: 'Arbeidscontract',
+          lastMessage: 'Hoe stel ik een contract op?',
+          timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
+          messageCount: 5
+        },
+        {
+          id: '3',
+          title: 'Verkeersboete',
+          lastMessage: 'Kan ik bezwaar maken tegen een boete?',
+          timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
+          messageCount: 2
+        }
+      ]
+      setChatHistory(mockHistory)
+    }
+  }, [session])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -113,7 +150,8 @@ export default function ModernLegalChat() {
       answer: '',
       sources: [],
       profession: selectedProfession,
-      isLoading: true
+      isLoading: true,
+      timestamp: new Date()
     }
 
     setMessages(prev => [...prev, newMessage])
@@ -192,6 +230,28 @@ export default function ModernLegalChat() {
     handleSubmit(action)
   }
 
+  const formatRelativeTime = (date: Date) => {
+    const now = new Date()
+    const diff = now.getTime() - date.getTime()
+    const minutes = Math.floor(diff / (1000 * 60))
+    const hours = Math.floor(diff / (1000 * 60 * 60))
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+
+    if (minutes < 60) return `${minutes}m geleden`
+    if (hours < 24) return `${hours}u geleden`
+    return `${days}d geleden`
+  }
+
+  const clearChatHistory = () => {
+    setChatHistory([])
+  }
+
+  const newChat = () => {
+    setMessages([])
+    setCurrentQuestion('')
+    inputRef.current?.focus()
+  }
+
   return (
     <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
       {/* Top Navigation Bar */}
@@ -227,9 +287,32 @@ export default function ModernLegalChat() {
               {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
             
-            <Button variant="ghost" size="sm" className="rounded-full">
-              <User className="h-5 w-5" />
-            </Button>
+            {session ? (
+              <div className="flex items-center gap-2">
+                <span className={`text-sm hidden sm:block ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                  {session.user?.email}
+                </span>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="rounded-full"
+                  onClick={() => signOut()}
+                  title="Uitloggen"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="rounded-full"
+                onClick={() => signIn()}
+                title="Inloggen"
+              >
+                <LogIn className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
       </header>
@@ -262,11 +345,7 @@ export default function ModernLegalChat() {
               className={`w-full mb-6 ${
                 darkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'
               } text-white`}
-              onClick={() => {
-                setMessages([])
-                setCurrentQuestion('')
-                inputRef.current?.focus()
-              }}
+              onClick={newChat}
             >
               <Plus className="h-4 w-4 mr-2" />
               Nieuwe Chat
@@ -300,45 +379,112 @@ export default function ModernLegalChat() {
 
             {/* Navigation Items */}
             <nav className="space-y-2 mb-6">
-              <Button variant="ghost" className="w-full justify-start">
-                <History className="h-4 w-4 mr-3" />
-                Geschiedenis
-              </Button>
-              <Button variant="ghost" className="w-full justify-start">
-                <Bookmark className="h-4 w-4 mr-3" />
-                Opgeslagen
-              </Button>
-              <Button variant="ghost" className="w-full justify-start">
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start"
+                onClick={() => setShowSettings(!showSettings)}
+              >
                 <Settings className="h-4 w-4 mr-3" />
                 Instellingen
               </Button>
+              {session && (
+                <Button variant="ghost" className="w-full justify-start">
+                  <Bookmark className="h-4 w-4 mr-3" />
+                  Opgeslagen
+                </Button>
+              )}
             </nav>
 
-            {/* Legal Categories */}
-            <div>
-              <h3 className={`text-sm font-medium mb-3 ${
-                darkMode ? 'text-gray-300' : 'text-gray-700'
-              }`}>
-                Rechtsgebieden
-              </h3>
-              <div className="space-y-1">
-                {LEGAL_CATEGORIES.map((category) => (
-                  <Button
-                    key={category.name}
-                    variant="ghost"
-                    className="w-full justify-between text-sm"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span>{category.icon}</span>
-                      <span>{category.name}</span>
-                    </div>
-                    <Badge variant="secondary" className="text-xs">
-                      {category.count}
-                    </Badge>
-                  </Button>
-                ))}
+            {/* Chat History - Only show when logged in */}
+            {session ? (
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className={`text-sm font-medium ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    Chatgeschiedenis
+                  </h3>
+                  {chatHistory.length > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearChatHistory}
+                      className="h-6 w-6 p-0"
+                      title="Geschiedenis wissen"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  {chatHistory.length === 0 ? (
+                    <p className={`text-xs ${
+                      darkMode ? 'text-gray-500' : 'text-gray-400'
+                    }`}>
+                      Nog geen chatgeschiedenis
+                    </p>
+                  ) : (
+                    chatHistory.map((chat) => (
+                      <Button
+                        key={chat.id}
+                        variant="ghost"
+                        className={`w-full justify-start text-left h-auto p-3 ${
+                          darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                        }`}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p className={`font-medium text-sm truncate ${
+                            darkMode ? 'text-white' : 'text-gray-900'
+                          }`}>
+                            {chat.title}
+                          </p>
+                          <p className={`text-xs truncate ${
+                            darkMode ? 'text-gray-400' : 'text-gray-500'
+                          }`}>
+                            {chat.lastMessage}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className={`text-xs ${
+                              darkMode ? 'text-gray-500' : 'text-gray-400'
+                            }`}>
+                              {formatRelativeTime(chat.timestamp)}
+                            </span>
+                            <Badge variant="secondary" className="text-xs">
+                              {chat.messageCount}
+                            </Badge>
+                          </div>
+                        </div>
+                      </Button>
+                    ))
+                  )}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className={`p-4 rounded-lg border ${
+                darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
+              }`}>
+                <h3 className={`font-medium mb-2 ${
+                  darkMode ? 'text-white' : 'text-gray-900'
+                }`}>
+                  Log in voor meer functies
+                </h3>
+                <p className={`text-sm mb-3 ${
+                  darkMode ? 'text-gray-300' : 'text-gray-600'
+                }`}>
+                  • Chatgeschiedenis opslaan
+                  • Vragen bookmarken  
+                  • Persoonlijke instellingen
+                </p>
+                <Button 
+                  onClick={() => signIn()}
+                  className="w-full"
+                  size="sm"
+                >
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Inloggen
+                </Button>
+              </div>
+            )}
           </div>
         </aside>
 
@@ -555,6 +701,198 @@ export default function ModernLegalChat() {
           className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
           onClick={() => setLeftSidebarOpen(false)}
         />
+      )}
+
+      {/* Settings Panel */}
+      {showSettings && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <Card className={`w-full max-w-lg ${
+            darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'
+          }`}>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className={`text-xl font-semibold ${
+                  darkMode ? 'text-white' : 'text-gray-900'
+                }`}>
+                  Instellingen
+                </h2>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowSettings(false)}
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Theme Setting */}
+                <div>
+                  <h3 className={`font-medium mb-3 ${
+                    darkMode ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    Thema
+                  </h3>
+                  <div className="flex gap-2">
+                    <Button
+                      variant={!darkMode ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setDarkMode(false)}
+                      className="flex-1"
+                    >
+                      <Sun className="h-4 w-4 mr-2" />
+                      Licht
+                    </Button>
+                    <Button
+                      variant={darkMode ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setDarkMode(true)}
+                      className="flex-1"
+                    >
+                      <Moon className="h-4 w-4 mr-2" />
+                      Donker
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Default Profession */}
+                <div>
+                  <h3 className={`font-medium mb-3 ${
+                    darkMode ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    Standaard beroep
+                  </h3>
+                  <Select value={selectedProfession} onValueChange={setSelectedProfession}>
+                    <SelectTrigger className={`${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white'
+                    }`}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className={darkMode ? 'bg-gray-700 border-gray-600' : ''}>
+                      {PROFESSIONS.map((profession) => (
+                        <SelectItem key={profession.value} value={profession.value}>
+                          <div className="flex items-center gap-2">
+                            <span>{profession.icon}</span>
+                            <span>{profession.label}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className={`text-sm mt-1 ${
+                    darkMode ? 'text-gray-400' : 'text-gray-500'
+                  }`}>
+                    Dit bepaalt hoe WetHelder antwoordt op uw vragen
+                  </p>
+                </div>
+
+                {/* Account Section */}
+                {session ? (
+                  <div>
+                    <h3 className={`font-medium mb-3 ${
+                      darkMode ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      Account
+                    </h3>
+                    <div className={`p-3 rounded-lg border ${
+                      darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
+                    }`}>
+                      <p className={`text-sm ${
+                        darkMode ? 'text-gray-300' : 'text-gray-600'
+                      }`}>
+                        Ingelogd als: {session.user?.email}
+                      </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          signOut()
+                          setShowSettings(false)
+                        }}
+                        className="mt-2"
+                      >
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Uitloggen
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <h3 className={`font-medium mb-3 ${
+                      darkMode ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      Account
+                    </h3>
+                    <div className={`p-3 rounded-lg border ${
+                      darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
+                    }`}>
+                      <p className={`text-sm mb-2 ${
+                        darkMode ? 'text-gray-300' : 'text-gray-600'
+                      }`}>
+                        Log in om uw instellingen en geschiedenis op te slaan
+                      </p>
+                      <Button
+                        onClick={() => {
+                          signIn()
+                          setShowSettings(false)
+                        }}
+                        size="sm"
+                      >
+                        <LogIn className="h-4 w-4 mr-2" />
+                        Inloggen
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Data Management */}
+                {session && (
+                  <div>
+                    <h3 className={`font-medium mb-3 ${
+                      darkMode ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      Gegevens
+                    </h3>
+                    <div className="space-y-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          clearChatHistory()
+                          setShowSettings(false)
+                        }}
+                        className="w-full justify-start"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Chatgeschiedenis wissen
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* App Info */}
+                <div className={`pt-4 border-t ${
+                  darkMode ? 'border-gray-600' : 'border-gray-200'
+                }`}>
+                  <p className={`text-xs ${
+                    darkMode ? 'text-gray-500' : 'text-gray-400'
+                  }`}>
+                    WetHelder v2.0 - Juridische AI-assistent voor Nederlandse wetgeving
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-2 mt-6">
+                <Button
+                  onClick={() => setShowSettings(false)}
+                  className="flex-1"
+                >
+                  Sluiten
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
     </div>
   )
