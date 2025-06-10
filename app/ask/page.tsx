@@ -23,6 +23,9 @@ import {
   Settings
 } from 'lucide-react'
 import Link from 'next/link'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import { format } from 'date-fns'
 
 interface Message {
   id: string
@@ -31,6 +34,7 @@ interface Message {
   sources: string[]
   isLoading?: boolean
   profession?: string
+  timestamp: Date
 }
 
 type Profession = 'aspirant' | 'student' | 'politieagent' | 'advocaat' | 'algemeen'
@@ -76,6 +80,12 @@ const professionConfig = {
     description: 'Begrijpelijke uitleg in toegankelijke taal',
     detailedExplanation: 'Voor het algemene publiek wordt juridische informatie in begrijpelijke taal uitgelegd zonder jargon.'
   }
+}
+
+interface MarkdownProps {
+  node?: any
+  children?: React.ReactNode
+  [key: string]: any
 }
 
 // Enhanced text formatter
@@ -162,7 +172,8 @@ export default function AskPage() {
       answer: '',
       sources: [],
       isLoading: true,
-      profession
+      profession,
+      timestamp: new Date()
     }
 
     setMessages(prev => [...prev, newMessage])
@@ -399,10 +410,24 @@ export default function AskPage() {
                         </div>
                         
                         {message.isLoading ? (
-                          <div className="space-y-3">
+                          <div className="space-y-4">
                             <div className="flex items-center gap-2 text-sm text-slate-600">
                               <div className="h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                              <span>Raadpleging Nederlandse wetgeving...</span>
+                              <span>Raadpleging juridische bronnen...</span>
+                            </div>
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2 text-xs text-slate-500">
+                                <Scale className="h-3 w-3" />
+                                <span>Zoeken in wetgeving...</span>
+                              </div>
+                              <div className="flex items-center gap-2 text-xs text-slate-500">
+                                <FileText className="h-3 w-3" />
+                                <span>Controleren jurisprudentie...</span>
+                              </div>
+                              <div className="flex items-center gap-2 text-xs text-slate-500">
+                                <Shield className="h-3 w-3" />
+                                <span>Raadplegen tuchtrecht...</span>
+                              </div>
                             </div>
                             <div className="space-y-2">
                               <div className="h-3 bg-slate-200 rounded animate-pulse" />
@@ -411,24 +436,76 @@ export default function AskPage() {
                             </div>
                           </div>
                         ) : (
-                          <div className="space-y-4">
-                            {formatText(message.answer)}
+                          <>
+                            {/* Antwoordtekst met Markdown parsing */}
+                            <div className="prose prose-sm max-w-none text-slate-600">
+                              <ReactMarkdown
+                                remarkPlugins={[remarkGfm]}
+                                components={{
+                                  p: ({children, ...props}: MarkdownProps) => <p className="mb-2" {...props}>{children}</p>,
+                                  a: ({children, ...props}: MarkdownProps) => <a className="text-blue-600 hover:underline" {...props} target="_blank" rel="noopener noreferrer">{children}</a>,
+                                  ul: ({children, ...props}: MarkdownProps) => <ul className="list-disc pl-4 mb-2" {...props}>{children}</ul>,
+                                  ol: ({children, ...props}: MarkdownProps) => <ol className="list-decimal pl-4 mb-2" {...props}>{children}</ol>,
+                                  li: ({children, ...props}: MarkdownProps) => <li className="mb-1" {...props}>{children}</li>,
+                                  strong: ({children, ...props}: MarkdownProps) => <strong className="font-semibold" {...props}>{children}</strong>,
+                                  h3: ({children, ...props}: MarkdownProps) => <h3 className="text-lg font-semibold mt-4 mb-2" {...props}>{children}</h3>,
+                                  code: ({children, ...props}: MarkdownProps) => <code className="bg-slate-100 px-1 py-0.5 rounded" {...props}>{children}</code>,
+                                  blockquote: ({children, ...props}: MarkdownProps) => <blockquote className="border-l-4 border-slate-200 pl-4 italic" {...props}>{children}</blockquote>
+                                }}
+                              >
+                                {message.answer}
+                              </ReactMarkdown>
+                            </div>
+
+                            {/* Juridische bronnen sectie */}
                             {message.sources && message.sources.length > 0 && (
-                              <div className="border-t border-slate-200 pt-4">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <FileText className="h-4 w-4 text-slate-500" />
-                                  <span className="text-xs font-medium text-slate-700 uppercase tracking-wider">Juridische Bronnen</span>
+                              <div className="mt-4 pt-3 border-t border-slate-200">
+                                <div className="flex items-center gap-2 mb-2 text-sm text-slate-600">
+                                  <FileText className="h-4 w-4" />
+                                  <span className="font-medium">Juridische bronnen</span>
                                 </div>
-                                <div className="space-y-1">
-                                  {message.sources.map((source, idx) => (
-                                    <p key={idx} className="text-xs text-slate-600 leading-relaxed pl-6">
-                                      • {source}
-                                    </p>
+                                <ul className="space-y-1">
+                                  {message.sources.map((source, index) => (
+                                    <li key={index} className="text-sm">
+                                      <a
+                                        href={source}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 hover:underline flex items-center gap-1"
+                                      >
+                                        {source.includes('ECLI') ? (
+                                          <>
+                                            <Scale className="h-3 w-3" />
+                                            <span>Jurisprudentie: {source}</span>
+                                          </>
+                                        ) : source.includes('wetten.overheid.nl') ? (
+                                          <>
+                                            <FileText className="h-3 w-3" />
+                                            <span>Wetgeving: {new URL(source).pathname.split('/').pop()}</span>
+                                          </>
+                                        ) : source.includes('tuchtrecht') ? (
+                                          <>
+                                            <Shield className="h-3 w-3" />
+                                            <span>Tuchtrecht: {new URL(source).pathname.split('/').pop()}</span>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <Eye className="h-3 w-3" />
+                                            <span>{source}</span>
+                                          </>
+                                        )}
+                                      </a>
+                                    </li>
                                   ))}
-                                </div>
+                                </ul>
                               </div>
                             )}
-                          </div>
+
+                            {/* Timestamp */}
+                            <div className="mt-2 text-xs text-slate-400">
+                              {format(message.timestamp, 'HH:mm')}
+                            </div>
+                          </>
                         )}
                       </div>
                     </div>

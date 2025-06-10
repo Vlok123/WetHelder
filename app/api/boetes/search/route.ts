@@ -91,54 +91,88 @@ const mockBoeteData = [
     type: 'overtreding',
     toelichting: 'Urineren op openbare plaatsen (varieert per gemeente).',
     bronUrl: 'https://boetebase.om.nl'
-  }
+  },
+  {
+    feitcode: 'K055',
+    omschrijving: 'Rijden zonder rijbewijs',
+    juridischeGrondslag: 'Art. 107 WVW 1994',
+    standaardboete: 370,
+    type: 'overtreding',
+    toelichting: 'Rijden zonder geldig rijbewijs.',
+    bronUrl: 'https://boetebase.om.nl'
+  },
+  {
+    feitcode: 'A089',
+    omschrijving: 'Open vuur/BBQ op openbare plaats',
+    juridischeGrondslag: 'Gemeentelijke APV',
+    standaardboete: 160,
+    type: 'overtreding',
+    toelichting: 'Het is verboden om open vuur te maken of te barbecueën op openbare plaatsen zonder toestemming.',
+    bronUrl: 'https://boetebase.om.nl'
+  },
+  {
+    feitcode: 'S089',
+    omschrijving: 'Snelheidsovertreding 1-10 km/h binnen bebouwde kom',
+    juridischeGrondslag: 'Art. 20 RVV 1990',
+    standaardboete: 30,
+    type: 'overtreding',
+    toelichting: 'Te hard rijden binnen de bebouwde kom.',
+    bronUrl: 'https://boetebase.om.nl'
+  },
+  {
+    feitcode: 'S099',
+    omschrijving: 'Snelheidsovertreding 11-20 km/h binnen bebouwde kom',
+    juridischeGrondslag: 'Art. 20 RVV 1990',
+    standaardboete: 70,
+    type: 'overtreding',
+    toelichting: 'Te hard rijden binnen de bebouwde kom.',
+    bronUrl: 'https://boetebase.om.nl'
+  },
+  {
+    feitcode: 'M089',
+    omschrijving: 'Mobiel bellen tijdens rijden',
+    juridischeGrondslag: 'Art. 61a RVV 1990',
+    standaardboete: 350,
+    type: 'overtreding',
+    toelichting: 'Vasthouden van mobiele telefoon tijdens het rijden.',
+    bronUrl: 'https://boetebase.om.nl'
+  },
 ]
 
+// Function to detect APV context words and municipality names
+function detectAPVContext(query) {
+  const apvKeywords = ['barbecue', 'park', 'open vuur', 'bbq', 'gemeente'];
+  const municipalities = ['Nijmegen', 'Amsterdam', 'Rotterdam']; // Example list, should be expanded
+  const detectedKeywords = apvKeywords.filter(keyword => query.toLowerCase().includes(keyword));
+  const detectedMunicipalities = municipalities.filter(municipality => query.toLowerCase().includes(municipality.toLowerCase()));
+  return { detectedKeywords, detectedMunicipalities };
+}
+
+// Enhance the search logic
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { query } = body
+    const { query } = (await request.json()) as { query: string };
+    const { detectedKeywords, detectedMunicipalities } = detectAPVContext(query);
+    let results = mockBoeteData.filter(boete =>
+      boete.feitcode.toLowerCase().includes(query.toLowerCase()) ||
+      boete.omschrijving.toLowerCase().includes(query.toLowerCase())
+    );
 
-    if (!query || typeof query !== 'string') {
-      return NextResponse.json(
-        { error: 'Zoekterm is vereist' },
-        { status: 400 }
-      )
+    // If APV context is detected, filter results accordingly
+    if (detectedKeywords.length > 0) {
+      results = results.filter(boete => boete.juridischeGrondslag.includes('APV'));
     }
 
-    // Zoek in feitcode, omschrijving en juridische grondslag
-    const searchTerm = query.toLowerCase().trim()
-    const results = mockBoeteData.filter(boete => 
-      boete.feitcode.toLowerCase().includes(searchTerm) ||
-      boete.omschrijving.toLowerCase().includes(searchTerm) ||
-      boete.juridischeGrondslag.toLowerCase().includes(searchTerm) ||
-      searchTerm.includes(boete.feitcode.toLowerCase())
-    )
+    // If a municipality is detected, add municipality-specific logic
+    if (detectedMunicipalities.length > 0) {
+      // Example: Add logic to fetch municipality-specific APV rules
+      // This is a placeholder for actual implementation
+      console.log(`Detected municipality: ${detectedMunicipalities.join(', ')}`);
+    }
 
-    // Sorteer resultaten: exacte feitcode matches eerst
-    results.sort((a, b) => {
-      const aExact = a.feitcode.toLowerCase() === searchTerm
-      const bExact = b.feitcode.toLowerCase() === searchTerm
-      
-      if (aExact && !bExact) return -1
-      if (!aExact && bExact) return 1
-      
-      // Dan op boetebedrag (hoogste eerst)
-      return b.standaardboete - a.standaardboete
-    })
-
-    return NextResponse.json({
-      results,
-      total: results.length,
-      query: searchTerm,
-      disclaimer: 'Gebaseerd op officiële Boetebase OM. Controleer altijd boetebase.om.nl voor actuele informatie.'
-    })
-
+    return NextResponse.json({ results });
   } catch (error) {
-    console.error('Boetes search error:', error)
-    return NextResponse.json(
-      { error: 'Er is een fout opgetreden bij het zoeken' },
-      { status: 500 }
-    )
+    console.error('Search error:', error);
+    return NextResponse.json({ error: 'Error processing search query' }, { status: 500 });
   }
 } 

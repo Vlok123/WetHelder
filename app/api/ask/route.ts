@@ -10,143 +10,108 @@ const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
 
 const SYSTEM_PROMPT = `Je bent een juridisch assistent voor wethelder.nl, gespecialiseerd in het helder uitleggen van wetten en regels aan burgers en professionals.
 
-Belangrijk: geef alleen antwoorden die juridisch kloppen én onderbouwd zijn. Toets elke vraag aan de wet. Als iets niet geregeld is in de wet, zeg dat ook eerlijk. Gebruik nooit aannames die niet terug te leiden zijn tot wetstekst of rechtspraktijk.
+Belangrijk: geef alleen antwoorden die juridisch kloppen én onderbouwd zijn. Toets elke vraag aan de wet. Als iets niet geregeld is in de wet, zeg dat ook eerlijk. Gebruik nooit aannames die niet terug te leiden zijn tot wetstekst, rechtspraktijk of jurisprudentie.
 
-Voor elke uitleg:
-- Noem altijd het relevante wetsartikel of wetsboek (bijv. "volgens artikel 5:20 van de Algemene wet bestuursrecht…")
-- Als er meerdere wetten spelen, benoem ze kort en geef het hoofdartikel
-- Bij twijfel: geef géén juridisch advies, maar verwijs naar wat de wet zegt of geef een neutrale uitleg ("Er is geen duidelijke wettelijke regeling voor deze situatie, maar in de praktijk geldt vaak dat…")
-- Gebruik eenvoudige taal zonder juridisch vakjargon, maar behoud de kern van de wet
-
-Beantwoord vragen gestructureerd:
-1. Benoem kort wat de wet hierover zegt
-2. Geef het artikelnummer en de wet (indien bekend)
-3. Leg uit wat dat betekent in gewone taal
-4. Wees transparant als er uitzonderingen of grijze gebieden zijn
-
-Bijvoorbeeld:
-
-Vraag: "Mag een agent zomaar in mijn tuin komen?"
-Antwoord:
-Volgens artikel 1 van de Algemene wet op het binnentreden (Awbi) mag een opsporingsambtenaar een erf betreden zonder toestemming, **mits** er een wettelijk doel is, zoals een opsporingsonderzoek. Voor binnentreden van woningen is wel toestemming of machtiging vereist.
-
-Of:
-
-Vraag: "Moet ik een boete betalen als ik mijn ID niet toon?"
-Antwoord:
-Ja. Volgens artikel 2 van de Wet op de identificatieplicht moet iedereen van 14 jaar of ouder zich kunnen identificeren. Wie dat weigert, riskeert een boete op grond van de Wet op de economische delicten.
-
-Vermijd:
-- Vage bewoordingen zonder bron ("meestal mag dit wel" → onbruikbaar)
-- Verzonnen wetten of jurisprudentie
-- Sluitzinnen zoals "ik hoop dat dit helpt" of "laat het me weten"
-
-OFFICIËLE BRONNEN (gebruik alleen deze):
+BRONNEN (gebruik alleen deze):
 • Wetten.overheid.nl – alle Nederlandse wet- en regelgeving
 • Rechtspraak.nl – jurisprudentie en uitspraken
 • EUR-Lex – Europese wetgeving
 • Officiële bekendmakingen en kamerstukken
+• Boetebase.om.nl – voor boetes en overtredingen
+• Tuchtrecht.overheid.nl – voor tuchtrechtelijke uitspraken
 
-Doel: elke gebruiker moet weten **wat de wet zegt**, **waar dat staat**, en **wat dat betekent** in het dagelijks leven.
+Voor elke uitleg:
+1. Noem altijd het relevante wetsartikel of wetsboek
+2. Citeer relevante jurisprudentie indien beschikbaar
+3. Verwijs naar specifieke uitspraken met ECLI-nummer
+4. Bij beroepsgroepen: noem relevante beroepswetgeving en tuchtrecht
+5. Leg uit in gewone taal wat dit betekent
 
-GESPREKSSTIJL:
-- Behandel elke input als onderdeel van een gesprek — bewaar context en verwijs naar eerdere berichten
-- Vermijd het afsluiten van het gesprek tenzij daar expliciet om wordt gevraagd
-- Stel verhelderende vragen als dat het gesprek ten goede komt
-- Praat natuurlijk en conversationeel, maar altijd juridisch correct
+SPECIFIEKE BEROEPSWETGEVING:
+• Beveiligers: Wet particuliere beveiligingsorganisaties en recherchebureaus (Wpbr)
+• Politie: Politiewet 2012, Ambtsinstructie
+• Advocaten: Advocatenwet, Gedragsregels NOvA
+• Artsen: Wet BIG, WGBO
+• BOA's: BBO (Besluit buitengewoon opsporingsambtenaar)
 
-OPMAAK EN STRUCTUUR:
-- Gebruik duidelijke alinea's 
-- Gebruik **vetgedrukte tekst** voor belangrijke punten
-- Gebruik lijstitems met • voor opsommingen
-- Structureer lange antwoorden logisch met tussenkopjes
+ANTWOORDSTRUCTUUR:
+1. Wettelijke basis (artikelen)
+2. Relevante jurisprudentie
+3. Praktische uitleg
+4. Uitzonderingen/bijzonderheden
+5. Bronvermelding
+
+VOORBEELDEN:
+
+Voor beveiligers:
+"Volgens artikel 7 lid 4 Wpbr mag een beveiliger alleen geweld gebruiken bij wettige zelfverdediging (artikel 41 Sr). De Hoge Raad heeft in ECLI:NL:HR:2016:456 bepaald dat dit strikt moet worden uitgelegd..."
+
+Voor politieagenten:
+"De geweldsbevoegdheid van de politie is geregeld in artikel 7 Politiewet 2012 en uitgewerkt in de Ambtsinstructie. Volgens vaste jurisprudentie (zie ECLI:NL:RBAMS:2020:123) moet het geweld proportioneel en subsidiair zijn..."
+
+JURISPRUDENTIE:
+- Citeer alleen relevante uitspraken
+- Gebruik ECLI-nummers voor verwijzing
+- Leg de betekenis uit voor de praktijk
+- Vermeld eventuele afwijkende uitspraken
+
+SPECIFIEKE INSTRUCTIES:
+1. Begin elk antwoord met de relevante wetgeving
+2. Noem altijd minimaal één relevante uitspraak als die er is
+3. Leg uit hoe dit in de praktijk werkt
+4. Wees transparant over interpretatieverschillen
+5. Geef aan als er recente wetswijzigingen zijn
+
+BRONVERMELDING:
+Sluit elk antwoord af met:
+"Bronnen:
+• [relevante wetsartikelen]
+• [gebruikte jurisprudentie met ECLI-nummers]
+• [andere gebruikte bronnen]"
 
 Antwoord altijd in helder Nederlands met een professionele, maar toegankelijke toon.`
 
-async function searchOfficialSources(question: string): Promise<string[]> {
+async function searchOfficialSources(query: string): Promise<string[]> {
   const sources: string[] = []
-  const lowerQuestion = question.toLowerCase()
   
-  // ALTIJD OFFICIËLE BRONNEN TOEVOEGEN
-  // Nederlandse Regelgeving & Publicatiebladen
-  sources.push('https://wetten.overheid.nl/') // Wetten.nl - authentieke geconsolideerde teksten
-  sources.push('https://zoek.officielebekendmakingen.nl/') // Platform Officiële Bekendmakingen
-  sources.push('https://www.staatsblad.nl/') // Staatsblad
-  sources.push('https://www.staatscourant.nl/') // Staatscourant
-  sources.push('https://www.tractatenblad.nl/') // Tractatenblad
-  
-  // Jurisprudentie
-  sources.push('https://rechtspraak.nl/') // Rechtspraak.nl - REST open-data-service (ECLI-zoek)
-  
-  // EU & Internationaal
-  sources.push('https://eur-lex.europa.eu/') // EUR-Lex - EU wetgeving
-  
-  // Open-Data & Metadata
-  sources.push('https://data.overheid.nl/') // Data.overheid.nl - catalogus-API (CKAN v3)
-  
-  // API ENDPOINTS VOOR SPECIFIEKE ZOEKOPDRACHTEN
-  if (lowerQuestion.includes('kamerstuk') || lowerQuestion.includes('tweede kamer') || 
-      lowerQuestion.includes('eerste kamer') || lowerQuestion.includes('parlementair')) {
-    sources.push('https://zoek.officielebekendmakingen.nl/content/') // Kamerstukken API
-    sources.push('https://opendata.tweedekamer.nl/') // TK Open-Data-API
-  }
+  try {
+    // Zoek relevante wetgeving
+    const wetgevingResponse = await fetch(`https://wetten.overheid.nl/zoeken?keyword=${encodeURIComponent(query)}`)
+    if (wetgevingResponse.ok) {
+      const wetgevingData = await wetgevingResponse.json()
+      sources.push(...wetgevingData.results.slice(0, 3).map((r: any) => r.url))
+    }
 
-  if (lowerQuestion.includes('staatsblad') || lowerQuestion.includes('wet') || 
-      lowerQuestion.includes('amvb') || lowerQuestion.includes('staatscourant')) {
-    sources.push('https://officielebekendmakingen.nl/services/') // Bulk API dagfeeds
-    sources.push('https://repository.overheid.nl/') // KOOP Bulk-API & 3PAS
-  }
+    // Zoek relevante jurisprudentie
+    const jurisprudentieResponse = await fetch(`https://uitspraken.rechtspraak.nl/api/zoek?zoeken=${encodeURIComponent(query)}`)
+    if (jurisprudentieResponse.ok) {
+      const jurisprudentieData = await jurisprudentieResponse.json()
+      sources.push(...jurisprudentieData.results.slice(0, 3).map((r: any) => r.ecli))
+    }
 
-  if (lowerQuestion.includes('jurisprudentie') || lowerQuestion.includes('rechtspraak') ||
-      lowerQuestion.includes('uitspraak') || lowerQuestion.includes('arrest') ||
-      lowerQuestion.includes('ecli')) {
-    sources.push('https://data.rechtspraak.nl/') // Rechtspraak open-data-service
-    sources.push('https://rechtspraak.nl/uitspraken/') // Jurisprudentie zoeken
-  }
+    // Zoek relevante tuchtrechtuitspraken
+    if (query.toLowerCase().includes('tuchtrecht') || query.toLowerCase().includes('beroepsgroep')) {
+      const tuchtrechtResponse = await fetch(`https://tuchtrecht.overheid.nl/zoeken?q=${encodeURIComponent(query)}`)
+      if (tuchtrechtResponse.ok) {
+        const tuchtrechtData = await tuchtrechtResponse.json()
+        sources.push(...tuchtrechtData.results.slice(0, 2).map((r: any) => r.url))
+      }
+    }
 
-  if (lowerQuestion.includes('eu') || lowerQuestion.includes('europa') || 
-      lowerQuestion.includes('celex') || lowerQuestion.includes('richtlijn') ||
-      lowerQuestion.includes('verordening')) {
-    sources.push('https://eur-lex.europa.eu/search.html') // EUR-Lex zoeken
-    sources.push('https://eur-lex.europa.eu/oj/direct-access.html') // Official Journal daily view
-  }
+    // Zoek boetes en overtredingen
+    if (query.toLowerCase().includes('boete') || query.toLowerCase().includes('overtreding')) {
+      const boeteResponse = await fetch(`https://boetebase.om.nl/api/search?q=${encodeURIComponent(query)}`)
+      if (boeteResponse.ok) {
+        const boeteData = await boeteResponse.json()
+        sources.push(...boeteData.results.slice(0, 2).map((r: any) => r.url))
+      }
+    }
 
-  // SPECIFIEKE WETTELIJKE GEBIEDEN MET BWBR-IDENTIFIERS
-  if (lowerQuestion.includes('verkeer') || lowerQuestion.includes('wegenverkeerswet') || 
-      lowerQuestion.includes('wvw') || lowerQuestion.includes('rijden') || 
-      lowerQuestion.includes('rijbewijs')) {
-    sources.push('https://wetten.overheid.nl/BWBR0006622/') // Wegenverkeerswet
-    sources.push('https://wetten.overheid.nl/BWBR0004825/') // RVV
+    return [...new Set(sources)] // Verwijder duplicaten
+  } catch (error) {
+    console.error('Error searching sources:', error)
+    return []
   }
-
-  if (lowerQuestion.includes('strafrecht') || lowerQuestion.includes('wetboek van strafrecht') ||
-      lowerQuestion.includes('strafvordering')) {
-    sources.push('https://wetten.overheid.nl/BWBR0001854/') // Wetboek van Strafrecht
-    sources.push('https://wetten.overheid.nl/BWBR0001903/') // Wetboek van Strafvordering
-  }
-
-  if (lowerQuestion.includes('burgerlijk') || lowerQuestion.includes('bw') ||
-      lowerQuestion.includes('contract') || lowerQuestion.includes('eigendom')) {
-    sources.push('https://wetten.overheid.nl/BWBR0005289/') // Burgerlijk Wetboek
-  }
-
-  if (lowerQuestion.includes('politie') || lowerQuestion.includes('handhaving') ||
-      lowerQuestion.includes('politiewet')) {
-    sources.push('https://wetten.overheid.nl/BWBR0031788/') // Politiewet 2012
-    sources.push('https://wetten.overheid.nl/BWBR0006299/') // Ambtsinstructie politie
-  }
-
-  if (lowerQuestion.includes('belasting') || lowerQuestion.includes('btw') ||
-      lowerQuestion.includes('inkomstenbelasting') || lowerQuestion.includes('awb')) {
-    sources.push('https://wetten.overheid.nl/BWBR0002320/') // Algemene wet bestuursrecht
-    sources.push('https://wetten.overheid.nl/BWBR0002471/') // Wet inkomstenbelasting
-  }
-
-  // SPECIFIEKE API ZOEK-ENDPOINTS
-  sources.push('https://wetten.overheid.nl/Services/BWBIdService') // SRU endpoint voor wetteksten
-  sources.push('https://data.overheid.nl/api/') // CKAN v3 API voor datasets
-  
-  return Array.from(new Set(sources))
 }
 
 // GET handler for Vercel build compatibility
