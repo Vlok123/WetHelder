@@ -71,6 +71,9 @@ Sluit elk antwoord af met:
 
 Antwoord altijd in helder Nederlands met een professionele, maar toegankelijke toon.`
 
+// In-memory store for anonymous user rate limiting (development only)
+const anonymousUsageStore = new Map<string, { count: number; date: string }>()
+
 async function searchOfficialSources(query: string): Promise<string[]> {
   const sources: string[] = []
   
@@ -115,56 +118,102 @@ async function searchOfficialSources(query: string): Promise<string[]> {
 }
 
 // GET handler for Vercel build compatibility
-export async function GET() {
-  return new Response(JSON.stringify({ 
-    message: 'WetHelder API is running',
-    version: '2.0.0',
-    features: ['conversational-ai', 'thinking-process', 'profession-specific']
-  }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' }
-  })
+export async function GET(request: NextRequest) {
+  try {
+    // Get rate limit status for current user/IP
+    let session = null
+    let userId: string | undefined = undefined
+    let clientIP: string | undefined = undefined
+    
+    try {
+      session = await getServerSession(authOptions)
+      userId = session?.user?.id
+      clientIP = request.headers.get('x-forwarded-for') || undefined
+    } catch (sessionError) {
+      console.log('Session error (non-critical):', sessionError instanceof Error ? sessionError.message : 'Unknown session error')
+    }
+    
+    const { allowed, remaining, role } = await checkRateLimit(userId, clientIP)
+    
+    return new Response(JSON.stringify({ 
+      message: 'WetHelder API is running',
+      version: '2.0.0',
+      features: ['conversational-ai', 'thinking-process', 'profession-specific'],
+      rateLimit: {
+        allowed,
+        remaining,
+        role,
+        isAuthenticated: !!userId
+      }
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  } catch (error) {
+    console.error('GET error:', error)
+    return new Response(JSON.stringify({ 
+      message: 'WetHelder API is running',
+      version: '2.0.0',
+      features: ['conversational-ai', 'thinking-process', 'profession-specific'],
+      rateLimit: {
+        allowed: true,
+        remaining: 3,
+        role: 'ANONYMOUS',
+        isAuthenticated: false
+      }
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
 }
 
 // Rate limiting helper
-async function checkRateLimit(userId?: string): Promise<{ allowed: boolean; remaining: number; role: string }> {
-  // Temporarily disable database rate limiting
-  return { allowed: true, remaining: 10, role: 'FREE' }
+async function checkRateLimit(userId?: string, clientIP?: string): Promise<{ allowed: boolean; remaining: number; role: string }> {
+  // Voor gebruikers met account - geen limiet tijdens development
+  if (userId) {
+    return { allowed: true, remaining: 999, role: 'AUTHENTICATED' }
+  }
   
-  /* Original database code - uncomment when database is working
-  if (!userId) {
-    return { allowed: true, remaining: 3, role: 'ANONYMOUS' }
+  // Voor anonieme gebruikers - limiet van 3 vragen per dag
+  const today = new Date().toISOString().split('T')[0]
+  const anonymousKey = clientIP || 'anonymous'
+  
+  const currentUsage = anonymousUsageStore.get(anonymousKey)
+  
+  // Reset count if it's a new day
+  if (!currentUsage || currentUsage.date !== today) {
+    anonymousUsageStore.set(anonymousKey, { count: 0, date: today })
+    return { allowed: true, remaining: 2, role: 'ANONYMOUS' }
   }
-
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { role: true }
-    })
-
-    if (!user) {
-      return { allowed: true, remaining: 3, role: 'FREE' }
-    }
-
-    if (user.role === 'PREMIUM' || user.role === 'ADMIN') {
-      return { allowed: true, remaining: 999, role: user.role }
-    }
-
-    const today = new Date().toISOString().split('T')[0]
-    const usage = await prisma.dailyUsage.findUnique({
-      where: { userId_date: { userId, date: today } }
-    })
-
-    const used = usage?.count || 0
-    const limit = 3
-    const remaining = Math.max(0, limit - used)
-
-    return { allowed: remaining > 0, remaining, role: user.role }
-  } catch (error) {
-    console.error('Rate limit check error:', error)
-    return { allowed: true, remaining: 3, role: 'FREE' }
+  
+  // Check if limit is reached
+  const limit = 3
+  const used = currentUsage.count
+  const remaining = Math.max(0, limit - used)
+  
+  if (used >= limit) {
+    return { allowed: false, remaining: 0, role: 'ANONYMOUS' }
   }
-  */
+  
+  return { allowed: true, remaining: remaining - 1, role: 'ANONYMOUS' }
+}
+
+// Function to increment anonymous usage
+function incrementAnonymousUsage(clientIP?: string) {
+  const today = new Date().toISOString().split('T')[0]
+  const anonymousKey = clientIP || 'anonymous'
+  
+  const currentUsage = anonymousUsageStore.get(anonymousKey)
+  
+  if (!currentUsage || currentUsage.date !== today) {
+    anonymousUsageStore.set(anonymousKey, { count: 1, date: today })
+  } else {
+    anonymousUsageStore.set(anonymousKey, { 
+      count: currentUsage.count + 1, 
+      date: today 
+    })
+  }
 }
 
 function getProfessionContext(profession?: string): string {
@@ -505,22 +554,30 @@ export async function POST(request: NextRequest) {
     }
 
     // Temporarily handle session errors gracefully
-    let session = null
-    let userId: string | undefined = undefined
-    try {
-      session = await getServerSession(authOptions)
-      userId = session?.user?.id
-    } catch (sessionError) {
-      console.log('Session error (non-critical):', sessionError instanceof Error ? sessionError.message : 'Unknown session error')
-    }
+          let session = null
+      let userId: string | undefined = undefined
+      let clientIP: string | undefined = undefined
+      try {
+        session = await getServerSession(authOptions)
+        userId = session?.user?.id
+        clientIP = request.headers.get('x-forwarded-for') || undefined
+      } catch (sessionError) {
+        console.log('Session error (non-critical):', sessionError instanceof Error ? sessionError.message : 'Unknown session error')
+      }
     
-    const { allowed, remaining, role } = await checkRateLimit(userId)
+    const { allowed, remaining, role } = await checkRateLimit(userId, clientIP)
     
     if (!allowed) {
+      const message = role === 'ANONYMOUS' 
+        ? 'Je hebt het maximum van 3 gratis vragen per dag bereikt. Maak een account aan voor onbeperkt gebruik van WetHelder!'
+        : 'Gratis gebruikers kunnen 3 vragen per dag stellen. Upgrade naar premium voor onbeperkt gebruik.'
+      
       return new Response(JSON.stringify({ 
         error: 'Dagelijkse limiet bereikt', 
-        message: 'Gratis gebruikers kunnen 3 vragen per dag stellen. Upgrade naar premium voor onbeperkt gebruik.',
-        remaining: 0, role
+        message,
+        remaining: 0, 
+        role,
+        needsAccount: role === 'ANONYMOUS'
       }), { 
         status: 429,
         headers: { 'Content-Type': 'application/json' }
@@ -623,6 +680,11 @@ Kun je me hierover helpen? Geef me een direct, helder antwoord.`,
 
           const doneChunk = encoder.encode('data: [DONE]\n\n')
           controller.enqueue(doneChunk)
+
+          // Increment usage for anonymous users
+          if (!userId) {
+            incrementAnonymousUsage(clientIP)
+          }
 
           // Save to database - temporarily disabled
           try {

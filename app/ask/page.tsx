@@ -151,6 +151,7 @@ export default function AskPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [profession, setProfession] = useState<Profession>('algemeen')
   const [showProfessionDetails, setShowProfessionDetails] = useState(false)
+  const [rateLimit, setRateLimit] = useState<{remaining: number, role: string} | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -160,6 +161,28 @@ export default function AskPage() {
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
+  // Fetch rate limit status
+  useEffect(() => {
+    const fetchRateLimit = async () => {
+      try {
+        const response = await fetch('/api/ask')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.rateLimit) {
+            setRateLimit({
+              remaining: data.rateLimit.remaining,
+              role: data.rateLimit.role
+            })
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch rate limit:', error)
+      }
+    }
+
+    fetchRateLimit()
+  }, [session])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -192,7 +215,27 @@ export default function AskPage() {
         }),
       })
 
-      if (!response.ok) throw new Error('Network response was not ok')
+      if (!response.ok) {
+        if (response.status === 429) {
+          const errorData = await response.json()
+          if (errorData.needsAccount) {
+            setMessages(prev =>
+              prev.map(msg =>
+                msg.id === questionId
+                  ? { 
+                      ...msg, 
+                      answer: `❌ **${errorData.error}**\n\n${errorData.message}\n\n[🔐 **Account aanmaken →**](/auth/signin)\n\nMet een gratis account krijg je:\n• Onbeperkt vragen stellen\n• Persoonlijke vraaghistorie\n• Geavanceerde juridische filters`, 
+                      isLoading: false 
+                    }
+                  : msg
+              )
+            )
+            setIsLoading(false)
+            return
+          }
+        }
+        throw new Error('Network response was not ok')
+      }
 
       const reader = response.body?.getReader()
       const decoder = new TextDecoder()
@@ -256,6 +299,14 @@ export default function AskPage() {
           msg.id === questionId ? { ...msg, isLoading: false } : msg
         )
       )
+      
+      // Update rate limit for anonymous users
+      if (!session && rateLimit && rateLimit.role === 'ANONYMOUS') {
+        setRateLimit(prev => prev ? {
+          ...prev,
+          remaining: Math.max(0, prev.remaining - 1)
+        } : null)
+      }
     }
   }
 
@@ -542,6 +593,10 @@ export default function AskPage() {
                 <div>
                   {session ? (
                     <span>Ingelogd • Onbeperkt gebruik</span>
+                  ) : rateLimit ? (
+                    <span className={rateLimit.remaining <= 1 ? 'text-orange-600 font-medium' : ''}>
+                      Anoniem • {rateLimit.remaining} {rateLimit.remaining === 1 ? 'vraag' : 'vragen'} resterend vandaag
+                    </span>
                   ) : (
                     <span>Anoniem • Beperkt tot 3 vragen per dag</span>
                   )}
