@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,7 +21,8 @@ import {
   Send,
   Clock,
   AlertTriangle,
-  User
+  User,
+  Crown
 } from 'lucide-react'
 
 interface Message {
@@ -112,10 +114,21 @@ const formatText = (text: string) => {
 }
 
 export default function HomePage() {
+  const { data: session } = useSession()
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [selectedProfession, setSelectedProfession] = useState('burger')
+  const [userStats, setUserStats] = useState<{ remainingToday: number; role: string } | null>(null)
+
+  useEffect(() => {
+    if (session) {
+      fetch('/api/user/stats')
+        .then(res => res.json())
+        .then(data => setUserStats(data))
+        .catch(err => console.error('Error fetching user stats:', err))
+    }
+  }, [session])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -144,7 +157,20 @@ export default function HomePage() {
         body: JSON.stringify({ question: input.trim(), profession: selectedProfession }),
       })
 
-      if (!response.ok) throw new Error('Network response was not ok')
+      if (!response.ok) {
+        if (response.status === 429) {
+          const errorData = await response.json()
+          setMessages(prev =>
+            prev.map(msg =>
+              msg.id === questionId
+                ? { ...msg, answer: errorData.message || 'Dagelijkse limiet bereikt', isLoading: false }
+                : msg
+            )
+          )
+          return
+        }
+        throw new Error('Network response was not ok')
+      }
 
       const reader = response.body?.getReader()
       const decoder = new TextDecoder()
@@ -269,6 +295,30 @@ export default function HomePage() {
                     </SelectContent>
                   </Select>
                 </div>
+
+                {/* Rate Limiting Info */}
+                {session && userStats && (
+                  <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-blue-700">
+                        {userStats.role === 'PREMIUM' ? (
+                          <span className="flex items-center gap-2">
+                            <Crown className="h-4 w-4" />
+                            Premium: Onbeperkt gebruik
+                          </span>
+                        ) : (
+                          `Vandaag resterend: ${userStats.remainingToday} van 3 vragen`
+                        )}
+                      </span>
+                      {userStats.role === 'FREE' && (
+                        <Link href="/auth/signin" className="text-blue-600 hover:text-blue-800 font-medium">
+                          Upgrade naar Premium
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 <form onSubmit={handleSubmit} className="flex gap-2 mb-6">
                 <Input
                   value={input}

@@ -1,9 +1,10 @@
 // Force dynamic rendering for Vercel
-export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 
 import { NextRequest } from 'next/server'
-import { prisma } from '@/lib/db'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions'
 
@@ -126,6 +127,53 @@ export async function GET() {
   })
 }
 
+// Rate limiting helper
+async function checkRateLimit(userId?: string): Promise<{ allowed: boolean; remaining: number; role: string }> {
+  if (!userId) {
+    // Anonymous users get 1 free question per session
+    return { allowed: true, remaining: 0, role: 'ANONYMOUS' }
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true }
+  })
+
+  if (!user) {
+    return { allowed: false, remaining: 0, role: 'UNKNOWN' }
+  }
+
+  // PREMIUM users have unlimited access
+  if (user.role === 'PREMIUM') {
+    return { allowed: true, remaining: -1, role: user.role }
+  }
+
+  // FREE users have 3 queries per day
+  const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD
+  
+  const dailyUsage = await prisma.dailyUsage.upsert({
+    where: {
+      userId_date: {
+        userId,
+        date: today
+      }
+    },
+    create: {
+      userId,
+      date: today,
+      count: 0
+    },
+    update: {},
+    select: { count: true }
+  })
+
+  const limit = 3
+  const remaining = Math.max(0, limit - dailyUsage.count)
+  const allowed = dailyUsage.count < limit
+
+  return { allowed, remaining, role: user.role }
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Validate environment variables
@@ -142,6 +190,25 @@ export async function POST(request: NextRequest) {
     if (!question || typeof question !== 'string') {
       return new Response(JSON.stringify({ error: 'Ongeldige vraag' }), { 
         status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
+    // Get user session
+    const session = await getServerSession(authOptions)
+    const userId = session?.user?.id
+
+    // Check rate limiting
+    const { allowed, remaining, role } = await checkRateLimit(userId)
+    
+    if (!allowed) {
+      return new Response(JSON.stringify({ 
+        error: 'Dagelijkse limiet bereikt', 
+        message: 'Gratis gebruikers kunnen 3 vragen per dag stellen. Upgrade naar premium voor onbeperkt gebruik.',
+        remaining: 0,
+        role
+      }), { 
+        status: 429,
         headers: { 'Content-Type': 'application/json' }
       })
     }
@@ -278,16 +345,42 @@ export async function POST(request: NextRequest) {
           const doneChunk = encoder.encode('data: [DONE]\n\n')
           controller.enqueue(doneChunk)
 
-          // Save to database (with safe error handling)
+          // Save to database and update usage (with safe error handling)
           try {
             if (prisma && prisma.query) {
+              // Save the query
               await prisma.query.create({
                 data: {
                   question,
                   answer: fullAnswer,
                   sources: JSON.stringify(sources),
-                } as any,
+                  profession,
+                  userId: userId || null
+                }
               })
+
+              // Update daily usage for logged-in FREE users
+              if (userId && role === 'FREE') {
+                const today = new Date().toISOString().split('T')[0]
+                await prisma.dailyUsage.upsert({
+                  where: {
+                    userId_date: {
+                      userId,
+                      date: today
+                    }
+                  },
+                  create: {
+                    userId,
+                    date: today,
+                    count: 1
+                  },
+                  update: {
+                    count: {
+                      increment: 1
+                    }
+                  }
+                })
+              }
             }
           } catch (dbError) {
             console.error('Database error (non-critical):', dbError)
