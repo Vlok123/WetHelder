@@ -77,12 +77,40 @@ async function searchSources(question: string): Promise<string[]> {
   return Array.from(new Set(sources)) // Remove duplicates
 }
 
+// GET handler for Vercel build compatibility
+export async function GET() {
+  return new Response(JSON.stringify({ 
+    message: 'WetHelder API is running',
+    version: '1.0.0',
+    endpoints: {
+      POST: 'Send a legal question in JSON format: { "question": "your question" }'
+    }
+  }), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+}
+
 export async function POST(request: NextRequest) {
   try {
+    // Validate environment variables
+    if (!process.env.DEEPSEEK_API_KEY) {
+      console.error('DEEPSEEK_API_KEY not configured')
+      return new Response(JSON.stringify({ error: 'API configuration error' }), { 
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
     const { question } = await request.json()
     
     if (!question || typeof question !== 'string') {
-      return new Response('Ongeldige vraag', { status: 400 })
+      return new Response(JSON.stringify({ error: 'Ongeldige vraag' }), { 
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      })
     }
 
     const sources = await searchSources(question)
@@ -170,17 +198,20 @@ export async function POST(request: NextRequest) {
           const doneChunk = encoder.encode('data: [DONE]\n\n')
           controller.enqueue(doneChunk)
 
-          // Save to database (without user association)
+          // Save to database (with safe error handling)
           try {
-            await prisma.query.create({
-              data: {
-                question,
-                answer: fullAnswer,
-                sources: JSON.stringify(sources),
-              },
-            })
+            if (prisma && prisma.query) {
+              await prisma.query.create({
+                data: {
+                  question,
+                  answer: fullAnswer,
+                  sources: JSON.stringify(sources),
+                },
+              })
+            }
           } catch (dbError) {
-            console.error('Database error:', dbError)
+            console.error('Database error (non-critical):', dbError)
+            // Don't fail the request if database save fails
           }
 
         } catch (error) {
@@ -206,6 +237,9 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('API error:', error)
-    return new Response('Server error', { status: 500 })
+    return new Response(JSON.stringify({ error: 'Server error' }), { 
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    })
   }
 } 
