@@ -697,7 +697,7 @@ export default function ModernLegalChat() {
                                 )}
                               </div>
                               <p className={`text-xs sm:text-sm ${
-                                darkMode ? 'text-gray-300' : 'text-gray-600'
+                                darkMode ? 'text-gray-200' : 'text-gray-700'
                               }`}>
                                 {feature.description}
                               </p>
@@ -809,35 +809,22 @@ export default function ModernLegalChat() {
                     }
                     disabled={isLoading}
                     className={`w-full text-sm sm:text-base py-3 sm:py-4 ${
-                      darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                      darkMode 
+                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                        : 'bg-white border-gray-300 text-black placeholder-gray-500'
                     }`}
                   />
                 </div>
                 
-                {/* Wet & Uitleg Toggle Button */}
-                {session && (
-                  <Button
-                    type="button"
-                    variant={advancedMode ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setAdvancedMode(!advancedMode)}
-                    className={`px-3 py-3 sm:py-4 whitespace-nowrap ${
-                      advancedMode 
-                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0' 
-                        : darkMode 
-                          ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
-                          : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    <span className="text-xs sm:text-sm">🧠</span>
-                    <span className="hidden sm:inline ml-1 text-xs">Wet & Uitleg</span>
-                  </Button>
-                )}
-                
+                {/* Send Button - op mobiel eerst, dan Wet & Uitleg */}
                 <Button 
                   type="submit" 
                   disabled={isLoading || !currentQuestion.trim()}
-                  className="px-4 sm:px-6 py-3 sm:py-4"
+                  className={`px-4 sm:px-6 py-3 sm:py-4 order-2 sm:order-3 ${
+                    darkMode 
+                      ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  }`}
                 >
                   {isLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -845,13 +832,33 @@ export default function ModernLegalChat() {
                     <Send className="h-4 w-4" />
                   )}
                 </Button>
+                
+                {/* Wet & Uitleg Toggle Button - op mobiel tweede, desktop laatste */}
+                {session && (
+                  <Button
+                    type="button"
+                    variant={advancedMode ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setAdvancedMode(!advancedMode)}
+                    className={`px-3 py-3 sm:py-4 whitespace-nowrap order-3 sm:order-2 ${
+                      advancedMode 
+                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0' 
+                        : darkMode 
+                          ? 'border-gray-600 text-gray-200 hover:bg-gray-700' 
+                          : 'border-gray-300 text-black hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="text-xs sm:text-sm">🧠</span>
+                    <span className="hidden sm:inline ml-1 text-xs">Wet & Uitleg</span>
+                  </Button>
+                )}
               </form>
 
               {/* Quick Actions below input - only when no messages */}
               {messages.length === 0 && (
                 <div className="space-y-3">
                   <p className={`text-xs text-center ${
-                    darkMode ? 'text-gray-400' : 'text-gray-600'
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
                   }`}>
                     Of kies een van deze voorbeeldvragen:
                   </p>
@@ -863,13 +870,13 @@ export default function ModernLegalChat() {
                         onClick={() => handleQuickAction(action.text)}
                         className={`text-left p-3 rounded-lg border text-sm transition-all duration-200 hover:scale-[1.02] ${
                           darkMode 
-                            ? 'bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-650' 
-                            : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
+                            ? 'bg-gray-700 border-gray-600 text-gray-100 hover:bg-gray-650' 
+                            : 'bg-gray-50 border-gray-200 text-black hover:bg-gray-100'
                         }`}
                       >
                         <div className="font-medium">{action.text}</div>
                         <div className={`text-xs mt-1 ${
-                          darkMode ? 'text-gray-400' : 'text-gray-500'
+                          darkMode ? 'text-gray-300' : 'text-gray-600'
                         }`}>
                           {action.category}
                         </div>
@@ -893,7 +900,7 @@ export default function ModernLegalChat() {
               )}
               
               <p className={`text-xs text-center px-4 ${
-                darkMode ? 'text-gray-500' : 'text-gray-400'
+                darkMode ? 'text-gray-400' : 'text-gray-500'
               }`}>
                 WetHelder kan fouten maken. Controleer belangrijke informatie altijd.
               </p>
