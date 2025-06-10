@@ -22,7 +22,10 @@ import {
   Clock,
   AlertTriangle,
   User,
-  Crown
+  Crown,
+  Gift,
+  Star,
+  CheckCircle
 } from 'lucide-react'
 
 interface Message {
@@ -234,6 +237,14 @@ export default function HomePage() {
           msg.id === questionId ? { ...msg, isLoading: false } : msg
         )
       )
+      
+      // Update user stats after successful question
+      if (session) {
+        fetch('/api/user/stats')
+          .then(res => res.json())
+          .then(data => setUserStats(data))
+          .catch(err => console.error('Error fetching user stats:', err))
+      }
     }
   }
 
@@ -242,88 +253,217 @@ export default function HomePage() {
       <Navigation />
       
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           {/* Hero Section */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-6">
               <Scale className="h-16 w-16 text-primary" />
             </div>
             <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
               WetHelder
             </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Uw intelligente juridische assistent voor helder inzicht in Nederlandse wetgeving en jurisprudentie
+            <p className="text-xl text-muted-foreground mb-6 max-w-2xl mx-auto">
+              Uw intelligente juridische assistent voor helder inzicht in Nederlandse wetgeving
             </p>
+
+            {/* Account CTA for anonymous users */}
+            {!session && (
+              <Card className="max-w-lg mx-auto mb-8 border-2 border-green-200 bg-gradient-to-br from-green-50 to-blue-50">
+                <CardContent className="pt-6">
+                  <div className="text-center">
+                    <div className="flex items-center justify-center mb-3">
+                      <Gift className="h-8 w-8 text-green-600" />
+                    </div>
+                    <h3 className="font-bold text-lg mb-2 text-green-900">Tijdelijk Gratis Account!</h3>
+                    <p className="text-sm text-green-700 mb-4">
+                      Zonder account: <strong>3 vragen per dag</strong><br/>
+                      Met gratis account: <strong>Onbeperkt vragen</strong> 🎉
+                    </p>
+                    <div className="flex gap-2 justify-center">
+                      <Button asChild className="bg-green-600 hover:bg-green-700">
+                        <Link href="/auth/signup">
+                          <Star className="h-4 w-4 mr-2" />
+                          Account Aanmaken
+                        </Link>
+                      </Button>
+                      <Button variant="outline" asChild>
+                        <Link href="/auth/signin">Inloggen</Link>
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
-          {/* Chat Interface */}
-          <Card className="mb-12">
+          {/* Usage Status */}
+          {session && userStats && (
+            <Card className="mb-6 border-2">
+              <CardContent className="pt-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    {userStats.role === 'PREMIUM' ? (
+                      <>
+                        <Crown className="h-5 w-5 text-amber-500" />
+                        <div>
+                          <p className="font-semibold text-amber-700">Premium Account</p>
+                          <p className="text-sm text-amber-600">Onbeperkt gebruik - Geen limieten!</p>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle className="h-5 w-5 text-green-500" />
+                        <div>
+                          <p className="font-semibold text-green-700">Gratis Account</p>
+                          <p className="text-sm text-green-600">Tijdelijk onbeperkt gebruik 🎉</p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-muted-foreground">Welkom terug!</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {!session && (
+            <Card className="mb-6 border-amber-200 bg-amber-50">
+              <CardContent className="pt-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <AlertTriangle className="h-5 w-5 text-amber-600" />
+                    <div>
+                      <p className="font-semibold text-amber-800">Anonieme Toegang</p>
+                      <p className="text-sm text-amber-700">Maximaal 3 vragen per dag</p>
+                    </div>
+                  </div>
+                  <Button size="sm" asChild className="bg-amber-600 hover:bg-amber-700">
+                    <Link href="/auth/signup">
+                      Gratis Account
+                    </Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Conversation Area - Only show if there are messages */}
+          {messages.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                <MessageSquare className="h-6 w-6" />
+                Gesprek
+              </h2>
+              <div className="space-y-4 max-h-96 overflow-y-auto">
+                {messages.map((message, index) => (
+                  <Card key={message.id} className="border-l-4 border-l-primary">
+                    <CardContent className="pt-4">
+                      <div className="space-y-3">
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <h4 className="font-semibold text-primary">Vraag {index + 1}:</h4>
+                            <Badge variant="secondary" className="text-xs">
+                              {PROFESSIONS.find(p => p.value === message.profession)?.icon} {PROFESSIONS.find(p => p.value === message.profession)?.label}
+                            </Badge>
+                          </div>
+                          <p className="text-muted-foreground italic">{message.question}</p>
+                        </div>
+                        
+                        <div>
+                          <h4 className="font-semibold text-primary mb-2">Antwoord:</h4>
+                          {message.isLoading ? (
+                            <div className="flex items-center gap-2">
+                              <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                              <span className="text-sm text-muted-foreground">Zoeken in Nederlandse wetgeving...</span>
+                            </div>
+                          ) : (
+                            <div className="bg-muted/30 p-3 rounded-md">
+                              {formatText(message.answer)}
+                            </div>
+                          )}
+                        </div>
+                        
+                        {message.sources.length > 0 && (
+                          <div>
+                            <h4 className="font-semibold text-sm mb-2">Bronnen:</h4>
+                            <div className="grid gap-1">
+                              {message.sources.map((source, idx) => (
+                                <div key={idx} className="flex items-start gap-2">
+                                  <FileText className="h-3 w-3 text-primary mt-1 flex-shrink-0" />
+                                  <a 
+                                    href={source} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-primary hover:underline break-all"
+                                  >
+                                    {source}
+                                  </a>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Question Input Area */}
+          <Card className="mb-8">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MessageSquare className="h-5 w-5" />
-                Stel een juridische vraag
+                {messages.length > 0 ? 'Volgende vraag stellen' : 'Stel uw juridische vraag'}
               </CardTitle>
               <CardDescription>
-                Krijg direct toegang tot relevante wetsartikelen en jurisprudentie
+                {messages.length > 0 
+                  ? 'U kunt doorvragen over het bovenstaande antwoord of een nieuwe vraag stellen'
+                  : 'Krijg direct toegang tot relevante wetsartikelen en jurisprudentie'
+                }
               </CardDescription>
             </CardHeader>
             <CardContent>
-                              <div className="mb-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <User className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">Uw functie:</span>
-                  </div>
-                  <Select
-                    value={selectedProfession}
-                    onValueChange={(value: string) => setSelectedProfession(value)}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Selecteer uw functie" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {PROFESSIONS.map((profession) => (
-                        <SelectItem key={profession.value} value={profession.value}>
-                          <div className="flex items-center gap-2">
-                            <span>{profession.icon}</span>
-                            <div className="flex flex-col">
-                              <span>{profession.label}</span>
-                              <span className="text-xs text-muted-foreground">{profession.description}</span>
-                            </div>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              <div className="mb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <User className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Uw functie:</span>
                 </div>
+                <Select
+                  value={selectedProfession}
+                  onValueChange={(value: string) => setSelectedProfession(value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Selecteer uw functie" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PROFESSIONS.map((profession) => (
+                      <SelectItem key={profession.value} value={profession.value}>
+                        <div className="flex items-center gap-2">
+                          <span>{profession.icon}</span>
+                          <div className="flex flex-col">
+                            <span>{profession.label}</span>
+                            <span className="text-xs text-muted-foreground">{profession.description}</span>
+                          </div>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-                {/* Rate Limiting Info */}
-                {session && userStats && (
-                  <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-blue-700">
-                        {userStats.role === 'PREMIUM' ? (
-                          <span className="flex items-center gap-2">
-                            <Crown className="h-4 w-4" />
-                            Premium: Onbeperkt gebruik
-                          </span>
-                        ) : (
-                          `Vandaag resterend: ${userStats.remainingToday} van 3 vragen`
-                        )}
-                      </span>
-                      {userStats.role === 'FREE' && (
-                        <Link href="/auth/signin" className="text-blue-600 hover:text-blue-800 font-medium">
-                          Upgrade naar Premium
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="flex gap-2 mb-6">
+              <form onSubmit={handleSubmit} className="flex gap-2">
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Bijvoorbeeld: Wat zijn de regels voor opzegging van een arbeidscontract?"
+                  placeholder={messages.length > 0 
+                    ? "Bijvoorbeeld: Kun je dit verder uitleggen?"
+                    : "Bijvoorbeeld: Wat zijn de regels voor opzegging van een arbeidscontract?"
+                  }
                   className="flex-1"
                   disabled={isLoading}
                 />
@@ -333,150 +473,88 @@ export default function HomePage() {
               </form>
 
               {isLoading && (
-                <Card className="mb-4 bg-blue-50 border-blue-200">
-                  <CardContent className="pt-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-5 w-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                      <div>
-                        <p className="font-medium text-blue-900">Bezig met zoeken in Nederlandse wetgeving...</p>
-                        <p className="text-sm text-blue-700 flex items-center gap-1 mt-1">
-                          <Clock className="h-3 w-3" />
-                          Dit kan 10-30 seconden duren voor een volledig antwoord
-                        </p>
-                      </div>
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <div className="flex items-center gap-3">
+                    <div className="h-5 w-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    <div>
+                      <p className="font-medium text-blue-900">Bezig met zoeken in Nederlandse wetgeving...</p>
+                      <p className="text-sm text-blue-700 flex items-center gap-1 mt-1">
+                        <Clock className="h-3 w-3" />
+                        Dit kan 10-30 seconden duren voor een volledig antwoord
+                      </p>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               )}
-
-              <div className="space-y-6">
-                {messages.map((message) => (
-                  <Card key={message.id} className="border-l-4 border-l-primary">
-                    <CardContent className="pt-4">
-                      <div className="space-y-4">
-                        <div>
-                          <div className="flex items-center gap-2 mb-2">
-                            <h3 className="font-semibold text-lg">Vraag:</h3>
-                            <Badge variant="secondary" className="text-xs">
-                              {PROFESSIONS.find(p => p.value === message.profession)?.icon} {PROFESSIONS.find(p => p.value === message.profession)?.label}
-                            </Badge>
-                          </div>
-                          <p className="text-muted-foreground">{message.question}</p>
-                        </div>
-                        
-                        <div>
-                          <h3 className="font-semibold text-lg mb-2">Antwoord:</h3>
-                          {message.isLoading ? (
-                            <div className="space-y-3">
-                              <div className="flex items-center gap-2">
-                                <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                                <span className="text-sm text-muted-foreground">Zoeken in wetgeving...</span>
-                              </div>
-                              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                                <div className="flex items-start gap-2">
-                                  <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5" />
-                                  <div className="text-sm text-yellow-800">
-                                    <p className="font-medium">Een moment geduld</p>
-                                    <p>We doorzoeken Nederlandse wetten en jurisprudentie voor een compleet antwoord. Dit proces kan 10-30 seconden duren.</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          ) : (
-                            formatText(message.answer)
-                          )}
-                        </div>
-                        
-                        {message.sources.length > 0 && (
-                          <div>
-                            <h3 className="font-semibold text-lg mb-2">Bronnen:</h3>
-                            <ul className="space-y-1">
-                              {message.sources.map((source, idx) => (
-                                <li key={idx} className="flex items-start gap-2">
-                                  <FileText className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                                  <a 
-                                    href={source} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className="text-primary hover:underline break-all"
-                                  >
-                                    {source}
-                                  </a>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
             </CardContent>
           </Card>
 
-          {/* Features Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-            <Card className="text-center">
-              <CardHeader>
-                <BookOpen className="h-12 w-12 text-primary mx-auto mb-4" />
-                <CardTitle>Nederlandse Wetgeving</CardTitle>
-                <CardDescription>
-                  Toegang tot alle officiele Nederlandse wetten en regelgeving via wetten.overheid.nl
-                </CardDescription>
-              </CardHeader>
-            </Card>
+          {/* Features Grid - Only show when no conversation */}
+          {messages.length === 0 && (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <Card className="text-center">
+                  <CardHeader>
+                    <BookOpen className="h-12 w-12 text-primary mx-auto mb-4" />
+                    <CardTitle>Nederlandse Wetgeving</CardTitle>
+                    <CardDescription>
+                      Toegang tot alle officiele Nederlandse wetten via wetten.overheid.nl
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
 
-            <Card className="text-center">
-              <CardHeader>
-                <Gavel className="h-12 w-12 text-primary mx-auto mb-4" />
-                <CardTitle>Jurisprudentie</CardTitle>
-                <CardDescription>
-                  Uitspraken en rechtspraak van Nederlandse rechtbanken via rechtspraak.nl
-                </CardDescription>
-              </CardHeader>
-            </Card>
+                <Card className="text-center">
+                  <CardHeader>
+                    <Gavel className="h-12 w-12 text-primary mx-auto mb-4" />
+                    <CardTitle>Jurisprudentie</CardTitle>
+                    <CardDescription>
+                      Rechtspraak van Nederlandse rechtbanken via rechtspraak.nl
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
 
-            <Card className="text-center">
-              <CardHeader>
-                <Search className="h-12 w-12 text-primary mx-auto mb-4" />
-                <CardTitle>Intelligente Zoekfunctie</CardTitle>
-                <CardDescription>
-                  AI-gestuurde zoekfunctie die relevante wetsartikelen en uitspraken vindt
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </div>
+                <Card className="text-center">
+                  <CardHeader>
+                    <Search className="h-12 w-12 text-primary mx-auto mb-4" />
+                    <CardTitle>AI-Zoekfunctie</CardTitle>
+                    <CardDescription>
+                      Intelligente zoekfunctie die relevante artikelen vindt
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </div>
 
-          {/* Rechtsgebieden */}
-          <div className="mb-16">
-            <h2 className="text-3xl font-bold text-center mb-8">Rechtsgebieden</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Card className="p-4 text-center hover:shadow-md transition-shadow">
-                <Shield className="h-8 w-8 text-primary mx-auto mb-2" />
-                <h3 className="font-semibold mb-1">Strafrecht</h3>
-                <Badge variant="secondary" className="text-xs">Wetboek van Strafrecht</Badge>
-              </Card>
-              
-              <Card className="p-4 text-center hover:shadow-md transition-shadow">
-                <FileText className="h-8 w-8 text-primary mx-auto mb-2" />
-                <h3 className="font-semibold mb-1">Burgerlijk Recht</h3>
-                <Badge variant="secondary" className="text-xs">BW Boek 3 & 6</Badge>
-              </Card>
-              
-              <Card className="p-4 text-center hover:shadow-md transition-shadow">
-                <Users className="h-8 w-8 text-primary mx-auto mb-2" />
-                <h3 className="font-semibold mb-1">Arbeidsrecht</h3>
-                <Badge variant="secondary" className="text-xs">Arbeidsomstandighedenwet</Badge>
-              </Card>
-              
-              <Card className="p-4 text-center hover:shadow-md transition-shadow">
-                <Scale className="h-8 w-8 text-primary mx-auto mb-2" />
-                <h3 className="font-semibold mb-1">Bestuursrecht</h3>
-                <Badge variant="secondary" className="text-xs">Algemene wet bestuursrecht</Badge>
-              </Card>
-            </div>
-          </div>
+              {/* Rechtsgebieden */}
+              <div className="mb-12">
+                <h2 className="text-3xl font-bold text-center mb-8">Rechtsgebieden</h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <Card className="p-4 text-center hover:shadow-md transition-shadow">
+                    <Shield className="h-8 w-8 text-primary mx-auto mb-2" />
+                    <h3 className="font-semibold mb-1">Strafrecht</h3>
+                    <Badge variant="secondary" className="text-xs">Wetboek van Strafrecht</Badge>
+                  </Card>
+                  
+                  <Card className="p-4 text-center hover:shadow-md transition-shadow">
+                    <FileText className="h-8 w-8 text-primary mx-auto mb-2" />
+                    <h3 className="font-semibold mb-1">Burgerlijk Recht</h3>
+                    <Badge variant="secondary" className="text-xs">BW Boek 3 & 6</Badge>
+                  </Card>
+                  
+                  <Card className="p-4 text-center hover:shadow-md transition-shadow">
+                    <Users className="h-8 w-8 text-primary mx-auto mb-2" />
+                    <h3 className="font-semibold mb-1">Arbeidsrecht</h3>
+                    <Badge variant="secondary" className="text-xs">Arbeidsomstandighedenwet</Badge>
+                  </Card>
+                  
+                  <Card className="p-4 text-center hover:shadow-md transition-shadow">
+                    <Scale className="h-8 w-8 text-primary mx-auto mb-2" />
+                    <h3 className="font-semibold mb-1">Bestuursrecht</h3>
+                    <Badge variant="secondary" className="text-xs">Algemene wet bestuursrecht</Badge>
+                  </Card>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </main>
     </div>

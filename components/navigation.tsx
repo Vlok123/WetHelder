@@ -12,7 +12,9 @@ import {
   LogIn, 
   LogOut, 
   Settings,
-  Crown 
+  Crown,
+  Star,
+  Gift
 } from 'lucide-react'
 
 export function Navigation() {
@@ -38,10 +40,15 @@ export function Navigation() {
                 <div className="flex items-center space-x-2 text-sm">
                   <span className="text-muted-foreground">Welkom,</span>
                   <span className="font-medium">{session.user.name}</span>
-                  {session.user.role === 'PREMIUM' && (
+                  {session.user.role === 'PREMIUM' ? (
                     <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-300">
                       <Crown className="h-3 w-3 mr-1" />
                       Premium
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
+                      <Gift className="h-3 w-3 mr-1" />
+                      Gratis
                     </Badge>
                   )}
                 </div>
@@ -66,6 +73,11 @@ export function Navigation() {
             ) : (
               // Not logged in
               <>
+                <div className="hidden md:flex items-center text-xs text-muted-foreground mr-2">
+                  <Gift className="h-3 w-3 mr-1" />
+                  Tijdelijk gratis onbeperkt!
+                </div>
+
                 <Link href="/auth/signin">
                   <Button variant="ghost" size="sm" className="flex items-center space-x-2">
                     <LogIn className="h-4 w-4" />
@@ -74,9 +86,9 @@ export function Navigation() {
                 </Link>
 
                 <Link href="/auth/signup">
-                  <Button size="sm" className="flex items-center space-x-2">
-                    <User className="h-4 w-4" />
-                    <span>Registreren</span>
+                  <Button size="sm" className="flex items-center space-x-2 bg-green-600 hover:bg-green-700">
+                    <Star className="h-4 w-4" />
+                    <span>Gratis Account</span>
                   </Button>
                 </Link>
               </>
