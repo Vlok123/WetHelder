@@ -60,13 +60,8 @@ module.exports = {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		fontFamily: {
-  			sans: [
-  				'Inter',
-  				'SF Pro Display',
-  				'DM Sans',
-  				'system-ui',
-  				'sans-serif'
-  			]
+  			sans: ['Inter', 'system-ui', 'sans-serif'],
+  			mono: ['SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'monospace'],
   		},
   		keyframes: {
   			'accordion-down': {
@@ -95,21 +90,21 @@ module.exports = {
   					animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)',
   				},
   			},
-  			fadeIn: {
-  				'0%': { opacity: '0', transform: 'translateY(10px)' },
-  				'100%': { opacity: '1', transform: 'translateY(0)' },
+  			'fade-in': {
+  				'0%': { opacity: '0' },
+  				'100%': { opacity: '1' },
   			},
-  			slideIn: {
-  				'0%': { transform: 'translateX(-100%)' },
-  				'100%': { transform: 'translateX(0)' },
+  			'slide-in': {
+  				'0%': { transform: 'translateY(10px)', opacity: '0' },
+  				'100%': { transform: 'translateY(0)', opacity: '1' },
   			},
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
   			bounce: 'bounce 1s infinite',
-  			fadeIn: 'fadeIn 0.5s ease-out',
-  			slideIn: 'slideIn 0.3s ease-out',
+  			'fade-in': 'fade-in 0.3s ease-out',
+  			'slide-in': 'slide-in 0.3s ease-out',
   		},
   		typography: {
   			DEFAULT: {
@@ -167,5 +162,8 @@ module.exports = {
   		},
   	}
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+  plugins: [
+    require("tailwindcss-animate"),
+    ...(process.env.NODE_ENV === 'production' ? [] : [require("@tailwindcss/typography")]),
+  ],
 } 
