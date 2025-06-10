@@ -108,7 +108,7 @@ Leg uit wat deze boete betekent, wanneer deze wordt opgelegd, en geef praktische
     return NextResponse.json({
       explanation,
       feitcode: boete.feitcode,
-      disclaimer: 'Gebaseerd op officiële bronnen via AI. Controleer altijd boetebase.om.nl voor actuele informatie.'
+      disclaimer: 'Gebaseerd op officiële bronnen via automatische analyse. Controleer altijd boetebase.om.nl voor actuele informatie.'
     })
 
   } catch (error) {

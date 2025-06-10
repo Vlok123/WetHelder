@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useSession, signIn, signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Navigation } from '@/components/navigation'
 import { 
   Scale, 
   MessageSquare, 
@@ -37,9 +37,13 @@ import {
   ChevronRight,
   LogIn,
   LogOut,
-  Trash2
+  Trash2,
+  Loader2,
+  UserCheck
 } from 'lucide-react'
 import { formatTextWithLinks, formatSourcesWithLinks } from '@/lib/textFormatter'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 // Available professions with their specific contexts
 const PROFESSIONS = [
@@ -110,6 +114,10 @@ export default function ModernLegalChat() {
   const [darkMode, setDarkMode] = useState(false)
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([])
   const [showSettings, setShowSettings] = useState(false)
+  const [rateLimitStatus, setRateLimitStatus] = useState<{
+    remaining: number;
+    role: string;
+  } | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
@@ -186,6 +194,23 @@ export default function ModernLegalChat() {
     fetchChatHistory()
   }, [session])
 
+  // Check rate limit status
+  useEffect(() => {
+    const checkRateLimit = async () => {
+      try {
+        const response = await fetch('/api/ask')
+        if (response.ok) {
+          const data = await response.json()
+          setRateLimitStatus(data.rateLimit)
+        }
+      } catch (error) {
+        console.error('Failed to check rate limit:', error)
+      }
+    }
+    
+    checkRateLimit()
+  }, [])
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
@@ -194,24 +219,22 @@ export default function ModernLegalChat() {
     scrollToBottom()
   }, [messages])
 
-  const handleSubmit = async (question: string = currentQuestion) => {
-    if (!question.trim() || isLoading) return
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!currentQuestion.trim() || isLoading) return
 
-    const questionToSubmit = question.trim()
-    setCurrentQuestion('')
-    setIsLoading(true)
-
-    const newMessage: Message = {
+    const userMessage: Message = {
       id: Date.now().toString(),
-      question: questionToSubmit,
+      question: currentQuestion,
       answer: '',
       sources: [],
       profession: selectedProfession,
-      isLoading: true,
       timestamp: new Date()
     }
 
-    setMessages(prev => [...prev, newMessage])
+    setMessages(prev => [...prev, userMessage])
+    setCurrentQuestion('')
+    setIsLoading(true)
 
     try {
       const response = await fetch('/api/ask', {
@@ -220,61 +243,78 @@ export default function ModernLegalChat() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          question: questionToSubmit,
+          question: currentQuestion,
           profession: selectedProfession,
         }),
       })
 
+      if (response.status === 429) {
+        const errorData = await response.json()
+        // Update rate limit status
+        setRateLimitStatus({ remaining: 0, role: errorData.role })
+        
+        setMessages(prev => prev.map(msg => 
+          msg.id === userMessage.id 
+            ? { ...msg, answer: errorData.message || 'U heeft uw dagelijkse limiet bereikt.' }
+            : msg
+        ))
+        return
+      }
+
       if (!response.ok) {
-        throw new Error('Network response was not ok')
+        throw new Error('API request failed')
       }
 
       const reader = response.body?.getReader()
-      if (!reader) throw new Error('No reader available')
+      const decoder = new TextDecoder()
+      let fullAnswer = ''
 
-      let answer = ''
-      let sources: string[] = []
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
 
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
+          const chunk = decoder.decode(value, { stream: true })
+          const lines = chunk.split('\n')
 
-        const chunk = new TextDecoder().decode(value)
-        const lines = chunk.split('\n')
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.slice(6).trim()
+              if (data === '[DONE]') continue
 
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            try {
-              const data = JSON.parse(line.slice(6))
-              if (data.content) {
-                answer += data.content
-                setMessages(prev => prev.map(msg => 
-                  msg.id === newMessage.id 
-                    ? { ...msg, answer, isLoading: false }
-                    : msg
-                ))
+              try {
+                const parsed = JSON.parse(data)
+                const content = parsed.content || ''
+                
+                if (content) {
+                  fullAnswer += content
+                  setMessages(prev => prev.map(msg => 
+                    msg.id === userMessage.id 
+                      ? { ...msg, answer: fullAnswer }
+                      : msg
+                  ))
+                }
+              } catch (e) {
+                // Ignore parse errors
               }
-              if (data.sources) {
-                sources = data.sources
-              }
-            } catch (e) {
-              // Ignore JSON parsing errors
             }
           }
         }
       }
 
-      setMessages(prev => prev.map(msg => 
-        msg.id === newMessage.id 
-          ? { ...msg, answer, sources, isLoading: false }
-          : msg
-      ))
+      // Update rate limit status after successful question
+      if (rateLimitStatus) {
+        setRateLimitStatus({
+          ...rateLimitStatus,
+          remaining: Math.max(0, rateLimitStatus.remaining - 1)
+        })
+      }
 
     } catch (error) {
       console.error('Error:', error)
       setMessages(prev => prev.map(msg => 
-        msg.id === newMessage.id 
-          ? { ...msg, answer: 'Er is een fout opgetreden. Probeer het opnieuw.', isLoading: false }
+        msg.id === userMessage.id 
+          ? { ...msg, answer: 'Er is een fout opgetreden. Probeer het opnieuw.' }
           : msg
       ))
     } finally {
@@ -284,7 +324,16 @@ export default function ModernLegalChat() {
 
   const handleQuickAction = (action: string) => {
     setCurrentQuestion(action)
-    handleSubmit(action)
+    // Trigger submit with synthetic event
+    const syntheticEvent = {
+      preventDefault: () => {},
+      target: null,
+      currentTarget: null
+    } as React.FormEvent
+    
+    setTimeout(() => {
+      handleSubmit(syntheticEvent)
+    }, 100)
   }
 
   const formatRelativeTime = (date: Date) => {
@@ -335,91 +384,75 @@ export default function ModernLegalChat() {
       <header className={`sticky top-0 z-50 border-b transition-colors duration-300 ${
         darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
       }`}>
-        <div className="flex items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between px-3 sm:px-4 py-2 sm:py-3">
+          <div className="flex items-center gap-2 sm:gap-4">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setLeftSidebarOpen(!leftSidebarOpen)}
-              className="lg:hidden"
+              className="lg:hidden p-1 sm:p-2"
             >
-              <Menu className="h-5 w-5" />
+              <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
             
-            <div className="flex items-center gap-2">
-              <Scale className={`h-8 w-8 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
-              <span className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+            <div className="flex items-center gap-1 sm:gap-2">
+              <Scale className={`h-6 w-6 sm:h-8 sm:w-8 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+              <span className={`text-lg sm:text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                 WetHelder
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
+            {/* Rate Limit Status */}
+            {rateLimitStatus && (
+              <div className={`text-xs sm:text-sm px-2 py-1 rounded ${
+                rateLimitStatus.remaining <= 1 
+                  ? 'bg-red-100 text-red-700 border border-red-200' 
+                  : 'bg-yellow-100 text-yellow-700 border border-yellow-200'
+              }`}>
+                <span className="hidden sm:inline">Gratis: </span>{rateLimitStatus.remaining} vragen
+              </div>
+            )}
+
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setDarkMode(!darkMode)}
-              className="rounded-full"
+              onClick={() => setShowSettings(true)}
+              className="p-1 sm:p-2"
             >
-              {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
-            
-            {session ? (
-              <div className="flex items-center gap-2">
-                <span className={`text-sm hidden sm:block ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                  {session.user?.email}
-                </span>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="rounded-full"
-                  onClick={() => signOut()}
-                  title="Uitloggen"
-                >
-                  <LogOut className="h-4 w-4" />
-                </Button>
-              </div>
-            ) : (
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="rounded-full"
-                onClick={() => signIn()}
-                title="Inloggen"
-              >
-                <LogIn className="h-4 w-4" />
-              </Button>
-            )}
           </div>
         </div>
       </header>
 
-      <div className="flex h-[calc(100vh-73px)]">
+      <div className="flex h-[calc(100vh-57px)] sm:h-[calc(100vh-73px)]">
         {/* Left Sidebar */}
         <aside className={`${
           leftSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 w-80 transition-transform duration-300 ${
+        } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 w-72 sm:w-80 transition-transform duration-300 ${
           darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
         } border-r overflow-y-auto`}>
           
-          <div className="p-4">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+          <div className="p-3 sm:p-4">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h2 className={`text-base sm:text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                 Navigatie
               </h2>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setLeftSidebarOpen(false)}
-                className="lg:hidden"
+                className="lg:hidden p-1"
               >
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             </div>
 
             {/* New Chat Button */}
             <Button 
-              className={`w-full mb-6 ${
+              className={`w-full mb-4 sm:mb-6 ${
                 darkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'
               } text-white`}
               onClick={newChat}
@@ -429,24 +462,24 @@ export default function ModernLegalChat() {
             </Button>
 
             {/* Profession Selector */}
-            <div className="mb-6">
-              <label className={`block text-sm font-medium mb-2 ${
+            <div className="mb-4 sm:mb-6">
+              <label className={`block text-xs sm:text-sm font-medium mb-2 ${
                 darkMode ? 'text-gray-300' : 'text-gray-700'
               }`}>
-                Ik ben een:
+                Uw professie
               </label>
               <Select value={selectedProfession} onValueChange={setSelectedProfession}>
-                <SelectTrigger className={`${
-                  darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white'
+                <SelectTrigger className={`w-full ${
+                  darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                 }`}>
-                  <SelectValue />
+                  <SelectValue placeholder="Selecteer professie" />
                 </SelectTrigger>
-                <SelectContent className={darkMode ? 'bg-gray-700 border-gray-600' : ''}>
-                  {PROFESSIONS.map((profession) => (
-                    <SelectItem key={profession.value} value={profession.value}>
+                <SelectContent>
+                  {PROFESSIONS.map((prof) => (
+                    <SelectItem key={prof.value} value={prof.value}>
                       <div className="flex items-center gap-2">
-                        <span>{profession.icon}</span>
-                        <span>{profession.label}</span>
+                        <span className="text-base">{prof.icon}</span>
+                        <span className="text-xs sm:text-sm">{prof.label}</span>
                       </div>
                     </SelectItem>
                   ))}
@@ -454,146 +487,71 @@ export default function ModernLegalChat() {
               </Select>
             </div>
 
-            {/* Navigation Items */}
-            <nav className="space-y-2 mb-6">
-              <Button 
-                variant="ghost" 
-                className="w-full justify-start"
-                onClick={() => setShowSettings(!showSettings)}
-              >
-                <Settings className="h-4 w-4 mr-3" />
-                Instellingen
-              </Button>
-              {session && (
-                <Button variant="ghost" className="w-full justify-start">
-                  <Bookmark className="h-4 w-4 mr-3" />
-                  Opgeslagen
-                </Button>
-              )}
-            </nav>
-
-            {/* Chat History - Only show when logged in */}
-            {session ? (
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className={`text-sm font-medium ${
-                    darkMode ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
-                    Chatgeschiedenis
-                  </h3>
-                  {chatHistory.length > 0 && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={clearChatHistory}
-                      className="h-6 w-6 p-0"
-                      title="Geschiedenis wissen"
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  {chatHistory.length === 0 ? (
-                    <p className={`text-xs ${
-                      darkMode ? 'text-gray-500' : 'text-gray-400'
-                    }`}>
-                      Nog geen chatgeschiedenis
-                    </p>
-                  ) : (
-                    chatHistory.map((chat) => (
-                      <Button
-                        key={chat.id}
-                        variant="ghost"
-                        className={`w-full justify-start text-left h-auto p-3 ${
-                          darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
-                        }`}
-                        onClick={() => continueChat(chat)}
-                      >
-                        <div className="flex-1 min-w-0">
-                          <p className={`font-medium text-sm truncate ${
-                            darkMode ? 'text-white' : 'text-gray-900'
-                          }`}>
-                            {chat.title}
-                          </p>
-                          <p className={`text-xs truncate ${
-                            darkMode ? 'text-gray-400' : 'text-gray-500'
-                          }`}>
-                            {chat.lastMessage}
-                          </p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className={`text-xs ${
-                              darkMode ? 'text-gray-500' : 'text-gray-400'
-                            }`}>
-                              {formatRelativeTime(chat.timestamp)}
-                            </span>
-                            <Badge variant="secondary" className="text-xs">
-                              {chat.messageCount}
-                            </Badge>
-                          </div>
-                        </div>
-                      </Button>
-                    ))
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className={`p-4 rounded-lg border ${
-                darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
-              }`}>
-                <h3 className={`font-medium mb-2 ${
-                  darkMode ? 'text-white' : 'text-gray-900'
-                }`}>
-                  Log in voor meer functies
-                </h3>
-                <p className={`text-sm mb-3 ${
-                  darkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}>
-                  • Chatgeschiedenis opslaan
-                  • Vragen bookmarken  
-                  • Persoonlijke instellingen
-                </p>
-                <Button 
-                  onClick={() => signIn()}
-                  className="w-full"
+            {/* Quick Links */}
+            <div className="space-y-2">
+              <h3 className={`text-xs sm:text-sm font-medium ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                Snel naar
+              </h3>
+              <div className="space-y-1">
+                <Button
+                  variant="ghost"
                   size="sm"
+                  className="w-full justify-start text-xs sm:text-sm"
+                  onClick={() => window.location.href = '/boetes'}
                 >
-                  <LogIn className="h-4 w-4 mr-2" />
-                  Inloggen
+                  <Scale className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                  Boetes & Feitcodes
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start text-xs sm:text-sm"
+                  onClick={() => handleQuickAction('Wat zijn mijn rechten bij een politiecontrole?')}
+                >
+                  <Shield className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                  Rechten bij controle
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start text-xs sm:text-sm"
+                  onClick={() => handleQuickAction('Procedure bij aanhouding door beveiliger')}
+                >
+                  <UserCheck className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                  Beveiligingsprocedures
                 </Button>
               </div>
-            )}
+            </div>
           </div>
         </aside>
 
-        {/* Main Chat Area */}
         <main className="flex-1 flex flex-col">
           {/* Messages Container */}
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-4">
             <div className="max-w-4xl mx-auto">
               {messages.length === 0 ? (
                 // Welcome Screen
-                <div className="text-center py-12">
-                  <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-6 ${
+                <div className="text-center py-6 sm:py-12">
+                  <div className={`inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full mb-4 sm:mb-6 ${
                     darkMode ? 'bg-blue-600' : 'bg-blue-100'
                   }`}>
-                    <Scale className={`h-8 w-8 ${darkMode ? 'text-white' : 'text-blue-600'}`} />
+                    <Scale className={`h-6 w-6 sm:h-8 sm:w-8 ${darkMode ? 'text-white' : 'text-blue-600'}`} />
                   </div>
                   
-                  <h1 className={`text-3xl font-bold mb-3 ${
+                  <h1 className={`text-2xl sm:text-3xl font-bold mb-2 sm:mb-3 ${
                     darkMode ? 'text-white' : 'text-gray-900'
                   }`}>
                     Welkom bij WetHelder
                   </h1>
                   
-                  <p className={`text-lg mb-8 ${
+                  <p className={`text-base sm:text-lg mb-6 sm:mb-8 px-4 ${
                     darkMode ? 'text-gray-300' : 'text-gray-600'
                   }`}>
-                    Uw persoonlijke juridische AI-assistent voor betrouwbare juridische informatie
+                    Uw persoonlijke juridische kennisplatform voor betrouwbare juridische informatie
                   </p>
 
                   {/* Feature Cards */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8 px-4">
                     {FEATURE_CARDS.map((feature, index) => (
                       <Card
                         key={index}
@@ -604,12 +562,12 @@ export default function ModernLegalChat() {
                         }`}
                         onClick={() => window.location.href = feature.href}
                       >
-                        <CardContent className="p-6">
+                        <CardContent className="p-4 sm:p-6">
                           <div className="flex items-start justify-between">
                             <div className="text-left flex-1">
-                              <div className="flex items-center gap-3 mb-2">
-                                <span className="text-2xl">{feature.icon}</span>
-                                <h3 className={`text-xl font-bold ${
+                              <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                                <span className="text-xl sm:text-2xl">{feature.icon}</span>
+                                <h3 className={`text-base sm:text-xl font-bold ${
                                   darkMode ? 'text-white' : 'text-gray-900'
                                 }`}>
                                   {feature.title}
@@ -620,13 +578,13 @@ export default function ModernLegalChat() {
                                   </Badge>
                                 )}
                               </div>
-                              <p className={`text-sm ${
+                              <p className={`text-xs sm:text-sm ${
                                 darkMode ? 'text-gray-300' : 'text-gray-600'
                               }`}>
                                 {feature.description}
                               </p>
                             </div>
-                            <ChevronRight className={`h-6 w-6 ml-4 ${
+                            <ChevronRight className={`h-5 w-5 sm:h-6 sm:w-6 ml-2 sm:ml-4 ${
                               darkMode ? 'text-gray-400' : 'text-gray-400'
                             }`} />
                           </div>
@@ -636,7 +594,7 @@ export default function ModernLegalChat() {
                   </div>
 
                   {/* Quick Actions */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                  <div className="grid grid-cols-1 gap-3 sm:gap-4 mb-6 sm:mb-8 px-4">
                     {QUICK_ACTIONS.map((action, index) => (
                       <Card
                         key={index}
@@ -647,19 +605,19 @@ export default function ModernLegalChat() {
                         }`}
                         onClick={() => handleQuickAction(action.text)}
                       >
-                        <CardContent className="p-4">
+                        <CardContent className="p-3 sm:p-4">
                           <div className="flex items-center justify-between">
                             <div className="text-left">
-                              <p className={`font-medium ${
+                              <p className={`font-medium text-sm sm:text-base ${
                                 darkMode ? 'text-white' : 'text-gray-900'
                               }`}>
                                 {action.text}
                               </p>
-                              <Badge variant="secondary" className="mt-2 text-xs">
+                              <Badge variant="secondary" className="mt-1 sm:mt-2 text-xs">
                                 {action.category}
                               </Badge>
                             </div>
-                            <ChevronRight className={`h-5 w-5 ${
+                            <ChevronRight className={`h-4 w-4 sm:h-5 sm:w-5 ${
                               darkMode ? 'text-gray-400' : 'text-gray-400'
                             }`} />
                           </div>
@@ -668,83 +626,57 @@ export default function ModernLegalChat() {
                     ))}
                   </div>
                 </div>
-              ) : (
+              ) :
                 // Messages
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {messages.map((message) => (
-                    <div key={message.id} className="space-y-4">
+                    <div key={message.id} className="space-y-3 sm:space-y-4">
                       {/* User Question */}
                       <div className="flex justify-end">
-                        <Card className={`max-w-2xl ${
+                        <Card className={`max-w-[90%] sm:max-w-2xl ${
                           darkMode 
                             ? 'bg-blue-600 text-white' 
                             : 'bg-blue-600 text-white'
                         }`}>
-                          <CardContent className="p-4">
-                            <p>{message.question}</p>
+                          <CardContent className="p-3 sm:p-4">
+                            <p className="text-sm sm:text-base">{message.question}</p>
                             <div className="flex items-center gap-2 mt-2 text-xs opacity-80">
                               <Clock className="h-3 w-3" />
-                              <span>Zojuist</span>
+                              <span>{formatRelativeTime(message.timestamp || new Date())}</span>
                             </div>
                           </CardContent>
                         </Card>
                       </div>
 
-                      {/* AI Response */}
+                      {/* Response */}
                       <div className="flex justify-start">
-                        <Card className={`max-w-4xl ${
+                        <Card className={`max-w-[95%] sm:max-w-4xl ${
                           darkMode 
                             ? 'bg-gray-800 border-gray-700' 
                             : 'bg-white'
                         }`}>
-                          <CardContent className="p-6">
-                            <div className="flex items-start gap-3">
-                              <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                          <CardContent className="p-4 sm:p-6">
+                            <div className="flex items-start gap-2 sm:gap-3">
+                              <div className={`flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center ${
                                 darkMode ? 'bg-blue-600' : 'bg-blue-100'
                               }`}>
-                                <Bot className={`h-4 w-4 ${
+                                <Bot className={`h-3 w-3 sm:h-4 sm:w-4 ${
                                   darkMode ? 'text-white' : 'text-blue-600'
                                 }`} />
                               </div>
-                              
-                              <div className="flex-1">
-                                {message.isLoading ? (
-                                  <div className="flex items-center gap-2">
-                                    <div className="flex space-x-1">
-                                      <div className={`w-2 h-2 rounded-full animate-bounce ${
-                                        darkMode ? 'bg-gray-400' : 'bg-gray-400'
-                                      }`} style={{ animationDelay: '0ms' }}></div>
-                                      <div className={`w-2 h-2 rounded-full animate-bounce ${
-                                        darkMode ? 'bg-gray-400' : 'bg-gray-400'
-                                      }`} style={{ animationDelay: '150ms' }}></div>
-                                      <div className={`w-2 h-2 rounded-full animate-bounce ${
-                                        darkMode ? 'bg-gray-400' : 'bg-gray-400'
-                                      }`} style={{ animationDelay: '300ms' }}></div>
-                                    </div>
-                                    <span className={`text-sm ${
-                                      darkMode ? 'text-gray-400' : 'text-gray-500'
-                                    }`}>
-                                      WetHelder denkt na...
-                                    </span>
-                                  </div>
-                                ) : (
-                                  <>
-                                    <div className="max-w-none">
-                                      {formatTextWithLinks(message.answer, darkMode)}
-                                    </div>
-                                    
-                                    {message.sources.length > 0 && (
-                                      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                        <p className={`text-sm font-medium mb-2 ${
-                                          darkMode ? 'text-gray-300' : 'text-gray-700'
-                                        }`}>
-                                          📖 Nuttige bronnen:
-                                        </p>
-                                        {formatSourcesWithLinks(message.sources, darkMode)}
-                                      </div>
-                                    )}
-                                  </>
-                                )}
+                              <div className="flex-1 min-w-0">
+                                <div className={`prose prose-sm sm:prose max-w-none ${
+                                  darkMode ? 'prose-invert' : ''
+                                }`}>
+                                  <ReactMarkdown 
+                                    remarkPlugins={[remarkGfm]}
+                                    components={{
+                                      p: ({ children }) => <p className="whitespace-pre-wrap break-words">{children}</p>
+                                    }}
+                                  >
+                                    {message.answer}
+                                  </ReactMarkdown>
+                                </div>
                               </div>
                             </div>
                           </CardContent>
@@ -754,65 +686,36 @@ export default function ModernLegalChat() {
                   ))}
                 </div>
               )}
-              <div ref={messagesEndRef} />
             </div>
           </div>
 
           {/* Input Area */}
-          <div className={`border-t ${
-            darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
-          }`}>
-            <div className="max-w-4xl mx-auto p-4">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  handleSubmit()
-                }}
-                className="flex gap-3"
-              >
-                <div className="flex-1 relative">
+          <div className="border-t p-3 sm:p-4">
+            <div className="max-w-4xl mx-auto">
+              <form onSubmit={handleSubmit} className="flex gap-2 sm:gap-4">
+                <div className="flex-1">
                   <Input
-                    ref={inputRef as any}
                     value={currentQuestion}
                     onChange={(e) => setCurrentQuestion(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault()
-                        handleSubmit()
-                      }
-                    }}
-                    placeholder="Stel uw juridische vraag... (Enter = verzenden)"
+                    placeholder={`Stel uw vraag over Nederlandse wetgeving...`}
                     disabled={isLoading}
-                    className={`pr-12 min-h-[44px] text-base ${
-                      darkMode 
-                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
-                        : 'bg-gray-50 border-gray-300'
-                    }`}
+                    className="w-full text-sm sm:text-base py-2 sm:py-3"
                   />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-1 top-2"
-                  >
-                    <Mic className="h-4 w-4" />
-                  </Button>
                 </div>
-                
-                <Button
-                  type="submit"
-                  disabled={!currentQuestion.trim() || isLoading}
-                  className={`px-6 ${
-                    darkMode 
-                      ? 'bg-blue-600 hover:bg-blue-700' 
-                      : 'bg-blue-600 hover:bg-blue-700'
-                  } text-white`}
+                <Button 
+                  type="submit" 
+                  disabled={isLoading || !currentQuestion.trim()}
+                  className="px-4 sm:px-6 py-2 sm:py-3"
                 >
-                  <Send className="h-4 w-4" />
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
                 </Button>
               </form>
               
-              <p className={`text-xs text-center mt-2 ${
+              <p className={`text-xs text-center mt-2 px-4 ${
                 darkMode ? 'text-gray-400' : 'text-gray-500'
               }`}>
                 WetHelder kan fouten maken. Controleer belangrijke informatie altijd.
@@ -836,185 +739,42 @@ export default function ModernLegalChat() {
           <Card className={`w-full max-w-lg ${
             darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'
           }`}>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className={`text-xl font-semibold ${
-                  darkMode ? 'text-white' : 'text-gray-900'
-                }`}>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className={darkMode ? 'text-white' : 'text-gray-900'}>
                   Instellingen
-                </h2>
+                </CardTitle>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowSettings(false)}
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
-
-              <div className="space-y-6">
-                {/* Theme Setting */}
-                <div>
-                  <h3 className={`font-medium mb-3 ${
-                    darkMode ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    Thema
-                  </h3>
-                  <div className="flex gap-2">
-                    <Button
-                      variant={!darkMode ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setDarkMode(false)}
-                      className="flex-1"
-                    >
-                      <Sun className="h-4 w-4 mr-2" />
-                      Licht
-                    </Button>
-                    <Button
-                      variant={darkMode ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setDarkMode(true)}
-                      className="flex-1"
-                    >
-                      <Moon className="h-4 w-4 mr-2" />
-                      Donker
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Default Profession */}
-                <div>
-                  <h3 className={`font-medium mb-3 ${
-                    darkMode ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    Standaard beroep
-                  </h3>
-                  <Select value={selectedProfession} onValueChange={setSelectedProfession}>
-                    <SelectTrigger className={`${
-                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white'
-                    }`}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className={darkMode ? 'bg-gray-700 border-gray-600' : ''}>
-                      {PROFESSIONS.map((profession) => (
-                        <SelectItem key={profession.value} value={profession.value}>
-                          <div className="flex items-center gap-2">
-                            <span>{profession.icon}</span>
-                            <span>{profession.label}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <p className={`text-sm mt-1 ${
-                    darkMode ? 'text-gray-400' : 'text-gray-500'
-                  }`}>
-                    Dit bepaalt hoe WetHelder antwoordt op uw vragen
-                  </p>
-                </div>
-
-                {/* Account Section */}
-                {session ? (
-                  <div>
-                    <h3 className={`font-medium mb-3 ${
-                      darkMode ? 'text-white' : 'text-gray-900'
-                    }`}>
-                      Account
-                    </h3>
-                    <div className={`p-3 rounded-lg border ${
-                      darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
-                    }`}>
-                      <p className={`text-sm ${
-                        darkMode ? 'text-gray-300' : 'text-gray-600'
-                      }`}>
-                        Ingelogd als: {session.user?.email}
-                      </p>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          signOut()
-                          setShowSettings(false)
-                        }}
-                        className="mt-2"
-                      >
-                        <LogOut className="h-4 w-4 mr-2" />
-                        Uitloggen
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    <h3 className={`font-medium mb-3 ${
-                      darkMode ? 'text-white' : 'text-gray-900'
-                    }`}>
-                      Account
-                    </h3>
-                    <div className={`p-3 rounded-lg border ${
-                      darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
-                    }`}>
-                      <p className={`text-sm mb-2 ${
-                        darkMode ? 'text-gray-300' : 'text-gray-600'
-                      }`}>
-                        Log in om uw instellingen en geschiedenis op te slaan
-                      </p>
-                      <Button
-                        onClick={() => {
-                          signIn()
-                          setShowSettings(false)
-                        }}
-                        size="sm"
-                      >
-                        <LogIn className="h-4 w-4 mr-2" />
-                        Inloggen
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Data Management */}
-                {session && (
-                  <div>
-                    <h3 className={`font-medium mb-3 ${
-                      darkMode ? 'text-white' : 'text-gray-900'
-                    }`}>
-                      Gegevens
-                    </h3>
-                    <div className="space-y-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          clearChatHistory()
-                          setShowSettings(false)
-                        }}
-                        className="w-full justify-start"
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Chatgeschiedenis wissen
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {/* App Info */}
-                <div className={`pt-4 border-t ${
-                  darkMode ? 'border-gray-600' : 'border-gray-200'
-                }`}>
-                  <p className={`text-xs ${
-                    darkMode ? 'text-gray-500' : 'text-gray-400'
-                  }`}>
-                    WetHelder v2.0 - Juridische AI-assistent voor Nederlandse wetgeving
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-2 mt-6">
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  Donkere modus
+                </span>
                 <Button
-                  onClick={() => setShowSettings(false)}
-                  className="flex-1"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDarkMode(!darkMode)}
+                  className="flex items-center gap-2"
                 >
-                  Sluiten
+                  {darkMode ? (
+                    <>
+                      <Sun className="h-4 w-4" />
+                      Licht
+                    </>
+                  ) : (
+                    <>
+                      <Moon className="h-4 w-4" />
+                      Donker
+                    </>
+                  )}
                 </Button>
               </div>
             </CardContent>

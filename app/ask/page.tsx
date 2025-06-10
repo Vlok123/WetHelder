@@ -20,12 +20,15 @@ import {
   Info,
   Eye,
   ChevronDown,
-  Settings
+  Settings,
+  AlertTriangle
 } from 'lucide-react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { format } from 'date-fns'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Loader2 } from 'lucide-react'
 
 interface Message {
   id: string
@@ -318,50 +321,38 @@ export default function AskPage() {
       
       {/* Professional Header */}
       <div className="bg-white border-b border-slate-200 shadow-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <MessageSquare className="h-6 w-6 text-blue-700" />
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-blue-100 rounded-lg">
+                <MessageSquare className="h-5 w-5 sm:h-6 sm:w-6 text-blue-700" />
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-slate-900">WetHelder Consultatieplatform</h1>
-                <p className="text-sm text-slate-600">Nederlandse juridische kennisbank</p>
+                <h1 className="text-lg sm:text-xl font-semibold text-slate-900">WetHelder Consultatieplatform</h1>
+                <p className="text-xs sm:text-sm text-slate-600">Nederlandse juridische kennisbank</p>
               </div>
             </div>
             
             {/* Professional Selector */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-              <div className="relative">
-                <select 
-                  value={profession} 
-                  onChange={(e) => setProfession(e.target.value as Profession)}
-                  className="appearance-none bg-white border border-slate-300 rounded-lg px-4 py-2 pr-10 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+              <label className="text-xs sm:text-sm font-medium text-slate-700 whitespace-nowrap">
+                Uw professie:
+              </label>
+              <Select value={profession} onValueChange={(value) => setProfession(value as Profession)}>
+                <SelectTrigger className="w-full sm:w-48 border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
                   {(Object.entries(professionConfig) as [Profession, typeof professionConfig[Profession]][]).map(([key, config]) => (
-                    <option key={key} value={key}>
-                      {config.fullLabel}
-                    </option>
+                    <SelectItem key={key} value={key}>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm">{config.icon}</span>
+                        <span className="text-xs sm:text-sm">{config.fullLabel}</span>
+                      </div>
+                    </SelectItem>
                   ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-slate-500" />
-              </div>
-              
-              <button
-                onClick={() => setShowProfessionDetails(!showProfessionDetails)}
-                className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors"
-              >
-                <Eye className="h-4 w-4" />
-                Uitleg verschillen
-              </button>
-              
-              <Link 
-                href="/contact" 
-                className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors"
-              >
-                <Settings className="h-4 w-4" />
-                Contact & Suggesties
-              </Link>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           
@@ -409,155 +400,77 @@ export default function AskPage() {
         </div>
       )}
 
+      {/* Rate Limit Warning */}
+      {rateLimit && rateLimit.remaining <= 1 && (
+        <div className="bg-red-50 border-b border-red-200">
+          <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-3">
+            <div className="flex items-center gap-2 text-red-700">
+              <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="text-xs sm:text-sm font-medium">
+                {rateLimit.remaining === 0 
+                  ? 'Geen gratis vragen meer vandaag - Maak een account aan voor onbeperkt gebruik!'
+                  : `Nog ${rateLimit.remaining} gratis vraag vandaag - Maak een account aan voor onbeperkt gebruik!`
+                }
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Chat Container */}
-      <div className="container mx-auto px-4 py-6 max-w-5xl">
-        <div className="flex flex-col h-[calc(100vh-280px)]">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-5xl">
+        <div className="flex flex-col h-[calc(100vh-280px)] sm:h-[calc(100vh-280px)]">
           
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto space-y-6 mb-6">
+          <div className="flex-1 overflow-y-auto space-y-4 sm:space-y-6 mb-4 sm:mb-6">
             {messages.length === 0 && (
-              <div className="text-center py-12">
-                <div className="inline-flex p-4 bg-blue-100 rounded-full mb-6">
-                  <Bot className="h-8 w-8 text-blue-700" />
+              <div className="text-center py-8 sm:py-12">
+                <div className="inline-flex p-3 sm:p-4 bg-blue-100 rounded-full mb-4 sm:mb-6">
+                  <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-blue-700" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3 text-slate-900">WetHelder Consultatie</h3>
-                <p className="text-slate-600 mb-6 max-w-md mx-auto">
+                <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-slate-900">WetHelder Consultatie</h3>
+                <p className="text-slate-600 mb-4 sm:mb-6 max-w-md mx-auto text-sm sm:text-base px-4">
                   Stel uw juridische vraag over Nederlandse wetgeving. 
                   Antwoorden worden aangepast aan uw professie.
                 </p>
-                <div className="text-sm text-slate-500">
+                <div className="text-xs sm:text-sm text-slate-500 px-4">
                   <p>Voorbeelden: &ldquo;Artikel 8 WVW uitleg&rdquo; • &ldquo;Procedure bij rijden onder invloed&rdquo;</p>
                 </div>
               </div>
             )}
 
             {messages.map((message) => (
-              <div key={message.id} className="space-y-4">
+              <div key={message.id} className="space-y-3 sm:space-y-4">
                 {/* User Question */}
                 <div className="flex justify-end">
-                  <div className="max-w-[80%] bg-blue-600 text-white rounded-2xl px-4 py-3">
+                  <div className="max-w-[85%] sm:max-w-[80%] bg-blue-600 text-white rounded-2xl px-3 sm:px-4 py-2 sm:py-3">
                     <div className="flex items-start gap-2">
-                      <User className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm leading-relaxed">{message.question}</p>
+                      <User className="h-3 w-3 sm:h-4 sm:w-4 mt-0.5 flex-shrink-0" />
+                      <p className="text-xs sm:text-sm leading-relaxed">{message.question}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* AI Response */}
                 <div className="flex justify-start">
-                  <div className="max-w-[90%]">
+                  <div className="max-w-[95%] sm:max-w-[90%]">
                     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
-                      <div className="p-4">
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="p-1 bg-blue-100 rounded">
-                            <Bot className="h-4 w-4 text-blue-700" />
+                      <div className="p-3 sm:p-4">
+                        <div className="flex items-start gap-2 sm:gap-3">
+                          <div className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                            <Scale className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600" />
                           </div>
-                          <span className="text-sm font-medium text-slate-900">WetHelder</span>
-                          {message.profession && (
-                            <Badge variant="outline" className={`text-xs ${professionConfig[message.profession as Profession].color}`}>
-                              {professionConfig[message.profession as Profession].label}
-                            </Badge>
-                          )}
-                        </div>
-                        
-                        {message.isLoading ? (
-                          <div className="space-y-4">
-                            <div className="flex items-center gap-2 text-sm text-slate-600">
-                              <div className="h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                              <span>Raadpleging juridische bronnen...</span>
-                            </div>
-                            <div className="space-y-2">
-                              <div className="flex items-center gap-2 text-xs text-slate-500">
-                                <Scale className="h-3 w-3" />
-                                <span>Zoeken in wetgeving...</span>
-                              </div>
-                              <div className="flex items-center gap-2 text-xs text-slate-500">
-                                <FileText className="h-3 w-3" />
-                                <span>Controleren jurisprudentie...</span>
-                              </div>
-                              <div className="flex items-center gap-2 text-xs text-slate-500">
-                                <Shield className="h-3 w-3" />
-                                <span>Raadplegen tuchtrecht...</span>
-                              </div>
-                            </div>
-                            <div className="space-y-2">
-                              <div className="h-3 bg-slate-200 rounded animate-pulse" />
-                              <div className="h-3 bg-slate-200 rounded w-4/5 animate-pulse" />
-                              <div className="h-3 bg-slate-200 rounded w-3/5 animate-pulse" />
-                            </div>
-                          </div>
-                        ) : (
-                          <>
-                            {/* Antwoordtekst met Markdown parsing */}
-                            <div className="prose prose-sm max-w-none text-slate-600">
-                              <ReactMarkdown
+                          <div className="flex-1 min-w-0">
+                            <div className="prose prose-sm sm:prose prose-slate max-w-none">
+                              <ReactMarkdown 
                                 remarkPlugins={[remarkGfm]}
-                                components={{
-                                  p: ({children, ...props}: MarkdownProps) => <p className="mb-2" {...props}>{children}</p>,
-                                  a: ({children, ...props}: MarkdownProps) => <a className="text-blue-600 hover:underline" {...props} target="_blank" rel="noopener noreferrer">{children}</a>,
-                                  ul: ({children, ...props}: MarkdownProps) => <ul className="list-disc pl-4 mb-2" {...props}>{children}</ul>,
-                                  ol: ({children, ...props}: MarkdownProps) => <ol className="list-decimal pl-4 mb-2" {...props}>{children}</ol>,
-                                  li: ({children, ...props}: MarkdownProps) => <li className="mb-1" {...props}>{children}</li>,
-                                  strong: ({children, ...props}: MarkdownProps) => <strong className="font-semibold" {...props}>{children}</strong>,
-                                  h3: ({children, ...props}: MarkdownProps) => <h3 className="text-lg font-semibold mt-4 mb-2" {...props}>{children}</h3>,
-                                  code: ({children, ...props}: MarkdownProps) => <code className="bg-slate-100 px-1 py-0.5 rounded" {...props}>{children}</code>,
-                                  blockquote: ({children, ...props}: MarkdownProps) => <blockquote className="border-l-4 border-slate-200 pl-4 italic" {...props}>{children}</blockquote>
-                                }}
+                                className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap break-words"
                               >
                                 {message.answer}
                               </ReactMarkdown>
                             </div>
-
-                            {/* Juridische bronnen sectie */}
-                            {message.sources && message.sources.length > 0 && (
-                              <div className="mt-4 pt-3 border-t border-slate-200">
-                                <div className="flex items-center gap-2 mb-2 text-sm text-slate-600">
-                                  <FileText className="h-4 w-4" />
-                                  <span className="font-medium">Juridische bronnen</span>
-                                </div>
-                                <ul className="space-y-1">
-                                  {message.sources.map((source, index) => (
-                                    <li key={index} className="text-sm">
-                                      <a
-                                        href={source}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-blue-600 hover:underline flex items-center gap-1"
-                                      >
-                                        {source.includes('ECLI') ? (
-                                          <>
-                                            <Scale className="h-3 w-3" />
-                                            <span>Jurisprudentie: {source}</span>
-                                          </>
-                                        ) : source.includes('wetten.overheid.nl') ? (
-                                          <>
-                                            <FileText className="h-3 w-3" />
-                                            <span>Wetgeving: {new URL(source).pathname.split('/').pop()}</span>
-                                          </>
-                                        ) : source.includes('tuchtrecht') ? (
-                                          <>
-                                            <Shield className="h-3 w-3" />
-                                            <span>Tuchtrecht: {new URL(source).pathname.split('/').pop()}</span>
-                                          </>
-                                        ) : (
-                                          <>
-                                            <Eye className="h-3 w-3" />
-                                            <span>{source}</span>
-                                          </>
-                                        )}
-                                      </a>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-
-                            {/* Timestamp */}
-                            <div className="mt-2 text-xs text-slate-400">
-                              {format(message.timestamp, 'HH:mm')}
-                            </div>
-                          </>
-                        )}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -568,44 +481,48 @@ export default function AskPage() {
           </div>
 
           {/* Input Form */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
-            <div className="p-4">
-              <form onSubmit={handleSubmit} className="flex gap-3">
-                <Input
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Stel uw juridische vraag..."
-                  disabled={isLoading}
-                  className="flex-1 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
-                  maxLength={500}
-                />
+          <div className="border-t border-slate-200 pt-3 sm:pt-4">
+            <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-3">
+              <div className="flex gap-2 sm:gap-3">
+                <div className="flex-1">
+                  <Input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Stel uw juridische vraag..."
+                    disabled={isLoading}
+                    className="w-full text-sm sm:text-base py-2 sm:py-3 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
                 <Button 
                   type="submit" 
-                  disabled={!input.trim() || isLoading}
-                  className="bg-blue-600 hover:bg-blue-700 px-6"
+                  disabled={isLoading || !input.trim()}
+                  className="px-3 sm:px-6 py-2 sm:py-3 bg-blue-600 hover:bg-blue-700"
                 >
-                  <Send className="h-4 w-4" />
-                </Button>
-              </form>
-              
-              {/* Status bar */}
-              <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
-                <div>
-                  {session ? (
-                    <span>Ingelogd • Onbeperkt gebruik</span>
-                  ) : rateLimit ? (
-                    <span className={rateLimit.remaining <= 1 ? 'text-orange-600 font-medium' : ''}>
-                      Anoniem • {rateLimit.remaining} {rateLimit.remaining === 1 ? 'vraag' : 'vragen'} resterend vandaag
-                    </span>
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    <span>Anoniem • Beperkt tot 3 vragen per dag</span>
+                    <Send className="h-3 w-3 sm:h-4 sm:w-4" />
+                  )}
+                </Button>
+              </div>
+
+              {/* Rate Limit Status */}
+              {rateLimit && (
+                <div className="flex items-center justify-between text-xs sm:text-sm text-slate-500">
+                  <span>
+                    {rateLimit.role === 'ANONYMOUS' 
+                      ? `Gratis: ${rateLimit.remaining} vragen van 3 over vandaag`
+                      : 'Onbeperkt gebruik met account'
+                    }
+                  </span>
+                  {rateLimit.role === 'ANONYMOUS' && (
+                    <Link href="/auth/signin" className="text-blue-600 hover:text-blue-800 underline">
+                      Account aanmaken
+                    </Link>
                   )}
                 </div>
-                <div>
-                  Antwoorden aangepast voor: {professionConfig[profession].label}
-                </div>
-              </div>
-            </div>
+              )}
+            </form>
           </div>
         </div>
       </div>

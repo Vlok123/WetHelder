@@ -137,14 +137,107 @@ const mockBoeteData = [
     toelichting: 'Vasthouden van mobiele telefoon tijdens het rijden.',
     bronUrl: 'https://boetebase.om.nl'
   },
+  // Uitgebreide APV overtredingen
+  {
+    feitcode: 'A001',
+    omschrijving: 'Hinderlijk gedrag op openbare plaats',
+    juridischeGrondslag: 'Gemeentelijke APV',
+    standaardboete: 95,
+    type: 'overtreding',
+    toelichting: 'Gedragingen die andere personen hinderen of overlast veroorzaken.',
+    bronUrl: 'https://boetebase.om.nl'
+  },
+  {
+    feitcode: 'A025',
+    omschrijving: 'Kamperen op niet-toegestane plaats',
+    juridischeGrondslag: 'Gemeentelijke APV',
+    standaardboete: 230,
+    type: 'overtreding',
+    toelichting: 'Overnachten in tent, caravan of voertuig op openbare grond zonder vergunning.',
+    bronUrl: 'https://boetebase.om.nl'
+  },
+  {
+    feitcode: 'A050',
+    omschrijving: 'Venten zonder vergunning',
+    juridischeGrondslag: 'Gemeentelijke APV',
+    standaardboete: 325,
+    type: 'overtreding',
+    toelichting: 'Handelen in goederen op openbare plaatsen zonder vereiste vergunning.',
+    bronUrl: 'https://boetebase.om.nl'
+  },
+  {
+    feitcode: 'A075',
+    omschrijving: 'Hondenpoep niet opruimen',
+    juridischeGrondslag: 'Gemeentelijke APV',
+    standaardboete: 75,
+    type: 'overtreding',
+    toelichting: 'Eigenaar laat uitwerpselen van hond achter op openbare plaats.',
+    bronUrl: 'https://boetebase.om.nl'
+  },
+  {
+    feitcode: 'A095',
+    omschrijving: 'Parkeren in park/plantsoen',
+    juridischeGrondslag: 'Gemeentelijke APV',
+    standaardboete: 90,
+    type: 'overtreding',
+    toelichting: 'Motorvoertuig parkeren in park, plantsoen of groenstrook.',
+    bronUrl: 'https://boetebase.om.nl'
+  },
+  {
+    feitcode: 'A110',
+    omschrijving: 'Afval dumpen/zwerfvuil',
+    juridischeGrondslag: 'Gemeentelijke APV',
+    standaardboete: 140,
+    type: 'overtreding',
+    toelichting: 'Afval achterlaten op openbare plaatsen buiten daarvoor bestemde voorzieningen.',
+    bronUrl: 'https://boetebase.om.nl'
+  },
+  {
+    feitcode: 'A135',
+    omschrijving: 'Hond los lopen in verboden gebied',
+    juridischeGrondslag: 'Gemeentelijke APV',
+    standaardboete: 140,
+    type: 'overtreding',
+    toelichting: 'Hond niet aangelijnd houden waar dit verplicht is.',
+    bronUrl: 'https://boetebase.om.nl'
+  },
+  {
+    feitcode: 'A150',
+    omschrijving: 'Geluidshinder/geluidsoverlast',
+    juridischeGrondslag: 'Gemeentelijke APV',
+    standaardboete: 160,
+    type: 'overtreding',
+    toelichting: 'Veroorzaken van hinderlijk geluid voor omwonenden.',
+    bronUrl: 'https://boetebase.om.nl'
+  },
+  {
+    feitcode: 'A175',
+    omschrijving: 'Klimmen op monumenten/gebouwen',
+    juridischeGrondslag: 'Gemeentelijke APV',
+    standaardboete: 95,
+    type: 'overtreding',
+    toelichting: 'Klimmen op of betreden van monumenten, standbeelden of openbare gebouwen.',
+    bronUrl: 'https://boetebase.om.nl'
+  }
 ]
 
 // Function to detect APV context words and municipality names
 function detectAPVContext(query: string) {
-  const apvKeywords = ['barbecue', 'park', 'open vuur', 'bbq', 'gemeente'];
-  const municipalities = ['Nijmegen', 'Amsterdam', 'Rotterdam']; // Example list, should be expanded
-  const detectedKeywords = apvKeywords.filter(keyword => query.toLowerCase().includes(keyword));
-  const detectedMunicipalities = municipalities.filter(municipality => query.toLowerCase().includes(municipality.toLowerCase()));
+  const apvKeywords = [
+    'barbecue', 'bbq', 'park', 'open vuur', 'gemeente', 'wildplassen', 
+    'hond', 'hondenpoep', 'kamperen', 'venten', 'afval', 'zwerfvuil',
+    'geluidshinder', 'overlast', 'hinderlijk', 'klimmen', 'monument',
+    'plantsoen', 'groenstrook', 'openbare plaats', 'apv'
+  ];
+  const municipalities = ['amsterdam', 'rotterdam', 'den haag', 'utrecht', 'eindhoven', 'tilburg', 'groningen', 'nijmegen'];
+  
+  const detectedKeywords = apvKeywords.filter(keyword => 
+    query.toLowerCase().includes(keyword.toLowerCase())
+  );
+  const detectedMunicipalities = municipalities.filter(municipality => 
+    query.toLowerCase().includes(municipality.toLowerCase())
+  );
+  
   return { detectedKeywords, detectedMunicipalities };
 }
 
@@ -153,24 +246,58 @@ export async function POST(request: NextRequest) {
   try {
     const { query } = (await request.json()) as { query: string };
     const { detectedKeywords, detectedMunicipalities } = detectAPVContext(query);
+    
     let results = mockBoeteData.filter(boete =>
       boete.feitcode.toLowerCase().includes(query.toLowerCase()) ||
-      boete.omschrijving.toLowerCase().includes(query.toLowerCase())
+      boete.omschrijving.toLowerCase().includes(query.toLowerCase()) ||
+      boete.toelichting?.toLowerCase().includes(query.toLowerCase())
     );
 
-    // If APV context is detected, filter results accordingly
+    // If APV context is detected, prioritize and filter APV results
     if (detectedKeywords.length > 0) {
-      results = results.filter(boete => boete.juridischeGrondslag.includes('APV'));
+      const apvResults = results.filter(boete => boete.juridischeGrondslag.includes('APV'));
+      const nonApvResults = results.filter(boete => !boete.juridischeGrondslag.includes('APV'));
+      
+      // Prioritize APV results when APV keywords are detected
+      results = [...apvResults, ...nonApvResults];
+      
+      // Add municipality context information if detected
+      if (detectedMunicipalities.length > 0) {
+        console.log(`APV zoekopdracht voor gemeente(n): ${detectedMunicipalities.join(', ')}`);
+        // In a real implementation, you would fetch municipality-specific APV rules here
+      }
     }
 
-    // If a municipality is detected, add municipality-specific logic
-    if (detectedMunicipalities.length > 0) {
-      // Example: Add logic to fetch municipality-specific APV rules
-      // This is a placeholder for actual implementation
-      console.log(`Detected municipality: ${detectedMunicipalities.join(', ')}`);
-    }
+    // Sort results by relevance (exact matches first, then partial matches)
+    results.sort((a, b) => {
+      const aExactMatch = a.feitcode.toLowerCase() === query.toLowerCase() ||
+                         a.omschrijving.toLowerCase() === query.toLowerCase();
+      const bExactMatch = b.feitcode.toLowerCase() === query.toLowerCase() ||
+                         b.omschrijving.toLowerCase() === query.toLowerCase();
+      
+      if (aExactMatch && !bExactMatch) return -1;
+      if (!aExactMatch && bExactMatch) return 1;
+      
+      // APV results get priority when APV keywords are detected
+      if (detectedKeywords.length > 0) {
+        const aIsApv = a.juridischeGrondslag.includes('APV');
+        const bIsApv = b.juridischeGrondslag.includes('APV');
+        
+        if (aIsApv && !bIsApv) return -1;
+        if (!aIsApv && bIsApv) return 1;
+      }
+      
+      return 0;
+    });
 
-    return NextResponse.json({ results });
+    return NextResponse.json({ 
+      results,
+      searchContext: {
+        detectedKeywords,
+        detectedMunicipalities,
+        isApvSearch: detectedKeywords.length > 0
+      }
+    });
   } catch (error) {
     console.error('Search error:', error);
     return NextResponse.json({ error: 'Error processing search query' }, { status: 500 });

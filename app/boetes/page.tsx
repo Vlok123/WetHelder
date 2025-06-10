@@ -107,7 +107,7 @@ export default function BoetesPage() {
           </div>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Zoek officiële boetes en feitcodes uit de Boetebase van het Openbaar Ministerie. 
-            Inclusief juridische grondslag en uitleg via AI.
+            Inclusief juridische grondslag en geautomatiseerde uitleg.
           </p>
         </div>
 
@@ -120,7 +120,7 @@ export default function BoetesPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-blue-700">
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <strong>Boetebase OM:</strong>
                 <br />
@@ -136,11 +136,6 @@ export default function BoetesPage() {
                    className="flex items-center gap-1 text-blue-600 hover:underline">
                   wetten.overheid.nl <ExternalLink className="h-3 w-3" />
                 </a>
-              </div>
-              <div>
-                <strong>Hergebruik:</strong>
-                <br />
-                Art. 15b Auteurswet & EU Open Data Richtlijn
               </div>
             </div>
           </CardContent>
@@ -297,7 +292,7 @@ export default function BoetesPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-green-800">
                 <MessageCircle className="h-5 w-5" />
-                AI Uitleg voor {selectedBoete.feitcode}
+                Juridische Uitleg voor {selectedBoete.feitcode}
               </CardTitle>
             </CardHeader>
             <CardContent>
