@@ -329,7 +329,7 @@ export default function ModernLegalChat() {
       preventDefault: () => {},
       target: null,
       currentTarget: null
-    } as React.FormEvent
+    } as unknown as React.FormEvent
     
     setTimeout(() => {
       handleSubmit(syntheticEvent)
