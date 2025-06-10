@@ -133,7 +133,7 @@ export default function BoetesPage() {
               <div className="flex-1">
                 <Input
                   type="text"
-                  placeholder="Zoek op feitcode of omschrijving (bijv. 'rechtsinhalen', 'W010a', 'alcohol')"
+                  placeholder="Zoek op feitcode of omschrijving (bijv. rechtsinhalen, W010a, alcohol)"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -251,7 +251,7 @@ export default function BoetesPage() {
           <Card className="text-center py-8">
             <CardContent>
               <p className="text-gray-600 mb-4">
-                Geen resultaten gevonden voor "{searchQuery}"
+                Geen resultaten gevonden voor &quot;{searchQuery}&quot;
               </p>
               <p className="text-sm text-gray-500">
                 Probeer een andere zoekterm of controleer de officiële Boetebase handmatig.
