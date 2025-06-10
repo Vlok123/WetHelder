@@ -12,7 +12,7 @@ module.exports = {
   		center: true,
   		padding: '2rem',
   		screens: {
-  			'2xl': '1280px'
+  			'2xl': '1400px'
   		}
   	},
   	extend: {
@@ -50,12 +50,8 @@ module.exports = {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
   			},
-  			chart: {
-  				'1': 'hsl(var(--chart-1))',
-  				'2': 'hsl(var(--chart-2))',
-  				'3': 'hsl(var(--chart-3))',
-  				'4': 'hsl(var(--chart-4))',
-  				'5': 'hsl(var(--chart-5))'
+  			gray: {
+  				750: '#374151',
   			}
   		},
   		borderRadius: {
@@ -66,6 +62,9 @@ module.exports = {
   		fontFamily: {
   			sans: [
   				'Inter',
+  				'SF Pro Display',
+  				'DM Sans',
+  				'system-ui',
   				'sans-serif'
   			]
   		},
@@ -85,13 +84,88 @@ module.exports = {
   				to: {
   					height: 0
   				}
-  			}
+  			},
+  			bounce: {
+  				'0%, 100%': {
+  					transform: 'translateY(-25%)',
+  					animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)',
+  				},
+  				'50%': {
+  					transform: 'translateY(0)',
+  					animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)',
+  				},
+  			},
+  			fadeIn: {
+  				'0%': { opacity: '0', transform: 'translateY(10px)' },
+  				'100%': { opacity: '1', transform: 'translateY(0)' },
+  			},
+  			slideIn: {
+  				'0%': { transform: 'translateX(-100%)' },
+  				'100%': { transform: 'translateX(0)' },
+  			},
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
-  		}
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+  			bounce: 'bounce 1s infinite',
+  			fadeIn: 'fadeIn 0.5s ease-out',
+  			slideIn: 'slideIn 0.3s ease-out',
+  		},
+  		typography: {
+  			DEFAULT: {
+  				css: {
+  					maxWidth: 'none',
+  					color: 'inherit',
+  					p: {
+  						marginTop: '0.5rem',
+  						marginBottom: '0.5rem',
+  					},
+  					h1: {
+  						color: 'inherit',
+  					},
+  					h2: {
+  						color: 'inherit',
+  					},
+  					h3: {
+  						color: 'inherit',
+  					},
+  					h4: {
+  						color: 'inherit',
+  					},
+  					strong: {
+  						color: 'inherit',
+  					},
+  					a: {
+  						color: 'inherit',
+  						textDecoration: 'underline',
+  						'&:hover': {
+  							color: 'inherit',
+  						},
+  					},
+  				},
+  			},
+  			invert: {
+  				css: {
+  					'--tw-prose-body': 'white',
+  					'--tw-prose-headings': 'white',
+  					'--tw-prose-lead': 'white',
+  					'--tw-prose-links': 'white',
+  					'--tw-prose-bold': 'white',
+  					'--tw-prose-counters': 'white',
+  					'--tw-prose-bullets': 'white',
+  					'--tw-prose-hr': 'white',
+  					'--tw-prose-quotes': 'white',
+  					'--tw-prose-quote-borders': 'white',
+  					'--tw-prose-captions': 'white',
+  					'--tw-prose-code': 'white',
+  					'--tw-prose-pre-code': 'white',
+  					'--tw-prose-pre-bg': 'white',
+  					'--tw-prose-th-borders': 'white',
+  					'--tw-prose-td-borders': 'white',
+  				},
+  			},
+  		},
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 } 
