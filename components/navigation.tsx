@@ -14,7 +14,8 @@ import {
   Settings,
   Crown,
   Star,
-  Gift
+  Gift,
+  Shield
 } from 'lucide-react'
 
 export function Navigation() {
@@ -68,6 +69,15 @@ export function Navigation() {
                     <span className="hidden sm:inline">Dashboard</span>
                   </Button>
                 </Link>
+
+                {session.user?.email === 'sanderhelmink@gmail.com' && (
+                  <Link href="/admin" className="shrink-0">
+                    <Button variant="ghost" size="sm" className="flex items-center space-x-1 sm:space-x-2 h-9 px-2 sm:px-3 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+                      <Shield className="h-4 w-4" />
+                      <span className="hidden sm:inline">Admin</span>
+                    </Button>
+                  </Link>
+                )}
 
                 <Button 
                   variant="ghost" 
