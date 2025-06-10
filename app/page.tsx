@@ -358,8 +358,20 @@ export default function ModernLegalChat() {
     return `${days}d geleden`
   }
 
-  const clearChatHistory = () => {
+  const clearChatHistory = async () => {
+    if (!session?.user?.email) return
+    
+    // Clear local state immediately for better UX
     setChatHistory([])
+    
+    try {
+      await fetch('/api/chat-history', {
+        method: 'DELETE'
+      })
+    } catch (error) {
+      console.error('Failed to clear chat history:', error)
+      // Could refetch to restore if needed
+    }
   }
 
   const newChat = () => {
@@ -415,9 +427,64 @@ export default function ModernLegalChat() {
                 WetHelder
               </span>
             </button>
+            
+            {/* Right sidebar toggle for mobile - only when logged in */}
+            {session && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
+                className="lg:hidden p-1 sm:p-2"
+              >
+                <History className="h-4 w-4 sm:h-5 sm:w-5" />
+              </Button>
+            )}
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2">
+            {/* Authentication Buttons */}
+            {status === 'loading' ? (
+              <Button variant="ghost" size="sm" disabled className="p-1 sm:p-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+              </Button>
+            ) : session ? (
+              <div className="flex items-center gap-1 sm:gap-2">
+                {/* User Profile Button */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="p-1 sm:p-2 flex items-center gap-1 sm:gap-2"
+                  onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
+                >
+                  <User className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span className="hidden sm:inline text-xs sm:text-sm">
+                    {session.user?.email?.split('@')[0]}
+                  </span>
+                </Button>
+                
+                {/* Logout Button */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => signOut()}
+                  className="p-1 sm:p-2 text-red-600 hover:text-red-700"
+                >
+                  <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span className="hidden sm:inline text-xs sm:text-sm">Uitloggen</span>
+                </Button>
+              </div>
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => signIn()}
+                className="p-1 sm:p-2 text-blue-600 hover:text-blue-700"
+              >
+                <LogIn className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="hidden sm:inline text-xs sm:text-sm">Inloggen</span>
+              </Button>
+            )}
+
             {/* Rate Limit Status */}
             {rateLimitStatus && (
               <div className={`text-xs sm:text-sm px-2 py-1 rounded ${
@@ -607,7 +674,7 @@ export default function ModernLegalChat() {
           </div>
         </aside>
 
-        <main className="flex-1 flex flex-col">
+        <main className={`flex-1 flex flex-col ${session ? 'lg:mr-80' : ''}`}>
           {/* Messages Container */}
           <div className="flex-1 overflow-y-auto p-3 sm:p-4">
             <div className="max-w-4xl mx-auto">
@@ -937,13 +1004,135 @@ export default function ModernLegalChat() {
             </div>
           </div>
         </main>
+
+        {/* Right Sidebar - Chat History */}
+        <aside className={`${
+          rightSidebarOpen ? 'translate-x-0' : 'translate-x-full'
+        } lg:translate-x-0 fixed lg:static inset-y-0 right-0 z-40 w-72 sm:w-80 transition-transform duration-300 ${
+          darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+        } border-l overflow-y-auto lg:block ${session ? 'block' : 'hidden'}`}>
+          
+          <div className="p-3 sm:p-4">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h2 className={`text-base sm:text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                Zoekgeschiedenis
+              </h2>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearChatHistory}
+                  className="p-1 text-red-600 hover:text-red-700"
+                  title="Geschiedenis wissen"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setRightSidebarOpen(false)}
+                  className="lg:hidden p-1"
+                >
+                  <X className="h-4 w-4 sm:h-5 sm:w-5" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Chat History */}
+            <div className="space-y-2">
+              {chatHistory.length === 0 ? (
+                <div className={`text-center py-8 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <History className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">Nog geen zoekgeschiedenis</p>
+                  <p className="text-xs mt-1">Uw vragen verschijnen hier</p>
+                </div>
+              ) : (
+                chatHistory.map((chat) => (
+                  <div
+                    key={chat.id}
+                    onClick={() => continueChat(chat)}
+                    className={`p-3 rounded-lg border cursor-pointer transition-all hover:scale-[1.02] ${
+                      darkMode 
+                        ? 'bg-gray-700 border-gray-600 hover:bg-gray-650 text-white' 
+                        : 'bg-gray-50 border-gray-200 hover:bg-gray-100 text-black'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="text-sm font-medium line-clamp-2 flex-1">
+                        {chat.title}
+                      </h3>
+                      <div className="flex items-center gap-1 ml-2">
+                        {chat.profession && PROFESSIONS.find(p => p.value === chat.profession) && (
+                          <span className="text-xs">
+                            {PROFESSIONS.find(p => p.value === chat.profession)?.icon}
+                          </span>
+                        )}
+                        <ChevronRight className="h-3 w-3 opacity-50" />
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className={`flex items-center gap-2 text-xs ${
+                        darkMode ? 'text-gray-400' : 'text-gray-500'
+                      }`}>
+                        <Clock className="h-3 w-3" />
+                        <span>{formatRelativeTime(chat.timestamp)}</span>
+                      </div>
+                      
+                      {chat.profession && (
+                        <Badge variant="outline" className="text-xs">
+                          {PROFESSIONS.find(p => p.value === chat.profession)?.label.split(' ')[0]}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Account Info */}
+            {session && (
+              <div className={`mt-6 p-3 rounded-lg border ${
+                darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
+              }`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <User className="h-4 w-4" />
+                  <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    Account
+                  </span>
+                  {session.user?.email === 'sanderhelmink@gmail.com' && (
+                    <Badge variant="default" className="text-xs bg-blue-600 text-white">
+                      Admin
+                    </Badge>
+                  )}
+                </div>
+                <p className={`text-xs ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                  {session.user?.email}
+                </p>
+                <p className={`text-xs mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  {session.user?.email === 'sanderhelmink@gmail.com' 
+                    ? 'Admin gebruiker met volledige toegang' 
+                    : 'Gratis gebruiker - beperkte vragen per dag'
+                  }
+                </p>
+              </div>
+            )}
+          </div>
+        </aside>
       </div>
 
-      {/* Overlay for mobile sidebar */}
+      {/* Overlay for mobile sidebars */}
       {leftSidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
           onClick={() => setLeftSidebarOpen(false)}
+        />
+      )}
+      
+      {rightSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+          onClick={() => setRightSidebarOpen(false)}
         />
       )}
 

@@ -49,4 +49,40 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     )
   }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions)
+    
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Haal de user op uit de database
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { id: true }
+    })
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+
+    // Verwijder alle queries van de gebruiker
+    await prisma.query.deleteMany({
+      where: { userId: user.id }
+    })
+
+    return NextResponse.json({ 
+      message: 'Chat history cleared successfully' 
+    })
+
+  } catch (error) {
+    console.error('Clear chat history error:', error)
+    return NextResponse.json(
+      { error: 'Failed to clear chat history' },
+      { status: 500 }
+    )
+  }
 } 
