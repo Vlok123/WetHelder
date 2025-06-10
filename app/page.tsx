@@ -426,6 +426,19 @@ export default function ModernLegalChat() {
               </div>
             )}
 
+            {/* Admin Panel Link */}
+            {session?.user?.email === 'sanderhelmink@gmail.com' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => window.open('/admin', '_blank')}
+                className="p-1 sm:p-2 text-blue-600 hover:text-blue-700"
+              >
+                <Shield className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="hidden sm:inline ml-1">Admin</span>
+              </Button>
+            )}
+
             <Button
               variant="ghost"
               size="sm"
@@ -573,6 +586,19 @@ export default function ModernLegalChat() {
                   <UserCheck className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
                   Beveiligingsprocedures
                 </Button>
+                
+                {/* Admin Panel Link voor Sander */}
+                {session?.user?.email === 'sanderhelmink@gmail.com' && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start text-xs sm:text-sm text-blue-600 hover:text-blue-700"
+                    onClick={() => window.open('/admin', '_blank')}
+                  >
+                    <Shield className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                    Admin Panel
+                  </Button>
+                )}
               </div>
             </div>
           </div>

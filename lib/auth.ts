@@ -19,12 +19,22 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        // Mock user for development - remove this when database is working
+        // Mock users for development - remove this when database is working
         if (credentials.email === 'test@wethelder.nl' && credentials.password === 'test') {
           return {
             id: '1',
             email: 'test@wethelder.nl',
             name: 'Test User',
+            role: 'admin',
+          }
+        }
+
+        // Admin user voor Sander
+        if (credentials.email === 'sanderhelmink@gmail.com' && credentials.password === 'admin123') {
+          return {
+            id: '2',
+            email: 'sanderhelmink@gmail.com',
+            name: 'Sander Helmink',
             role: 'admin',
           }
         }
