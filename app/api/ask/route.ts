@@ -7,36 +7,49 @@ import { prisma } from '@/lib/db'
 
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions'
 
-const SYSTEM_PROMPT = `Je bent een professionele Nederlandse juridische AI-assistent. Je doel is het geven van heldere, goed gestructureerde antwoorden op juridische vragen.
+const SYSTEM_PROMPT = `Je bent WetHelder, een professionele Nederlandse juridische AI-assistent.
 
-VERPLICHTE REGELS:
-- Antwoord ALTIJD in correct, professioneel Nederlands
-- Gebruik ALLEEN officiële Nederlandse bronnen (wetten.overheid.nl, rechtspraak.nl)
-- Geef concrete wetsartikelen met exacte bronvermelding
-- Structureer je antwoord met duidelijke koppen en paragrafen
-- Geen interpretaties of juridisch advies, alleen feitelijke informatie
-- Bij onzekerheid: verwijs naar officiële bronnen voor verificatie
+HOOFDREGEL: Schrijf ALTIJD in correct, helder Nederlands met volledige zinnen.
 
-ANTWOORDSTRUCTUUR:
-1. **Direct antwoord** met relevant wetsartikel
-2. **Wettelijke grondslag** (exacte wet + artikel + link indien mogelijk)
-3. **Relevante jurisprudentie** (indien van toepassing)
-4. **Belangrijke punten** in bulletpoints
-5. **Bronvermelding** voor verdere verificatie
+JE DOEL:
+- Geef accurate, begrijpelijke antwoorden op Nederlandse juridische vragen
+- Gebruik uitsluitend officiële Nederlandse bronnen
+- Structureer antwoorden duidelijk en logisch
 
-VOORBEELDFORMAT:
-## Artikel [nummer] [Wetnaam]
+VEREISTE ANTWOORDFORMAT:
+## [Hoofdonderwerp]
 
-**Artikel [nummer] [Wetnaam] bepaalt:**
-[Exacte wettekst of samenvatting]
+**Kort antwoord:**
+[Direct antwoord in 1-2 zinnen]
 
-**Bron:** [Wetnaam], artikel [nummer] - [URL indien beschikbaar]
+**Wettelijke basis:**
+- [Relevant wetsartikel met exacte bronvermelding]
+- [Link naar wetten.overheid.nl indien beschikbaar]
 
 **Belangrijke punten:**
-- [Punt 1]
-- [Punt 2]
+- [Kernpunt 1]
+- [Kernpunt 2]
+- [Kernpunt 3]
 
-**Verificatie:** Raadpleeg altijd de actuele wettekst op wetten.overheid.nl`
+**Bronnen:**
+- [Officiële bronvermelding]
+
+SCHRIJFREGELS:
+✓ Gebruik complete, grammaticaal correcte zinnen
+✓ Vermijd afkortingen en samenvoegingen
+✓ Gebruik duidelijke koppen en bullet points
+✓ Schrijf voor mensen, niet voor machines
+✓ Controleer spelfouten en interpunctie
+
+✗ NOOIT fragmenten of gebroken tekst
+✗ NOOIT samenvoegingen zoals "artikel159V199"
+✗ NOOIT weggelaten spaties of leestekens
+✗ NOOIT onduidelijke afkortingen
+
+BRONNEN:
+- Alleen wetten.overheid.nl en rechtspraak.nl
+- Vermeld altijd exacte artikelnummers
+- Geef werkende links waar mogelijk`
 
 async function searchSources(question: string): Promise<string[]> {
   const sources: string[] = []
@@ -188,12 +201,15 @@ export async function POST(request: NextRequest) {
                 },
                 {
                   role: 'user',
-                  content: question,
+                  content: `Beantwoord deze juridische vraag in helder Nederlands: ${question}`,
                 },
               ],
               stream: true,
-              max_tokens: 1200,
-              temperature: 0.1,
+              max_tokens: 1500,
+              temperature: 0.0,
+              top_p: 0.8,
+              frequency_penalty: 0.0,
+              presence_penalty: 0.0,
             }),
           })
 
@@ -208,12 +224,17 @@ export async function POST(request: NextRequest) {
             throw new Error('No reader available')
           }
 
+          let buffer = ''
+          
           while (true) {
             const { done, value } = await reader.read()
             if (done) break
 
-            const chunk = decoder.decode(value)
-            const lines = chunk.split('\n')
+            const chunk = decoder.decode(value, { stream: true })
+            buffer += chunk
+            
+            const lines = buffer.split('\n')
+            buffer = lines.pop() || '' // Keep incomplete line in buffer
 
             for (const line of lines) {
               if (line.startsWith('data: ')) {
@@ -225,14 +246,18 @@ export async function POST(request: NextRequest) {
                   const content = parsed.choices?.[0]?.delta?.content || ''
                   
                   if (content) {
-                    fullAnswer += content
-                    const chunk = encoder.encode(
-                      `data: ${JSON.stringify({ content })}\n\n`
-                    )
-                    controller.enqueue(chunk)
+                    // Clean and validate content before adding
+                    const cleanContent = content.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+                    if (cleanContent.trim()) {
+                      fullAnswer += cleanContent
+                      const responseChunk = encoder.encode(
+                        `data: ${JSON.stringify({ content: cleanContent })}\n\n`
+                      )
+                      controller.enqueue(responseChunk)
+                    }
                   }
                 } catch (e) {
-                  // Skip invalid JSON
+                  console.warn('Failed to parse chunk:', data)
                 }
               }
             }
