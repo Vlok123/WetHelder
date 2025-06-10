@@ -10,12 +10,44 @@ const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
 
 const SYSTEM_PROMPT = `Je bent WetHelder, een ervaren Nederlandse juridische AI-assistent in een doorlopend gesprek.
 
-BRONNEN EN KENNIS:
-- Je hebt toegang tot alle officiële documenten op wetten.overheid.nl
-- Inclusief wetten, AMvB's, ministeriële regelingen, reglementen en richtlijnen
-- Bijvoorbeeld: Reglement verkeersregels en verkeerstekens (RVV), branchrichtlijnen, professionele gedragscodes
-- Ook Europese wetgeving, verdragen en jurisprudentie van rechtspraak.nl
-- Dekking van alle rechtsgebieden: straf-, civiel-, bestuurs-, arbeids-, belasting-, omgevingsrecht, etc.
+OFFICIËLE BRONNEN EN KENNIS (ALLEEN DEZE GEBRUIKEN):
+Je mag ALLEEN informatie gebruiken uit deze officiële Nederlandse rechtsbronnen:
+
+NEDERLANDSE REGELGEVING & PUBLICATIEBLADEN:
+• Wetten.nl – authentieke, geconsolideerde teksten; ELI/BWBR-identifiers; SRU- & XML-endpoints
+• Staatsblad – wetten & AMvB's; integraal PDF + metadata via OfficiëleBekendmakingen-API
+• Staatscourant – ministeriële regelingen, beleidsregels; dag-feed & Bulk Uitlever Systeem
+• Tractatenblad – verdragen; full-text PDF en metadata via dezelfde API
+• Gemeenteblad / Provinciaal blad / Waterschapsblad / BGR – decentrale verordeningen; regionale feeds
+• KOOP Bulk-API & 3PAS – machine-leesbare ZIP/XML dumps van alle bovenstaande bladen
+• Platform OfficiëleBekendmakingen (zoek.oficiëlebekendmakingen.nl) – federatieve zoekmachine over alle publicaties
+
+PARLEMENTAIRE DOCUMENTEN:
+• Kamerstukken (TK/EK) – MvT, NNV, amendementen, moties
+• Handelingen – woordelijke verslagen
+• Stemmingsuitslagen & agenda's – via Tweede Kamer Open-Data-API
+• Advies Afdeling advisering Raad van State & Nader rapport – gepubliceerd in Staatscourant en op rvs.nl
+
+EU & INTERNATIONAAL:
+• EUR-Lex – Publicatieblad EU (OJ L/C/D), geconsolideerde verordeningen/richtlijnen; CELEX-, ELI- en REST/SOAP-API
+• Official Journal daily view – actuele publicaties per dag
+• Tractatenblad – NL-verdragen
+
+JURISPRUDENTIE:
+• Rechtspraak.nl – Hoge Raad, hoven, rechtbanken; REST open-data-service (ECLI-zoek)
+• Hof van Justitie EU en Gerecht – via EUR-Lex CELEX-'620NNN'-zoek
+
+OPEN-DATA & METADATA:
+• Data.overheid.nl – catalogus-API (CKAN v3); alle datasets standaard CC0
+• Linked Data Overheid (triplestore) – SPARQL-endpoint & bulk dumps
+• Wet- en Regelgeving-XML (Basiswettenbestand) – SRU + repository uitleg
+
+HERGEBRUIKSGRONDSLAG:
+• NL Auteurswet art. 15b – overheidspublicaties vallen in het publieke domein
+• EU Open-Data-Richtlijn 2019/1024 & NL-Who-implementatie (2024)
+• Data.overheid.nl — CC0 voor datasets
+
+BELANGRIJKE BEPERKING: Je mag GEEN informatie gebruiken die niet uit bovenstaande officiële bronnen komt.
 
 GESPREKSSTIJL:
 - Geef beknopte en concrete antwoorden, maar nodig uit om door te vragen
@@ -61,11 +93,19 @@ GEEN TECHNISCHE DETAILS:
 - Geen site: operators of URL's tonen
 - Focus op het juridische antwoord, niet het zoekproces
 
-BRONVERMELDING:
-- Vermeld wetgeving, reglementen en richtlijnen natuurlijk in de tekst
-- Verwijs naar relevante artikelen zonder technische formatting
-- Geef praktische voorbeelden
-- Noem specifieke documenten waar relevant (bijv. RVV, AMvB's, branchrichtlijnen)
+BRONVERMELDING EN API-GEBRUIK:
+- Vermeld ALLEEN informatie uit de officiële bronnen die hierboven staan vermeld
+- Verwijs naar specifieke wetsartikelen met BWBR-identifiers waar mogelijk (bijv. BWBR0006622 voor Wegenverkeerswet)
+- Gebruik ECLI-nummers voor jurisprudentie waar relevant
+- Bij kamerstukken verwijs naar het officiële identifier (bijv. KST-36382-3)
+- Geef praktische voorbeelden alleen als deze gebaseerd zijn op officiële documenten
+- Als informatie niet beschikbaar is in de officiële bronnen, geef dit eerlijk aan
+
+SPECIFIEKE API-BRONNEN NOEMEN:
+- Wetten: "Volgens wetten.overheid.nl (BWBR-[nummer])"
+- Kamerstukken: "Uit kamerstuk [nummer] via zoek.officielebekendmakingen.nl"
+- Jurisprudentie: "Rechtspraak.nl (ECLI:[nummer])"
+- EU-wetgeving: "EUR-Lex (CELEX:[nummer])"
 
 Antwoord altijd in helder Nederlands met een vriendelijke, professionele toon. Gebruik goede alinea-structuur voor leesbaarheid.`
 
@@ -73,154 +113,84 @@ async function searchOfficialSources(question: string): Promise<string[]> {
   const sources: string[] = []
   const lowerQuestion = question.toLowerCase()
   
-  // VERKEER EN VERVOER - Uitgebreid
+  // ALTIJD OFFICIËLE BRONNEN TOEVOEGEN
+  // Nederlandse Regelgeving & Publicatiebladen
+  sources.push('https://wetten.overheid.nl/') // Wetten.nl - authentieke geconsolideerde teksten
+  sources.push('https://zoek.officielebekendmakingen.nl/') // Platform Officiële Bekendmakingen
+  sources.push('https://www.staatsblad.nl/') // Staatsblad
+  sources.push('https://www.staatscourant.nl/') // Staatscourant
+  sources.push('https://www.tractatenblad.nl/') // Tractatenblad
+  
+  // Jurisprudentie
+  sources.push('https://rechtspraak.nl/') // Rechtspraak.nl - REST open-data-service (ECLI-zoek)
+  
+  // EU & Internationaal
+  sources.push('https://eur-lex.europa.eu/') // EUR-Lex - EU wetgeving
+  
+  // Open-Data & Metadata
+  sources.push('https://data.overheid.nl/') // Data.overheid.nl - catalogus-API (CKAN v3)
+  
+  // API ENDPOINTS VOOR SPECIFIEKE ZOEKOPDRACHTEN
+  if (lowerQuestion.includes('kamerstuk') || lowerQuestion.includes('tweede kamer') || 
+      lowerQuestion.includes('eerste kamer') || lowerQuestion.includes('parlementair')) {
+    sources.push('https://zoek.officielebekendmakingen.nl/content/') // Kamerstukken API
+    sources.push('https://opendata.tweedekamer.nl/') // TK Open-Data-API
+  }
+
+  if (lowerQuestion.includes('staatsblad') || lowerQuestion.includes('wet') || 
+      lowerQuestion.includes('amvb') || lowerQuestion.includes('staatscourant')) {
+    sources.push('https://officielebekendmakingen.nl/services/') // Bulk API dagfeeds
+    sources.push('https://repository.overheid.nl/') // KOOP Bulk-API & 3PAS
+  }
+
+  if (lowerQuestion.includes('jurisprudentie') || lowerQuestion.includes('rechtspraak') ||
+      lowerQuestion.includes('uitspraak') || lowerQuestion.includes('arrest') ||
+      lowerQuestion.includes('ecli')) {
+    sources.push('https://data.rechtspraak.nl/') // Rechtspraak open-data-service
+    sources.push('https://rechtspraak.nl/uitspraken/') // Jurisprudentie zoeken
+  }
+
+  if (lowerQuestion.includes('eu') || lowerQuestion.includes('europa') || 
+      lowerQuestion.includes('celex') || lowerQuestion.includes('richtlijn') ||
+      lowerQuestion.includes('verordening')) {
+    sources.push('https://eur-lex.europa.eu/search.html') // EUR-Lex zoeken
+    sources.push('https://eur-lex.europa.eu/oj/direct-access.html') // Official Journal daily view
+  }
+
+  // SPECIFIEKE WETTELIJKE GEBIEDEN MET BWBR-IDENTIFIERS
   if (lowerQuestion.includes('verkeer') || lowerQuestion.includes('wegenverkeerswet') || 
       lowerQuestion.includes('wvw') || lowerQuestion.includes('rijden') || 
-      lowerQuestion.includes('auto') || lowerQuestion.includes('rijbewijs') ||
-      lowerQuestion.includes('motorrijtuig') || lowerQuestion.includes('verkeersregel') ||
-      lowerQuestion.includes('verkeersteken') || lowerQuestion.includes('rvv') ||
-      lowerQuestion.includes('reglement verkeersregels') || lowerQuestion.includes('voertuig')) {
+      lowerQuestion.includes('rijbewijs')) {
     sources.push('https://wetten.overheid.nl/BWBR0006622/') // Wegenverkeerswet
-    sources.push('https://wetten.overheid.nl/BWBR0004825/') // Reglement verkeersregels en verkeerstekens (RVV)
-    sources.push('https://wetten.overheid.nl/BWBR0006746/') // Wegenverkeerswet uitvoeringsregeling
-    sources.push('https://wetten.overheid.nl/BWBR0009047/') // Kentekenreglement
-    sources.push('https://juridischloket.nl/verkeer-en-vervoer/')
-  }
-  
-  // RIJDEN ONDER INVLOED - Specifiek
-  if (lowerQuestion.includes('artikel 8') || lowerQuestion.includes('art 8') || 
-      lowerQuestion.includes('art. 8') || lowerQuestion.includes('onder invloed') ||
-      lowerQuestion.includes('alcohol') || lowerQuestion.includes('drugs') ||
-      lowerQuestion.includes('promillage') || lowerQuestion.includes('ademanalyse')) {
-    sources.push('https://wetten.overheid.nl/BWBR0006622/2024-01-01/#Hoofdstuk2')
-    sources.push('https://juridischloket.nl/verkeer-en-vervoer/alcohol-en-drugs-in-het-verkeer/')
+    sources.push('https://wetten.overheid.nl/BWBR0004825/') // RVV
   }
 
-  // STRAFRECHT EN STRAFVORDERING
-  if (lowerQuestion.includes('strafrecht') || lowerQuestion.includes('strafbaar') ||
-      lowerQuestion.includes('wetboek van strafrecht') || lowerQuestion.includes('sr') ||
-      lowerQuestion.includes('strafvordering') || lowerQuestion.includes('sv') ||
-      lowerQuestion.includes('aanhouding') || lowerQuestion.includes('inverzekeringstelling')) {
+  if (lowerQuestion.includes('strafrecht') || lowerQuestion.includes('wetboek van strafrecht') ||
+      lowerQuestion.includes('strafvordering')) {
     sources.push('https://wetten.overheid.nl/BWBR0001854/') // Wetboek van Strafrecht
     sources.push('https://wetten.overheid.nl/BWBR0001903/') // Wetboek van Strafvordering
-    sources.push('https://juridischloket.nl/misdaad-en-criminaliteit/')
   }
 
-  // BURGERLIJK RECHT
-  if (lowerQuestion.includes('burgerlijk') || lowerQuestion.includes('contract') ||
-      lowerQuestion.includes('bw') || lowerQuestion.includes('eigendom') ||
-      lowerQuestion.includes('verbintenis') || lowerQuestion.includes('onrechtmatige daad')) {
+  if (lowerQuestion.includes('burgerlijk') || lowerQuestion.includes('bw') ||
+      lowerQuestion.includes('contract') || lowerQuestion.includes('eigendom')) {
     sources.push('https://wetten.overheid.nl/BWBR0005289/') // Burgerlijk Wetboek
-    sources.push('https://wetten.overheid.nl/BWBR0005290/') // Burgerlijk Wetboek Boek 3
-    sources.push('https://juridischloket.nl/wonen-en-buren/')
   }
 
-  // ARBEIDSRECHT EN SOCIALE ZEKERHEID
-  if (lowerQuestion.includes('werk') || lowerQuestion.includes('arbeids') || 
-      lowerQuestion.includes('ontslag') || lowerQuestion.includes('wwz') ||
-      lowerQuestion.includes('cao') || lowerQuestion.includes('arbeidstijd') ||
-      lowerQuestion.includes('ziektewet') || lowerQuestion.includes('ww') ||
-      lowerQuestion.includes('sociale zekerheid')) {
-    sources.push('https://wetten.overheid.nl/BWBR0024821/') // Wet werk en zekerheid
-    sources.push('https://wetten.overheid.nl/BWBR0019057/') // Arbeidsomstandighedenwet
-    sources.push('https://wetten.overheid.nl/BWBR0001888/') // Ziektewet
-    sources.push('https://wetten.overheid.nl/BWBR0004045/') // Werkloosheidswet
-    sources.push('https://juridischloket.nl/werk-en-inkomen/')
-  }
-
-  // POLITIE EN HANDHAVING
   if (lowerQuestion.includes('politie') || lowerQuestion.includes('handhaving') ||
-      lowerQuestion.includes('politiewet') || lowerQuestion.includes('bevoegdheid') ||
-      lowerQuestion.includes('geweldsmiddel') || lowerQuestion.includes('staandehouding') ||
-      lowerQuestion.includes('fouillering') || lowerQuestion.includes('surveillance')) {
+      lowerQuestion.includes('politiewet')) {
     sources.push('https://wetten.overheid.nl/BWBR0031788/') // Politiewet 2012
-    sources.push('https://wetten.overheid.nl/BWBR0006299/') // Ambtsinstructie voor de politie
-    sources.push('https://wetten.overheid.nl/BWBR0027466/') // Besluit bewapening en uitrusting politie
-    sources.push('https://juridischloket.nl/politie-en-justitie/')
+    sources.push('https://wetten.overheid.nl/BWBR0006299/') // Ambtsinstructie politie
   }
 
-  // BELASTINGRECHT
   if (lowerQuestion.includes('belasting') || lowerQuestion.includes('btw') ||
-      lowerQuestion.includes('inkomstenbelasting') || lowerQuestion.includes('awb') ||
-      lowerQuestion.includes('bezwaar') || lowerQuestion.includes('beroep')) {
+      lowerQuestion.includes('inkomstenbelasting') || lowerQuestion.includes('awb')) {
     sources.push('https://wetten.overheid.nl/BWBR0002320/') // Algemene wet bestuursrecht
     sources.push('https://wetten.overheid.nl/BWBR0002471/') // Wet inkomstenbelasting
-    sources.push('https://wetten.overheid.nl/BWBR0002629/') // Wet omzetbelasting
-    sources.push('https://juridischloket.nl/belasting/')
   }
 
-  // BOUW EN OMGEVING
-  if (lowerQuestion.includes('bouw') || lowerQuestion.includes('omgevingswet') ||
-      lowerQuestion.includes('vergunning') || lowerQuestion.includes('ruimtelijke ordening') ||
-      lowerQuestion.includes('milieu') || lowerQuestion.includes('wabo')) {
-    sources.push('https://wetten.overheid.nl/BWBR0024779/') // Wet algemene bepalingen omgevingsrecht
-    sources.push('https://wetten.overheid.nl/BWBR0044337/') // Omgevingswet
-    sources.push('https://wetten.overheid.nl/BWBR0003245/') // Wet ruimtelijke ordening
-    sources.push('https://juridischloket.nl/wonen-en-buren/verbouwen/')
-  }
-
-  // ONDERWIJSRECHT
-  if (lowerQuestion.includes('onderwijs') || lowerQuestion.includes('school') ||
-      lowerQuestion.includes('universiteit') || lowerQuestion.includes('hbo') ||
-      lowerQuestion.includes('student') || lowerQuestion.includes('leerpicht')) {
-    sources.push('https://wetten.overheid.nl/BWBR0003420/') // Wet op het primair onderwijs
-    sources.push('https://wetten.overheid.nl/BWBR0002399/') // Wet op het hoger onderwijs
-    sources.push('https://wetten.overheid.nl/BWBR0030060/') // Leerplichtwet
-    sources.push('https://juridischloket.nl/onderwijs/')
-  }
-
-  // GEZONDHEIDSZORG
-  if (lowerQuestion.includes('zorg') || lowerQuestion.includes('medisch') ||
-      lowerQuestion.includes('arts') || lowerQuestion.includes('ziekenhuis') ||
-      lowerQuestion.includes('farmaceutisch') || lowerQuestion.includes('big') ||
-      lowerQuestion.includes('wkkgz') || lowerQuestion.includes('zvw')) {
-    sources.push('https://wetten.overheid.nl/BWBR0018906/') // Wet op de beroepen in de individuele gezondheidszorg
-    sources.push('https://wetten.overheid.nl/BWBR0018450/') // Zorgverzekeringswet
-    sources.push('https://wetten.overheid.nl/BWBR0002084/') // Wet op de geneesmiddelenvoorziening
-    sources.push('https://juridischloket.nl/zorg-en-gezondheid/')
-  }
-
-  // COMMUNICATIE EN PRIVACY
-  if (lowerQuestion.includes('privacy') || lowerQuestion.includes('avg') ||
-      lowerQuestion.includes('gdpr') || lowerQuestion.includes('persoonsgegevens') ||
-      lowerQuestion.includes('telecommunicatie') || lowerQuestion.includes('internet')) {
-    sources.push('https://wetten.overheid.nl/BWBR0040940/') // Algemene verordening gegevensbescherming implementatiewet
-    sources.push('https://wetten.overheid.nl/BWBR0009950/') // Telecommunicatiewet
-    sources.push('https://juridischloket.nl/internet-telefoon-tv/privacy-op-internet/')
-  }
-
-  // FINANCIEEL RECHT
-  if (lowerQuestion.includes('bank') || lowerQuestion.includes('financieel') ||
-      lowerQuestion.includes('verzekering') || lowerQuestion.includes('wft') ||
-      lowerQuestion.includes('afm') || lowerQuestion.includes('toezicht')) {
-    sources.push('https://wetten.overheid.nl/BWBR0020368/') // Wet op het financieel toezicht
-    sources.push('https://wetten.overheid.nl/BWBR0003066/') // Wet op het verzekeringsbedrijf
-    sources.push('https://juridischloket.nl/geld-en-schulden/')
-  }
-
-  // BRANCHRICHTLIJNEN EN PROFESSIONELE REGELGEVING
-  if (lowerQuestion.includes('branchrichtlijn') || lowerQuestion.includes('beroepsregel') ||
-      lowerQuestion.includes('tuchtrecht') || lowerQuestion.includes('gedragscode') ||
-      lowerQuestion.includes('kwaliteitsstandaard') || lowerQuestion.includes('certificering')) {
-    // Voeg algemene beroepsregelgeving toe
-    sources.push('https://wetten.overheid.nl/BWBR0002061/') // Advocatenwet
-    sources.push('https://wetten.overheid.nl/BWBR0002394/') // Gerechtsdeurwaarderswet
-    sources.push('https://wetten.overheid.nl/BWBR0018906/') // Wet BIG (ook voor brancherichtlijnen)
-  }
-
-  // EUROPEES RECHT EN VERDRAGEN
-  if (lowerQuestion.includes('europa') || lowerQuestion.includes('evrm') ||
-      lowerQuestion.includes('eu') || lowerQuestion.includes('verdrag') ||
-      lowerQuestion.includes('grondrechten') || lowerQuestion.includes('mensenrechten')) {
-    sources.push('https://wetten.overheid.nl/BWBV0001000/') // Europees Verdrag voor de Rechten van de Mens
-    sources.push('https://wetten.overheid.nl/BWBR0001840/') // Grondwet
-    sources.push('https://juridischloket.nl/discriminatie/')
-  }
-
-  // Voeg altijd algemene bronnen toe voor bredere dekking
-  sources.push('https://wetten.overheid.nl/')
-  sources.push('https://rechtspraak.nl/')
-  sources.push('https://juridischloket.nl/')
+  // SPECIFIEKE API ZOEK-ENDPOINTS
+  sources.push('https://wetten.overheid.nl/Services/BWBIdService') // SRU endpoint voor wetteksten
+  sources.push('https://data.overheid.nl/api/') // CKAN v3 API voor datasets
   
   return Array.from(new Set(sources))
 }
