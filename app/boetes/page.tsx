@@ -25,24 +25,44 @@ export default function BoetesPage() {
   const [selectedBoete, setSelectedBoete] = useState<BoeteResult | null>(null)
   const [chatResponse, setChatResponse] = useState('')
   const [isChatLoading, setIsChatLoading] = useState(false)
+  const [searchMode, setSearchMode] = useState<'search' | 'question'>('search')
+  const [questionResponse, setQuestionResponse] = useState('')
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return
     
     setIsLoading(true)
+    setResults([])
+    setQuestionResponse('')
+    
     try {
-      const response = await fetch('/api/boetes/search', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: searchQuery })
-      })
-      
-      if (response.ok) {
-        const data = await response.json()
-        setResults(data.results || [])
+      if (searchMode === 'search') {
+        // Zoek naar specifieke feitcodes
+        const response = await fetch('/api/boetes/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: searchQuery })
+        })
+        
+        if (response.ok) {
+          const data = await response.json()
+          setResults(data.results || [])
+        }
+      } else {
+        // Stel een vraag aan ChatGPT over boetes
+        const response = await fetch('/api/boetes/question', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: searchQuery })
+        })
+        
+        if (response.ok) {
+          const data = await response.json()
+          setQuestionResponse(data.answer || '')
+        }
       }
     } catch (error) {
-      console.error('Search error:', error)
+      console.error('Search/Question error:', error)
     } finally {
       setIsLoading(false)
     }
@@ -126,14 +146,37 @@ export default function BoetesPage() {
           </CardContent>
         </Card>
 
-        {/* Zoekbalk */}
+        {/* Zoek/Vraag sectie */}
         <Card className="mb-8">
           <CardContent className="pt-6">
+            {/* Mode selector */}
+            <div className="flex gap-2 mb-4">
+              <Button
+                variant={searchMode === 'search' ? 'default' : 'outline'}
+                onClick={() => setSearchMode('search')}
+                className="flex-1"
+              >
+                <Search className="h-4 w-4 mr-2" />
+                Zoek Feitcode
+              </Button>
+              <Button
+                variant={searchMode === 'question' ? 'default' : 'outline'}
+                onClick={() => setSearchMode('question')}
+                className="flex-1"
+              >
+                <MessageCircle className="h-4 w-4 mr-2" />
+                Stel Vraag
+              </Button>
+            </div>
+            
             <div className="flex gap-4">
               <div className="flex-1">
                 <Input
                   type="text"
-                  placeholder="Zoek op feitcode of omschrijving (bijv. rechtsinhalen, W010a, alcohol)"
+                  placeholder={searchMode === 'search' 
+                    ? "Zoek op feitcode of omschrijving (bijv. rechtsinhalen, W010a, alcohol)"
+                    : "Stel je vraag over boetes (bijv. Hoeveel boete krijg ik voor te hard rijden?)"
+                  }
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -145,15 +188,47 @@ export default function BoetesPage() {
                 disabled={isLoading}
                 className="px-8 py-3"
               >
-                <Search className="h-5 w-5 mr-2" />
-                {isLoading ? 'Zoeken...' : 'Zoek'}
+                {searchMode === 'search' ? (
+                  <>
+                    <Search className="h-5 w-5 mr-2" />
+                    {isLoading ? 'Zoeken...' : 'Zoek'}
+                  </>
+                ) : (
+                  <>
+                    <MessageCircle className="h-5 w-5 mr-2" />
+                    {isLoading ? 'Beantwoorden...' : 'Vraag'}
+                  </>
+                )}
               </Button>
             </div>
           </CardContent>
         </Card>
 
+        {/* Vraag Antwoord */}
+        {questionResponse && searchMode === 'question' && (
+          <Card className="mb-8 border-blue-200 bg-blue-50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-blue-800">
+                <MessageCircle className="h-5 w-5" />
+                Antwoord op je vraag
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="prose prose-blue max-w-none">
+                <div className="whitespace-pre-wrap text-blue-800">
+                  {questionResponse}
+                </div>
+                <div className="mt-4 p-3 bg-blue-100 rounded-lg text-sm text-blue-700">
+                  <strong>Bronnen:</strong> Gebaseerd op officiële Boetebase OM en Nederlandse wetgeving. 
+                  Controleer altijd <a href="https://boetebase.om.nl" className="underline">Boetebase.om.nl</a> voor actuele details.
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Zoekresultaten */}
-        {results.length > 0 && (
+        {results.length > 0 && searchMode === 'search' && (
           <div className="space-y-4 mb-8">
             <h2 className="text-2xl font-bold text-gray-900">
               Zoekresultaten ({results.length})
@@ -247,7 +322,7 @@ export default function BoetesPage() {
         )}
 
         {/* Geen resultaten */}
-        {!isLoading && results.length === 0 && searchQuery && (
+        {!isLoading && searchMode === 'search' && results.length === 0 && searchQuery && (
           <Card className="text-center py-8">
             <CardContent>
               <p className="text-gray-600 mb-4">
@@ -255,6 +330,20 @@ export default function BoetesPage() {
               </p>
               <p className="text-sm text-gray-500">
                 Probeer een andere zoekterm of controleer de officiële Boetebase handmatig.
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Geen antwoord bij vraag */}
+        {!isLoading && searchMode === 'question' && !questionResponse && searchQuery && (
+          <Card className="text-center py-8">
+            <CardContent>
+              <p className="text-gray-600 mb-4">
+                Kon geen antwoord vinden op je vraag
+              </p>
+              <p className="text-sm text-gray-500">
+                Probeer je vraag anders te formuleren of controleer de officiële Boetebase handmatig.
               </p>
             </CardContent>
           </Card>

@@ -92,7 +92,7 @@ const QUICK_ACTIONS = [
 const FEATURE_CARDS = [
   {
     title: "Boetes & Feitcodes",
-    description: "Zoek officiële boetes uit de Boetebase van het OM",
+    description: "Zoek feitcodes of stel vragen over Nederlandse boetes en overtredingen",
     icon: "⚖️",
     href: "/boetes",
     badge: "Nieuw"
