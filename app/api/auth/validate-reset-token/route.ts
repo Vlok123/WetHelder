@@ -5,6 +5,8 @@ export async function POST(request: NextRequest) {
   try {
     const { token, email } = await request.json()
 
+    console.log('Token validation request:', { token, email })
+
     if (!token || !email) {
       return NextResponse.json(
         { error: 'Token en e-mailadres zijn verplicht' },
@@ -13,6 +15,8 @@ export async function POST(request: NextRequest) {
     }
 
     const isValid = validateResetToken(token, email)
+    
+    console.log('Token validation result:', { isValid, token, email })
 
     if (isValid) {
       return NextResponse.json(

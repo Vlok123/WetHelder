@@ -33,12 +33,14 @@ export default function ForgotPasswordPage() {
       const data = await response.json()
 
       if (response.ok) {
-        setSuccess('Als dit e-mailadres bekend is, hebben we een reset link verstuurd.')
-        // In een echte implementatie zou hier een email worden verstuurd
-        // Voor de demo sturen we direct door naar reset pagina
-        setTimeout(() => {
-          router.push(`/auth/reset-password?token=${data.resetToken}&email=${email}`)
-        }, 2000)
+        if (data.resetToken) {
+          // Direct redirect voor demo doeleinden
+          const encodedEmail = encodeURIComponent(email)
+          const encodedToken = encodeURIComponent(data.resetToken)
+          router.push(`/auth/reset-password?token=${encodedToken}&email=${encodedEmail}`)
+        } else {
+          setSuccess('Als dit e-mailadres bekend is, hebben we een reset link verstuurd.')
+        }
       } else {
         setError(data.error || 'Er is een fout opgetreden')
       }

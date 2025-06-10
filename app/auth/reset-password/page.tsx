@@ -21,6 +21,8 @@ function ResetPasswordContent() {
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
   const email = searchParams.get('email')
+  
+  console.log('URL params:', { token, email })
 
   const validateToken = useCallback(async () => {
     try {

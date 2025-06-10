@@ -78,15 +78,21 @@ export function generateResetToken(email: string): string {
     expires
   })
   
+  console.log('Generated reset token:', { email, token, expires, allTokens: resetTokens })
+  
   return token
 }
 
 export function validateResetToken(token: string, email: string): boolean {
+  console.log('Validating token:', { token, email, allTokens: resetTokens, currentTime: new Date() })
+  
   const resetToken = resetTokens.find(rt => 
     rt.token === token && 
     rt.email === email && 
     rt.expires > new Date()
   )
+  
+  console.log('Found token:', resetToken)
   
   return !!resetToken
 }
