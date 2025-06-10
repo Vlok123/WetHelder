@@ -140,7 +140,7 @@ const mockBoeteData = [
 ]
 
 // Function to detect APV context words and municipality names
-function detectAPVContext(query) {
+function detectAPVContext(query: string) {
   const apvKeywords = ['barbecue', 'park', 'open vuur', 'bbq', 'gemeente'];
   const municipalities = ['Nijmegen', 'Amsterdam', 'Rotterdam']; // Example list, should be expanded
   const detectedKeywords = apvKeywords.filter(keyword => query.toLowerCase().includes(keyword));
