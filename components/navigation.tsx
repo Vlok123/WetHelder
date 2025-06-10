@@ -16,7 +16,8 @@ import {
   Star,
   Gift,
   Shield,
-  History
+  History,
+  Euro
 } from 'lucide-react'
 
 export function Navigation() {
@@ -31,6 +32,17 @@ export function Navigation() {
               <Scale className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
               <span className="text-lg sm:text-xl font-bold">WetHelder</span>
             </Link>
+            
+            <div className="hidden md:flex items-center space-x-1">
+              <Link href="/ask" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Stel vraag
+              </Link>
+              <span className="text-muted-foreground">•</span>
+              <Link href="/boetes" className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+                <Euro className="h-3 w-3" />
+                Boetes
+              </Link>
+            </div>
           </div>
 
           <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-4">

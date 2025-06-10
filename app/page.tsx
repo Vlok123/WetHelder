@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useSession, signIn, signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
+
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -86,6 +86,17 @@ const QUICK_ACTIONS = [
   { text: "Hoe stel ik een arbeidscontract op?", category: "Arbeidsrecht" },
   { text: "Wat is het verschil tussen eigendom en erfpacht?", category: "Vastgoedrecht" },
   { text: "Welke stappen moet ik nemen bij echtscheiding?", category: "Familierecht" },
+]
+
+// Feature cards
+const FEATURE_CARDS = [
+  {
+    title: "Boetes & Feitcodes",
+    description: "Zoek officiële boetes uit de Boetebase van het OM",
+    icon: "⚖️",
+    href: "/boetes",
+    badge: "Nieuw"
+  }
 ]
 
 export default function ModernLegalChat() {
@@ -581,6 +592,49 @@ export default function ModernLegalChat() {
                     Uw persoonlijke juridische AI-assistent voor betrouwbare juridische informatie
                   </p>
 
+                  {/* Feature Cards */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    {FEATURE_CARDS.map((feature, index) => (
+                      <Card
+                        key={index}
+                        className={`cursor-pointer transition-all duration-200 hover:scale-105 border-2 ${
+                          darkMode 
+                            ? 'bg-gradient-to-r from-blue-800 to-indigo-800 border-blue-600 hover:from-blue-700 hover:to-indigo-700' 
+                            : 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 hover:from-blue-100 hover:to-indigo-100'
+                        }`}
+                        onClick={() => window.location.href = feature.href}
+                      >
+                        <CardContent className="p-6">
+                          <div className="flex items-start justify-between">
+                            <div className="text-left flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <span className="text-2xl">{feature.icon}</span>
+                                <h3 className={`text-xl font-bold ${
+                                  darkMode ? 'text-white' : 'text-gray-900'
+                                }`}>
+                                  {feature.title}
+                                </h3>
+                                {feature.badge && (
+                                  <Badge variant="default" className="bg-green-500 text-white text-xs">
+                                    {feature.badge}
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className={`text-sm ${
+                                darkMode ? 'text-gray-300' : 'text-gray-600'
+                              }`}>
+                                {feature.description}
+                              </p>
+                            </div>
+                            <ChevronRight className={`h-6 w-6 ml-4 ${
+                              darkMode ? 'text-gray-400' : 'text-gray-400'
+                            }`} />
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+
                   {/* Quick Actions */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                     {QUICK_ACTIONS.map((action, index) => (
@@ -717,34 +771,23 @@ export default function ModernLegalChat() {
                 className="flex gap-3"
               >
                 <div className="flex-1 relative">
-                  <Textarea
-                    ref={inputRef}
+                  <Input
+                    ref={inputRef as any}
                     value={currentQuestion}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCurrentQuestion(e.target.value)}
-                    onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                    onChange={(e) => setCurrentQuestion(e.target.value)}
+                    onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault()
                         handleSubmit()
                       }
                     }}
-                    placeholder="Stel uw juridische vraag... (Enter = verzenden, Shift+Enter = nieuwe regel)"
+                    placeholder="Stel uw juridische vraag... (Enter = verzenden)"
                     disabled={isLoading}
-                    rows={1}
-                    className={`pr-12 min-h-[44px] resize-none text-base ${
+                    className={`pr-12 min-h-[44px] text-base ${
                       darkMode 
                         ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
                         : 'bg-gray-50 border-gray-300'
                     }`}
-                    style={{
-                      height: 'auto',
-                      minHeight: '44px',
-                      maxHeight: '120px'
-                    }}
-                    onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
-                      const target = e.target as HTMLTextAreaElement
-                      target.style.height = 'auto'
-                      target.style.height = Math.min(target.scrollHeight, 120) + 'px'
-                    }}
                   />
                   <Button
                     type="button"
