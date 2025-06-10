@@ -1,5 +1,7 @@
 {
-  "buildCommand": "prisma generate && next build",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
   "functions": {
@@ -8,6 +10,10 @@
     }
   },
   "env": {
+    "DATABASE_URL": "@database_url",
+    "NEXTAUTH_SECRET": "@nextauth_secret",
+    "NEXTAUTH_URL": "@nextauth_url",
+    "OPENAI_API_KEY": "@openai_api_key",
     "PRISMA_GENERATE_SKIP_AUTOINSTALL": "true",
     "NODE_ENV": "production"
   },
