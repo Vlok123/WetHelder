@@ -118,6 +118,7 @@ export default function ModernLegalChat() {
     remaining: number;
     role: string;
   } | null>(null)
+  const [advancedMode, setAdvancedMode] = useState(false) // Voor "Wet & Uitleg" functionaliteit
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
@@ -229,7 +230,8 @@ export default function ModernLegalChat() {
       answer: '',
       sources: [],
       profession: selectedProfession,
-      timestamp: new Date()
+      timestamp: new Date(),
+      ...(advancedMode && { advancedMode: true })
     }
 
     setMessages(prev => [...prev, userMessage])
@@ -245,6 +247,7 @@ export default function ModernLegalChat() {
         body: JSON.stringify({
           question: currentQuestion,
           profession: selectedProfession,
+          advancedMode: advancedMode,
         }),
       })
 
@@ -487,6 +490,48 @@ export default function ModernLegalChat() {
               </Select>
             </div>
 
+            {/* Premium Mode Toggle (alleen voor ingelogde gebruikers) */}
+            {session && (
+              <div className={`mb-4 sm:mb-6 p-3 rounded-lg border ${
+                darkMode ? 'bg-gradient-to-r from-blue-900/30 to-purple-900/30 border-blue-700' : 'bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200'
+              }`}>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">🧠</span>
+                    <span className={`text-xs sm:text-sm font-medium ${
+                      darkMode ? 'text-blue-300' : 'text-blue-800'
+                    }`}>
+                      Wet & Uitleg
+                    </span>
+                    <Badge variant="outline" className={`text-xs ${
+                      darkMode ? 'border-purple-400 text-purple-300' : 'border-purple-500 text-purple-700'
+                    }`}>
+                      Premium
+                    </Badge>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setAdvancedMode(!advancedMode)}
+                    className={`p-1 ${
+                      advancedMode 
+                        ? darkMode ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
+                        : darkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}
+                  >
+                    <span className="text-xs">
+                      {advancedMode ? 'AAN' : 'UIT'}
+                    </span>
+                  </Button>
+                </div>
+                <p className={`text-xs ${
+                  darkMode ? 'text-blue-200' : 'text-blue-700'
+                }`}>
+                  Diepgaande juridische uitleg met jurisprudentie en praktijkvoorbeelden
+                </p>
+              </div>
+            )}
+
             {/* Quick Links */}
             <div className="space-y-2">
               <h3 className={`text-xs sm:text-sm font-medium ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -549,6 +594,45 @@ export default function ModernLegalChat() {
                   }`}>
                     Uw persoonlijke juridische kennisplatform voor betrouwbare juridische informatie
                   </p>
+
+                  {/* Account Benefits Section */}
+                  {!session && (
+                    <div className={`mx-4 mb-8 p-6 rounded-lg border ${
+                      darkMode ? 'bg-blue-900/20 border-blue-800' : 'bg-blue-50 border-blue-200'
+                    }`}>
+                      <h3 className={`text-lg font-semibold mb-4 ${
+                        darkMode ? 'text-blue-300' : 'text-blue-800'
+                      }`}>
+                        ✅ Waarom een gratis account aanmaken?
+                      </h3>
+                      <div className={`grid md:grid-cols-2 gap-3 text-sm ${
+                        darkMode ? 'text-blue-200' : 'text-blue-700'
+                      }`}>
+                        <div className="flex items-start gap-2">
+                          <span>🔍</span>
+                          <span><strong>Diepgaande juridische uitleg</strong> bij wetgeving, inclusief voorbeelden uit de praktijk</span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <span>⚖️</span>
+                          <span><strong>Jurisprudentie en toelichtingen</strong> van rechters en instanties, vertaald naar gewone taal</span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <span>🧠</span>
+                          <span><strong>Slimme zoekfunctie</strong> op thema's als 'mishandeling', 'ontslag' of 'huurproblemen'</span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <span>🛠️</span>
+                          <span><strong>Persoonlijke vragen stellen</strong> over jouw situatie – direct zoeken in de wet</span>
+                        </div>
+                      </div>
+                      <p className={`mt-4 text-sm ${
+                        darkMode ? 'text-blue-300' : 'text-blue-800'
+                      }`}>
+                        Je hoeft geen jurist te zijn – wij maken wetten begrijpelijk.<br/>
+                        <strong>Meld je gratis aan</strong> en ontdek wat de wet echt zegt – in gewone taal.
+                      </p>
+                    </div>
+                  )}
 
                   {/* Feature Cards */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8 px-4">
@@ -640,9 +724,16 @@ export default function ModernLegalChat() {
                         }`}>
                           <CardContent className="p-3 sm:p-4">
                             <p className="text-sm sm:text-base">{message.question}</p>
-                            <div className="flex items-center gap-2 mt-2 text-xs opacity-80">
-                              <Clock className="h-3 w-3" />
-                              <span>{formatRelativeTime(message.timestamp || new Date())}</span>
+                            <div className="flex items-center justify-between mt-2">
+                              <div className="flex items-center gap-2 text-xs opacity-80">
+                                <Clock className="h-3 w-3" />
+                                <span>{formatRelativeTime(message.timestamp || new Date())}</span>
+                              </div>
+                              {(message as any).advancedMode && (
+                                <Badge variant="outline" className="text-xs border-white/30 text-white/90">
+                                  🧠 Wet & Uitleg
+                                </Badge>
+                              )}
                             </div>
                           </CardContent>
                         </Card>
@@ -697,7 +788,11 @@ export default function ModernLegalChat() {
                   <Input
                     value={currentQuestion}
                     onChange={(e) => setCurrentQuestion(e.target.value)}
-                    placeholder={`Stel uw vraag over Nederlandse wetgeving...`}
+                    placeholder={
+                      advancedMode 
+                        ? `🧠 Wet & Uitleg: Krijg diepgaande juridische analyse met jurisprudentie...`
+                        : `Stel uw vraag over Nederlandse wetgeving...`
+                    }
                     disabled={isLoading}
                     className="w-full text-sm sm:text-base py-2 sm:py-3"
                   />
