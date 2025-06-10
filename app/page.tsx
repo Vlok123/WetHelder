@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Navigation } from '@/components/navigation'
 import { 
   Scale, 
@@ -18,7 +19,8 @@ import {
   Search,
   Send,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  User
 } from 'lucide-react'
 
 interface Message {
@@ -26,8 +28,21 @@ interface Message {
   question: string
   answer: string
   sources: string[]
+  profession: string
   isLoading?: boolean
 }
+
+// Available professions with their specific contexts
+const PROFESSIONS = [
+  { value: 'burger', label: 'Burger', icon: '👤', description: 'Algemene juridische informatie' },
+  { value: 'advocaat', label: 'Advocaat', icon: '⚖️', description: 'Juridische analyse en procedurele aspecten' },
+  { value: 'politie', label: 'Politie', icon: '👮', description: 'Handhaving en strafrecht focus' },
+  { value: 'boa', label: 'BOA', icon: '🛡️', description: 'Bijzondere opsporingsbevoegdheden' },
+  { value: 'rechter', label: 'Rechter', icon: '👨‍⚖️', description: 'Jurisprudentie en rechtspraak' },
+  { value: 'notaris', label: 'Notaris', icon: '📜', description: 'Civielrecht en aktes' },
+  { value: 'juridisch_adviseur', label: 'Juridisch Adviseur', icon: '💼', description: 'Bedrijfsjuridische context' },
+  { value: 'student', label: 'Rechtenstudent', icon: '🎓', description: 'Educatieve uitleg met achtergrond' }
+]
 
 // Markdown-like text parser for better formatting
 const formatText = (text: string) => {
@@ -99,6 +114,7 @@ export default function HomePage() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [selectedProfession, setSelectedProfession] = useState('burger')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -110,6 +126,7 @@ export default function HomePage() {
       question: input.trim(),
       answer: '',
       sources: [],
+      profession: selectedProfession,
       isLoading: true,
     }
 
@@ -123,7 +140,7 @@ export default function HomePage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ question: input.trim() }),
+        body: JSON.stringify({ question: input.trim(), profession: selectedProfession }),
       })
 
       if (!response.ok) throw new Error('Network response was not ok')
@@ -224,7 +241,34 @@ export default function HomePage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="flex gap-2 mb-6">
+                              <div className="mb-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <User className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Uw functie:</span>
+                  </div>
+                  <Select
+                    value={selectedProfession}
+                    onValueChange={(value: string) => setSelectedProfession(value)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecteer uw functie" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PROFESSIONS.map((profession) => (
+                        <SelectItem key={profession.value} value={profession.value}>
+                          <div className="flex items-center gap-2">
+                            <span>{profession.icon}</span>
+                            <div className="flex flex-col">
+                              <span>{profession.label}</span>
+                              <span className="text-xs text-muted-foreground">{profession.description}</span>
+                            </div>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <form onSubmit={handleSubmit} className="flex gap-2 mb-6">
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
@@ -260,7 +304,12 @@ export default function HomePage() {
                     <CardContent className="pt-4">
                       <div className="space-y-4">
                         <div>
-                          <h3 className="font-semibold text-lg mb-2">Vraag:</h3>
+                          <div className="flex items-center gap-2 mb-2">
+                            <h3 className="font-semibold text-lg">Vraag:</h3>
+                            <Badge variant="secondary" className="text-xs">
+                              {PROFESSIONS.find(p => p.value === message.profession)?.icon} {PROFESSIONS.find(p => p.value === message.profession)?.label}
+                            </Badge>
+                          </div>
                           <p className="text-muted-foreground">{message.question}</p>
                         </div>
                         
