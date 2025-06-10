@@ -33,7 +33,7 @@ export default function SignInPage() {
       } else {
         const session = await getSession()
         if (session) {
-          router.push('/dashboard')
+          router.push('/')
         }
       }
     } catch (error) {

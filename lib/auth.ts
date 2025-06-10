@@ -3,6 +3,7 @@ import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 // import { prisma } from './prisma'
+import { findUser } from './mock-users'
 
 export const authOptions: NextAuthOptions = {
   // adapter: PrismaAdapter(prisma) as any, // Temporarily disabled
@@ -20,22 +21,14 @@ export const authOptions: NextAuthOptions = {
         }
 
         // Mock users for development - remove this when database is working
-        if (credentials.email === 'test@wethelder.nl' && credentials.password === 'test') {
+        const user = findUser(credentials.email)
+        
+        if (user && user.password === credentials.password) {
           return {
-            id: '1',
-            email: 'test@wethelder.nl',
-            name: 'Test User',
-            role: 'admin',
-          }
-        }
-
-        // Admin user voor Sander
-        if (credentials.email === 'sanderhelmink@gmail.com' && credentials.password === 'admin123') {
-          return {
-            id: '2',
-            email: 'sanderhelmink@gmail.com',
-            name: 'Sander Helmink',
-            role: 'admin',
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
           }
         }
 
@@ -93,5 +86,6 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/auth/signin'
   },
-  secret: process.env.NEXTAUTH_SECRET || 'fallback-secret-for-development'
+  secret: process.env.NEXTAUTH_SECRET || 'development-secret-key-change-in-production-12345',
+  debug: process.env.NODE_ENV === 'development'
 }
