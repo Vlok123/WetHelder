@@ -15,7 +15,8 @@ import {
   Crown,
   Star,
   Gift,
-  Shield
+  Shield,
+  History
 } from 'lucide-react'
 
 export function Navigation() {
@@ -67,6 +68,13 @@ export function Navigation() {
                   <Button variant="ghost" size="sm" className="flex items-center space-x-1 sm:space-x-2 h-9 px-2 sm:px-3">
                     <User className="h-4 w-4" />
                     <span className="hidden sm:inline">Dashboard</span>
+                  </Button>
+                </Link>
+
+                <Link href="/chat-history" className="shrink-0">
+                  <Button variant="ghost" size="sm" className="flex items-center space-x-1 sm:space-x-2 h-9 px-2 sm:px-3">
+                    <History className="h-4 w-4" />
+                    <span className="hidden sm:inline">Geschiedenis</span>
                   </Button>
                 </Link>
 

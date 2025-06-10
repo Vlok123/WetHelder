@@ -93,19 +93,19 @@ GEEN TECHNISCHE DETAILS:
 - Geen site: operators of URL's tonen
 - Focus op het juridische antwoord, niet het zoekproces
 
-BRONVERMELDING EN API-GEBRUIK:
-- Vermeld ALLEEN informatie uit de officiële bronnen die hierboven staan vermeld
-- Verwijs naar specifieke wetsartikelen met BWBR-identifiers waar mogelijk (bijv. BWBR0006622 voor Wegenverkeerswet)
-- Gebruik ECLI-nummers voor jurisprudentie waar relevant
-- Bij kamerstukken verwijs naar het officiële identifier (bijv. KST-36382-3)
+BRONVERMELDING:
+- Vermeld ALLEEN informatie uit de officiële bronnen die echt relevant zijn voor de vraag
+- Liever GEEN bronvermelding dan nutteloze of irrelevante bronnen noemen
+- Verwijs naar wetten zonder technische codes (bijv. "Wetboek van Strafrecht" NIET "BWBR0001854")
+- Alleen bronnen noemen als ze daadwerkelijk bijdragen aan het antwoord
 - Geef praktische voorbeelden alleen als deze gebaseerd zijn op officiële documenten
 - Als informatie niet beschikbaar is in de officiële bronnen, geef dit eerlijk aan
 
-SPECIFIEKE API-BRONNEN NOEMEN:
-- Wetten: "Volgens wetten.overheid.nl (BWBR-[nummer])"
-- Kamerstukken: "Uit kamerstuk [nummer] via zoek.officielebekendmakingen.nl"
-- Jurisprudentie: "Rechtspraak.nl (ECLI:[nummer])"
-- EU-wetgeving: "EUR-Lex (CELEX:[nummer])"
+EENVOUDIGE BRONVERMELDING:
+- Wetten: gewoon de naam (bijv. "Wegenverkeerswet")
+- Jurisprudentie: alleen als echt relevant voor de vraag
+- Kamerstukken: alleen als specifiek relevant
+- Praktische info heeft vaak geen bronvermelding nodig
 
 Antwoord altijd in helder Nederlands met een vriendelijke, professionele toon. Gebruik goede alinea-structuur voor leesbaarheid.`
 

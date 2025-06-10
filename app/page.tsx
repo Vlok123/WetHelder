@@ -100,6 +100,41 @@ export default function ModernLegalChat() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
+  // Check for continued chat from sessionStorage
+  useEffect(() => {
+    const continueChat = sessionStorage.getItem('continueChat')
+    if (continueChat) {
+      try {
+        const chatData = JSON.parse(continueChat)
+        
+        // Add the previous conversation to messages
+        const previousMessage: Message = {
+          id: 'continued-' + Date.now().toString(),
+          question: chatData.question,
+          answer: chatData.answer,
+          sources: [],
+          profession: chatData.profession || 'algemeen',
+          timestamp: new Date()
+        }
+        
+        setMessages([previousMessage])
+        setSelectedProfession(chatData.profession || 'algemeen')
+        
+        // Clear the sessionStorage after using it
+        sessionStorage.removeItem('continueChat')
+        
+        // Focus input for immediate continuation
+        setTimeout(() => {
+          inputRef.current?.focus()
+        }, 100)
+        
+      } catch (error) {
+        console.error('Error parsing continue chat data:', error)
+        sessionStorage.removeItem('continueChat')
+      }
+    }
+  }, [])
+
   // Mock chat history - in real app this would come from database
   useEffect(() => {
     if (session) {
