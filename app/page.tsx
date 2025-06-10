@@ -618,7 +618,7 @@ export default function ModernLegalChat() {
                         </div>
                         <div className="flex items-start gap-2">
                           <span>🧠</span>
-                          <span><strong>Slimme zoekfunctie</strong> op thema's als 'mishandeling', 'ontslag' of 'huurproblemen'</span>
+                          <span><strong>Slimme zoekfunctie</strong> op thema&apos;s als &apos;mishandeling&apos;, &apos;ontslag&apos; of &apos;huurproblemen&apos;</span>
                         </div>
                         <div className="flex items-start gap-2">
                           <span>🛠️</span>
