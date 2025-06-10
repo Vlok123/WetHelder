@@ -1,11 +1,11 @@
 import { NextAuthOptions } from 'next-auth'
-import { PrismaAdapter } from '@auth/prisma-adapter'
+// import { PrismaAdapter } from '@auth/prisma-adapter'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
-import { prisma } from './prisma'
+// import { prisma } from './prisma'
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as any,
+  // adapter: PrismaAdapter(prisma) as any, // Temporarily disabled
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -14,10 +14,25 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' }
       },
       async authorize(credentials) {
+        // Temporarily allow any credentials for development
         if (!credentials?.email || !credentials?.password) {
           return null
         }
 
+        // Mock user for development - remove this when database is working
+        if (credentials.email === 'test@wethelder.nl' && credentials.password === 'test') {
+          return {
+            id: '1',
+            email: 'test@wethelder.nl',
+            name: 'Test User',
+            role: 'admin',
+          }
+        }
+
+        return null
+
+        // Original database code - uncomment when database is working
+        /*
         const user = await prisma.user.findUnique({
           where: {
             email: credentials.email
@@ -43,6 +58,7 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           role: user.role,
         }
+        */
       }
     })
   ],
@@ -66,5 +82,6 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: '/auth/signin'
-  }
+  },
+  secret: process.env.NEXTAUTH_SECRET || 'fallback-secret-for-development'
 }

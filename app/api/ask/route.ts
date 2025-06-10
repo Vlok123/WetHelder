@@ -128,36 +128,43 @@ export async function GET() {
 
 // Rate limiting helper
 async function checkRateLimit(userId?: string): Promise<{ allowed: boolean; remaining: number; role: string }> {
+  // Temporarily disable database rate limiting
+  return { allowed: true, remaining: 10, role: 'FREE' }
+  
+  /* Original database code - uncomment when database is working
   if (!userId) {
-    return { allowed: true, remaining: 0, role: 'ANONYMOUS' }
+    return { allowed: true, remaining: 3, role: 'ANONYMOUS' }
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { role: true }
-  })
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { role: true }
+    })
 
-  if (!user) {
-    return { allowed: false, remaining: 0, role: 'UNKNOWN' }
+    if (!user) {
+      return { allowed: true, remaining: 3, role: 'FREE' }
+    }
+
+    if (user.role === 'PREMIUM' || user.role === 'ADMIN') {
+      return { allowed: true, remaining: 999, role: user.role }
+    }
+
+    const today = new Date().toISOString().split('T')[0]
+    const usage = await prisma.dailyUsage.findUnique({
+      where: { userId_date: { userId, date: today } }
+    })
+
+    const used = usage?.count || 0
+    const limit = 3
+    const remaining = Math.max(0, limit - used)
+
+    return { allowed: remaining > 0, remaining, role: user.role }
+  } catch (error) {
+    console.error('Rate limit check error:', error)
+    return { allowed: true, remaining: 3, role: 'FREE' }
   }
-
-  if (user.role === 'PREMIUM') {
-    return { allowed: true, remaining: -1, role: user.role }
-  }
-
-  const today = new Date().toISOString().split('T')[0]
-  const dailyUsage = await prisma.dailyUsage.upsert({
-    where: { userId_date: { userId, date: today } },
-    create: { userId, date: today, count: 0 },
-    update: {},
-    select: { count: true }
-  })
-
-  const limit = 3
-  const remaining = Math.max(0, limit - dailyUsage.count)
-  const allowed = dailyUsage.count < limit
-
-  return { allowed, remaining, role: user.role }
+  */
 }
 
 function getProfessionContext(profession?: string): string {
@@ -497,8 +504,16 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    const session = await getServerSession(authOptions)
-    const userId = session?.user?.id
+    // Temporarily handle session errors gracefully
+    let session = null
+    let userId: string | undefined = undefined
+    try {
+      session = await getServerSession(authOptions)
+      userId = session?.user?.id
+    } catch (sessionError) {
+      console.log('Session error (non-critical):', sessionError instanceof Error ? sessionError.message : 'Unknown session error')
+    }
+    
     const { allowed, remaining, role } = await checkRateLimit(userId)
     
     if (!allowed) {
@@ -609,28 +624,10 @@ Kun je me hierover helpen? Geef me een direct, helder antwoord.`,
           const doneChunk = encoder.encode('data: [DONE]\n\n')
           controller.enqueue(doneChunk)
 
-          // Save to database
+          // Save to database - temporarily disabled
           try {
-            if (prisma && prisma.query) {
-              await prisma.query.create({
-                data: {
-                  question,
-                  answer: fullAnswer,
-                  sources: JSON.stringify(sources),
-                  profession,
-                  userId: userId || null
-                }
-              })
-
-              if (userId && role === 'FREE') {
-                const today = new Date().toISOString().split('T')[0]
-                await prisma.dailyUsage.upsert({
-                  where: { userId_date: { userId, date: today } },
-                  create: { userId, date: today, count: 1 },
-                  update: { count: { increment: 1 } }
-                })
-              }
-            }
+            // Database saves disabled during development
+            console.log('Question processed:', { question: question.substring(0, 50), profession, userId })
           } catch (dbError) {
             console.error('Database error (non-critical):', dbError)
           }
