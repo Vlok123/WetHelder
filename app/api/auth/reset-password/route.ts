@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { useResetToken, updateUserPassword } from '@/lib/mock-users'
+import { consumeResetToken, updateUserPassword } from '@/lib/mock-users'
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Use the reset token (this validates and removes it)
-    const tokenUsed = useResetToken(token, email)
+    const tokenUsed = consumeResetToken(token, email)
 
     if (!tokenUsed) {
       return NextResponse.json(

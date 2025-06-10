@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeft, Scale, Lock, AlertCircle, CheckCircle, Eye, EyeOff } from 'lucide-react'
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
@@ -22,17 +22,7 @@ export default function ResetPasswordPage() {
   const token = searchParams.get('token')
   const email = searchParams.get('email')
 
-  useEffect(() => {
-    // Validate token on component mount
-    if (!token || !email) {
-      setError('Ongeldige reset link')
-      return
-    }
-
-    validateToken()
-  }, [token, email])
-
-  const validateToken = async () => {
+  const validateToken = useCallback(async () => {
     try {
       const response = await fetch('/api/auth/validate-reset-token', {
         method: 'POST',
@@ -50,7 +40,17 @@ export default function ResetPasswordPage() {
     } catch (error) {
       setError('Er is een fout opgetreden bij het valideren van de link')
     }
-  }
+  }, [token, email])
+
+  useEffect(() => {
+    // Validate token on component mount
+    if (!token || !email) {
+      setError('Ongeldige reset link')
+      return
+    }
+
+    validateToken()
+  }, [token, email, validateToken])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -248,5 +248,21 @@ export default function ResetPasswordPage() {
         </Card>
       </div>
     </div>
+  )
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+        <div className="w-full max-w-md text-center">
+          <Scale className="h-12 w-12 text-primary mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">WetHelder</h1>
+          <p className="text-gray-600">Pagina wordt geladen...</p>
+        </div>
+      </div>
+    }>
+      <ResetPasswordContent />
+    </Suspense>
   )
 } 

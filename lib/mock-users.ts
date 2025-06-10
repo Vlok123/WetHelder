@@ -37,8 +37,8 @@ export const defaultUsers: MockUser[] = [
   }
 ]
 
-// Additional registered users (in-memory storage)
-export let registeredUsers: MockUser[] = []
+// Mock storage for registered users - in a real app this would be a database
+export const registeredUsers: MockUser[] = []
 
 // Reset tokens storage (in-memory)
 interface ResetToken {
@@ -91,7 +91,7 @@ export function validateResetToken(token: string, email: string): boolean {
   return !!resetToken
 }
 
-export function useResetToken(token: string, email: string): boolean {
+export function consumeResetToken(token: string, email: string): boolean {
   const tokenIndex = resetTokens.findIndex(rt => 
     rt.token === token && 
     rt.email === email && 

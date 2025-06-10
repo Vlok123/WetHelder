@@ -110,7 +110,7 @@ export default function ModernLegalChat() {
   const [selectedProfession, setSelectedProfession] = useState('algemeen')
   const [isLoading, setIsLoading] = useState(false)
   const [leftSidebarOpen, setLeftSidebarOpen] = useState(false)
-  const [rightSidebarOpen, setRightSidebarOpen] = useState(false)
+  const [rightSidebarOpen, setRightSidebarOpen] = useState(true)
   const [darkMode, setDarkMode] = useState(false)
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([])
   const [showSettings, setShowSettings] = useState(false)
@@ -449,12 +449,25 @@ export default function ModernLegalChat() {
               </Button>
             ) : session ? (
               <div className="flex items-center gap-1 sm:gap-2">
-                {/* User Profile Button */}
+                {/* Zoekgeschiedenis Toggle Button */}
                 <Button
                   variant="ghost"
                   size="sm"
                   className="p-1 sm:p-2 flex items-center gap-1 sm:gap-2"
                   onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
+                  title={rightSidebarOpen ? "Zoekgeschiedenis verbergen" : "Zoekgeschiedenis tonen"}
+                >
+                  <History className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span className="hidden lg:inline text-xs sm:text-sm">
+                    {rightSidebarOpen ? 'Verberg' : 'Geschiedenis'}
+                  </span>
+                </Button>
+
+                {/* User Profile Button */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="p-1 sm:p-2 flex items-center gap-1 sm:gap-2"
                 >
                   <User className="h-4 w-4 sm:h-5 sm:w-5" />
                   <span className="hidden sm:inline text-xs sm:text-sm">
@@ -674,7 +687,9 @@ export default function ModernLegalChat() {
           </div>
         </aside>
 
-        <main className={`flex-1 flex flex-col ${session ? 'lg:mr-80' : ''}`}>
+        <main className={`flex-1 flex flex-col transition-all duration-300 ${
+          session && rightSidebarOpen ? 'lg:mr-80' : ''
+        }`}>
           {/* Messages Container */}
           <div className="flex-1 overflow-y-auto p-3 sm:p-4">
             <div className="max-w-4xl mx-auto">
@@ -1007,10 +1022,10 @@ export default function ModernLegalChat() {
 
         {/* Right Sidebar - Chat History */}
         <aside className={`${
-          rightSidebarOpen ? 'translate-x-0' : 'translate-x-full'
-        } lg:translate-x-0 fixed lg:static inset-y-0 right-0 z-40 w-72 sm:w-80 transition-transform duration-300 ${
+          rightSidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-full'
+        } fixed lg:static inset-y-0 right-0 z-40 w-72 sm:w-80 transition-transform duration-300 ${
           darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-        } border-l overflow-y-auto lg:block ${session ? 'block' : 'hidden'}`}>
+        } border-l overflow-y-auto ${session ? 'block' : 'hidden'}`}>
           
           <div className="p-3 sm:p-4">
             <div className="flex items-center justify-between mb-4 sm:mb-6">
@@ -1031,9 +1046,10 @@ export default function ModernLegalChat() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setRightSidebarOpen(false)}
-                  className="lg:hidden p-1"
+                  className="p-1"
+                  title="Zoekgeschiedenis verbergen"
                 >
-                  <X className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
               </div>
             </div>
