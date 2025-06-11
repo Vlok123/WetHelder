@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npx prisma generate && npm run build",
   "outputDirectory": ".next",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
@@ -25,7 +25,8 @@
   "build": {
     "env": {
       "SKIP_ENV_VALIDATION": "1",
-      "NODE_OPTIONS": "--max-old-space-size=4096"
+      "NODE_OPTIONS": "--max-old-space-size=4096",
+      "PRISMA_GENERATE_SKIP_AUTOINSTALL": "true"
     }
   },
   "github": {
