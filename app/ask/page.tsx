@@ -62,7 +62,7 @@ const professionConfig = {
     description: 'Uitgebreide wetteksten met jurisprudentie en praktijkvoorbeelden',
     detailedExplanation: 'Diepgaande juridische analyse met volledige wetteksten, relevante jurisprudentie, praktijkvoorbeelden en achtergrondcontext.'
   },
-  juridisch-expert: {
+  'juridisch-expert': {
     icon: Gavel,
     label: 'Juridisch Expert',
     fullLabel: 'Juridisch Expert',
