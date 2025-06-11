@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Search, ExternalLink, MessageCircle, Scale, Euro, FileText } from 'lucide-react'
+import { Search, ExternalLink, MessageCircle, Scale, Euro, FileText, Upload, File, Check } from 'lucide-react'
 
 interface BoeteResult {
   feitcode: string
@@ -27,6 +27,12 @@ export default function BoetesPage() {
   const [isChatLoading, setIsChatLoading] = useState(false)
   const [searchMode, setSearchMode] = useState<'search' | 'question'>('search')
   const [questionResponse, setQuestionResponse] = useState('')
+  
+  // PDF Upload states
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadSuccess, setUploadSuccess] = useState(false)
+  const [uploadError, setUploadError] = useState('')
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return
@@ -141,6 +147,56 @@ export default function BoetesPage() {
           </CardContent>
         </Card>
 
+        {/* PDF Bonnenboekje */}
+        <Card className="mb-8 border-green-200 bg-green-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-green-800">
+              <File className="h-5 w-5" />
+              Officieel Bonnenboekje
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col sm:flex-row gap-4 items-start">
+              <div className="flex-1">
+                <p className="text-green-700 mb-3">
+                  Download het officiële PDF bonnenboekje met alle feitcodes en boetebedragen. 
+                  Vul je feitcode in onderstaand veld om direct te zien wat de boete inhoudt.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <Button 
+                    variant="outline" 
+                    className="border-green-600 text-green-700 hover:bg-green-100"
+                    onClick={() => window.open('/documents/bonnenboekje.pdf', '_blank')}
+                  >
+                    <File className="h-4 w-4 mr-2" />
+                    Bekijk PDF
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="border-green-600 text-green-700 hover:bg-green-100"
+                    onClick={() => {
+                      const link = document.createElement('a')
+                      link.href = '/documents/bonnenboekje.pdf'
+                      link.download = 'bonnenboekje.pdf'
+                      link.click()
+                    }}
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Download PDF
+                  </Button>
+                </div>
+              </div>
+              <div className="w-full sm:w-auto">
+                <iframe 
+                  src="/documents/bonnenboekje.pdf" 
+                  className="w-full h-32 border border-green-300 rounded"
+                  title="Bonnenboekje Preview"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Zoek/Vraag sectie */}
         <Card className="mb-8">
           <CardContent className="pt-6">
@@ -195,6 +251,65 @@ export default function BoetesPage() {
                   </>
                 )}
               </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Snelle Feitcode Lookup */}
+        <Card className="mb-8 border-orange-200 bg-orange-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-orange-800">
+              <Scale className="h-5 w-5" />
+              Snelle Feitcode Lookup
+            </CardTitle>
+            <CardDescription className="text-orange-700">
+              Vul direct een feitcode in voor een snelle opzoeking uit het bonnenboekje
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-3">
+              <Input
+                type="text"
+                placeholder="Bijv. W010a, V100, M001"
+                className="flex-1 font-mono text-lg"
+                maxLength={10}
+                onChange={(e) => {
+                  const target = e.target as HTMLInputElement
+                  const value = target.value.toUpperCase()
+                  target.value = value
+                  if (value.length >= 3) {
+                    // Auto-search when 3+ characters
+                    setSearchQuery(value)
+                    setSearchMode('search')
+                  }
+                }}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    const target = e.target as HTMLInputElement
+                    setSearchQuery(target.value)
+                    setSearchMode('search')
+                    handleSearch()
+                  }
+                }}
+              />
+              <Button 
+                variant="outline" 
+                className="border-orange-600 text-orange-700 hover:bg-orange-100"
+                onClick={() => {
+                  const input = document.querySelector('input[placeholder*="W010a"]') as HTMLInputElement
+                  if (input?.value) {
+                    setSearchQuery(input.value)
+                    setSearchMode('search')
+                    handleSearch()
+                  }
+                }}
+              >
+                <Search className="h-4 w-4 mr-2" />
+                Zoek
+              </Button>
+            </div>
+            <div className="mt-3 text-sm text-orange-600">
+              <strong>Tip:</strong> Gebruik de exacte feitcode zoals deze in het bonnenboekje staat (bijv. W010a voor rechts inhalen)
             </div>
           </CardContent>
         </Card>
