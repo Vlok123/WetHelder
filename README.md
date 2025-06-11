@@ -1,6 +1,66 @@
-# WetHelder
+# WetHelder - Nederlandse Juridische AI Platform
 
-Nederlandse wetgeving doorzoeken en begrijpen met AI.
+WetHelder is een Nederlandse juridische AI-assistent platform dat uitsluitend werkt met officiële bronnen van de Nederlandse overheid.
+
+## 🏛️ KRITISCHE BASIS DOCUMENTATIE
+
+⚠️ **BELANGRIJK**: De absolute kern van dit platform staat gedocumenteerd in:
+
+- **`JURIDISCHE_BASIS_PROMPT.md`** - De foundation prompt die NOOIT mag worden gewijzigd
+- **`JURIDISCHE_RICHTLIJNEN.md`** - Implementatie richtlijnen en BETA disclaimers
+
+Deze documenten vormen de juridische basis van het hele platform en moeten altijd bewaard blijven.
+
+## 📚 Officiële Bronnen
+
+Het platform werkt uitsluitend met deze officiële Nederlandse bronnen:
+- Wettenbank (wetten.overheid.nl)
+- Rechtspraak (uitspraken.rechtspraak.nl) 
+- Boetebase OM (boetebase.om.nl)
+- EUR-Lex (eur-lex.europa.eu)
+- Officiële Bekendmakingen (officielebekendmakingen.nl)
+- Lokale Regelgeving (lokaleregelgeving.overheid.nl)
+- Parlementaire documenten (TK open data)
+- Data Overheid (data.overheid.nl)
+
+## 🚀 Features
+
+- **Juridische Q&A** - Vragen beantwoorden op basis van Nederlandse wetgeving
+- **Boetes & Feitcodes** - Zoeken in officiële boetebase
+- **BETA Disclaimers** - Duidelijke waarschuwingen dat antwoorden fouten kunnen bevatten
+- **Bronverwijzingen** - Alle antwoorden met specifieke artikelnummers en ECLI-codes
+
+## ⚠️ BETA Status
+
+Dit platform is in BETA. Alle antwoorden bevatten verplichte disclaimers over mogelijke fouten en verwijzingen naar officiële bronnen voor verificatie.
+
+## 🔧 Technische Stack
+
+- Next.js 14 met App Router
+- TypeScript
+- Prisma ORM
+- NextAuth.js voor authenticatie
+- OpenAI GPT-4 met strenge juridische prompts
+- Tailwind CSS voor styling
+
+## 📋 Development
+
+```bash
+npm install
+npm run dev
+```
+
+## 🚨 Belangrijk voor Developers
+
+Bij elke wijziging aan AI-prompts of juridische functionaliteit:
+1. Controleer `JURIDISCHE_BASIS_PROMPT.md` 
+2. Zorg dat alle wijzigingen consistent zijn met de basis
+3. Test dat BETA disclaimers aanwezig blijven
+4. Verifieer dat alleen officiële bronnen worden gebruikt
+
+---
+
+**Juridische Basis**: Zie `JURIDISCHE_BASIS_PROMPT.md` voor de volledige foundation van dit platform.
 
 ## Functionaliteiten
 
