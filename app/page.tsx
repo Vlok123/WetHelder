@@ -134,8 +134,8 @@ export default function HomePage() {
         profileParam = `&profile=${encodeURIComponent(mappedProfile)}`
       }
       
-      // Direct redirect to ask with query and auto-search
-      window.location.href = `/ask?q=${encodeURIComponent(searchQuery)}&search=true${profileParam}`
+      // Use Next.js router for better navigation without auto-search
+      window.location.href = `/ask?q=${encodeURIComponent(searchQuery)}${profileParam}`
     }
   }
 

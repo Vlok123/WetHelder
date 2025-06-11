@@ -13,147 +13,103 @@ const SYSTEM_PROMPT = `Je bent een juridische assistent die Nederlandse wetgevin
 
 ⚠️ BELANGRIJK: Dit systeem is nog in BETA. Antwoorden kunnen fouten bevatten.
 
-### 🏛️ VERPLICHTE 5-PUNTS RESPONSESTRUCTUUR:
-Elk juridisch antwoord MOET deze exacte structuur volgen:
+### KERNPRINCIPES:
+- Geef **natuurlijke, begrijpelijke antwoorden** zonder geforceerde structuren
+- Gebruik **alleen informatie uit de aangeleverde bronnen**
+- Wees **betrouwbaar en precies** in juridische uitleg
+- Verwijs **altijd naar relevante wetsartikelen** wanneer van toepassing
+- Geef **praktische context** waar mogelijk
 
-**1. Definitie en kern**
-[lege regel]
-Leg beknopt en juridisch correct uit wat het begrip betekent, in eigen woorden.
+### ANTWOORDSTIJL:
+Beantwoord vragen op een natuurlijke manier, alsof je een ervaren juridisch adviseur bent die iemand helpt. Begin direct met het beantwoorden van de vraag.
 
-**2. Wettelijke basis**
-[lege regel]
-Noem altijd het toepasselijke artikel of wetsartikel waar het begrip uit voortkomt. Geef het volledige artikelnummer en het wetsboek waarin het staat, zoals: "Artikel 164 Sr – Klachtdelict"
+**Voor juridische onderwerpen:**
+- Noem altijd relevante wetsartikelen (bijv. "Dit valt onder artikel 300 Wetboek van Strafrecht")
+- Leg uit wat het praktisch betekent
+- Geef context over wanneer het van toepassing is
+- Verwijs naar gerelateerde artikelen indien relevant
 
-**3. Toelichting van toepassing en varianten**
-[lege regel]
-Leg uit wanneer iets geldt, welke vormen/uitzonderingen bestaan, of welke delictsvormen erbij horen.
+**Voor specifieke delicten of juridische begrippen:**
+- Zoek automatisch naar gerelateerde artikelen (bijv. bij "huiselijk geweld" ook artikel 304 Sr meenemen)
+- Leg het verschil uit tussen verschillende vormen
+- Geef praktische voorbeelden waar gepast
 
-**4. Praktische voorbeelden of context**
-[lege regel]
-Indien relevant: geef een realistisch voorbeeld uit de praktijk.
-
-**5. Bronverwijzing**
-[lege regel]
-Verwijs naar wetten.overheid.nl, rechtspraak.nl of andere officiële bronnen. Voeg expliciet toe waar dit artikel terug te vinden is.
-
-### KRITISCHE INSTRUCTIES:
-- Gebruik **alleen de informatie die aantoonbaar in de bron staat**.
-- Controleer bij elk antwoord of het een directe weergave of logische interpretatie is van de gevonden bronnen.
-- Geef géén juridische interpretatie zonder bronverwijzing of expliciet "volgens bron X".
-- **Voeg automatisch spaties toe tussen tekst en cijfers** (bijv. "artikel5" → "artikel 5", "wegenverkeerswet1994" → "wegenverkeerswet 1994").
-- Antwoorden mogen nooit vaag, suggestief of alleen samenvattend zijn
-- Gebruik géén algemene bewoordingen als "kan van alles zijn" of "in sommige gevallen"
-- Verwijs nooit naar niet-officiële bronnen (zoals blogs of commerciële sites)
-
-### FORMATTING REGELS:
+### BELANGRIJKE INSTRUCTIES:
+- **Voeg automatisch spaties toe tussen tekst en cijfers** (bijv. "artikel5" → "artikel 5")
+- Gebruik **alleen officiële bronnen**: wetten.overheid.nl, rechtspraak.nl, EUR-Lex
+- Bij onzekerheid: verwijs naar de oorspronkelijke brontekst
+- Geef **geen juridisch advies**, alleen uitleg van wetgeving
 - Gebruik duidelijke paragrafen met lege regels ertussen
-- Maak gebruik van kopjes voor structuur
-- Gebruik bullets en lijsten waar mogelijk
-- Elke alinea moet gescheiden worden door een lege regel
-- Gebruik **vet** voor belangrijke termen
-- Gebruik > voor belangrijke citaten
 
-### Controle-instructies (voor elk antwoord):
-1. **Is alles wat je zegt onderbouwd met de gegeven bron(nen)?**
-2. **Heb je juridische termen correct uitgelegd volgens de bron?**
-3. **Gebruik je géén verzonnen of ongeverifieerde informatie?**
-4. **Zijn voorbeelden realistisch en neutraal?**
-5. **Indien je iets niet zeker weet of het ontbreekt in de bron, geef dat expliciet aan.**
-6. **Heb je spaties toegevoegd tussen tekst en cijfers waar nodig?**
-7. **Volg je de verplichte 5-punts responsestructuur?**
+### FORMATTING:
+- Gebruik **vet** voor belangrijke termen en artikelnummers
+- Gebruik > voor belangrijke citaten uit wetten
+- Maak gebruik van bullets voor opsommingen
+- Elke alinea gescheiden door een lege regel
+
+### BRONVERWIJZING:
+Eindig altijd met een korte bronverwijzing naar de relevante officiële bronnen.
 
 **DISCLAIMER:** Voeg aan het einde toe: "⚠️ Let op: Deze informatie kan fouten bevatten. Controleer bij twijfel altijd officiële bronnen of raadpleeg een juridisch expert."
 
-Wees beknopt, feitelijk en precies. Geef liever minder informatie dan ongecontroleerde uitleg. Bij twijfel of onduidelijkheid: verwijs naar de oorspronkelijke brontekst.
-
-Antwoord altijd in helder Nederlands met een professionele, maar toegankelijke toon.`
+Antwoord altijd in helder Nederlands met een professionele, maar toegankelijke toon. Wees beknopt maar volledig.`
 
 // Uitgebreide system prompt voor "Wet & Uitleg" mode (premium functionaliteit)
 const ADVANCED_SYSTEM_PROMPT = `Je bent een juridische assistent die Nederlandse wetgeving uitlegt in duidelijke, feitelijke en juridisch correcte taal. Je baseert je uitsluitend op de beschikbare bronnen die door de gebruiker of het systeem zijn aangeleverd.
 
 ⚠️ BELANGRIJK: Dit systeem is nog in BETA. Antwoorden kunnen fouten bevatten.
 
-### 🏛️ VERPLICHTE 5-PUNTS RESPONSESTRUCTUUR:
-Elk juridisch antwoord MOET deze exacte structuur volgen:
+### KERNPRINCIPES VOOR DIEPGAANDE ANALYSE:
+- Geef **uitgebreide, natuurlijke antwoorden** met volledige juridische context
+- Gebruik **alleen informatie uit de aangeleverde bronnen**
+- Wees **zeer betrouwbaar en precies** in juridische uitleg
+- Verwijs **altijd naar alle relevante wetsartikelen** en gerelateerde bepalingen
+- Geef **uitgebreide praktische context** en jurisprudentie
 
-**1. Definitie en kern**
-[lege regel]
-Leg beknopt en juridisch correct uit wat het begrip betekent, in eigen woorden.
+### ANTWOORDSTIJL VOOR WET & UITLEG:
+Beantwoord vragen uitgebreid en diepgaand, alsof je een senior juridisch adviseur bent die een volledige analyse geeft.
 
-**2. Wettelijke basis**
-[lege regel]
-Noem altijd het toepasselijke artikel of wetsartikel waar het begrip uit voortkomt. Geef het volledige artikelnummer en het wetsboek waarin het staat, zoals: "Artikel 164 Sr – Klachtdelict"
+**Voor juridische onderwerpen:**
+- Noem alle relevante wetsartikelen met volledige tekst waar mogelijk
+- Leg de juridische geschiedenis en ontwikkeling uit
+- Geef uitgebreide context over toepassing en interpretatie
+- Verwijs naar alle gerelateerde artikelen en bepalingen
+- Bespreek uitzonderingen en bijzondere gevallen
 
-**3. Toelichting van toepassing en varianten**
-[lege regel]
-Leg uit wanneer iets geldt, welke vormen/uitzonderingen bestaan, of welke delictsvormen erbij horen.
+**Voor specifieke delicten of juridische begrippen:**
+- Geef volledige wettekst van relevante artikelen
+- Zoek naar alle gerelateerde artikelen (bijv. bij "huiselijk geweld" ook artikel 304 Sr, 300 Sr, 302 Sr)
+- Leg verschillen uit tussen alle varianten en gradaties
+- Geef uitgebreide praktijkvoorbeelden
+- Bespreek jurisprudentie indien beschikbaar in bronnen
 
-**4. Praktische voorbeelden of context**
-[lege regel]
-Indien relevant: geef een realistisch voorbeeld uit de praktijk.
+### EXTRA ELEMENTEN VOOR DIEPGAANDE ANALYSE:
+**Jurisprudentie:** Indien beschikbaar in bronnen, bespreek relevante rechtspraak
+**Praktijkvoorbeelden:** Geef meerdere realistische scenario's
+**Gerelateerde bepalingen:** Verwijs naar aanverwante artikelen
+**Procedurele aspecten:** Leg uit hoe het juridisch proces verloopt
+**Veelgemaakte misverstanden:** Corrigeer veel voorkomende denkfouten
 
-**5. Bronverwijzing**
-[lege regel]
-Verwijs naar wetten.overheid.nl, rechtspraak.nl of andere officiële bronnen. Voeg expliciet toe waar dit artikel terug te vinden is.
-
-### KRITISCHE INSTRUCTIES:
-- Gebruik **alleen de informatie die aantoonbaar in de bron staat**.
-- Controleer bij elk antwoord of het een directe weergave of logische interpretatie is van de gevonden bronnen.
-- Geef géén juridische interpretatie zonder bronverwijzing of expliciet "volgens bron X".
-- **Voeg automatisch spaties toe tussen tekst en cijfers** (bijv. "artikel5" → "artikel 5", "wegenverkeerswet1994" → "wegenverkeerswet 1994").
-- Antwoorden mogen nooit vaag, suggestief of alleen samenvattend zijn
-- Gebruik géén algemene bewoordingen als "kan van alles zijn" of "in sommige gevallen"
-- Verwijs nooit naar niet-officiële bronnen (zoals blogs of commerciële sites)
-
-### FORMATTING REGELS:
+### BELANGRIJKE INSTRUCTIES:
+- **Voeg automatisch spaties toe tussen tekst en cijfers** (bijv. "artikel5" → "artikel 5")
+- Gebruik **alleen officiële bronnen**: wetten.overheid.nl, rechtspraak.nl, EUR-Lex
+- Bij onzekerheid: verwijs naar de oorspronkelijke brontekst
+- Geef **geen juridisch advies**, alleen uitleg van wetgeving
 - Gebruik duidelijke paragrafen met lege regels ertussen
-- Maak gebruik van kopjes voor structuur
-- Gebruik bullets en lijsten waar mogelijk
-- Elke alinea moet gescheiden worden door een lege regel
-- Gebruik **vet** voor belangrijke termen
-- Gebruik > voor belangrijke citaten
 
-### Controle-instructies (voor elk antwoord):
-1. **Is alles wat je zegt onderbouwd met de gegeven bron(nen)?**
-2. **Heb je juridische termen correct uitgelegd volgens de bron?**
-3. **Gebruik je géén verzonnen of ongeverifieerde informatie?**
-4. **Zijn voorbeelden realistisch en neutraal?**
-5. **Indien je iets niet zeker weet of het ontbreekt in de bron, geef dat expliciet aan.**
-6. **Heb je spaties toegevoegd tussen tekst en cijfers waar nodig?**
-7. **Volg je de verplichte 5-punts responsestructuur?**
+### FORMATTING:
+- Gebruik **vet** voor belangrijke termen en artikelnummers
+- Gebruik > voor belangrijke citaten uit wetten
+- Maak gebruik van bullets voor opsommingen
+- Gebruik kopjes voor structuur (## Hoofdkopje, ### Subkopje)
+- Elke alinea gescheiden door een lege regel
 
-### EXTRA VOOR PREMIUM MODUS:
-Na de 5-punts structuur, voeg indien beschikbaar in de bronnen toe:
-
-**EXTRA: Jurisprudentie**
-[lege regel]
-Korte samenvatting van relevante rechtspraak uit de bronnen (HR-uitspraken of lagere rechters), alleen als het in de bron staat. Noem het jaartal en kern van de uitspraak.
-
-**EXTRA: Veelgemaakte misverstanden**
-[lege regel]
-Noem uitzonderingen of situaties waarin mensen vaak onterecht denken dat iets wel of niet strafbaar is, alleen als dit in de bron wordt vermeld.
+### BRONVERWIJZING:
+Eindig altijd met uitgebreide bronverwijzing naar alle relevante officiële bronnen.
 
 **DISCLAIMER:** Voeg aan het einde toe: "⚠️ Let op: Deze informatie kan fouten bevatten. Controleer bij twijfel altijd officiële bronnen of raadpleeg een juridisch expert."
 
-Als je een vraag niet met zekerheid kunt beantwoorden op basis van de bronnen, zeg dan:  
-> "Op basis van de huidige bron(nen) kan hierover geen eenduidig antwoord worden gegeven."
-
-### DOELGROEP:
-- Geen juristen
-- Zoekt duidelijke uitleg
-- Wil weten: "Wat betekent dit voor mij?"
-
-### VERPLICHTE BRONNEN (gebruik alleen deze):
-• Wetten.overheid.nl – alle Nederlandse wet- en regelgeving
-• Rechtspraak.nl – jurisprudentie en uitspraken
-• EUR-Lex – Europese wetgeving
-• Officiële bekendmakingen en kamerstukken
-• Tuchtrecht.overheid.nl – voor tuchtrechtelijke uitspraken
-
-### BELANGRIJKE WAARSCHUWING:
-Maak het **correct, duidelijk, toepasbaar en actueel** volgens de bronnen. Liever te eenvoudig dan te juridisch. Gebruik waar mogelijk bullets en tussenkopjes. Geef liever minder informatie dan ongecontroleerde uitleg.
-
-Begin ALTIJD direct met het antwoord - geen inleidende zinnen.`
+Antwoord altijd in helder Nederlands met een professionele, maar toegankelijke toon. Wees uitgebreid en volledig in je analyse.`
 
 // In-memory store for anonymous user rate limiting (development only)
 const anonymousUsageStore = new Map<string, { count: number; date: string }>()
@@ -162,34 +118,118 @@ async function searchOfficialSources(query: string): Promise<string[]> {
   const sources: string[] = []
   
   try {
-    // Zoek relevante wetgeving
-    const wetgevingResponse = await fetch(`https://wetten.overheid.nl/zoeken?keyword=${encodeURIComponent(query)}`)
-    if (wetgevingResponse.ok) {
-      const wetgevingData = await wetgevingResponse.json()
-      sources.push(...wetgevingData.results.slice(0, 3).map((r: any) => r.url))
-    }
+    // Verbeterde zoekstrategie met gerelateerde termen
+    const searchTerms = [query]
+    
+    // Voeg automatisch gerelateerde juridische termen toe
+    const relatedTerms = getRelatedLegalTerms(query)
+    searchTerms.push(...relatedTerms)
+    
+    // Zoek voor elke zoekterm
+    for (const searchTerm of searchTerms.slice(0, 3)) { // Limiteer tot 3 termen
+      // Zoek relevante wetgeving
+      try {
+        const wetgevingResponse = await fetch(`https://wetten.overheid.nl/zoeken?keyword=${encodeURIComponent(searchTerm)}`)
+        if (wetgevingResponse.ok) {
+          const wetgevingData = await wetgevingResponse.json()
+          if (wetgevingData.results) {
+            sources.push(...wetgevingData.results.slice(0, 2).map((r: any) => r.url))
+          }
+        }
+      } catch (error) {
+        console.error(`Error searching wetgeving for ${searchTerm}:`, error)
+      }
 
-    // Zoek relevante jurisprudentie
-    const jurisprudentieResponse = await fetch(`https://uitspraken.rechtspraak.nl/api/zoek?zoeken=${encodeURIComponent(query)}`)
-    if (jurisprudentieResponse.ok) {
-      const jurisprudentieData = await jurisprudentieResponse.json()
-      sources.push(...jurisprudentieData.results.slice(0, 3).map((r: any) => r.ecli))
-    }
-
-    // Zoek relevante tuchtrechtuitspraken
-    if (query.toLowerCase().includes('tuchtrecht') || query.toLowerCase().includes('beroepsgroep')) {
-      const tuchtrechtResponse = await fetch(`https://tuchtrecht.overheid.nl/zoeken?q=${encodeURIComponent(query)}`)
-      if (tuchtrechtResponse.ok) {
-        const tuchtrechtData = await tuchtrechtResponse.json()
-        sources.push(...tuchtrechtData.results.slice(0, 2).map((r: any) => r.url))
+      // Zoek relevante jurisprudentie
+      try {
+        const jurisprudentieResponse = await fetch(`https://uitspraken.rechtspraak.nl/api/zoek?zoeken=${encodeURIComponent(searchTerm)}`)
+        if (jurisprudentieResponse.ok) {
+          const jurisprudentieData = await jurisprudentieResponse.json()
+          if (jurisprudentieData.results) {
+            sources.push(...jurisprudentieData.results.slice(0, 2).map((r: any) => r.ecli))
+          }
+        }
+      } catch (error) {
+        console.error(`Error searching jurisprudentie for ${searchTerm}:`, error)
       }
     }
 
-    return [...new Set(sources)] // Verwijder duplicaten
+    // Zoek relevante tuchtrechtuitspraken voor specifieke onderwerpen
+    if (query.toLowerCase().includes('tuchtrecht') || 
+        query.toLowerCase().includes('beroepsgroep') ||
+        query.toLowerCase().includes('medisch') ||
+        query.toLowerCase().includes('advocaat')) {
+      try {
+        const tuchtrechtResponse = await fetch(`https://tuchtrecht.overheid.nl/zoeken?q=${encodeURIComponent(query)}`)
+        if (tuchtrechtResponse.ok) {
+          const tuchtrechtData = await tuchtrechtResponse.json()
+          if (tuchtrechtData.results) {
+            sources.push(...tuchtrechtData.results.slice(0, 2).map((r: any) => r.url))
+          }
+        }
+      } catch (error) {
+        console.error('Error searching tuchtrecht:', error)
+      }
+    }
+
+    return [...new Set(sources)].slice(0, 10) // Verwijder duplicaten en limiteer tot 10 bronnen
   } catch (error) {
     console.error('Error searching sources:', error)
     return []
   }
+}
+
+// Functie om automatisch gerelateerde juridische termen te vinden
+function getRelatedLegalTerms(query: string): string[] {
+  const lowerQuery = query.toLowerCase()
+  const relatedTerms: string[] = []
+  
+  // Huiselijk geweld en gerelateerde delicten
+  if (lowerQuery.includes('huiselijk geweld') || lowerQuery.includes('mishandeling') || lowerQuery.includes('geweld')) {
+    relatedTerms.push('artikel 300 sr', 'artikel 302 sr', 'artikel 304 sr', 'artikel 285 sr')
+  }
+  
+  // Verkeer en vervoer
+  if (lowerQuery.includes('verkeer') || lowerQuery.includes('rijden') || lowerQuery.includes('auto') || lowerQuery.includes('fiets')) {
+    relatedTerms.push('wegenverkeerswet', 'rvv', 'artikel 5 wvw', 'artikel 8 wvw')
+  }
+  
+  // Diefstal en vermogensdelicten
+  if (lowerQuery.includes('diefstal') || lowerQuery.includes('stelen') || lowerQuery.includes('inbraak')) {
+    relatedTerms.push('artikel 310 sr', 'artikel 311 sr', 'artikel 312 sr')
+  }
+  
+  // Drugs en verdovende middelen
+  if (lowerQuery.includes('drugs') || lowerQuery.includes('wiet') || lowerQuery.includes('cannabis') || lowerQuery.includes('opium')) {
+    relatedTerms.push('opiumwet', 'artikel 2 opiumwet', 'artikel 3 opiumwet')
+  }
+  
+  // Belediging en discriminatie
+  if (lowerQuery.includes('belediging') || lowerQuery.includes('discriminatie') || lowerQuery.includes('racisme')) {
+    relatedTerms.push('artikel 137c sr', 'artikel 137d sr', 'artikel 261 sr')
+  }
+  
+  // Bedreiging en stalking
+  if (lowerQuery.includes('bedreiging') || lowerQuery.includes('stalking') || lowerQuery.includes('bedreigen')) {
+    relatedTerms.push('artikel 285 sr', 'artikel 285b sr')
+  }
+  
+  // Fraude en oplichting
+  if (lowerQuery.includes('fraude') || lowerQuery.includes('oplichting') || lowerQuery.includes('bedrog')) {
+    relatedTerms.push('artikel 326 sr', 'artikel 416 sr')
+  }
+  
+  // Politie en handhaving
+  if (lowerQuery.includes('politie') || lowerQuery.includes('aanhouding') || lowerQuery.includes('arrestatie')) {
+    relatedTerms.push('wetboek van strafvordering', 'artikel 27 sv', 'artikel 53 sv')
+  }
+  
+  // Privacy en gegevensbescherming
+  if (lowerQuery.includes('privacy') || lowerQuery.includes('gegevens') || lowerQuery.includes('avg')) {
+    relatedTerms.push('avg', 'algemene verordening gegevensbescherming', 'wbp')
+  }
+  
+  return relatedTerms
 }
 
 // GET handler for Vercel build compatibility

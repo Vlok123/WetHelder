@@ -225,6 +225,7 @@ export default function AskPage() {
   const [showProfessionDetails, setShowProfessionDetails] = useState(false)
   const [rateLimit, setRateLimit] = useState<{remaining: number, role: string} | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const hasAutoSubmitted = useRef<boolean>(false)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -373,31 +374,30 @@ export default function AskPage() {
     }
   }, [isLoading, profession, messages, session, rateLimit])
 
-  // Check URL parameters on component mount
+  // Handle URL parameters and auto-search
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const queryParam = urlParams.get('q')
-    const searchParam = urlParams.get('search')
     const profileParam = urlParams.get('profile')
     
-    // Set profession if provided in URL
-    if (profileParam && profileParam !== 'overig') {
+    if (profileParam) {
       const mappedProfession = mapProfileToProfession(profileParam)
       setProfession(mappedProfession)
     }
     
-    if (queryParam) {
-      setInput(queryParam)
+    if (queryParam && queryParam.trim()) {
+      setInput(queryParam.trim())
       
-      // Auto-submit if search=true parameter is present
-      if (searchParam === 'true') {
+      // Only auto-submit if there are no existing messages and we haven't auto-submitted yet
+      if (messages.length === 0 && !hasAutoSubmitted.current) {
+        hasAutoSubmitted.current = true
         // Small delay to ensure state is set
         setTimeout(() => {
-          handleSubmitDirectly(queryParam)
-        }, 300)
+          handleSubmitDirectly(queryParam.trim())
+        }, 100)
       }
     }
-  }, [handleSubmitDirectly])
+  }, [handleSubmitDirectly, messages.length])
 
   // Fetch rate limit status
   useEffect(() => {
@@ -420,8 +420,6 @@ export default function AskPage() {
 
     fetchRateLimit()
   }, [session])
-
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
