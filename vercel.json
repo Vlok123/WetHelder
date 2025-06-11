@@ -5,7 +5,7 @@
       "maxDuration": 60
     },
     "app/api/ingest/route.ts": {
-      "maxDuration": 300
+      "maxDuration": 60
     }
   },
   "crons": [
