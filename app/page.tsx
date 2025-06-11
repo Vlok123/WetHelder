@@ -119,18 +119,21 @@ export default function HomePage() {
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      // Determine search type and redirect
+      // Determine search type and redirect with search execution
       if (searchQuery.toLowerCase().includes('feit') || 
           searchQuery.toLowerCase().includes('boete') || 
           /^[A-Z]\d+/.test(searchQuery)) {
-        window.location.href = `/boetes?q=${encodeURIComponent(searchQuery)}`
+        // Direct redirect to boetes with query and auto-search
+        window.location.href = `/boetes?q=${encodeURIComponent(searchQuery)}&search=true`
       } else if (searchQuery.toLowerCase().includes('artikel') ||
                  searchQuery.toLowerCase().includes('rvv') ||
                  searchQuery.toLowerCase().includes('wvw') ||
                  searchQuery.toLowerCase().includes('wet')) {
-        window.location.href = `/boetes?mode=wet&q=${encodeURIComponent(searchQuery)}`
+        // Direct redirect to wet mode with query and auto-search
+        window.location.href = `/boetes?mode=wet&q=${encodeURIComponent(searchQuery)}&search=true`
       } else {
-        window.location.href = `/ask?q=${encodeURIComponent(searchQuery)}`
+        // Direct redirect to ask with query and auto-search
+        window.location.href = `/ask?q=${encodeURIComponent(searchQuery)}&search=true`
       }
     }
   }
@@ -193,20 +196,38 @@ export default function HomePage() {
       <section className="section-padding-lg">
         <div className="container-narrow text-center">
           <div className="animate-fade-in">
-            <Badge variant="secondary" className="mb-6">
-              <Star className="h-3 w-3 mr-1" />
-              Officiële Nederlandse wetgeving
-            </Badge>
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <Badge variant="secondary">
+                <Star className="h-3 w-3 mr-1" />
+                Officiële Nederlandse wetgeving
+              </Badge>
+              <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+                IN ONTWIKKELING
+              </Badge>
+            </div>
             
             <h1 className="text-hero mb-6 text-balance">
               Nederlandse wetgeving
               <span className="text-primary block">doorzoeken en begrijpen</span>
             </h1>
             
-            <p className="text-subtitle mb-12 text-pretty max-w-2xl mx-auto">
+            <p className="text-subtitle mb-6 text-pretty max-w-2xl mx-auto">
               Betrouwbare juridische zoektool voor iedereen die officiële informatie zoekt over Nederlandse wetgeving.
               Speciaal ontwikkeld voor mensen die enkel en alleen informatie willen met officiële bronnen.
             </p>
+
+            {/* Beta Warning */}
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-3xl mx-auto mb-12">
+              <div className="flex items-start gap-3">
+                <svg className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
+                </svg>
+                <div className="text-sm text-yellow-800">
+                  <p className="font-semibold mb-1">⚠️ BETA-versie in ontwikkeling</p>
+                  <p>Deze applicatie is nog in ontwikkeling. AI-antwoorden kunnen fouten bevatten. Controleer belangrijke informatie altijd via officiële bronnen of raadpleeg een juridisch expert wanneer noodzakelijk.</p>
+                </div>
+              </div>
+            </div>
 
             {/* User Profile Selection */}
             <div className="max-w-md mx-auto mb-8">

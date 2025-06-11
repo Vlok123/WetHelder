@@ -165,6 +165,27 @@ export default function AskPage() {
     scrollToBottom()
   }, [messages])
 
+  // Check URL parameters on component mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const queryParam = urlParams.get('q')
+    const searchParam = urlParams.get('search')
+    
+    if (queryParam) {
+      setInput(queryParam)
+      
+      // Auto-submit if search=true parameter is present
+      if (searchParam === 'true') {
+        setTimeout(() => {
+          // Simulate form submission with the query
+          const syntheticEvent = { preventDefault: () => {} } as React.FormEvent
+          setInput(queryParam)
+          setTimeout(() => handleSubmit(syntheticEvent), 100)
+        }, 500)
+      }
+    }
+  }, [])
+
   // Fetch rate limit status
   useEffect(() => {
     const fetchRateLimit = async () => {
@@ -328,7 +349,12 @@ export default function AskPage() {
                 <MessageSquare className="h-5 w-5 sm:h-6 sm:w-6 text-blue-700" />
               </div>
               <div>
-                <h1 className="text-lg sm:text-xl font-semibold text-slate-900">WetHelder Consultatieplatform</h1>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-lg sm:text-xl font-semibold text-slate-900">WetHelder Consultatieplatform</h1>
+                  <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+                    BETA
+                  </Badge>
+                </div>
                 <p className="text-xs sm:text-sm text-slate-600">Nederlandse juridische kennisbank</p>
               </div>
             </div>

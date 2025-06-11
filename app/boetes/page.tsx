@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Navigation } from '@/components/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -41,7 +41,7 @@ export default function BoetesPage() {
   const [situatie, setSituatie] = useState<string>('alle_situaties')
   const [locatie, setLocatie] = useState<string>('alle_locaties')
 
-  const handleUnifiedSearch = async () => {
+  const handleUnifiedSearch = useCallback(async () => {
     if (!searchQuery.trim()) return
     
     setIsLoading(true)
@@ -81,9 +81,9 @@ export default function BoetesPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [searchQuery, voertuigType, situatie, locatie])
 
-  const handleWetSearch = async () => {
+  const handleWetSearch = useCallback(async () => {
     if (!searchQuery.trim()) return
     
     setIsWetLoading(true)
@@ -115,7 +115,34 @@ export default function BoetesPage() {
     } finally {
       setIsWetLoading(false)
     }
-  }
+  }, [searchQuery, voertuigType, situatie, locatie])
+
+  // Check URL parameters on component mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const queryParam = urlParams.get('q')
+    const modeParam = urlParams.get('mode')
+    const searchParam = urlParams.get('search')
+    
+    if (queryParam) {
+      setSearchQuery(queryParam)
+    }
+    
+    if (modeParam === 'wet') {
+      setSearchMode('wet')
+    }
+    
+    // Auto-search if search=true parameter is present
+    if (searchParam === 'true' && queryParam) {
+      setTimeout(() => {
+        if (modeParam === 'wet') {
+          handleWetSearch()
+        } else {
+          handleUnifiedSearch()
+        }
+      }, 100)
+    }
+  }, [handleUnifiedSearch, handleWetSearch])
 
   const handleDetailExplanation = async (boete: BoeteResult) => {
     setSelectedBoete(boete)
@@ -189,13 +216,31 @@ export default function BoetesPage() {
                 <FileText className="h-2.5 w-2.5 text-white" />
               </div>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-              Boetes & Feitcodes Zoeker
-            </h1>
+            <div className="flex items-center gap-2 justify-center">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+                Boetes & Feitcodes Zoeker
+              </h1>
+              <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+                BETA
+              </Badge>
+            </div>
           </div>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-4">
             Zoek in officiële Boetebase OM en bonnenboekje met geïntegreerde wetgeving verificatie
           </p>
+          
+          {/* Beta Warning */}
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 max-w-2xl mx-auto">
+            <div className="flex items-start gap-2">
+              <svg className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
+              </svg>
+              <div className="text-xs text-yellow-800">
+                <p className="font-medium">⚠️ BETA-versie in ontwikkeling</p>
+                <p>AI-antwoorden kunnen fouten bevatten. Controleer belangrijke informatie altijd zelf.</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Search Mode Toggle */}
