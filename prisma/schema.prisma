@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextIndex"]
 }
 
 datasource db {
@@ -126,7 +127,8 @@ model LegalDocument {
   @@index([rechtsgebied])
   @@index([datum])
   @@index([status])
-  @@fulltext([titel, tekst])
+  @@index([titel])
+  @@index([tekst])
 }
 
 // Boetes en feitcodes
@@ -185,7 +187,8 @@ model Jurisprudentie {
   @@index([instantie])
   @@index([datum])
   @@index([rechtsgebied])
-  @@fulltext([titel, samenvatting])
+  @@index([titel])
+  @@index([samenvatting])
 }
 
 // Parlementaire stukken

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -234,56 +234,8 @@ export default function AskPage() {
     scrollToBottom()
   }, [messages])
 
-  // Check URL parameters on component mount
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const queryParam = urlParams.get('q')
-    const searchParam = urlParams.get('search')
-    const profileParam = urlParams.get('profile')
-    
-    // Set profession if provided in URL
-    if (profileParam && profileParam !== 'overig') {
-      const mappedProfession = mapProfileToProfession(profileParam)
-      setProfession(mappedProfession)
-    }
-    
-    if (queryParam) {
-      setInput(queryParam)
-      
-      // Auto-submit if search=true parameter is present
-      if (searchParam === 'true') {
-        // Small delay to ensure state is set
-        setTimeout(() => {
-          handleSubmitDirectly(queryParam)
-        }, 300)
-      }
-    }
-  }, [])
-
-  // Fetch rate limit status
-  useEffect(() => {
-    const fetchRateLimit = async () => {
-      try {
-        const response = await fetch('/api/ask')
-        if (response.ok) {
-          const data = await response.json()
-          if (data.rateLimit) {
-            setRateLimit({
-              remaining: data.rateLimit.remaining,
-              role: data.rateLimit.role
-            })
-          }
-        }
-      } catch (error) {
-        console.error('Failed to fetch rate limit:', error)
-      }
-    }
-
-    fetchRateLimit()
-  }, [session])
-
   // Direct submit function for auto-submit from homepage
-  const handleSubmitDirectly = async (question: string) => {
+  const handleSubmitDirectly = useCallback(async (question: string) => {
     if (!question.trim() || isLoading) return
 
     const questionId = crypto.randomUUID()
@@ -419,7 +371,57 @@ export default function AskPage() {
         window.history.replaceState({}, '', '/ask')
       }
     }
-  }
+  }, [isLoading, profession, messages, session, rateLimit])
+
+  // Check URL parameters on component mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const queryParam = urlParams.get('q')
+    const searchParam = urlParams.get('search')
+    const profileParam = urlParams.get('profile')
+    
+    // Set profession if provided in URL
+    if (profileParam && profileParam !== 'overig') {
+      const mappedProfession = mapProfileToProfession(profileParam)
+      setProfession(mappedProfession)
+    }
+    
+    if (queryParam) {
+      setInput(queryParam)
+      
+      // Auto-submit if search=true parameter is present
+      if (searchParam === 'true') {
+        // Small delay to ensure state is set
+        setTimeout(() => {
+          handleSubmitDirectly(queryParam)
+        }, 300)
+      }
+    }
+  }, [handleSubmitDirectly])
+
+  // Fetch rate limit status
+  useEffect(() => {
+    const fetchRateLimit = async () => {
+      try {
+        const response = await fetch('/api/ask')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.rateLimit) {
+            setRateLimit({
+              remaining: data.rateLimit.remaining,
+              role: data.rateLimit.role
+            })
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch rate limit:', error)
+      }
+    }
+
+    fetchRateLimit()
+  }, [session])
+
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -721,10 +723,10 @@ export default function AskPage() {
                       <h4 className="font-semibold text-blue-900 mb-2">💬 Intelligente gesprekken</h4>
                       <p className="text-sm text-blue-800 mb-3">
                         WetHelder onthoudt uw hele gesprek en kan doorvragen beantwoorden. 
-                        Stel gerust vervolgvragen zoals "Leg dat eens anders uit" of "Wat zijn de uitzonderingen?".
+                        Stel gerust vervolgvragen zoals &ldquo;Leg dat eens anders uit&rdquo; of &ldquo;Wat zijn de uitzonderingen?&rdquo;.
                       </p>
                       <p className="text-xs text-blue-700">
-                        💡 Tip: Start een nieuw gesprek voor een ander onderwerp via de "🆕 Nieuw gesprek" knop.
+                        💡 Tip: Start een nieuw gesprek voor een ander onderwerp via de &ldquo;🆕 Nieuw gesprek&rdquo; knop.
                       </p>
                     </div>
                   </div>
