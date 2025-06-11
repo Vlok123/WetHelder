@@ -39,11 +39,11 @@ const MAIN_FEATURES = [
   },
   {
     title: "Wet & Uitleg",
-    description: "Officiële wetteksten uit RVV 1990, WVW 1994 en het Wetboek van Strafrecht",
+    description: "Diepgaande juridische analyse met volledige wetteksten, jurisprudentie en praktijkvoorbeelden",
     icon: FileText,
-    href: "/ask",
-    badge: "Officieel",
-    badgeVariant: "secondary" as const
+    href: "/ask?profile=wetuitleg",
+    badge: "Geavanceerd",
+    badgeVariant: "default" as const
   },
   {
     title: "Rechtspraak & Jurisprudentie",
@@ -99,9 +99,11 @@ const TARGET_AUDIENCE = [
 
 // User profile options
 const USER_PROFILES = [
-  { value: "burger", label: "Burger/Particulier" },
-  { value: "politie", label: "Politie" },
+  { value: "algemeen", label: "Algemeen publiek" },
+  { value: "wetuitleg", label: "Wet & Uitleg (Diepgaand)" },
+  { value: "juridisch-expert", label: "Juridisch Expert" },
   { value: "jurist", label: "Jurist/Advocaat" },
+  { value: "politie", label: "Politie" },
   { value: "boa", label: "BOA/Toezichthouder" },
   { value: "student", label: "Student" },
   { value: "overig", label: "Overig" }
@@ -119,8 +121,18 @@ export default function HomePage() {
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      // Build profile parameter
-      const profileParam = userProfile ? `&profile=${encodeURIComponent(userProfile)}` : ''
+      // Build profile parameter - map the new profile values
+      let profileParam = ''
+      if (userProfile) {
+        const mappedProfile = userProfile === 'algemeen' ? 'algemeen' : 
+                             userProfile === 'wetuitleg' ? 'wetuitleg' :
+                             userProfile === 'juridisch-expert' ? 'juridisch-expert' :
+                             userProfile === 'jurist' ? 'advocaat' :
+                             userProfile === 'politie' ? 'politieagent' :
+                             userProfile === 'boa' ? 'politieagent' :
+                             userProfile === 'student' ? 'student' : 'algemeen'
+        profileParam = `&profile=${encodeURIComponent(mappedProfile)}`
+      }
       
       // Direct redirect to ask with query and auto-search
       window.location.href = `/ask?q=${encodeURIComponent(searchQuery)}&search=true${profileParam}`

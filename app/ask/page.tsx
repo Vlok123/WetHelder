@@ -21,7 +21,10 @@ import {
   Eye,
   ChevronDown,
   Settings,
-  AlertTriangle
+  AlertTriangle,
+  BookOpen,
+  Gavel,
+  Briefcase
 } from 'lucide-react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
@@ -40,9 +43,49 @@ interface Message {
   timestamp: Date
 }
 
-type Profession = 'aspirant' | 'student' | 'politieagent' | 'advocaat' | 'algemeen'
+type Profession = 'aspirant' | 'student' | 'politieagent' | 'advocaat' | 'algemeen' | 'wetuitleg' | 'juridisch-expert'
 
 const professionConfig = {
+  algemeen: {
+    icon: Info,
+    label: 'Algemeen',
+    fullLabel: 'Algemeen publiek',
+    color: 'text-gray-700 bg-gray-50 border-gray-200',
+    description: 'Begrijpelijke uitleg in toegankelijke taal',
+    detailedExplanation: 'Voor het algemene publiek wordt juridische informatie in begrijpelijke taal uitgelegd zonder jargon.'
+  },
+  wetuitleg: {
+    icon: BookOpen,
+    label: 'Wet & Uitleg',
+    fullLabel: 'Wet & Uitleg (Diepgaand)',
+    color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+    description: 'Uitgebreide wetteksten met jurisprudentie en praktijkvoorbeelden',
+    detailedExplanation: 'Diepgaande juridische analyse met volledige wetteksten, relevante jurisprudentie, praktijkvoorbeelden en achtergrondcontext.'
+  },
+  juridisch-expert: {
+    icon: Gavel,
+    label: 'Juridisch Expert',
+    fullLabel: 'Juridisch Expert',
+    color: 'text-amber-700 bg-amber-50 border-amber-200',
+    description: 'Hoogst professionele juridische analyse met volledige bronvermelding',
+    detailedExplanation: 'Voor juridische experts: technische precisie, uitgebreide jurisprudentie, procedurele details en strategische overwegingen.'
+  },
+  advocaat: {
+    icon: Scale,
+    label: 'Advocaat/Jurist',
+    fullLabel: 'Advocaat/Jurist',
+    color: 'text-purple-700 bg-purple-50 border-purple-200',
+    description: 'Juridische feiten en jurisprudentie',
+    detailedExplanation: 'Voor advocaten/juristen wordt gefocust op juridische precisie, relevante jurisprudentie en processuele aspecten.'
+  },
+  politieagent: {
+    icon: Shield,
+    label: 'Politieagent',
+    fullLabel: 'Politieagent',
+    color: 'text-indigo-700 bg-indigo-50 border-indigo-200',
+    description: 'Praktische kernpunten voor handhaving',
+    detailedExplanation: 'Voor politieagenten worden praktische aspecten, handhavingsmogelijkheden en operationele procedures benadrukt.'
+  },
   aspirant: {
     icon: UserCheck,
     label: 'Aspirant',
@@ -58,30 +101,6 @@ const professionConfig = {
     color: 'text-green-700 bg-green-50 border-green-200',
     description: 'Theoretische achtergrond en verwijzingen',
     detailedExplanation: 'Voor studenten wordt gefocust op juridische theorie, bronnen, rechtsprincipes en academische context.'
-  },
-  politieagent: {
-    icon: Shield,
-    label: 'Politieagent',
-    fullLabel: 'Politieagent',
-    color: 'text-indigo-700 bg-indigo-50 border-indigo-200',
-    description: 'Praktische kernpunten voor handhaving',
-    detailedExplanation: 'Voor politieagenten worden praktische aspecten, handhavingsmogelijkheden en operationele procedures benadrukt.'
-  },
-  advocaat: {
-    icon: Scale,
-    label: 'Advocaat/Jurist',
-    fullLabel: 'Advocaat/Jurist',
-    color: 'text-purple-700 bg-purple-50 border-purple-200',
-    description: 'Juridische feiten en jurisprudentie',
-    detailedExplanation: 'Voor advocaten/juristen wordt gefocust op juridische precisie, relevante jurisprudentie en processuele aspecten.'
-  },
-  algemeen: {
-    icon: Info,
-    label: 'Algemeen',
-    fullLabel: 'Algemeen publiek',
-    color: 'text-gray-700 bg-gray-50 border-gray-200',
-    description: 'Begrijpelijke uitleg in toegankelijke taal',
-    detailedExplanation: 'Voor het algemene publiek wordt juridische informatie in begrijpelijke taal uitgelegd zonder jargon.'
   }
 }
 
@@ -91,7 +110,7 @@ interface MarkdownProps {
   [key: string]: any
 }
 
-// Enhanced text formatter
+// Enhanced text formatter with law article detection
 const formatText = (text: string) => {
   if (!text) return null
   
@@ -103,6 +122,34 @@ const formatText = (text: string) => {
     
     if (!line) {
       elements.push(<br key={i} />)
+      continue
+    }
+    
+    // Detect article references (e.g., "Artikel 5 WVW:", "Artikel 300 Sr:")
+    const articleMatch = line.match(/^(Artikel\s+\d+[a-z]?\s+(?:Sr|WVW|RVV|BW|AWB|Gw)[^:]*):?\s*(.*)$/i)
+    if (articleMatch) {
+      const [, articleTitle, articleContent] = articleMatch
+      elements.push(
+        <div key={i} className="my-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+          <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            {articleTitle}
+          </h4>
+          {articleContent && (
+            <p className="text-sm text-blue-800 leading-relaxed">{articleContent}</p>
+          )}
+        </div>
+      )
+      continue
+    }
+    
+    // Detect full law text blocks (lines starting with quotes or containing "luidt:")
+    if (line.includes('"') || line.toLowerCase().includes('luidt:') || line.toLowerCase().includes('bepaalt:')) {
+      elements.push(
+        <div key={i} className="my-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
+          <p className="text-sm text-slate-700 italic leading-relaxed">{line}</p>
+        </div>
+      )
       continue
     }
     
@@ -160,6 +207,10 @@ const mapProfileToProfession = (profile: string): Profession => {
       return 'politieagent' // BOA maps to politieagent for now
     case 'student':
       return 'student'
+    case 'wetuitleg':
+      return 'wetuitleg'
+    case 'juridisch-expert':
+      return 'juridisch-expert'
     default:
       return 'algemeen'
   }

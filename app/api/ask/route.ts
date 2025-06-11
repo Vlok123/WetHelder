@@ -293,320 +293,113 @@ function incrementAnonymousUsage(clientIP?: string) {
 
 function getProfessionContext(profession?: string): string {
   switch (profession) {
-    case 'aspirant':
+    case 'burger':
+    case 'algemeen':
       return `
-DOELGROEP: Aspirant (politie/justitie)
+### DOELGROEP: Algemeen Publiek (Burgers)
+Leg uit in **eenvoudige, begrijpelijke taal** zonder juridisch jargon. Focus op:
+- Wat betekent dit voor de gewone burger?
+- Praktische gevolgen en rechten
+- Duidelijke voorbeelden uit het dagelijks leven
+- Toegankelijke uitleg zonder technische details
 
-ANTWOORDSTIJL:
-- Uitgebreide uitleg met praktijkvoorbeelden
-- Stapsgewijze procedures en protocollen
-- Verwijs naar relevante handboeken en instructies
-- Leg de juridische basis uit maar focus op praktische toepassing
-- Geef context over rechtsstatelijke principes
-- Voeg tips toe voor de dagelijkse praktijk
+**Toon:** Behulpzaam, toegankelijk, zonder condescendentie
+**Complexiteit:** Laag, focus op begrijpelijkheid
+`
 
-STRUCTUUR ANTWOORD:
-1. Korte juridische basis
-2. Praktische uitwerking
-3. Voorbeelden uit de praktijk
-4. Relevante procedures
-5. Aandachtspunten voor aspiranten
-
-TOON: Educatief, ondersteunend, praktijkgericht`
-
-    case 'student':
-      return `
-DOELGROEP: Student (Rechten/Criminologie)
-
-ANTWOORDSTIJL:
-- Diepgaande theoretische achtergrond
-- Relevante jurisprudentie en rechtspraak
-- Academische bronnen en verwijzingen
-- Historische ontwikkeling van het recht
-- Rechtsvergelijkende aspecten waar relevant
-- Discussiepunten en verschillende juridische meningen
-
-STRUCTUUR ANTWOORD:
-1. Juridische grondslag en theorie
-2. Relevante jurisprudentie
-3. Academische discussie
-4. Praktische implicaties
-5. Vervolgonderzoek suggesties
-
-TOON: Academisch, analytisch, onderzoekend`
-
+    case 'politie':
     case 'politieagent':
       return `
-DOELGROEP: Politieagent
+### DOELGROEP: Politieagent
+Focus op **operationele toepassing** en **handhavingsaspecten**:
+- Concrete bevoegdheden en procedures
+- Wat mag wel/niet tijdens handhaving
+- Proces-verbaal gerelateerde aspecten
+- Praktische uitvoering in de dagelijkse dienst
+- Verwijs naar relevante artikelen voor processuele handelingen
 
-ANTWOORDSTIJL:
-- Kernpunten voor directe handhaving
-- Praktische bevoegdheden en grenzen daarvan
-- Snelle checklists en geheugensteuntjes
-- Operationele procedures
-- Wat wel/niet toegestaan is in de praktijk
-- Verwijs naar relevante artikelen Wetboek van Strafvordering
+**Toon:** Direct, professioneel, gericht op praktijk
+**Complexiteit:** Middelhoog, focus op uitvoerbaarheid
+`
 
-STRUCTUUR ANTWOORD:
-1. Kernpunt: Wat mag ik doen?
-2. Wettelijke basis (kort)
-3. Praktische uitvoering
-4. Aandachtspunten/valkuilen
-5. Vervolgstappen
+    case 'jurist':
+    case 'advocaat':
+      return `
+### DOELGROEP: Jurist/Advocaat
+Lever **juridisch-technische precisie** met:
+- Relevante jurisprudentie en precedenten
+- Processuele aspecten en mogelijke verdedigingsstrategieën
+- Formele vereisten en termijnen
+- Verwijzingen naar belangwekkende uitspraken
+- Analytische benadering van juridische complexiteit
 
-TOON: Direct, praktisch, operationeel gericht`
+**Toon:** Professioneel, analytisch, strategisch
+**Complexiteit:** Hoog, focus op juridische volledigheid
+`
 
     case 'boa':
       return `
-DOELGROEP: BOA (Buitengewoon Opsporingsambtenaar)
+### DOELGROEP: BOA (Buitengewoon Opsporingsambtenaar)
+Focus op **BOA-specifieke bevoegdheden**:
+- Welke artikelen vallen binnen jouw domein
+- Wanneer moet je doorverwijzen naar politie
+- Specifieke procedures voor BOA's
+- Lokale verordeningen vs landelijke wetgeving
+- Praktische handhaving binnen jouw bevoegdheden
 
-ANTWOORDSTIJL:
-- Focus op APV-handhaving en specifieke BOA-bevoegdheden
-- Duidelijke grenzen van de eigen bevoegdheden
-- Wanneer doorverwijzen naar politie
-- Praktische handhavingssituaties
-- Verschil tussen domein 1, 2 en 3 BOA's
-- Contactprocedures met politie en OM
+**Toon:** Praktisch, helder over bevoegdheidsgrenzen
+**Complexiteit:** Middelhoog, focus op BOA-domein
+`
 
-STRUCTUUR ANTWOORD:
-1. BOA-bevoegdheid: Wat mag ik als BOA?
-2. Wettelijke basis (APV/bijzondere wetgeving)
-3. Praktische handhaving
-4. Grenzen en doorverwijzing
-5. Rapportage en vervolgstappen
-
-TOON: Praktisch, duidelijk over bevoegdheidsgrenzen, procedureel`
-
-    case 'beveiliger':
+    case 'student':
       return `
-DOELGROEP: Beveiliger
+### DOELGROEP: Student (Rechten/Criminologie)
+Bied **theoretische verdieping** met:
+- Juridische achtergrond en rechtsbeginselen
+- Historische ontwikkeling van de wet
+- Academische bronnen en literatuurverwijzingen
+- Vergelijking met andere rechtsstelsels waar relevant
+- Analytische benadering voor studie
 
-ANTWOORDSTIJL:
-- Private beveiligingsbevoegdheden vs. publieke handhaving
-- Wat mag wel/niet zonder politiebevoegdheid
-- Eigendomsrecht en huisrecht
-- Aanhouding bij heterdaad
-- Samenwerking met politie en autoriteiten
-- Beveiligingsprotocollen en escalatieprocedures
+**Toon:** Educatief, analytisch, theoretisch onderbouwd
+**Complexiteit:** Middelhoog tot hoog, focus op leren en begrijpen
+`
 
-STRUCTUUR ANTWOORD:
-1. Beveiligingsbevoegdheid: Wat mag ik als beveiliger?
-2. Juridische basis (huisrecht, eigendomsrecht)
-3. Praktische uitvoering en protocollen
-4. Wanneer politie inschakelen
-5. Rapportage en documentatie
-
-TOON: Praktisch, duidelijk over bevoegdheidsgrenzen, veiligheid voorop`
-
-    case 'rechter':
+    case 'wetuitleg':
       return `
-DOELGROEP: Rechter/Magistraat
+### DOELGROEP: Wet & Uitleg (Diepgaande Analyse)
+Lever **uitgebreide juridische analyse** met:
+- Volledige wetteksten in aparte kaders
+- Relevante jurisprudentie met ECLI-nummers
+- Historische ontwikkeling en wetsgeschiedenis
+- Praktijkvoorbeelden en rechtelijke uitspraken
+- Interdisciplinaire verbanden
+- Format artikelen als: "**Artikel X Wetboek:** [volledige tekst in kader]"
 
-ANTWOORDSTIJL:
-- Jurisprudentie en precedentwerking
-- Rechterlijke beoordelingsvrijheid
-- Procesrechtelijke aspecten
-- Motiveringsplichten
-- Verschillende rechtsmachten en bevoegdheden
-- Constitutionele en Europese kaders
+**Toon:** Academisch, diepgaand, volledig
+**Complexiteit:** Zeer hoog, focus op complete juridische context
+`
 
-STRUCTUUR ANTWOORD:
-1. Juridische normen en toetsingskaders
-2. Relevante jurisprudentie en precedenten
-3. Beoordelingsvrijheid en motivering
-4. Processuele aspecten
-5. Rechtsmacht en bevoegdheidsverdeling
-
-TOON: Juridisch precies, rechtsstatelijk, procedure-bewust`
-
-    case 'officier':
+    case 'juridisch-expert':
       return `
-DOELGROEP: Officier van Justitie
+### DOELGROEP: Juridisch Expert
+Lever **hoogst professionele analyse** met:
+- Technische juridische precisie en nuances
+- Uitgebreide jurisprudentie en rechtsvergelijking
+- Procedurele complexiteiten en strategische overwegingen
+- Formele vereisten en specifieke termijnen
+- Kritische analyse van rechterlijke interpretaties
+- Verwijzingen naar doctrine en wetenschappelijke literatuur
 
-ANTWOORDSTIJL:
-- Vervolgingsbeleid en opportuniteitsbeginsel
-- Strafvorderlijke bevoegdheden
-- Samenwerking met politie en andere partners
-- Transacties en sepots
-- Rechtsmacht en competentieverdeling
-- Slachtoffer- en daderbelangen
-
-STRUCTUUR ANTWOORD:
-1. Vervolgingsaspect en opsporingsindicaties
-2. Strafvorderlijke mogelijkheden
-3. Beleidsmatige overwegingen
-4. Processuele stappen
-5. Samenwerking en coördinatie
-
-TOON: Strategisch, vervolgingsgericht, beleidsmatig`
-
-    case 'notaris':
-      return `
-DOELGROEP: Notaris
-
-ANTWOORDSTIJL:
-- Notariële authentieke akten en formaliteiten
-- Controle- en zorgplichten
-- Familierecht, ondernemingsrecht, goederenrecht
-- Fiscale aspecten en gevolgen
-- Conflictpreventie en onpartijdigheid
-- Registratie en publiciteit
-
-STRUCTUUR ANTWOORD:
-1. Notariële aspecten en formaliteiten
-2. Wettelijke vereisten en controles
-3. Praktische uitvoering en procedure
-4. Fiscale en juridische gevolgen
-5. Risico's en aandachtspunten
-
-TOON: Precies, formaliteit-bewust, preventief`
-
-    case 'deurwaarder':
-      return `
-DOELGROEP: Gerechtsdeurwaarder
-
-ANTWOORDSTIJL:
-- Executieprocedures en beslagmogelijkheden
-- Betekening en exploten
-- Incassoprocedures en dwangmiddelen
-- Bescherming van schuldenaren
-- Samenwerking met rechtbank en crediteuren
-- Tarieven en kosten
-
-STRUCTUUR ANTWOORD:
-1. Executiemogelijkheden en procedures
-2. Wettelijke vereisten en termijnen
-3. Praktische uitvoering
-4. Rechten van schuldenaren
-5. Kosten en vervolgstappen
-
-TOON: Procedureel, executiegericht, schuldenaarsbescherming-bewust`
-
-    case 'belastingadviseur':
-      return `
-DOELGROEP: Belastingadviseur
-
-ANTWOORDSTIJL:
-- Fiscale wetgeving en jurisprudentie
-- Belastingplanning en optimalisatie
-- Bezwaar- en beroepsprocedures
-- Verschillende belastingsoorten
-- Administratieve verplichtingen
-- Risicomanagement en compliance
-
-STRUCTUUR ANTWOORD:
-1. Fiscale regels en toepassingen
-2. Belastingconsequenties
-3. Planningsopties en risico's
-4. Procedurele aspecten
-5. Praktische implementatie
-
-TOON: Fiscaal-technisch, planningsgericht, compliance-bewust`
-
-    case 'gemeenteambtenaar':
-      return `
-DOELGROEP: Gemeenteambtenaar
-
-ANTWOORDSTIJL:
-- Bestuursrecht en lokale regelgeving
-- Vergunningverlening en handhaving
-- APV en lokale verordeningen
-- Bezwaar- en beroepsprocedures
-- Bestuurlijke boetes en sancties
-- Samenwerking met andere overheden
-
-STRUCTUUR ANTWOORD:
-1. Bestuurlijke bevoegdheden en procedures
-2. Lokale regelgeving en toepassingen
-3. Praktische uitvoering
-4. Rechtsbescherming en procedures
-5. Samenwerking en coördinatie
-
-TOON: Bestuurlijk, procedureel, service-gericht`
-
-    case 'verzekeringsexpert':
-      return `
-DOELGROEP: Verzekeringsexpert
-
-ANTWOORDSTIJL:
-- Verzekeringscontractenrecht
-- Polisvoorwaarden en uitsluitingen
-- Schadeafwikkeling en expertise
-- Verzekeringsplicht en dekking
-- Fraudepreventie en -detectie
-- Sectorspecifieke regelgeving
-
-STRUCTUUR ANTWOORD:
-1. Verzekeringsrechtelijke aspecten
-2. Polisvoorwaarden en dekking
-3. Schadeafwikkeling procedures
-4. Risico's en uitsluitingen
-5. Praktische afhandeling
-
-TOON: Verzekeringstechnisch, risicoanalytisch, klantgericht`
-
-    case 'hrprofessional':
-      return `
-DOELGROEP: HR Professional
-
-ANTWOORDSTIJL:
-- Arbeidsrecht en CAO-bepalingen
-- Personeelsbeleid en procedures
-- Arbeidsomstandigheden en veiligheid
-- Discriminatie en gelijke behandeling
-- Reorganisatie en ontslag
-- Privacy en gegevensbescherming
-
-STRUCTUUR ANTWOORD:
-1. Arbeidsrechtelijke kaders
-2. HR-beleid en procedures
-3. Praktische implementatie
-4. Risico's en compliance
-5. Medewerkerscommunicatie
-
-TOON: HR-gericht, beleidsmatig, medewerker-bewust`
-
-    case 'advocaat':
-      return `
-DOELGROEP: Advocaat/Jurist
-
-ANTWOORDSTIJL:
-- Juridische precisie en volledigheid
-- Relevante jurisprudentie met uitspraaknummers
-- Processuele aspecten en termijnen
-- Risico's en juridische valkuilen
-- Strategische overwegingen
-- Verwijzingen naar specifieke artikelen en regelgeving
-
-STRUCTUUR ANTWOORD:
-1. Juridische kern en toepasselijk recht
-2. Relevante jurisprudentie
-3. Processuele aspecten
-4. Praktische juridische gevolgen
-5. Strategische overwegingen
-
-TOON: Precies, professioneel, strategisch`
+**Toon:** Zeer professioneel, technisch, strategisch
+**Complexiteit:** Maximaal, focus op expertkennis
+`
 
     default:
       return `
-DOELGROEP: Algemeen publiek
-
-ANTWOORDSTIJL:
-- Begrijpelijke taal zonder juridisch jargon
-- Focus op praktische gevolgen voor dagelijks leven
-- Concrete voorbeelden en situaties
-- Wat betekent dit voor mij?
-- Heldere uitleg van complexe juridische concepten
-- Praktische tips en vervolgstappen
-
-STRUCTUUR ANTWOORD:
-1. Wat betekent dit in gewone woorden?
-2. Praktische gevolgen voor u
-3. Concrete voorbeelden
-4. Wat kunt u doen?
-5. Waar kunt u terecht voor hulp?
-
-TOON: Toegankelijk, behulpzaam, empathisch`
+### DOELGROEP: Algemeen
+Geef een evenwichtige uitleg die toegankelijk is voor de gemiddelde gebruiker.
+`
   }
 }
 
@@ -629,16 +422,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Temporarily handle session errors gracefully
-          let session = null
-      let userId: string | undefined = undefined
-      let clientIP: string | undefined = undefined
-      try {
-        session = await getServerSession(authOptions)
-        userId = session?.user?.id
-        clientIP = request.headers.get('x-forwarded-for') || undefined
-      } catch (sessionError) {
-        console.log('Session error (non-critical):', sessionError instanceof Error ? sessionError.message : 'Unknown session error')
-      }
+    let session = null
+    let userId: string | undefined = undefined
+    let clientIP: string | undefined = undefined
+    try {
+      session = await getServerSession(authOptions)
+      userId = session?.user?.id
+      clientIP = request.headers.get('x-forwarded-for') || undefined
+    } catch (sessionError) {
+      console.log('Session error (non-critical):', sessionError instanceof Error ? sessionError.message : 'Unknown session error')
+    }
     
     const { allowed, remaining, role } = await checkRateLimit(userId, clientIP)
     
@@ -666,6 +459,39 @@ export async function POST(request: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         try {
+          // Determine which system prompt to use based on profession
+          let systemPrompt = SYSTEM_PROMPT
+          if (profession === 'wetuitleg' || profession === 'juridisch-expert') {
+            systemPrompt = ADVANCED_SYSTEM_PROMPT
+          }
+
+          // Add article formatting instructions for all modes
+          const articleFormattingInstructions = `
+
+### SPECIALE FORMATTING REGELS VOOR WETTEKSTEN:
+- Wanneer je verwijst naar specifieke wetsartikelen, format deze als:
+  **Artikel [nummer] [wetboek]:** [titel artikel]
+  En plaats de volledige tekst in een apart blok.
+  
+- Voor volledige artikelteksten gebruik:
+  "Artikel [nummer] [wetboek] luidt: '[volledige tekst]'"
+  
+- Voor citaten uit wetten gebruik aanhalingstekens en cursief.
+
+### VOORBEELDFORMATTING:
+**Artikel 5 WVW:** Verkeersregels
+"Het is verboden een voertuig op de weg te laten staan..."
+
+### BRONVERMELDING:
+Vermeld altijd de exacte bron zoals: "Artikel 300 Sr" of "HR 12 juli 2022, ECLI:NL:HR:2022:1234"`
+
+          const fullSystemPrompt = systemPrompt + articleFormattingInstructions
+
+          // Add profession context
+          const professionContext = getProfessionContext(profession)
+          
+          const fullPrompt = fullSystemPrompt + '\n\n' + professionContext
+
           const response = await fetch(OPENAI_API_URL, {
             method: 'POST',
             headers: {
@@ -677,7 +503,7 @@ export async function POST(request: NextRequest) {
               messages: [
                 {
                   role: 'system',
-                  content: (advancedMode ? ADVANCED_SYSTEM_PROMPT : SYSTEM_PROMPT) + '\n\n' + getProfessionContext(profession),
+                  content: fullPrompt
                 },
                 // Add conversation history
                 ...conversationHistory.map((msg: string, index: number) => ({
