@@ -1,6 +1,6 @@
-# WetHelder - Nederlandse Juridische AI Platform
+# WetHelder - Nederlandse Juridische Platform
 
-WetHelder is een Nederlandse juridische AI-assistent platform dat uitsluitend werkt met officiële bronnen van de Nederlandse overheid.
+WetHelder is een Nederlandse juridische zoektool die uitsluitend werkt met officiële bronnen van de Nederlandse overheid.
 
 ## 🏛️ KRITISCHE BASIS DOCUMENTATIE
 
@@ -16,18 +16,18 @@ Deze documenten vormen de juridische basis van het hele platform en moeten altij
 Het platform werkt uitsluitend met deze officiële Nederlandse bronnen:
 - Wettenbank (wetten.overheid.nl)
 - Rechtspraak (uitspraken.rechtspraak.nl) 
-- Boetebase OM (boetebase.om.nl)
 - EUR-Lex (eur-lex.europa.eu)
 - Officiële Bekendmakingen (officielebekendmakingen.nl)
 - Lokale Regelgeving (lokaleregelgeving.overheid.nl)
 - Parlementaire documenten (TK open data)
 - Data Overheid (data.overheid.nl)
+- Tuchtrecht (tuchtrecht.overheid.nl)
 
 ## 🚀 Features
 
 - **Juridische Q&A** - Vragen beantwoorden op basis van Nederlandse wetgeving
-- **Boetes & Feitcodes** - Zoeken in officiële boetebase
-- **BETA Disclaimers** - Duidelijke waarschuwingen dat antwoorden fouten kunnen bevatten
+- **Wet & Uitleg** - Uitleg van specifieke wetsartikelen en regelgeving
+- **BETA Disclaimers** - Duidelijke waarschuwingen dat informatie fouten kan bevatten
 - **Bronverwijzingen** - Alle antwoorden met specifieke artikelnummers en ECLI-codes
 
 ## ⚠️ BETA Status
@@ -40,7 +40,7 @@ Dit platform is in BETA. Alle antwoorden bevatten verplichte disclaimers over mo
 - TypeScript
 - Prisma ORM
 - NextAuth.js voor authenticatie
-- OpenAI GPT-4 met strenge juridische prompts
+- DeepSeek API met strenge juridische prompts
 - Tailwind CSS voor styling
 
 ## 📋 Development
@@ -52,7 +52,7 @@ npm run dev
 
 ## 🚨 Belangrijk voor Developers
 
-Bij elke wijziging aan AI-prompts of juridische functionaliteit:
+Bij elke wijziging aan prompts of juridische functionaliteit:
 1. Controleer `JURIDISCHE_BASIS_PROMPT.md` 
 2. Zorg dat alle wijzigingen consistent zijn met de basis
 3. Test dat BETA disclaimers aanwezig blijven
@@ -64,7 +64,7 @@ Bij elke wijziging aan AI-prompts of juridische functionaliteit:
 
 ## Functionaliteiten
 
-- ✅ AI-vraaginterface voor Nederlandse wetgeving
+- ✅ Juridische vraaginterface voor Nederlandse wetgeving
 - ✅ Streaming antwoorden met bronverwijzingen
 - ✅ Email authenticatie met magic links
 - ✅ Admin dashboard voor query logs
@@ -77,7 +77,7 @@ Bij elke wijziging aan AI-prompts of juridische functionaliteit:
 - **Styling**: Tailwind CSS + shadcn/ui
 - **Database**: Neon PostgreSQL
 - **Auth**: NextAuth.js
-- **AI**: DeepSeek API
+- **API**: DeepSeek API
 - **Deployment**: Vercel
 
 ## Setup
@@ -114,7 +114,7 @@ EMAIL_SERVER_USER="your-email@example.com"
 EMAIL_SERVER_PASSWORD="your-email-password"
 EMAIL_FROM="noreply@wethelder.nl"
 
-# DeepSeek AI
+# DeepSeek API
 DEEPSEEK_API_KEY="sk-your-deepseek-api-key"
 ```
 
@@ -194,19 +194,13 @@ npm run db:studio
 ```
 /
 ├── app/                    # Next.js App Router
-│   ├── ask/               # AI chat interface  
+│   ├── ask/               # Juridische vraag interface  
 │   ├── dashboard/         # Admin dashboard
 │   └── api/
 │       └── ask/           # DeepSeek API integration
-├── components/            # React components
-│   ├── ui/               # shadcn/ui components
-│   └── navigation.tsx    # Main navigation
-├── lib/                  # Utilities
-│   ├── auth.ts          # NextAuth configuration
-│   ├── db.ts            # Prisma client
-│   └── utils.ts         # Helper functions
-└── prisma/
-    └── schema.prisma    # Database schema
+├── components/            # React componenten
+├── lib/                   # Utility functies
+└── prisma/               # Database schema
 ```
 
 ## API Endpoints
@@ -240,7 +234,7 @@ npm run db:studio
 | `NEXTAUTH_URL` | Base URL voor NextAuth | ✅ |
 | `NEXTAUTH_SECRET` | JWT signing secret | ✅ |
 | `EMAIL_SERVER_*` | SMTP configuratie voor magic links | ✅ |
-| `DEEPSEEK_API_KEY` | DeepSeek AI API key | ✅ |
+| `DEEPSEEK_API_KEY` | DeepSeek API key | ✅ |
 
 ## License
 

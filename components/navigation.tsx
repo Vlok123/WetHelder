@@ -16,8 +16,7 @@ import {
   Star,
   Gift,
   Shield,
-  History,
-  Euro
+  History
 } from 'lucide-react'
 
 export function Navigation() {
@@ -37,105 +36,54 @@ export function Navigation() {
               <Link href="/ask" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Stel vraag
               </Link>
-              <span className="text-muted-foreground">•</span>
-              <Link href="/boetes" className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
-                <Euro className="h-3 w-3" />
-                Boetes
-              </Link>
             </div>
           </div>
 
-          <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            {/* Status indicator */}
+            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs hidden sm:inline-flex">
+              BETA
+            </Badge>
+
+            {/* Authentication */}
             {status === 'loading' ? (
-              <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
+              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-muted animate-pulse" />
             ) : session ? (
-              // Logged in user
-              <>
-                <div className="hidden sm:flex items-center space-x-2 text-sm mr-2">
-                  <span className="text-muted-foreground hidden lg:inline">Welkom,</span>
-                  <span className="font-medium truncate max-w-20 sm:max-w-none">{session.user.name}</span>
-                  {session.user.role === 'PREMIUM' ? (
-                    <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-300 text-xs">
-                      <Crown className="h-3 w-3 mr-1" />
-                      <span className="hidden sm:inline">Premium</span>
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300 text-xs">
-                      <Gift className="h-3 w-3 mr-1" />
-                      <span className="hidden sm:inline">Gratis</span>
-                    </Badge>
-                  )}
-                </div>
-
-                {/* Mobile user indicator */}
-                <div className="sm:hidden flex items-center">
-                  {session.user.role === 'PREMIUM' ? (
-                    <Crown className="h-4 w-4 text-yellow-600" />
-                  ) : (
-                    <Gift className="h-4 w-4 text-green-600" />
-                  )}
-                </div>
-
-                <Link href="/dashboard" className="shrink-0">
-                  <Button variant="ghost" size="sm" className="flex items-center space-x-1 sm:space-x-2 h-9 px-2 sm:px-3">
-                    <User className="h-4 w-4" />
-                    <span className="hidden sm:inline">Dashboard</span>
-                  </Button>
-                </Link>
-
-                <Link href="/chat-history" className="shrink-0">
-                  <Button variant="ghost" size="sm" className="flex items-center space-x-1 sm:space-x-2 h-9 px-2 sm:px-3">
-                    <History className="h-4 w-4" />
-                    <span className="hidden sm:inline">Geschiedenis</span>
-                  </Button>
-                </Link>
-
-                {session.user?.email === 'sanderhelmink@gmail.com' && (
-                  <Link href="/admin" className="shrink-0">
-                    <Button variant="ghost" size="sm" className="flex items-center space-x-1 sm:space-x-2 h-9 px-2 sm:px-3 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
-                      <Shield className="h-4 w-4" />
-                      <span className="hidden sm:inline">Admin</span>
-                    </Button>
+              <div className="flex items-center space-x-2">
+                <Button variant="ghost" size="sm" asChild className="hidden sm:flex">
+                  <Link href="/chat-history" className="flex items-center">
+                    <History className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                    <span className="hidden md:inline">Geschiedenis</span>
                   </Link>
-                )}
-
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => signOut({ callbackUrl: '/' })}
-                  className="flex items-center space-x-1 sm:space-x-2 h-9 px-2 sm:px-3 shrink-0"
-                >
-                  <LogOut className="h-4 w-4" />
-                  <span className="hidden lg:inline">Uitloggen</span>
                 </Button>
-              </>
+                
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/dashboard">
+                    <User className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                    <span className="hidden sm:inline">Dashboard</span>
+                  </Link>
+                </Button>
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => signOut()}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline ml-1">Uitloggen</span>
+                </Button>
+              </div>
             ) : (
-              // Not logged in
-              <>
-                <div className="hidden lg:flex items-center text-xs text-muted-foreground mr-2">
-                  <Gift className="h-3 w-3 mr-1" />
-                  Tijdelijk gratis onbeperkt!
-                </div>
-
-                <Link href="/auth/signin" className="shrink-0">
-                  <Button variant="ghost" size="sm" className="flex items-center space-x-1 sm:space-x-2 h-9 px-2 sm:px-3">
-                    <LogIn className="h-4 w-4" />
-                    <span className="hidden sm:inline">Inloggen</span>
-                  </Button>
+              <Button size="sm" asChild>
+                <Link href="/auth/signin">
+                  <LogIn className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                  <span className="hidden sm:inline">Inloggen</span>
                 </Link>
-
-                <Link href="/auth/signup" className="shrink-0">
-                  <Button size="sm" className="flex items-center space-x-1 sm:space-x-2 bg-green-600 hover:bg-green-700 h-9 px-2 sm:px-3">
-                    <Star className="h-4 w-4" />
-                    <span className="text-xs sm:text-sm">Account</span>
-                  </Button>
-                </Link>
-              </>
+              </Button>
             )}
-
-            <div className="shrink-0">
-              <ThemeToggle />
-            </div>
+            
+            <ThemeToggle />
           </div>
         </div>
       </div>

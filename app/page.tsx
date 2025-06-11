@@ -27,13 +27,13 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 
-// Professional feature cards
+// Professional feature cards - zonder boetes
 const MAIN_FEATURES = [
   {
-    title: "Boetes & Feitcodes",
-    description: "Doorzoek Nederlandse feitcodes, boetebedragen en verkeersovertredingen",
-    icon: Gavel,
-    href: "/boetes",
+    title: "Juridische Vragen",
+    description: "Stel vragen over Nederlandse wetgeving en krijg uitleg gebaseerd op officiële bronnen",
+    icon: BookOpen,
+    href: "/ask",
     badge: "Populair",
     badgeVariant: "default" as const
   },
@@ -41,48 +41,48 @@ const MAIN_FEATURES = [
     title: "Wet & Uitleg",
     description: "Officiële wetteksten uit RVV 1990, WVW 1994 en het Wetboek van Strafrecht",
     icon: FileText,
-    href: "/boetes?mode=wet",
+    href: "/ask",
     badge: "Officieel",
     badgeVariant: "secondary" as const
   },
   {
-    title: "Juridische Vragen",
-    description: "Stel vragen over Nederlandse wetgeving aan onze juridische assistent",
-    icon: BookOpen,
+    title: "Rechtspraak & Jurisprudentie",
+    description: "Zoek in Nederlandse rechtspraak en belangrijke uitspraken",
+    icon: Gavel,
     href: "/ask",
     badge: null,
     badgeVariant: null
   }
 ]
 
-// Quick search suggestions
-const QUICK_SEARCHES = [
-  "Donkere ramen auto",
-  "N420 feitcode", 
-  "Snelheidsovertredingen",
-  "Artikel 5 WVW",
-  "Parkeerboetes",
-  "RVV 1990 teksten"
+// Juridische voorbeeldvragen
+const JURIDISCHE_VRAGEN = [
+  "Wat zijn mijn rechten bij een politiecontrole?",
+  "Hoe lang duurt een strafprocedure?",
+  "Wanneer mag de politie mijn huis doorzoeken?",
+  "Wat is het verschil tussen artikel 300 en 302 Wetboek van Strafrecht?",
+  "Hoe werkt de Nederlandse rechtspraak?",
+  "Welke rechten heb ik als verdachte?"
 ]
 
-// Platform stats - Real and achievable numbers
+// Platform stats - aangepast zonder feitcodes/boetes
 const PLATFORM_STATS = [
-  { label: "Feitcodes", value: "2.500+" },
   { label: "Wetsartikelen", value: "15.000+" },
   { label: "Wetboeken", value: "25+" },
+  { label: "Rechtspraak", value: "100.000+" },
   { label: "Actualiteit", value: "100%" }
 ]
 
-// Target audience - including citizens
+// Target audience
 const TARGET_AUDIENCE = [
   {
     title: "Burgers & Particulieren",
-    description: "Begrijpelijke uitleg van wetten en boetes voor iedere Nederlandse burger",
+    description: "Begrijpelijke uitleg van wetten en rechten voor iedere Nederlandse burger",
     icon: Users
   },
   {
     title: "Politie & Handhaving", 
-    description: "Snel toegang tot feitcodes en boetebedragen tijdens handhaving",
+    description: "Snel toegang tot relevante wetgeving tijdens handhaving",
     icon: Shield
   },
   {
@@ -122,22 +122,8 @@ export default function HomePage() {
       // Build profile parameter
       const profileParam = userProfile ? `&profile=${encodeURIComponent(userProfile)}` : ''
       
-      // Determine search type and redirect with search execution
-      if (searchQuery.toLowerCase().includes('feit') || 
-          searchQuery.toLowerCase().includes('boete') || 
-          /^[A-Z]\d+/.test(searchQuery)) {
-        // Direct redirect to boetes with query and auto-search
-        window.location.href = `/boetes?q=${encodeURIComponent(searchQuery)}&search=true${profileParam}`
-      } else if (searchQuery.toLowerCase().includes('artikel') ||
-                 searchQuery.toLowerCase().includes('rvv') ||
-                 searchQuery.toLowerCase().includes('wvw') ||
-                 searchQuery.toLowerCase().includes('wet')) {
-        // Direct redirect to wet mode with query and auto-search
-        window.location.href = `/boetes?mode=wet&q=${encodeURIComponent(searchQuery)}&search=true${profileParam}`
-      } else {
-        // Direct redirect to ask with query and auto-search
-        window.location.href = `/ask?q=${encodeURIComponent(searchQuery)}&search=true${profileParam}`
-      }
+      // Direct redirect to ask with query and auto-search
+      window.location.href = `/ask?q=${encodeURIComponent(searchQuery)}&search=true${profileParam}`
     }
   }
 
@@ -153,12 +139,6 @@ export default function HomePage() {
             </div>
             
             <nav className="hidden md:flex items-center space-x-6">
-              <Link href="/boetes" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Boetes & Feitcodes
-              </Link>
-              <Link href="/boetes?mode=wet" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Wet & Uitleg
-              </Link>
               <Link href="/ask" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                 Juridische Vragen
               </Link>
@@ -219,7 +199,7 @@ export default function HomePage() {
               Speciaal ontwikkeld voor mensen die enkel en alleen informatie willen met officiële bronnen.
             </p>
 
-            {/* Beta Warning */}
+            {/* Beta Warning - zonder AI verwijzing */}
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-3xl mx-auto mb-12">
               <div className="flex items-start gap-3">
                 <svg className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -227,7 +207,7 @@ export default function HomePage() {
                 </svg>
                 <div className="text-sm text-yellow-800">
                   <p className="font-semibold mb-1">⚠️ BETA-versie in ontwikkeling</p>
-                  <p>Deze applicatie is nog in ontwikkeling. AI-antwoorden kunnen fouten bevatten. Controleer belangrijke informatie altijd via officiële bronnen of raadpleeg een juridisch expert wanneer noodzakelijk.</p>
+                  <p>Deze applicatie is nog in ontwikkeling. Informatie kan fouten bevatten. Controleer belangrijke informatie altijd via officiële bronnen of raadpleeg een juridisch expert wanneer noodzakelijk.</p>
                 </div>
               </div>
             </div>
@@ -264,7 +244,7 @@ export default function HomePage() {
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                   <Input
                     type="text"
-                    placeholder="Zoek feitcodes, wetsartikelen, of stel een juridische vraag..."
+                    placeholder="Stel een juridische vraag of zoek in wetsartikelen..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="input-field pl-12 pr-32 h-14 text-lg shadow-medium"
@@ -281,18 +261,21 @@ export default function HomePage() {
               </form>
             </div>
 
-            {/* Quick Search Tags */}
-            <div className="flex flex-wrap justify-center gap-2 mb-12">
-              <span className="text-sm text-muted-foreground mr-2">Populaire zoekopdrachten:</span>
-              {QUICK_SEARCHES.map((query) => (
-                <button
-                  key={query}
-                  onClick={() => handleQuickSearch(query)}
-                  className="text-sm px-3 py-1 rounded-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {query}
-                </button>
-              ))}
+            {/* Juridische Voorbeeldvragen */}
+            <div className="max-w-4xl mx-auto mb-12">
+              <h3 className="text-lg font-semibold mb-4 text-muted-foreground">Juridische voorbeeldvragen:</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {JURIDISCHE_VRAGEN.map((vraag) => (
+                  <button
+                    key={vraag}
+                    onClick={() => handleQuickSearch(vraag)}
+                    className="text-left p-4 rounded-lg bg-muted/50 hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-colors border border-border/50 hover:border-border"
+                  >
+                    <BookOpen className="h-4 w-4 inline mr-2 text-primary" />
+                    {vraag}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Platform Stats */}
@@ -398,7 +381,7 @@ export default function HomePage() {
                   </div>
                   <div>
                     <h3 className="font-semibold mb-2">Razendsnelle zoekresultaten</h3>
-                    <p className="text-muted-foreground">Vind binnen seconden de juiste feitcode, wetsartikel of jurisprudentie.</p>
+                    <p className="text-muted-foreground">Vind binnen seconden wat u zoekt in duizenden wetsartikelen en uitspraken.</p>
                   </div>
                 </div>
                 
@@ -407,8 +390,8 @@ export default function HomePage() {
                     <Clock className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-2">Altijd actuele informatie</h3>
-                    <p className="text-muted-foreground">Onze database wordt regelmatig bijgewerkt met de laatste wetswijzigingen.</p>
+                    <h3 className="font-semibold mb-2">Altijd actueel</h3>
+                    <p className="text-muted-foreground">Automatische updates zorgen ervoor dat u altijd de meest recente wetgeving raadpleegt.</p>
                   </div>
                 </div>
                 
@@ -417,39 +400,65 @@ export default function HomePage() {
                     <Lock className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-2">Voor iedereen toegankelijk</h3>
-                    <p className="text-muted-foreground">Complexe juridische informatie begrijpelijk gemaakt voor burgers en professionals.</p>
+                    <h3 className="font-semibold mb-2">Veilig en betrouwbaar</h3>
+                    <p className="text-muted-foreground">Uw zoekopdrachten zijn privé en alle data wordt veilig verwerkt volgens Nederlandse standaarden.</p>
                   </div>
                 </div>
               </div>
             </div>
             
-            <div className="lg:text-center">
-              <div className="card-elevated p-8">
-                <h3 className="text-2xl font-bold mb-4">Start vandaag nog</h3>
-                <p className="text-muted-foreground mb-6">
-                  Krijg direct toegang tot betrouwbare juridische informatie
-                </p>
-                {session ? (
-                  <Button asChild size="lg" className="w-full">
-                    <Link href="/dashboard">
-                      Ga naar Dashboard
-                      <ChevronRight className="h-4 w-4 ml-2" />
-                    </Link>
-                  </Button>
-                ) : (
-                  <Button onClick={() => signIn()} size="lg" className="w-full">
-                    <LogIn className="h-4 w-4 mr-2" />
-                    Gratis Account Aanmaken
-                  </Button>
-                )}
+            <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-2xl p-8 text-center">
+              <div className="space-y-6">
+                <div className="mx-auto w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center">
+                  <Scale className="h-8 w-8 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold mb-2">Nederlandse Wetgeving</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Toegang tot alle Nederlandse wetten, rechtspraak en jurisprudentie op één centrale plek.
+                  </p>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center justify-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <span>Wetboek van Strafrecht</span>
+                    </div>
+                    <div className="flex items-center justify-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <span>Burgerlijk Wetboek</span>
+                    </div>
+                    <div className="flex items-center justify-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <span>Wegenverkeerswet</span>
+                    </div>
+                    <div className="flex items-center justify-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <span>RVV 1990</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Professional Footer */}
+      {/* CTA Section */}
+      <section className="section-padding bg-primary/5">
+        <div className="container-narrow text-center">
+          <h2 className="text-3xl font-bold mb-4">Begin met zoeken in Nederlandse wetgeving</h2>
+          <p className="text-subtitle mb-8">
+            Stel uw eerste juridische vraag en ontdek hoe eenvoudig het is om betrouwbare informatie te vinden
+          </p>
+          <Button size="lg" asChild>
+            <Link href="/ask">
+              Start nu
+              <ArrowRight className="h-5 w-5 ml-2" />
+            </Link>
+          </Button>
+        </div>
+      </section>
+
+      {/* Footer */}
       <footer className="border-t border-border bg-muted/20 section-padding-sm">
         <div className="container-fluid">
           <div className="grid md:grid-cols-3 gap-8 mb-8">
@@ -467,26 +476,24 @@ export default function HomePage() {
             <div>
               <h4 className="font-semibold mb-4">Platform</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/boetes" className="text-muted-foreground hover:text-foreground transition-colors">Boetes & Feitcodes</Link></li>
-                <li><Link href="/boetes?mode=wet" className="text-muted-foreground hover:text-foreground transition-colors">Wet & Uitleg</Link></li>
                 <li><Link href="/ask" className="text-muted-foreground hover:text-foreground transition-colors">Juridische Vragen</Link></li>
                 <li><Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">Contact</Link></li>
               </ul>
             </div>
             
             <div>
-              <h4 className="font-semibold mb-4">Legal</h4>
+              <h4 className="font-semibold mb-4">Juridisch</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</Link></li>
-                <li><Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">Terms of Service</Link></li>
+                <li><Link href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">Privacy</Link></li>
+                <li><Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">Algemene Voorwaarden</Link></li>
                 <li><Link href="/disclaimer" className="text-muted-foreground hover:text-foreground transition-colors">Disclaimer</Link></li>
               </ul>
             </div>
           </div>
           
-          <div className="pt-8 border-t border-border text-center">
+          <div className="border-t border-border pt-6 text-center">
             <p className="text-sm text-muted-foreground">
-              © 2024 WetHelder. Alle rechten voorbehouden.
+              © 2024 WetHelder. Alle rechten voorbehouden. Nederlandse wetgeving toegankelijk voor iedereen.
             </p>
           </div>
         </div>

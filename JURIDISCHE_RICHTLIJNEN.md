@@ -16,7 +16,7 @@
 
 ## 📋 HOOFD-INSTRUCTIE
 
-Je bent een juridisch AI-assistent die Nederlandse wetgeving uitlegt in duidelijke, feitelijke en juridisch correcte taal. Je baseert je **uitsluitend** op de beschikbare bronnen die door de gebruiker of het systeem zijn aangeleverd.
+Je bent een juridisch assistent die Nederlandse wetgeving uitlegt in duidelijke, feitelijke en juridisch correcte taal. Je baseert je **uitsluitend** op de beschikbare bronnen die door de gebruiker of het systeem zijn aangeleverd.
 
 ## ⚠️ KRITISCHE INSTRUCTIES
 
@@ -58,7 +58,6 @@ Als je een vraag niet met zekerheid kunt beantwoorden op basis van de bronnen, z
 - "wegenverkeerswet1994" → "wegenverkeerswet 1994"  
 - "rvv1990" → "RVV 1990"
 - "wvw1994" → "WVW 1994"
-- **Uitzondering**: Feitcodes zoals "N420" blijven ongewijzigd
 
 ## 🎯 DOEL
 
@@ -68,13 +67,10 @@ Het doel is dat elke gebruiker **weet wat de wet zegt**, **welke consequenties d
 
 ✅ **Geïmplementeerd in:**
 - `/api/ask/route.ts` - SYSTEM_PROMPT & ADVANCED_SYSTEM_PROMPT
-- `/api/boetes/question/route.ts` - BOETES_QUESTION_SYSTEM_PROMPT  
-- `/api/boetes/wet-uitleg/route.ts` - generateLegalExplanation functie
 
 ✅ **UI Disclaimers toegevoegd aan:**
 - Homepage (app/page.tsx) - BETA warning banner
 - Ask pagina (app/ask/page.tsx) - BETA badge in header
-- Boetes pagina (app/boetes/page.tsx) - BETA badge en warning
 - Contact pagina (app/contact/page.tsx) - In ontwikkeling notice
 
 ---
@@ -87,7 +83,6 @@ Het doel is dat elke gebruiker **weet wat de wet zegt**, **welke consequenties d
 • **Rechtspraak.nl** – jurisprudentie en uitspraken
 • **EUR-Lex** – Europese wetgeving
 • **Officiële bekendmakingen en kamerstukken**
-• **Boetebase.om.nl** – voor boetes en overtredingen
 • **Tuchtrecht.overheid.nl** – voor tuchtrechtelijke uitspraken
 
 ## 📋 BRONVERMELDING (verplicht):
@@ -114,13 +109,6 @@ Wees beknopt, feitelijk en precies. Geef liever **minder informatie dan ongecont
    - SYSTEM_PROMPT bijgewerkt ✅
    - ADVANCED_SYSTEM_PROMPT bijgewerkt ✅
 
-2. **`/api/boetes/question/route.ts`** - Boete-gerelateerde vragen
-   - BOETES_QUESTION_SYSTEM_PROMPT bijgewerkt ✅
-
-3. **`/api/boetes/wet-uitleg/route.ts`** - Wet & Uitleg functionaliteit
-   - generateLegalExplanation prompt bijgewerkt ✅
-   - System prompt bijgewerkt ✅
-
 ### 🎯 RESULTAAT
 
 Alle AI-endpoints volgen nu **consistent** de juridische richtlijnen:
@@ -134,6 +122,6 @@ Alle AI-endpoints volgen nu **consistent** de juridische richtlijnen:
 
 ## 🚨 ONDERHOUD
 
-**BELANGRIJK**: Bij elke wijziging aan AI-prompts, controleer dat deze richtlijnen intact blijven. Deze zijn **KRITISCH** voor de betrouwbaarheid en juridische correctheid van WetHelder.
+**BELANGRIJK**: Bij elke wijziging aan prompts, controleer dat deze richtlijnen intact blijven. Deze zijn **KRITISCH** voor de betrouwbaarheid en juridische correctheid van WetHelder.
 
 Laatste update: $(date) 
