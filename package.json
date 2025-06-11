@@ -12,7 +12,13 @@
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "ingest:test": "node scripts/ingest-test.js",
+    "ingest:wettenbank": "node scripts/ingest-test.js --source=wettenbank",
+    "ingest:koop": "node scripts/ingest-test.js --source=koop",
+    "ingest:rechtspraak": "node scripts/ingest-test.js --source=rechtspraak",
+    "ingest:all": "node scripts/ingest-test.js --source=all",
+    "search:test": "node scripts/ingest-test.js --search"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^1.6.0",

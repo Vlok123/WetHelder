@@ -11,17 +11,28 @@ WetHelder is een Nederlandse juridische zoektool die uitsluitend werkt met offic
 
 Deze documenten vormen de juridische basis van het hele platform en moeten altijd bewaard blijven.
 
-## 📚 Officiële Bronnen
+## 📚 Officiële Bronnen Integratie
 
-Het platform werkt uitsluitend met deze officiële Nederlandse bronnen:
-- Wettenbank (wetten.overheid.nl)
-- Rechtspraak (uitspraken.rechtspraak.nl) 
-- EUR-Lex (eur-lex.europa.eu)
-- Officiële Bekendmakingen (officielebekendmakingen.nl)
-- Lokale Regelgeving (lokaleregelgeving.overheid.nl)
-- Parlementaire documenten (TK open data)
-- Data Overheid (data.overheid.nl)
-- Tuchtrecht (tuchtrecht.overheid.nl)
+Het platform implementeert nu volledige integratie met officiële Nederlandse juridische bronnen:
+
+### ✅ **Geïmplementeerde Bronnen:**
+- **Wettenbank** (wetten.overheid.nl) - Basiswettenbestand en zoekfunctie
+- **Rechtspraak** (uitspraken.rechtspraak.nl) - ECLI feed en jurisprudentie
+- **KOOP Zoekdienst** (officielebekendmakingen.nl) - Staatsblad en Kamerstukken
+- **Tuchtrecht** (tuchtrecht.overheid.nl) - Tuchtrechtelijke uitspraken
+- **Tweede Kamer** (api.tweedekamer.nl) - GraphQL API voor parlementaire stukken
+
+### 🔄 **Automatische Data Ingestie:**
+- **Dagelijkse sync** om 03:00 CET via Vercel Cron
+- **Vector embeddings** voor semantische zoekfunctionaliteit
+- **Rate limiting** en **caching** voor API bescherming
+- **Logging** van alle ingestie processen
+
+### 🔍 **RAG (Retrieval-Augmented Generation):**
+- **PostgreSQL** database met full-text search
+- **OpenAI embeddings** (text-embedding-3-small)
+- **Semantic search** door juridische documenten
+- **Bronverwijzingen** met exacte artikelnummers en ECLI-codes
 
 ## 🚀 Features
 
@@ -29,6 +40,8 @@ Het platform werkt uitsluitend met deze officiële Nederlandse bronnen:
 - **Wet & Uitleg** - Uitleg van specifieke wetsartikelen en regelgeving
 - **BETA Disclaimers** - Duidelijke waarschuwingen dat informatie fouten kan bevatten
 - **Bronverwijzingen** - Alle antwoorden met specifieke artikelnummers en ECLI-codes
+- **Officiële Bronnen** - Automatische integratie met alle Nederlandse juridische databases
+- **Vector Search** - Semantische zoekfunctionaliteit door juridische documenten
 
 ## ⚠️ BETA Status
 
@@ -38,9 +51,10 @@ Dit platform is in BETA. Alle antwoorden bevatten verplichte disclaimers over mo
 
 - Next.js 14 met App Router
 - TypeScript
-- Prisma ORM
+- Prisma ORM met PostgreSQL
 - NextAuth.js voor authenticatie
-- DeepSeek API met strenge juridische prompts
+- OpenAI API met strenge juridische prompts
+- Vector embeddings voor RAG
 - Tailwind CSS voor styling
 
 ## 📋 Development
@@ -50,6 +64,55 @@ npm install
 npm run dev
 ```
 
+## 🗄️ Database Setup
+
+### 1. PostgreSQL Database
+```bash
+# Genereer Prisma client
+npm run db:generate
+
+# Push schema naar database (inclusief nieuwe juridische modellen)
+npm run db:push
+```
+
+### 2. Data Ingestie Testen
+```bash
+# Test alle bronnen
+npm run ingest:test
+
+# Test specifieke bronnen
+npm run ingest:wettenbank
+npm run ingest:koop
+npm run ingest:rechtspraak
+
+# Test zoekfunctionaliteit
+npm run search:test -- --search="artikel 300 sr"
+
+# Volledige sync (admin only)
+npm run ingest:all
+```
+
+## 🔄 Data Ingestie API
+
+### Admin Endpoints:
+```bash
+# Status check
+GET /api/ingest
+
+# Start ingestie
+POST /api/ingest
+{
+  "source": "wettenbank|koop|rechtspraak|tweedekamer|all",
+  "type": "incremental|full_sync"
+}
+
+# Test search
+PUT /api/ingest
+{
+  "query": "artikel 300 sr"
+}
+```
+
 ## 🚨 Belangrijk voor Developers
 
 Bij elke wijziging aan prompts of juridische functionaliteit:
@@ -57,6 +120,7 @@ Bij elke wijziging aan prompts of juridische functionaliteit:
 2. Zorg dat alle wijzigingen consistent zijn met de basis
 3. Test dat BETA disclaimers aanwezig blijven
 4. Verifieer dat alleen officiële bronnen worden gebruikt
+5. **Test data ingestie** na database wijzigingen
 
 ---
 
@@ -70,15 +134,20 @@ Bij elke wijziging aan prompts of juridische functionaliteit:
 - ✅ Admin dashboard voor query logs
 - ✅ Dark mode ondersteuning
 - ✅ Mobile-first responsive design
+- ✅ **Officiële bronnen integratie met RAG**
+- ✅ **Vector search door juridische documenten**
+- ✅ **Automatische data ingestie en updates**
 
 ## Tech Stack
 
 - **Framework**: Next.js 14 (App Router)
 - **Styling**: Tailwind CSS + shadcn/ui
-- **Database**: Neon PostgreSQL
+- **Database**: PostgreSQL met Prisma ORM
+- **Vector Search**: OpenAI Embeddings + PostgreSQL
 - **Auth**: NextAuth.js
-- **API**: DeepSeek API
-- **Deployment**: Vercel
+- **API**: OpenAI GPT-4o met juridische prompts
+- **Data Sources**: Wettenbank, Rechtspraak, KOOP, Tweede Kamer
+- **Deployment**: Vercel met Cron Jobs
 
 ## Setup
 
@@ -114,8 +183,8 @@ EMAIL_SERVER_USER="your-email@example.com"
 EMAIL_SERVER_PASSWORD="your-email-password"
 EMAIL_FROM="noreply@wethelder.nl"
 
-# DeepSeek API
-DEEPSEEK_API_KEY="sk-your-deepseek-api-key"
+# OpenAI API (voor embeddings en chat)
+OPENAI_API_KEY="sk-your-openai-api-key"
 ```
 
 ### 4. Database Setup
@@ -126,6 +195,9 @@ npm run db:generate
 
 # Push schema naar database
 npm run db:push
+
+# Test data ingestie
+npm run ingest:test
 ```
 
 ### 5. Development Server
@@ -166,7 +238,7 @@ Voeg de volgende environment variables toe in je Vercel dashboard:
 - `NEXTAUTH_URL` (je productie URL)
 - `NEXTAUTH_SECRET`
 - `EMAIL_SERVER_*`
-- `DEEPSEEK_API_KEY`
+- `OPENAI_API_KEY`
 
 ### 5. Database Schema Deploy
 
@@ -177,13 +249,17 @@ vercel env pull .env.local
 npm run db:push
 ```
 
+### 6. Data Ingestie Setup
+
+Na deployment wordt automatisch elke nacht om 03:00 CET een data sync uitgevoerd via Vercel Cron Jobs.
+
 ## Admin Access
 
 Om admin toegang te krijgen:
 
 1. Registreer met je email via de login
 2. Ga naar je database (bijv. via Prisma Studio)
-3. Zet `isAdmin` op `true` voor je user record
+3. Zet `role` op `ADMIN` voor je user record
 
 ```bash
 npm run db:studio
@@ -197,24 +273,38 @@ npm run db:studio
 │   ├── ask/               # Juridische vraag interface  
 │   ├── dashboard/         # Admin dashboard
 │   └── api/
-│       └── ask/           # DeepSeek API integration
+│       ├── ask/           # OpenAI API integration
+│       └── ingest/        # Data ingestie API
 ├── components/            # React componenten
 ├── lib/                   # Utility functies
-└── prisma/               # Database schema
+│   ├── officialSources.ts # Officiële bronnen integratie
+│   └── prisma.ts         # Database client
+├── prisma/               # Database schema
+│   └── schema.prisma     # Inclusief juridische modellen
+└── scripts/              # Data ingestie scripts
+    └── ingest-test.js    # Test script voor bronnen
 ```
 
 ## API Endpoints
 
-- `POST /api/ask` - Submit question, get streaming AI response
+- `POST /api/ask` - Submit question, get streaming AI response with official sources
+- `GET|POST|PUT /api/ingest` - Data ingestie management (admin only)
 - `GET|POST /api/auth/*` - NextAuth endpoints
 
 ## Features
 
-### AI Chat
+### AI Chat met Officiële Bronnen
 - Streaming responses via Server-Sent Events
-- Nederlandse wetgeving expertise  
-- Automatische bronverwijzingen
+- Nederlandse wetgeving expertise met RAG
+- Automatische bronverwijzingen naar officiële documenten
 - Query logging naar database
+- Vector search door juridische documenten
+
+### Data Ingestie Systeem
+- Automatische sync met Wettenbank, Rechtspraak, KOOP
+- Vector embeddings voor semantische zoekfunctionaliteit
+- Rate limiting en caching voor API bescherming
+- Comprehensive logging van alle processen
 
 ### Authentication
 - Magic link email authentication
@@ -225,6 +315,7 @@ npm run db:studio
 - Query statistics
 - Recent questions overview
 - User activity monitoring
+- Data ingestie status en controle
 
 ## Environment Variables
 
@@ -234,7 +325,23 @@ npm run db:studio
 | `NEXTAUTH_URL` | Base URL voor NextAuth | ✅ |
 | `NEXTAUTH_SECRET` | JWT signing secret | ✅ |
 | `EMAIL_SERVER_*` | SMTP configuratie voor magic links | ✅ |
-| `DEEPSEEK_API_KEY` | DeepSeek API key | ✅ |
+| `OPENAI_API_KEY` | OpenAI API key voor embeddings en chat | ✅ |
+
+## Officiële Bronnen Architectuur
+
+```mermaid
+flowchart TD
+  subgraph Ingestie
+    A1[Wettenbank<br/>Basiswettenbestand] --> P(Database)
+    A2[KOOP Zoekdienst<br/>Staatsblad / Kamerstukken] --> P
+    A3[Rechtspraak<br/>ECLI-feed] --> P
+    A4[Tweede Kamer<br/>GraphQL] --> P
+  end
+  P[(PostgreSQL + Embeddings)] --> V[Vector Search]
+  V -->|searchOfficialSources()| S((API /ask))
+  S --> O(OpenAI GPT-4o)
+  C[Client / Chat-UI] --> S
+```
 
 ## License
 

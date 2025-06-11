@@ -92,4 +92,157 @@ model Query {
 
   @@index([createdAt])
   @@index([userId, createdAt])
+}
+
+// === NIEUWE MODELLEN VOOR OFFICIËLE JURIDISCHE BRONNEN ===
+
+// Juridische documenten met vector embeddings voor RAG
+model LegalDocument {
+  id          String   @id @default(cuid())
+  bron        String   // wettenbank, rechtspraak, eur-lex, etc.
+  type        String   // wet, uitspraak, richtlijn, etc.
+  titel       String
+  tekst       String   @db.Text
+  uri         String   @unique
+  datum       DateTime?
+  artikelNr   String?  // Voor wetsartikelen
+  ecliNr      String?  // Voor rechtspraak
+  status      String   @default("ACTIVE") // ACTIVE, SUPERSEDED, DELETED
+  
+  // Metadata
+  wetboek     String?  // Sr, BW, WVW, etc.
+  rechtsgebied String? // strafrecht, civielrecht, etc.
+  
+  // Vector embedding (stored as JSON for now, later pgvector)
+  embedding   String?  @db.Text // JSON array van floats
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lastFetched DateTime @default(now())
+
+  @@index([bron, type])
+  @@index([wetboek])
+  @@index([rechtsgebied])
+  @@index([datum])
+  @@index([status])
+  @@fulltext([titel, tekst])
+}
+
+// Boetes en feitcodes
+model Boete {
+  id          String   @id @default(cuid())
+  feitcode    String   @unique
+  omschrijving String
+  categorie   String   // A, B, C, etc.
+  bedrag      Int      // In eurocenten
+  punten      Int?     // Strafpunten
+  
+  // Juridische basis
+  wetsartikel String?
+  wetboek     String?
+  
+  // Metadata
+  geldigVan   DateTime
+  geldigTot   DateTime?
+  status      String   @default("ACTIVE")
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([categorie])
+  @@index([bedrag])
+  @@index([status])
+  @@index([geldigVan, geldigTot])
+}
+
+// Jurisprudentie met ECLI nummers
+model Jurisprudentie {
+  id          String   @id @default(cuid())
+  ecli        String   @unique
+  titel       String
+  samenvatting String? @db.Text
+  volledigeTekst String @db.Text
+  
+  // Rechtbank info
+  instantie   String   // HR, Hof, Rechtbank, etc.
+  datum       DateTime
+  uitspraakType String // arrest, vonnis, beschikking
+  
+  // Juridische classificatie
+  rechtsgebied String[]
+  trefwoorden String[]
+  
+  // Relaties
+  wetsartikelen String[] // Geciteerde artikelen
+  
+  // Vector embedding
+  embedding   String?  @db.Text
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([instantie])
+  @@index([datum])
+  @@index([rechtsgebied])
+  @@fulltext([titel, samenvatting])
+}
+
+// Parlementaire stukken
+model ParlementairStuk {
+  id          String   @id @default(cuid())
+  nummer      String   @unique // Kamerstuknummer
+  titel       String
+  type        String   // wetsvoorstel, motie, amendement, etc.
+  tekst       String   @db.Text
+  
+  // Metadata
+  kamer       String   // TK, EK
+  vergaderjaar String
+  datum       DateTime
+  status      String   // ingediend, aangenomen, verworpen, etc.
+  
+  // Relaties
+  indieners   String[] // Namen van indieners
+  onderwerp   String?
+  
+  // Vector embedding
+  embedding   String?  @db.Text
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([type])
+  @@index([kamer])
+  @@index([vergaderjaar])
+  @@index([datum])
+  @@index([status])
+}
+
+// Data ingestie logs
+model DataIngestLog {
+  id          String   @id @default(cuid())
+  bron        String   // wettenbank, rechtspraak, etc.
+  type        String   // full_sync, incremental, manual
+  status      String   // running, completed, failed
+  
+  // Statistieken
+  documentsProcessed Int @default(0)
+  documentsAdded     Int @default(0)
+  documentsUpdated   Int @default(0)
+  documentsDeleted   Int @default(0)
+  
+  // Timing
+  startedAt   DateTime @default(now())
+  completedAt DateTime?
+  duration    Int?     // In seconden
+  
+  // Error handling
+  errorMessage String? @db.Text
+  
+  createdAt   DateTime @default(now())
+
+  @@index([bron, type])
+  @@index([status])
+  @@index([startedAt])
 } 

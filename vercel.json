@@ -7,8 +7,17 @@
   "functions": {
     "app/api/ask/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/ingest/route.ts": {
+      "maxDuration": 300
     }
   },
+  "crons": [
+    {
+      "path": "/api/ingest",
+      "schedule": "0 3 * * *"
+    }
+  ],
   "env": {
     "PRISMA_GENERATE_SKIP_AUTOINSTALL": "true",
     "NODE_ENV": "production"
