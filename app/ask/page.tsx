@@ -147,6 +147,24 @@ const formatText = (text: string) => {
   return <div className="max-w-none">{elements}</div>
 }
 
+// Map homepage profile selection to ask page profession types
+const mapProfileToProfession = (profile: string): Profession => {
+  switch (profile) {
+    case 'burger':
+      return 'algemeen'
+    case 'politie':
+      return 'politieagent'
+    case 'jurist':
+      return 'advocaat'
+    case 'boa':
+      return 'politieagent' // BOA maps to politieagent for now
+    case 'student':
+      return 'student'
+    default:
+      return 'algemeen'
+  }
+}
+
 export default function AskPage() {
   const { data: session } = useSession()
   const [messages, setMessages] = useState<Message[]>([])
@@ -170,6 +188,13 @@ export default function AskPage() {
     const urlParams = new URLSearchParams(window.location.search)
     const queryParam = urlParams.get('q')
     const searchParam = urlParams.get('search')
+    const profileParam = urlParams.get('profile')
+    
+    // Set profession if provided in URL
+    if (profileParam && profileParam !== 'overig') {
+      const mappedProfession = mapProfileToProfession(profileParam)
+      setProfession(mappedProfession)
+    }
     
     if (queryParam) {
       setInput(queryParam)

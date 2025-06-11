@@ -40,6 +40,7 @@ export default function BoetesPage() {
   const [voertuigType, setVoertuigType] = useState<string>('alle_voertuigen')
   const [situatie, setSituatie] = useState<string>('alle_situaties')
   const [locatie, setLocatie] = useState<string>('alle_locaties')
+  const [userProfile, setUserProfile] = useState<string>('')
 
   const handleUnifiedSearch = useCallback(async () => {
     if (!searchQuery.trim()) return
@@ -56,6 +57,7 @@ export default function BoetesPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           query: searchQuery,
+          profile: userProfile,
           context: {
             voertuigType: voertuigType === 'alle_voertuigen' ? '' : voertuigType,
             situatie: situatie === 'alle_situaties' ? '' : situatie,
@@ -95,6 +97,7 @@ export default function BoetesPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           query: searchQuery,
+          profile: userProfile,
           context: {
             voertuigType: voertuigType === 'alle_voertuigen' ? '' : voertuigType,
             situatie: situatie === 'alle_situaties' ? '' : situatie,
@@ -123,6 +126,7 @@ export default function BoetesPage() {
     const queryParam = urlParams.get('q')
     const modeParam = urlParams.get('mode')
     const searchParam = urlParams.get('search')
+    const profileParam = urlParams.get('profile')
     
     if (queryParam) {
       setSearchQuery(queryParam)
@@ -130,6 +134,10 @@ export default function BoetesPage() {
     
     if (modeParam === 'wet') {
       setSearchMode('wet')
+    }
+    
+    if (profileParam) {
+      setUserProfile(profileParam)
     }
     
     // Auto-search if search=true parameter is present

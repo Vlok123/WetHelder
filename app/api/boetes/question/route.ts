@@ -76,7 +76,142 @@ const mockBoeteData = [
   }
 ]
 
-const BOETES_QUESTION_SYSTEM_PROMPT = `Je bent een juridisch AI-assistent die Nederlandse boetes en overtredingen uitlegt in duidelijke, feitelijke en juridisch correcte taal. Je baseert je uitsluitend op de beschikbare bronnen die door de gebruiker of het systeem zijn aangeleverd.
+function getProfileContextForBoetes(profile?: string): string {
+  switch (profile) {
+    case 'burger':
+      return `
+DOELGROEP: Burger/Particulier
+
+ANTWOORDSTIJL:
+- Begrijpelijke uitleg zonder juridisch jargon
+- Focus op praktische gevolgen voor dagelijks leven
+- Concrete voorbeelden en situaties
+- Wat betekent dit voor u als automobilist/weggebruiker?
+- Heldere uitleg van rechten en plichten
+- Praktische tips voor naleving
+
+STRUCTUUR:
+1. Wat zegt de wet in gewone woorden?
+2. Wat betekent dit voor u als weggebruiker?
+3. Concrete voorbeelden
+4. Wat kunt u doen bij overtredingen?
+5. Waar vindt u hulp?
+
+TOON: Toegankelijk, behulpzaam, empathisch`
+
+    case 'politie':
+      return `
+DOELGROEP: Politieagent
+
+ANTWOORDSTIJL:
+- Kernpunten voor directe handhaving
+- Praktische bevoegdheden en grenzen
+- Operationele procedures bij overtredingen
+- Wat wel/niet toegestaan is tijdens controle
+- Bewijslast en procesverbaal
+- Doorverwijzing naar andere autoriteiten
+
+STRUCTUUR:
+1. Wettelijke basis en handhavingsbevoegdheden
+2. Praktische controle en vaststelling
+3. Proces-verbaal en bewijsvoering
+4. Doorverwijzing en vervolgstappen
+5. Aandachtspunten bij handhaving
+
+TOON: Direct, praktisch, operationeel gericht`
+
+    case 'jurist':
+      return `
+DOELGROEP: Jurist/Advocaat
+
+ANTWOORDSTIJL:
+- Juridische precisie en volledigheid
+- Relevante jurisprudentie en rechtsgrond
+- Processuele aspecten en termijnen
+- Verdedigingsstrategieën en juridische lacunes
+- Verwijzingen naar specifieke artikelen
+- Rechtsmacht en bevoegdheidsverdeling
+
+STRUCTUUR:
+1. Juridische grondslag en wetshistorie
+2. Relevante jurisprudentie
+3. Processuele aspecten en verweer
+4. Praktische juridische gevolgen
+5. Strategische overwegingen
+
+TOON: Precies, professioneel, strategisch`
+
+    case 'boa':
+      return `
+DOELGROEP: BOA (Buitengewoon Opsporingsambtenaar)
+
+ANTWOORDSTIJL:
+- Focus op BOA-bevoegdheden binnen specifiek domein
+- Duidelijke grenzen van eigen handhavingsmogelijkheden
+- Wanneer doorverwijzen naar politie/andere autoriteiten
+- APV-handhaving en lokale verordeningen
+- Procedurele aspecten binnen BOA-kaders
+- Rapportage en proces-verbaal voor BOA's
+
+STRUCTUUR:
+1. BOA-bevoegdheid binnen relevant domein
+2. Wettelijke basis en handhavingsruimte
+3. Praktische uitvoering binnen BOA-taken
+4. Grenzen en doorverwijzing
+5. Rapportage en administratie
+
+TOON: Praktisch, duidelijk over bevoegdheidsgrenzen, procedureel`
+
+    case 'student':
+      return `
+DOELGROEP: Student
+
+ANTWOORDSTIJL:
+- Theoretische achtergrond en wetshistorie
+- Rechtsprincipes en dogmatiek
+- Academische bronnen en literatuur
+- Rechtsvergelijking en kritische analyse
+- Discussiepunten en verschillende interpretaties
+- Studie-ondersteunende informatie
+
+STRUCTUUR:
+1. Theoretische basis en rechtsprincipes
+2. Wetshistorie en ontwikkeling
+3. Academische discussie en interpretatie
+4. Praktische toepassingen en cases
+5. Vervolgonderzoek en bronnen
+
+TOON: Academisch, analytisch, onderzoekend`
+
+    default:
+      return `
+DOELGROEP: Algemeen publiek
+
+ANTWOORDSTIJL:
+- Begrijpelijke taal zonder juridisch jargon
+- Focus op praktische gevolgen voor dagelijks leven
+- Concrete voorbeelden en situaties
+- Wat betekent dit voor mij?
+- Heldere uitleg van complexe juridische concepten
+- Praktische tips en vervolgstappen
+
+STRUCTUUR:
+1. Wat betekent dit in gewone woorden?
+2. Praktische gevolgen voor u
+3. Concrete voorbeelden
+4. Wat kunt u doen?
+5. Waar kunt u terecht voor hulp?
+
+TOON: Toegankelijk, behulpzaam, empathisch`
+  }
+}
+
+function getBoetesSystemPrompt(profile?: string): string {
+  const profileContext = getProfileContextForBoetes(profile)
+  
+  return `Je bent een juridisch AI-assistent die Nederlandse boetes en overtredingen uitlegt in duidelijke, feitelijke en juridisch correcte taal. Je baseert je uitsluitend op de beschikbare bronnen die door de gebruiker of het systeem zijn aangeleverd.
+
+${profileContext}
 
 ⚠️ BELANGRIJK: Dit systeem is nog in BETA. Antwoorden kunnen fouten bevatten.
 
@@ -108,11 +243,12 @@ Als je een vraag niet met zekerheid kunt beantwoorden op basis van de bronnen, z
 > "Op basis van de huidige bron(nen) kan hierover geen eenduidig antwoord worden gegeven."
 
 Wees beknopt, feitelijk en precies. Geef liever minder informatie dan ongecontroleerde uitleg.`
+}
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { question } = body
+    const { question, profile } = body
 
     if (!question || typeof question !== 'string') {
       return NextResponse.json(
@@ -128,6 +264,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const systemPrompt = getBoetesSystemPrompt(profile)
+
     const response = await fetch(OPENAI_API_URL, {
       method: 'POST',
       headers: {
@@ -137,7 +275,7 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         model: 'gpt-4',
         messages: [
-          { role: 'system', content: BOETES_QUESTION_SYSTEM_PROMPT },
+          { role: 'system', content: systemPrompt },
           { role: 'user', content: question }
         ],
         max_tokens: 1000,
@@ -165,6 +303,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       answer,
       question,
+      profile,
       disclaimer: 'Gebaseerd op officiële Boetebase OM en Nederlandse wetgeving. Controleer altijd boetebase.om.nl voor actuele informatie.'
     })
 

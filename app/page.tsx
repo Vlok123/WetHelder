@@ -119,21 +119,24 @@ export default function HomePage() {
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
+      // Build profile parameter
+      const profileParam = userProfile ? `&profile=${encodeURIComponent(userProfile)}` : ''
+      
       // Determine search type and redirect with search execution
       if (searchQuery.toLowerCase().includes('feit') || 
           searchQuery.toLowerCase().includes('boete') || 
           /^[A-Z]\d+/.test(searchQuery)) {
         // Direct redirect to boetes with query and auto-search
-        window.location.href = `/boetes?q=${encodeURIComponent(searchQuery)}&search=true`
+        window.location.href = `/boetes?q=${encodeURIComponent(searchQuery)}&search=true${profileParam}`
       } else if (searchQuery.toLowerCase().includes('artikel') ||
                  searchQuery.toLowerCase().includes('rvv') ||
                  searchQuery.toLowerCase().includes('wvw') ||
                  searchQuery.toLowerCase().includes('wet')) {
         // Direct redirect to wet mode with query and auto-search
-        window.location.href = `/boetes?mode=wet&q=${encodeURIComponent(searchQuery)}&search=true`
+        window.location.href = `/boetes?mode=wet&q=${encodeURIComponent(searchQuery)}&search=true${profileParam}`
       } else {
         // Direct redirect to ask with query and auto-search
-        window.location.href = `/ask?q=${encodeURIComponent(searchQuery)}&search=true`
+        window.location.href = `/ask?q=${encodeURIComponent(searchQuery)}&search=true${profileParam}`
       }
     }
   }

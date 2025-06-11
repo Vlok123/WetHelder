@@ -193,14 +193,149 @@ function searchLegalDatabase(query: string): any {
   return results
 }
 
-async function generateLegalExplanation(query: string, searchResults: any, context: SearchContext): Promise<string> {
+function getProfileContextForBoetes(profile?: string): string {
+  switch (profile) {
+    case 'burger':
+      return `
+DOELGROEP: Burger/Particulier
+
+ANTWOORDSTIJL:
+- Begrijpelijke uitleg zonder juridisch jargon
+- Focus op praktische gevolgen voor dagelijks leven
+- Concrete voorbeelden en situaties
+- Wat betekent dit voor u als automobilist/weggebruiker?
+- Heldere uitleg van rechten en plichten
+- Praktische tips voor naleving
+
+STRUCTUUR:
+1. Wat zegt de wet in gewone woorden?
+2. Wat betekent dit voor u als weggebruiker?
+3. Concrete voorbeelden
+4. Wat kunt u doen bij overtredingen?
+5. Waar vindt u hulp?
+
+TOON: Toegankelijk, behulpzaam, empathisch`
+
+    case 'politie':
+      return `
+DOELGROEP: Politieagent
+
+ANTWOORDSTIJL:
+- Kernpunten voor directe handhaving
+- Praktische bevoegdheden en grenzen
+- Operationele procedures bij overtredingen
+- Wat wel/niet toegestaan is tijdens controle
+- Bewijslast en procesverbaal
+- Doorverwijzing naar andere autoriteiten
+
+STRUCTUUR:
+1. Wettelijke basis en handhavingsbevoegdheden
+2. Praktische controle en vaststelling
+3. Proces-verbaal en bewijsvoering
+4. Doorverwijzing en vervolgstappen
+5. Aandachtspunten bij handhaving
+
+TOON: Direct, praktisch, operationeel gericht`
+
+    case 'jurist':
+      return `
+DOELGROEP: Jurist/Advocaat
+
+ANTWOORDSTIJL:
+- Juridische precisie en volledigheid
+- Relevante jurisprudentie en rechtsgrond
+- Processuele aspecten en termijnen
+- Verdedigingsstrategieën en juridische lacunes
+- Verwijzingen naar specifieke artikelen
+- Rechtsmacht en bevoegdheidsverdeling
+
+STRUCTUUR:
+1. Juridische grondslag en wetshistorie
+2. Relevante jurisprudentie
+3. Processuele aspecten en verweer
+4. Praktische juridische gevolgen
+5. Strategische overwegingen
+
+TOON: Precies, professioneel, strategisch`
+
+    case 'boa':
+      return `
+DOELGROEP: BOA (Buitengewoon Opsporingsambtenaar)
+
+ANTWOORDSTIJL:
+- Focus op BOA-bevoegdheden binnen specifiek domein
+- Duidelijke grenzen van eigen handhavingsmogelijkheden
+- Wanneer doorverwijzen naar politie/andere autoriteiten
+- APV-handhaving en lokale verordeningen
+- Procedurele aspecten binnen BOA-kaders
+- Rapportage en proces-verbaal voor BOA's
+
+STRUCTUUR:
+1. BOA-bevoegdheid binnen relevant domein
+2. Wettelijke basis en handhavingsruimte
+3. Praktische uitvoering binnen BOA-taken
+4. Grenzen en doorverwijzing
+5. Rapportage en administratie
+
+TOON: Praktisch, duidelijk over bevoegdheidsgrenzen, procedureel`
+
+    case 'student':
+      return `
+DOELGROEP: Student
+
+ANTWOORDSTIJL:
+- Theoretische achtergrond en wetshistorie
+- Rechtsprincipes en dogmatiek
+- Academische bronnen en literatuur
+- Rechtsvergelijking en kritische analyse
+- Discussiepunten en verschillende interpretaties
+- Studie-ondersteunende informatie
+
+STRUCTUUR:
+1. Theoretische basis en rechtsprincipes
+2. Wetshistorie en ontwikkeling
+3. Academische discussie en interpretatie
+4. Praktische toepassingen en cases
+5. Vervolgonderzoek en bronnen
+
+TOON: Academisch, analytisch, onderzoekend`
+
+    default:
+      return `
+DOELGROEP: Algemeen publiek
+
+ANTWOORDSTIJL:
+- Begrijpelijke taal zonder juridisch jargon
+- Focus op praktische gevolgen voor dagelijks leven
+- Concrete voorbeelden en situaties
+- Wat betekent dit voor mij?
+- Heldere uitleg van complexe juridische concepten
+- Praktische tips en vervolgstappen
+
+STRUCTUUR:
+1. Wat betekent dit in gewone woorden?
+2. Praktische gevolgen voor u
+3. Concrete voorbeelden
+4. Wat kunt u doen?
+5. Waar kunt u terecht voor hulp?
+
+TOON: Toegankelijk, behulpzaam, empathisch`
+  }
+}
+
+async function generateLegalExplanation(query: string, searchResults: any, context: SearchContext, profile?: string): Promise<string> {
   if (!process.env.OPENAI_API_KEY) {
     return "Wetgeving uitleg tijdelijk niet beschikbaar."
   }
   
   try {
+    // Get profile-specific context
+    const profileContext = getProfileContextForBoetes(profile)
+    
     const prompt = `
 Je bent een juridisch AI-assistent die Nederlandse wetgeving uitlegt in duidelijke, feitelijke en juridisch correcte taal. Je baseert je uitsluitend op de beschikbare bronnen die door de gebruiker of het systeem zijn aangeleverd.
+
+${profileContext}
 
 ⚠️ BELANGRIJK: Dit systeem is nog in BETA. Antwoorden kunnen fouten bevatten.
 
@@ -268,7 +403,7 @@ Wees beknopt, feitelijk en precies. Geef liever minder informatie dan ongecontro
 
 export async function POST(request: NextRequest) {
   try {
-    const { query, context = {} } = await request.json()
+    const { query, context = {}, profile } = await request.json()
     
     if (!query || typeof query !== 'string') {
       return NextResponse.json(
@@ -280,14 +415,15 @@ export async function POST(request: NextRequest) {
     // Search legal database
     const searchResults = searchLegalDatabase(query)
     
-    // Generate comprehensive legal explanation
-    const legalExplanation = await generateLegalExplanation(query, searchResults, context)
+    // Generate comprehensive legal explanation with profile context
+    const legalExplanation = await generateLegalExplanation(query, searchResults, context, profile)
     
     return NextResponse.json({
       explanation: legalExplanation,
       searchResults: searchResults,
       query: query,
-      context: context
+      context: context,
+      profile: profile
     })
 
   } catch (error) {
