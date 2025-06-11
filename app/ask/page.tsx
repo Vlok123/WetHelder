@@ -252,12 +252,10 @@ export default function AskPage() {
       
       // Auto-submit if search=true parameter is present
       if (searchParam === 'true') {
+        // Small delay to ensure state is set
         setTimeout(() => {
-          // Simulate form submission with the query
-          const syntheticEvent = { preventDefault: () => {} } as React.FormEvent
-          setInput(queryParam)
-          setTimeout(() => handleSubmit(syntheticEvent), 100)
-        }, 500)
+          handleSubmitDirectly(queryParam)
+        }, 300)
       }
     }
   }, [])
@@ -284,6 +282,145 @@ export default function AskPage() {
     fetchRateLimit()
   }, [session])
 
+  // Direct submit function for auto-submit from homepage
+  const handleSubmitDirectly = async (question: string) => {
+    if (!question.trim() || isLoading) return
+
+    const questionId = crypto.randomUUID()
+    const newMessage: Message = {
+      id: questionId,
+      question: question.trim(),
+      answer: '',
+      sources: [],
+      isLoading: true,
+      profession,
+      timestamp: new Date()
+    }
+
+    setMessages(prev => [...prev, newMessage])
+    setInput('')
+    setIsLoading(true)
+
+    // Build conversation history for API
+    const conversationHistory: string[] = []
+    messages.forEach(msg => {
+      conversationHistory.push(msg.question)
+      conversationHistory.push(msg.answer)
+    })
+
+    try {
+      const response = await fetch('/api/ask', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          question: question.trim(),
+          profession: profession,
+          conversationHistory: conversationHistory
+        }),
+      })
+
+      if (!response.ok) {
+        if (response.status === 429) {
+          const errorData = await response.json()
+          if (errorData.needsAccount) {
+            setMessages(prev =>
+              prev.map(msg =>
+                msg.id === questionId
+                  ? { 
+                      ...msg, 
+                      answer: `❌ **${errorData.error}**\n\n${errorData.message}\n\n[🔐 **Account aanmaken →**](/auth/signin)\n\nMet een gratis account krijg je:\n• Onbeperkt vragen stellen\n• Persoonlijke vraaghistorie\n• Geavanceerde juridische filters`, 
+                      isLoading: false 
+                    }
+                  : msg
+              )
+            )
+            setIsLoading(false)
+            return
+          }
+        }
+        throw new Error('Network response was not ok')
+      }
+
+      const reader = response.body?.getReader()
+      const decoder = new TextDecoder()
+
+      if (!reader) throw new Error('No reader available')
+
+      let accumulatedAnswer = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        const chunk = decoder.decode(value)
+        const lines = chunk.split('\n')
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6)
+            if (data === '[DONE]') continue
+
+            try {
+              const parsed = JSON.parse(data)
+              if (parsed.content) {
+                accumulatedAnswer += parsed.content
+                setMessages(prev =>
+                  prev.map(msg =>
+                    msg.id === questionId
+                      ? { ...msg, answer: accumulatedAnswer }
+                      : msg
+                  )
+                )
+              }
+              if (parsed.sources) {
+                setMessages(prev =>
+                  prev.map(msg =>
+                    msg.id === questionId
+                      ? { ...msg, sources: parsed.sources }
+                      : msg
+                  )
+                )
+              }
+            } catch (e) {
+              // Ignore parse errors
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      setMessages(prev =>
+        prev.map(msg =>
+          msg.id === questionId
+            ? { ...msg, answer: 'Er is een fout opgetreden. Probeer het opnieuw.', isLoading: false }
+            : msg
+        )
+      )
+    } finally {
+      setIsLoading(false)
+      setMessages(prev =>
+        prev.map(msg =>
+          msg.id === questionId ? { ...msg, isLoading: false } : msg
+        )
+      )
+      
+      // Update rate limit for anonymous users
+      if (!session && rateLimit && rateLimit.role === 'ANONYMOUS') {
+        setRateLimit(prev => prev ? {
+          ...prev,
+          remaining: Math.max(0, prev.remaining - 1)
+        } : null)
+      }
+
+      // Clear URL parameters after successful auto-submit
+      if (window.location.search.includes('search=true')) {
+        window.history.replaceState({}, '', '/ask')
+      }
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!input.trim() || isLoading) return
@@ -300,8 +437,16 @@ export default function AskPage() {
     }
 
     setMessages(prev => [...prev, newMessage])
+    const currentQuestion = input.trim()
     setInput('')
     setIsLoading(true)
+
+    // Build conversation history for API (include previous messages for context)
+    const conversationHistory: string[] = []
+    messages.forEach(msg => {
+      conversationHistory.push(msg.question)
+      conversationHistory.push(msg.answer)
+    })
 
     try {
       const response = await fetch('/api/ask', {
@@ -310,8 +455,9 @@ export default function AskPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          question: input.trim(),
-          profession: profession
+          question: currentQuestion,
+          profession: profession,
+          conversationHistory: conversationHistory
         }),
       })
 
@@ -412,6 +558,12 @@ export default function AskPage() {
 
   const ProfessionIcon = professionConfig[profession].icon
 
+  // Function to clear conversation
+  const clearConversation = () => {
+    setMessages([])
+    setInput('')
+  }
+
   return (
     <div className="min-h-screen bg-slate-50">
       <Navigation />
@@ -430,34 +582,51 @@ export default function AskPage() {
                   <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
                     BETA
                   </Badge>
+                  {messages.length > 0 && (
+                    <Badge variant="secondary" className="text-xs">
+                      {messages.length} {messages.length === 1 ? 'bericht' : 'berichten'}
+                    </Badge>
+                  )}
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600">Nederlandse juridische kennisbank</p>
               </div>
             </div>
             
-            {/* Professional Selector */}
+            {/* Professional Selector and Actions */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-              <label className="text-xs sm:text-sm font-medium text-slate-700 whitespace-nowrap">
-                Uw professie:
-              </label>
-              <Select value={profession} onValueChange={(value) => setProfession(value as Profession)}>
-                <SelectTrigger className="w-full sm:w-48 border-slate-300 focus:border-blue-500 focus:ring-blue-500">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {(Object.entries(professionConfig) as [Profession, typeof professionConfig[Profession]][]).map(([key, config]) => {
-                    const Icon = config.icon
-                    return (
-                      <SelectItem key={key} value={key}>
-                        <div className="flex items-center gap-2">
-                          <Icon className="h-4 w-4" />
-                          <span className="text-xs sm:text-sm">{config.fullLabel}</span>
-                        </div>
-                      </SelectItem>
-                    )
-                  })}
-                </SelectContent>
-              </Select>
+              {messages.length > 0 && (
+                <Button
+                  onClick={clearConversation}
+                  variant="outline"
+                  size="sm"
+                  className="text-xs border-slate-300 hover:border-slate-400"
+                >
+                  🆕 Nieuw gesprek
+                </Button>
+              )}
+              <div className="flex items-center gap-2">
+                <label className="text-xs sm:text-sm font-medium text-slate-700 whitespace-nowrap">
+                  Uw professie:
+                </label>
+                <Select value={profession} onValueChange={(value) => setProfession(value as Profession)}>
+                  <SelectTrigger className="w-full sm:w-48 border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(Object.entries(professionConfig) as [Profession, typeof professionConfig[Profession]][]).map(([key, config]) => {
+                      const Icon = config.icon
+                      return (
+                        <SelectItem key={key} value={key}>
+                          <div className="flex items-center gap-2">
+                            <Icon className="h-4 w-4" />
+                            <span className="text-xs sm:text-sm">{config.fullLabel}</span>
+                          </div>
+                        </SelectItem>
+                      )
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
           
@@ -467,6 +636,11 @@ export default function AskPage() {
               <ProfessionIcon className="h-4 w-4" />
               <span className="text-sm font-medium">Modus: {professionConfig[profession].label}</span>
               <span className="text-sm text-slate-600">— {professionConfig[profession].description}</span>
+              {messages.length > 0 && (
+                <span className="text-xs text-slate-500 ml-auto">
+                  📝 Gesprek actief - berichten worden onthouden
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -538,6 +712,24 @@ export default function AskPage() {
                   Stel uw juridische vraag over Nederlandse wetgeving. 
                   Antwoorden worden aangepast aan uw professie.
                 </p>
+                
+                {/* New conversation explanation */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-2xl mx-auto mb-4 sm:mb-6">
+                  <div className="flex items-start gap-2">
+                    <MessageSquare className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <div className="text-left">
+                      <h4 className="font-semibold text-blue-900 mb-2">💬 Intelligente gesprekken</h4>
+                      <p className="text-sm text-blue-800 mb-3">
+                        WetHelder onthoudt uw hele gesprek en kan doorvragen beantwoorden. 
+                        Stel gerust vervolgvragen zoals "Leg dat eens anders uit" of "Wat zijn de uitzonderingen?".
+                      </p>
+                      <p className="text-xs text-blue-700">
+                        💡 Tip: Start een nieuw gesprek voor een ander onderwerp via de "🆕 Nieuw gesprek" knop.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
                 <div className="text-xs sm:text-sm text-slate-500 px-4">
                   <p>Voorbeelden: &ldquo;Artikel 8 WVW uitleg&rdquo; • &ldquo;Procedure bij rijden onder invloed&rdquo;</p>
                 </div>
