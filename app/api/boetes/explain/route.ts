@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
+import OpenAI from 'openai'
 
-const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+})
 
 const BOETES_SYSTEM_PROMPT = `Je bent een juridisch assistent voor wethelder.nl, gespecialiseerd in het helder uitleggen van Nederlandse boetes en overtredingen aan burgers en professionals.
 
@@ -42,94 +45,75 @@ Doel: elke gebruiker moet weten **wat de wet zegt**, **welke boete dat oplevert*
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { boete } = body
-
+    const { boete, context = {} } = await request.json()
+    
     if (!boete) {
       return NextResponse.json(
-        { error: 'Boete informatie is vereist' },
+        { error: 'Boete object is required' },
         { status: 400 }
       )
     }
 
-    if (!process.env.OPENAI_API_KEY) {
-      return NextResponse.json(
-        { error: 'OpenAI API key niet geconfigureerd' },
-        { status: 500 }
-      )
-    }
+    // Create context-aware prompt
+    const contextInfo = context.voertuigType || context.situatie || context.locatie 
+      ? `
+Context van de gebruiker:
+- Voertuig: ${context.voertuigType || 'niet gespecificeerd'}
+- Situatie: ${context.situatie || 'niet gespecificeerd'}  
+- Locatie: ${context.locatie || 'niet gespecificeerd'}
+      ` : ''
 
-    // Creëer user prompt met boete informatie
-    const userPrompt = `Geef uitleg over deze boete:
+    const systemPrompt = `Je bent een juridische expert gespecialiseerd in Nederlandse verkeersovertredingen.
+Geef een uitgebreide, praktische uitleg over de volgende overtreding.
 
-Feitcode: ${boete.feitcode}
-Omschrijving: ${boete.omschrijving}
-Juridische grondslag: ${boete.juridischeGrondslag}
-Standaardboete: €${boete.standaardboete}
-Type: ${boete.type}
-${boete.toelichting ? `Toelichting: ${boete.toelichting}` : ''}
+${contextInfo}
 
-Leg uit wat deze boete betekent, wanneer deze wordt opgelegd, en geef praktische context voor burgers.`
+Overtreding details:
+- Feitcode: ${boete.feitcode}
+- Omschrijving: ${boete.omschrijving}
+- Juridische grondslag: ${boete.juridischeGrondslag}
+- Standaard boete: €${boete.standaardboete}
+- Type: ${boete.type}
+${boete.toelichting ? `- Toelichting: ${boete.toelichting}` : ''}
 
-    const response = await fetch(OPENAI_API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4',
-        messages: [
-          { role: 'system', content: BOETES_SYSTEM_PROMPT },
-          { role: 'user', content: userPrompt }
-        ],
-        max_tokens: 800,
-        temperature: 0.3,
-        stream: false
-      }),
+Behandel de volgende aspecten in je uitleg:
+1. Wat houdt deze overtreding precies in?
+2. Wanneer wordt deze feitcode toegepast?
+3. Zijn er uitzonderingen of bijzondere omstandigheden?
+4. Wat zijn de gevolgen (boete, punten, etc.)?
+5. Praktische tips om dit te voorkomen
+6. Hoe wordt dit gehandhaafd?
+${contextInfo ? '7. Specifiek advies gebaseerd op de context van de gebruiker' : ''}
+
+Houd je antwoord praktisch, begrijpelijk en accuraat. Verwijs naar de officiele feitcode ${boete.feitcode}.`
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: systemPrompt
+        },
+        {
+          role: "user",
+          content: `Leg feitcode ${boete.feitcode} uit met alle relevante details en praktische informatie.`
+        }
+      ],
+      max_tokens: 1200,
+      temperature: 0.3,
     })
 
-    if (!response.ok) {
-      const errorData = await response.text()
-      console.error('OpenAI API error:', response.status, errorData)
-      throw new Error(`OpenAI API error: ${response.status}`)
-    }
-
-    const completion = await response.json()
-    const explanation = completion.choices?.[0]?.message?.content
-
-    if (!explanation) {
-      return NextResponse.json(
-        { error: 'Geen uitleg gegenereerd' },
-        { status: 500 }
-      )
-    }
+    const explanation = completion.choices[0]?.message?.content || 
+      'Kon geen uitleg genereren. Raadpleeg de officiële Boetebase voor meer informatie.'
 
     return NextResponse.json({
       explanation,
       feitcode: boete.feitcode,
-      disclaimer: 'Gebaseerd op officiële bronnen via automatische analyse. Controleer altijd boetebase.om.nl voor actuele informatie.'
+      context: context
     })
 
   } catch (error) {
-    console.error('Boetes explain error:', error)
-    
-    // Specifieke error handling voor OpenAI
-    if (error instanceof Error) {
-      if (error.message.includes('API key')) {
-        return NextResponse.json(
-          { error: 'OpenAI configuratiefout' },
-          { status: 500 }
-        )
-      }
-      if (error.message.includes('rate limit') || error.message.includes('quota')) {
-        return NextResponse.json(
-          { error: 'Te veel verzoeken. Probeer het later opnieuw.' },
-          { status: 429 }
-        )
-      }
-    }
-
+    console.error('Explanation error:', error)
     return NextResponse.json(
       { error: 'Er is een fout opgetreden bij het genereren van de uitleg' },
       { status: 500 }
