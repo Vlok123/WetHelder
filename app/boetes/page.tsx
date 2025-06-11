@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Search, ExternalLink, MessageCircle, Scale, Euro, FileText, Car, Bike, Truck, MapPin, Clock, AlertTriangle } from 'lucide-react'
+import { Search, ExternalLink, MessageCircle, Scale, Euro, FileText, Car, Bike, Truck, MapPin, Clock, AlertTriangle, BookOpen, Gavel } from 'lucide-react'
 
 interface BoeteResult {
   feitcode: string
@@ -29,9 +29,12 @@ interface SearchResponse {
 export default function BoetesPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [results, setResults] = useState<BoeteResult[]>([])
-  const [aiResponse, setAiResponse] = useState('')
+  const [systemResponse, setSystemResponse] = useState('')
+  const [wetResponse, setWetResponse] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isWetLoading, setIsWetLoading] = useState(false)
   const [selectedBoete, setSelectedBoete] = useState<BoeteResult | null>(null)
+  const [searchMode, setSearchMode] = useState<'boete' | 'wet'>('boete')
   
   // Context variabelen voor betere zoekresultaten
   const [voertuigType, setVoertuigType] = useState<string>('alle_voertuigen')
@@ -43,12 +46,12 @@ export default function BoetesPage() {
     
     setIsLoading(true)
     setResults([])
-    setAiResponse('')
+    setSystemResponse('')
     setSelectedBoete(null)
     
     try {
-      // Unified search that combines AI analysis with bonnenboekje data
-      const response = await fetch('/api/boetes/unified-search', {
+      // Enhanced search that combines bonnenboekje data with web verification
+      const response = await fetch('/api/boetes/enhanced-search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -69,14 +72,48 @@ export default function BoetesPage() {
         }
         
         if (data.answer) {
-          setAiResponse(data.answer)
+          setSystemResponse(data.answer)
         }
       }
     } catch (error) {
-      console.error('Unified search error:', error)
-      setAiResponse('Er is een fout opgetreden bij het zoeken. Probeer het opnieuw.')
+      console.error('Enhanced search error:', error)
+      setSystemResponse('Er is een fout opgetreden bij het zoeken. Probeer het opnieuw.')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleWetSearch = async () => {
+    if (!searchQuery.trim()) return
+    
+    setIsWetLoading(true)
+    setWetResponse('')
+    
+    try {
+      const response = await fetch('/api/boetes/wet-uitleg', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          query: searchQuery,
+          context: {
+            voertuigType: voertuigType === 'alle_voertuigen' ? '' : voertuigType,
+            situatie: situatie === 'alle_situaties' ? '' : situatie,
+            locatie: locatie === 'alle_locaties' ? '' : locatie
+          }
+        })
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        if (data.explanation) {
+          setWetResponse(data.explanation)
+        }
+      }
+    } catch (error) {
+      console.error('Wet search error:', error)
+      setWetResponse('Er is een fout opgetreden bij het opzoeken van wetgeving. Probeer het opnieuw.')
+    } finally {
+      setIsWetLoading(false)
     }
   }
 
@@ -99,7 +136,7 @@ export default function BoetesPage() {
       
       if (response.ok) {
         const data = await response.json()
-        setAiResponse(data.explanation)
+        setSystemResponse(data.explanation)
       }
     } catch (error) {
       console.error('Detail explanation error:', error)
@@ -124,6 +161,8 @@ export default function BoetesPage() {
     { value: 'telefoon', label: 'Mobiele telefoon', icon: MessageCircle },
     { value: 'voorrang', label: 'Voorrang', icon: Car },
     { value: 'wegmarkering', label: 'Wegmarkering', icon: MapPin },
+    { value: 'ramen', label: 'Getinte ramen', icon: Car },
+    { value: 'gordel', label: 'Veiligheidsgordel', icon: AlertTriangle },
   ]
 
   const locaties = [
@@ -151,23 +190,67 @@ export default function BoetesPage() {
               </div>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-              Boetes & Feitcodes Assistent
+              Boetes & Feitcodes Zoeker
             </h1>
           </div>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Intelligente zoekassistent met officiële Boetebase OM en bonnenboekje integratie
+            Zoek in officiële Boetebase OM en bonnenboekje met geïntegreerde wetgeving verificatie
           </p>
         </div>
 
-        {/* Unified Search Interface */}
+        {/* Search Mode Toggle */}
+        <div className="flex justify-center mb-6">
+          <div className="inline-flex rounded-lg bg-gray-100 p-1">
+            <button
+              onClick={() => setSearchMode('boete')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                searchMode === 'boete'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <Euro className="h-4 w-4" />
+                Boetes & Feitcodes
+              </div>
+            </button>
+            <button
+              onClick={() => setSearchMode('wet')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                searchMode === 'wet'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <Gavel className="h-4 w-4" />
+                Wet & Uitleg
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {/* Enhanced Search Interface */}
         <Card className="mb-8 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-xl text-gray-800">
-              <Search className="h-6 w-6 text-blue-600" />
-              Intelligente Boete Zoeker
+              {searchMode === 'boete' ? (
+                <>
+                  <Search className="h-6 w-6 text-blue-600" />
+                  Geavanceerde Boete Zoeker
+                </>
+              ) : (
+                <>
+                  <BookOpen className="h-6 w-6 text-blue-600" />
+                  Wetgeving & Uitleg Zoeker
+                </>
+              )}
             </CardTitle>
             <CardDescription>
-              Stel een vraag, zoek op feitcode, of beschrijf je situatie. De AI zoekt automatisch in het bonnenboekje en officiële databases.
+              {searchMode === 'boete' 
+                ? "Stel een vraag, zoek op feitcode, of beschrijf je situatie. Het systeem zoekt automatisch in het bonnenboekje en verifieert met online bronnen."
+                : "Zoek uitleg bij wetgeving, regelgeving en verkeersregels. Inclusief RVV 1990, WVW 1994 en gerelateerde regelgeving."
+              }
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -201,17 +284,17 @@ export default function BoetesPage() {
                 <label className="text-sm font-medium text-gray-700">Situatie</label>
                 <Select value={situatie} onValueChange={setSituatie}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Type overtreding" />
+                    <SelectValue placeholder="Selecteer situatie" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="alle_situaties">Alle situaties</SelectItem>
-                    {situaties.map((sit) => {
-                      const IconComponent = sit.icon
+                    {situaties.map((situatie) => {
+                      const IconComponent = situatie.icon
                       return (
-                        <SelectItem key={sit.value} value={sit.value}>
+                        <SelectItem key={situatie.value} value={situatie.value}>
                           <div className="flex items-center gap-2">
                             <IconComponent className="h-4 w-4" />
-                            {sit.label}
+                            {situatie.label}
                           </div>
                         </SelectItem>
                       )
@@ -224,16 +307,13 @@ export default function BoetesPage() {
                 <label className="text-sm font-medium text-gray-700">Locatie</label>
                 <Select value={locatie} onValueChange={setLocatie}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Waar gebeurde het?" />
+                    <SelectValue placeholder="Selecteer locatie" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="alle_locaties">Alle locaties</SelectItem>
-                    {locaties.map((loc) => (
-                      <SelectItem key={loc.value} value={loc.value}>
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4" />
-                          {loc.label}
-                        </div>
+                    {locaties.map((locatie) => (
+                      <SelectItem key={locatie.value} value={locatie.value}>
+                        {locatie.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -241,25 +321,33 @@ export default function BoetesPage() {
               </div>
             </div>
 
-            {/* Main Search */}
+            {/* Search Input */}
             <div className="flex gap-3">
               <div className="flex-1">
                 <Input
                   type="text"
-                  placeholder="Bijvoorbeeld: 'Hoeveel boete voor 10 km/h te hard op snelweg met auto?', 'W010a', 'rood licht door'"
+                  placeholder={
+                    searchMode === 'boete' 
+                      ? "Bijv: 'donkere ramen auto', 'N420', 'te hard rijden 80 zone'" 
+                      : "Bijv: 'artikel 20 RVV 1990', 'snelheidslimiet wetgeving', 'WVW 1994'"
+                  }
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleUnifiedSearch()}
-                  className="text-lg py-3 border-2 border-gray-200 focus:border-blue-500 transition-colors"
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      searchMode === 'boete' ? handleUnifiedSearch() : handleWetSearch()
+                    }
+                  }}
+                  className="h-12 text-base"
                 />
               </div>
               <Button 
-                onClick={handleUnifiedSearch} 
-                disabled={isLoading}
+                onClick={searchMode === 'boete' ? handleUnifiedSearch : handleWetSearch}
+                disabled={searchMode === 'boete' ? isLoading : isWetLoading}
                 size="lg"
-                className="px-8 bg-blue-600 hover:bg-blue-700 text-white font-medium"
+                className="px-8 bg-blue-600 hover:bg-blue-700"
               >
-                {isLoading ? (
+                {(searchMode === 'boete' ? isLoading : isWetLoading) ? (
                   <div className="flex items-center gap-2">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                     Zoeken...
@@ -267,52 +355,75 @@ export default function BoetesPage() {
                 ) : (
                   <div className="flex items-center gap-2">
                     <Search className="h-5 w-5" />
-                    Zoek
+                    Zoeken
                   </div>
                 )}
               </Button>
             </div>
-
-            {/* Quick Examples */}
-            <div className="flex flex-wrap gap-2">
-              <span className="text-sm text-gray-500">Voorbeelden:</span>
-              {[
-                "Te hard rijden auto",
-                "Parkeren fiets",
-                "W010a",
-                "Rood licht",
-                "Telefoon auto"
-              ].map((example) => (
-                <Button
-                  key={example}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setSearchQuery(example)
-                    handleUnifiedSearch()
-                  }}
-                  className="text-xs h-7 px-3 text-gray-600 border-gray-300 hover:bg-gray-50"
-                >
-                  {example}
-                </Button>
-              ))}
+            
+            {/* Example Queries */}
+            <div className="text-sm text-gray-600">
+              <span className="font-medium">Voorbeelden: </span>
+              {searchMode === 'boete' ? (
+                <>
+                  <button 
+                    onClick={() => setSearchQuery('donkere ramen auto')}
+                    className="text-blue-600 hover:underline mr-2"
+                  >
+                    "donkere ramen auto"
+                  </button>
+                  <button 
+                    onClick={() => setSearchQuery('N420')}
+                    className="text-blue-600 hover:underline mr-2"
+                  >
+                    "N420"
+                  </button>
+                  <button 
+                    onClick={() => setSearchQuery('te hard rijden 80 zone')}
+                    className="text-blue-600 hover:underline"
+                  >
+                    "te hard rijden 80 zone"
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button 
+                    onClick={() => setSearchQuery('artikel 20 RVV 1990')}
+                    className="text-blue-600 hover:underline mr-2"
+                  >
+                    "artikel 20 RVV 1990"
+                  </button>
+                  <button 
+                    onClick={() => setSearchQuery('WVW 1994 snelheid')}
+                    className="text-blue-600 hover:underline mr-2"
+                  >
+                    "WVW 1994 snelheid"
+                  </button>
+                  <button 
+                    onClick={() => setSearchQuery('Reglement verkeersregels')}
+                    className="text-blue-600 hover:underline"
+                  >
+                    "Reglement verkeersregels"
+                  </button>
+                </>
+              )}
             </div>
           </CardContent>
         </Card>
 
-        {/* AI Response */}
-        {aiResponse && (
+        {/* System Response */}
+        {systemResponse && searchMode === 'boete' && (
           <Card className="mb-8 border-blue-200 bg-blue-50/50 backdrop-blur-sm">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-blue-800">
                 <MessageCircle className="h-5 w-5" />
-                AI Analyse & Bonnenboekje Resultaat
+                Zoekresultaat & Bonnenboekje Analyse
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="prose prose-blue max-w-none">
                 <div className="whitespace-pre-wrap text-blue-900 leading-relaxed">
-                  {aiResponse}
+                  {systemResponse}
                 </div>
                 <div className="mt-4 p-3 bg-blue-100 rounded-lg text-sm text-blue-700">
                   <strong>Bronnen:</strong> Officiële Boetebase OM, Nederlandse wetgeving en bonnenboekje. 
@@ -323,15 +434,38 @@ export default function BoetesPage() {
           </Card>
         )}
 
+        {/* Wet Response */}
+        {wetResponse && searchMode === 'wet' && (
+          <Card className="mb-8 border-green-200 bg-green-50/50 backdrop-blur-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-green-800">
+                <BookOpen className="h-5 w-5" />
+                Wetgeving & Uitleg
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="prose prose-green max-w-none">
+                <div className="whitespace-pre-wrap text-green-900 leading-relaxed">
+                  {wetResponse}
+                </div>
+                <div className="mt-4 p-3 bg-green-100 rounded-lg text-sm text-green-700">
+                  <strong>Bronnen:</strong> Nederlandse Wetgeving, RVV 1990, WVW 1994, Reglement verkeersregels en verkeerstekens 1990. 
+                  Voor officiële teksten: <a href="https://wetten.overheid.nl" className="underline font-medium">wetten.overheid.nl</a>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Search Results */}
-        {results.length > 0 && (
+        {results.length > 0 && searchMode === 'boete' && (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-bold text-gray-900">
                 Gevonden Feitcodes ({results.length})
               </h2>
               <Badge variant="outline" className="px-3 py-1">
-                Officële Boetebase OM
+                Officië Boetebase OM
               </Badge>
             </div>
             
@@ -352,54 +486,57 @@ export default function BoetesPage() {
                             {boete.type}
                           </Badge>
                         </div>
-                        <CardTitle className="text-lg leading-tight text-gray-900">
+                        <CardTitle className="text-lg leading-tight mb-2 text-gray-900">
                           {boete.omschrijving}
                         </CardTitle>
+                        <p className="text-sm text-gray-600">
+                          {boete.juridischeGrondslag}
+                        </p>
                       </div>
-                      <div className="text-right flex-shrink-0">
-                        <div className="flex items-center text-2xl font-bold text-green-600 mb-1">
-                          <Euro className="h-6 w-6 mr-1" />
-                          {boete.standaardboete}
+                      <div className="flex flex-col items-end gap-2">
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-red-600">
+                            €{typeof boete.standaardboete === 'number' ? boete.standaardboete : boete.standaardboete}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            standaardboete
+                          </div>
                         </div>
                       </div>
                     </div>
                   </CardHeader>
                   
+                  {boete.toelichting && (
+                    <CardContent className="pt-0 pb-3">
+                      <p className="text-sm text-gray-700 leading-relaxed">
+                        {boete.toelichting}
+                      </p>
+                    </CardContent>
+                  )}
+                  
                   <CardContent className="pt-0">
-                    <div className="space-y-3">
-                      <div className="text-sm text-gray-600">
-                        <strong>Juridische grondslag:</strong> {boete.juridischeGrondslag}
-                      </div>
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDetailExplanation(boete)}
+                        className="text-xs"
+                      >
+                        <MessageCircle className="h-3 w-3 mr-1" />
+                        Meer uitleg
+                      </Button>
                       
-                      {boete.toelichting && (
-                        <p className="text-sm text-gray-700 leading-relaxed">
-                          {boete.toelichting}
-                        </p>
-                      )}
-                      
-                      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                        <div className="flex items-center gap-3">
-                          {boete.bronUrl && (
-                            <a 
-                              href={boete.bronUrl} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-medium"
-                            >
-                              Officiële bron <ExternalLink className="h-3 w-3" />
-                            </a>
-                          )}
-                        </div>
-                        <Button 
-                          variant="outline" 
+                      {boete.bronUrl && (
+                        <Button
+                          variant="outline"
                           size="sm"
-                          onClick={() => handleDetailExplanation(boete)}
-                          className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                          onClick={() => window.open(boete.bronUrl, '_blank')}
+                          className="text-xs"
                         >
-                          <MessageCircle className="h-4 w-4 mr-1" />
-                          Uitleg
+                          <ExternalLink className="h-3 w-3 mr-1" />
+                          Officiële bron
                         </Button>
-                      </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -409,53 +546,52 @@ export default function BoetesPage() {
         )}
 
         {/* No Results */}
-        {!isLoading && results.length === 0 && !aiResponse && searchQuery && (
+        {!isLoading && !isWetLoading && results.length === 0 && !systemResponse && !wetResponse && searchQuery && (
           <Card className="text-center py-12 bg-white/60 backdrop-blur-sm">
             <CardContent>
               <AlertTriangle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Geen resultaten gevonden
-              </h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Geen resultaten gevonden</h3>
               <p className="text-gray-600 mb-4">
-                Geen specifieke feitcodes gevonden voor &quot;{searchQuery}&quot;
+                Probeer je zoekopdracht anders te formuleren of gebruik specifiekere termen.
               </p>
-              <p className="text-sm text-gray-500">
-                Probeer andere zoektermen of controleer de officiële Boetebase handmatig.
-              </p>
+              <div className="text-sm text-gray-500">
+                <strong>Tips:</strong> Gebruik concrete termen zoals "donkere ramen", feitcodes zoals "N420", 
+                of beschrijf de situatie duidelijk.
+              </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Legal Footer */}
-        <Card className="mt-8 border-gray-200 bg-gray-50/80 backdrop-blur-sm">
-          <CardContent className="py-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
-              <div>
-                <strong className="text-gray-800">Officiële Bronnen:</strong>
-                <br />
-                <a href="https://boetebase.om.nl" target="_blank" rel="noopener noreferrer" 
-                   className="flex items-center gap-1 text-blue-600 hover:underline">
-                  Boetebase OM <ExternalLink className="h-3 w-3" />
-                </a>
-              </div>
-              <div>
-                <strong className="text-gray-800">Wetgeving:</strong>
-                <br />
-                <a href="https://wetten.overheid.nl" target="_blank" rel="noopener noreferrer"
-                   className="flex items-center gap-1 text-blue-600 hover:underline">
-                  Wetten.nl <ExternalLink className="h-3 w-3" />
-                </a>
-              </div>
-              <div>
-                <strong className="text-gray-800">Disclaimer:</strong>
-                <br />
-                <span className="text-xs">
-                  Gebaseerd op officiële bronnen. Controleer altijd actuele details.
-                </span>
-              </div>
+        {/* Help Section */}
+        <Card className="mt-12 bg-gray-50/50 backdrop-blur-sm border-0">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-gray-800">
+              <FileText className="h-5 w-5" />
+              Hoe werkt de zoekfunctie?
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="font-medium text-gray-900 mb-2">Boetes & Feitcodes</h4>
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li>• Zoek op specifieke feitcodes (bijv: N420, V100)</li>
+                <li>• Beschrijf je situatie in gewone taal</li>
+                <li>• Het systeem doorzoekt het bonnenboekje en verifieert online</li>
+                <li>• Resultaten worden gecontroleerd met officiële bronnen</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-medium text-gray-900 mb-2">Wet & Uitleg</h4>
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li>• Zoek uitleg bij wetartikelen</li>
+                <li>• RVV 1990, WVW 1994 en gerelateerde regelgeving</li>
+                <li>• Reglement verkeersregels en verkeerstekens 1990</li>
+                <li>• Juridische achtergrond en uitleg</li>
+              </ul>
             </div>
           </CardContent>
         </Card>
+
       </div>
     </div>
   )

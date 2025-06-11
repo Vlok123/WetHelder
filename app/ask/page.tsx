@@ -454,7 +454,7 @@ export default function AskPage() {
                   </div>
                 </div>
 
-                {/* AI Response */}
+                {/* Systeem Response */}
                 <div className="flex justify-start">
                   <div className="max-w-[95%] sm:max-w-[90%]">
                     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
