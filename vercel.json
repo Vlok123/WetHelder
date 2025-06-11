@@ -1,8 +1,4 @@
 {
-  "buildCommand": "npx prisma generate && npm run build",
-  "outputDirectory": ".next",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
   "framework": "nextjs",
   "functions": {
     "app/api/ask/route.ts": {
