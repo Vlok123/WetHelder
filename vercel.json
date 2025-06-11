@@ -30,6 +30,6 @@
     }
   },
   "github": {
-    "silent": true
+    "silent": false
   }
 } 
