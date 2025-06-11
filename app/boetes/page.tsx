@@ -34,9 +34,9 @@ export default function BoetesPage() {
   const [selectedBoete, setSelectedBoete] = useState<BoeteResult | null>(null)
   
   // Context variabelen voor betere zoekresultaten
-  const [voertuigType, setVoertuigType] = useState<string>('')
-  const [situatie, setSituatie] = useState<string>('')
-  const [locatie, setLocatie] = useState<string>('')
+  const [voertuigType, setVoertuigType] = useState<string>('alle_voertuigen')
+  const [situatie, setSituatie] = useState<string>('alle_situaties')
+  const [locatie, setLocatie] = useState<string>('alle_locaties')
 
   const handleUnifiedSearch = async () => {
     if (!searchQuery.trim()) return
@@ -54,9 +54,9 @@ export default function BoetesPage() {
         body: JSON.stringify({ 
           query: searchQuery,
           context: {
-            voertuigType,
-            situatie,
-            locatie
+            voertuigType: voertuigType === 'alle_voertuigen' ? '' : voertuigType,
+            situatie: situatie === 'alle_situaties' ? '' : situatie,
+            locatie: locatie === 'alle_locaties' ? '' : locatie
           }
         })
       })
@@ -90,9 +90,9 @@ export default function BoetesPage() {
         body: JSON.stringify({ 
           boete,
           context: {
-            voertuigType,
-            situatie,
-            locatie
+            voertuigType: voertuigType === 'alle_voertuigen' ? '' : voertuigType,
+            situatie: situatie === 'alle_situaties' ? '' : situatie,
+            locatie: locatie === 'alle_locaties' ? '' : locatie
           }
         })
       })
@@ -181,7 +181,7 @@ export default function BoetesPage() {
                     <SelectValue placeholder="Selecteer voertuig" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Alle voertuigen</SelectItem>
+                    <SelectItem value="alle_voertuigen">Alle voertuigen</SelectItem>
                     {voertuigTypes.map((type) => {
                       const IconComponent = type.icon
                       return (
@@ -204,7 +204,7 @@ export default function BoetesPage() {
                     <SelectValue placeholder="Type overtreding" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Alle situaties</SelectItem>
+                    <SelectItem value="alle_situaties">Alle situaties</SelectItem>
                     {situaties.map((sit) => {
                       const IconComponent = sit.icon
                       return (
@@ -227,7 +227,7 @@ export default function BoetesPage() {
                     <SelectValue placeholder="Waar gebeurde het?" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Alle locaties</SelectItem>
+                    <SelectItem value="alle_locaties">Alle locaties</SelectItem>
                     {locaties.map((loc) => (
                       <SelectItem key={loc.value} value={loc.value}>
                         <div className="flex items-center gap-2">

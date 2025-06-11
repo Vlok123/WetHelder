@@ -110,7 +110,7 @@ export default function ModernLegalChat() {
   const [selectedProfession, setSelectedProfession] = useState('algemeen')
   const [isLoading, setIsLoading] = useState(false)
   const [leftSidebarOpen, setLeftSidebarOpen] = useState(false)
-  const [rightSidebarOpen, setRightSidebarOpen] = useState(true)
+  const [rightSidebarOpen, setRightSidebarOpen] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([])
   const [showSettings, setShowSettings] = useState(false)
@@ -459,7 +459,10 @@ export default function ModernLegalChat() {
                 >
                   <History className="h-4 w-4 sm:h-5 sm:w-5" />
                   <span className="hidden lg:inline text-xs sm:text-sm">
-                    {rightSidebarOpen ? 'Verberg' : 'Geschiedenis'}
+                    {rightSidebarOpen ? 'Verberg Geschiedenis' : 'Toon Geschiedenis'}
+                  </span>
+                  <span className="lg:hidden text-xs sm:text-sm">
+                    Geschiedenis
                   </span>
                 </Button>
 
@@ -688,7 +691,7 @@ export default function ModernLegalChat() {
         </aside>
 
         <main className={`flex-1 flex flex-col transition-all duration-300 ${
-          session && rightSidebarOpen ? 'lg:mr-80' : ''
+          session && rightSidebarOpen ? 'lg:mr-80' : 'lg:mr-0'
         }`}>
           {/* Messages Container */}
           <div className="flex-1 overflow-y-auto p-3 sm:p-4">
@@ -1022,10 +1025,12 @@ export default function ModernLegalChat() {
 
         {/* Right Sidebar - Chat History */}
         <aside className={`${
-          rightSidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-full'
+          rightSidebarOpen ? 'translate-x-0' : 'translate-x-full'
         } fixed lg:static inset-y-0 right-0 z-40 w-72 sm:w-80 transition-transform duration-300 ${
           darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-        } border-l overflow-y-auto ${session ? 'block' : 'hidden'}`}>
+        } border-l overflow-y-auto ${session ? 'block' : 'hidden'} ${
+          rightSidebarOpen ? 'lg:translate-x-0' : 'lg:translate-x-0'
+        }`}>
           
           <div className="p-3 sm:p-4">
             <div className="flex items-center justify-between mb-4 sm:mb-6">
