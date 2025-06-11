@@ -370,19 +370,19 @@ export default function BoetesPage() {
                     onClick={() => setSearchQuery('donkere ramen auto')}
                     className="text-blue-600 hover:underline mr-2"
                   >
-                    "donkere ramen auto"
+                    &quot;donkere ramen auto&quot;
                   </button>
                   <button 
                     onClick={() => setSearchQuery('N420')}
                     className="text-blue-600 hover:underline mr-2"
                   >
-                    "N420"
+                    &quot;N420&quot;
                   </button>
                   <button 
                     onClick={() => setSearchQuery('te hard rijden 80 zone')}
                     className="text-blue-600 hover:underline"
                   >
-                    "te hard rijden 80 zone"
+                    &quot;te hard rijden 80 zone&quot;
                   </button>
                 </>
               ) : (
@@ -391,19 +391,19 @@ export default function BoetesPage() {
                     onClick={() => setSearchQuery('artikel 20 RVV 1990')}
                     className="text-blue-600 hover:underline mr-2"
                   >
-                    "artikel 20 RVV 1990"
+                    &quot;artikel 20 RVV 1990&quot;
                   </button>
                   <button 
                     onClick={() => setSearchQuery('WVW 1994 snelheid')}
                     className="text-blue-600 hover:underline mr-2"
                   >
-                    "WVW 1994 snelheid"
+                    &quot;WVW 1994 snelheid&quot;
                   </button>
                   <button 
                     onClick={() => setSearchQuery('Reglement verkeersregels')}
                     className="text-blue-600 hover:underline"
                   >
-                    "Reglement verkeersregels"
+                    &quot;Reglement verkeersregels&quot;
                   </button>
                 </>
               )}
@@ -555,7 +555,7 @@ export default function BoetesPage() {
                 Probeer je zoekopdracht anders te formuleren of gebruik specifiekere termen.
               </p>
               <div className="text-sm text-gray-500">
-                <strong>Tips:</strong> Gebruik concrete termen zoals "donkere ramen", feitcodes zoals "N420", 
+                <strong>Tips:</strong> Gebruik concrete termen zoals &quot;donkere ramen&quot;, feitcodes zoals &quot;N420&quot;, 
                 of beschrijf de situatie duidelijk.
               </div>
             </CardContent>
