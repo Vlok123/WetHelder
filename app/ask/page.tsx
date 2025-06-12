@@ -291,40 +291,6 @@ export default function AskPage() {
     scrollToBottom()
   }, [messages])
 
-  // Handle URL parameters
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const questionParam = urlParams.get('q')
-    const profileParam = urlParams.get('profile')
-    const wetUitlegParam = urlParams.get('wetuitleg')
-    const wetgevingParam = urlParams.get('wetgeving')
-    
-    if (profileParam) {
-      setProfession(mapProfileToProfession(profileParam))
-      if (profileParam === 'juridisch-expert') {
-        setWetUitlegEnabled(true)
-      }
-    }
-    
-    if (wetUitlegParam === 'true') {
-      setWetUitlegEnabled(true)
-    }
-    
-    if (wetgevingParam === 'true') {
-      setWetgevingEnabled(true)
-    }
-    
-    if (questionParam && !hasAutoSubmitted.current) {
-      hasAutoSubmitted.current = true
-      setInput(questionParam)
-      
-      // Auto-submit after a short delay
-      setTimeout(() => {
-        handleSubmitDirectly(questionParam)
-      }, 500)
-    }
-  }, [])
-
   const handleSubmitDirectly = useCallback(async (question: string) => {
     if (!question.trim() || isLoading) return
 
@@ -437,6 +403,40 @@ export default function AskPage() {
       setIsLoading(false)
     }
   }, [profession, wetUitlegEnabled, wetgevingEnabled, messages, isLoading])
+
+  // Handle URL parameters
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const questionParam = urlParams.get('q')
+    const profileParam = urlParams.get('profile')
+    const wetUitlegParam = urlParams.get('wetuitleg')
+    const wetgevingParam = urlParams.get('wetgeving')
+    
+    if (profileParam) {
+      setProfession(mapProfileToProfession(profileParam))
+      if (profileParam === 'juridisch-expert') {
+        setWetUitlegEnabled(true)
+      }
+    }
+    
+    if (wetUitlegParam === 'true') {
+      setWetUitlegEnabled(true)
+    }
+    
+    if (wetgevingParam === 'true') {
+      setWetgevingEnabled(true)
+    }
+    
+    if (questionParam && !hasAutoSubmitted.current) {
+      hasAutoSubmitted.current = true
+      setInput(questionParam)
+      
+      // Auto-submit after a short delay
+      setTimeout(() => {
+        handleSubmitDirectly(questionParam)
+      }, 500)
+    }
+  }, [handleSubmitDirectly])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -564,7 +564,7 @@ export default function AskPage() {
                   Antwoorden worden aangepast aan uw professie.
                 </p>
                 <div className="text-sm text-slate-500">
-                  <p>Voorbeelden: "Artikel 8 WVW uitleg" • "Procedure bij rijden onder invloed"</p>
+                  <p>Voorbeelden: &quot;Artikel 8 WVW uitleg&quot; • &quot;Procedure bij rijden onder invloed&quot;</p>
                 </div>
                 
                 {/* Wachttijd informatie */}

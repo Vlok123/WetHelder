@@ -29,19 +29,20 @@ export async function POST(request: NextRequest) {
     }
 
     // Perform comprehensive search
-    const results = await comprehensiveJuridicalSearch(query, extractedTerms)
+    const results = await comprehensiveJuridicalSearch(query)
     
     // Format results for context
     const formattedContext = formatSearchResultsForContext(results)
     
     // Calculate totals
     const totals = {
-      wetten: results.wetten.length,
-      rechtspraak: results.rechtspraak.length,
-      tuchtrecht: results.tuchtrecht.length,
-      boetes: results.boetes.length,
-      algemeen: results.algemeen.length,
-      total: Object.values(results).reduce((sum, arr) => sum + arr.length, 0)
+      wetten: results.sources?.wetten?.length || 0,
+      rechtspraak: results.sources?.rechtspraak?.length || 0,
+      tuchtrecht: results.sources?.tuchtrecht?.length || 0,
+      boetes: results.sources?.boetes?.length || 0,
+      overheid: results.sources?.overheid?.length || 0,
+      apv: results.sources?.apv?.length || 0,
+      total: results.totalResults || 0
     }
 
     return NextResponse.json({
@@ -80,12 +81,13 @@ export async function GET(request: NextRequest) {
       query,
       results,
       totals: {
-        wetten: results.wetten.length,
-        rechtspraak: results.rechtspraak.length,
-        tuchtrecht: results.tuchtrecht.length,
-        boetes: results.boetes.length,
-        algemeen: results.algemeen.length,
-        total: Object.values(results).reduce((sum, arr) => sum + arr.length, 0)
+        wetten: results.sources?.wetten?.length || 0,
+        rechtspraak: results.sources?.rechtspraak?.length || 0,
+        tuchtrecht: results.sources?.tuchtrecht?.length || 0,
+        boetes: results.sources?.boetes?.length || 0,
+        overheid: results.sources?.overheid?.length || 0,
+        apv: results.sources?.apv?.length || 0,
+        total: results.totalResults || 0
       }
     })
   } catch (error) {
