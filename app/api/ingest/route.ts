@@ -7,6 +7,14 @@ import {
   fetchKOOPDocuments,
   fetchRechtspraak,
   fetchTweedeKamer,
+  fetchBelastingdienst,
+  fetchAutoriteitPersoonsgegevens,
+  fetchACM,
+  fetchSVB,
+  fetchUWV,
+  fetchKadaster,
+  fetchPolitie,
+  fetchRijksoverheid,
   searchOfficialSources as searchOfficialSourcesLib
 } from '@/lib/officialSources'
 
@@ -29,6 +37,14 @@ export async function GET(request: NextRequest) {
         rechtspraak: 'configured', 
         koop: 'configured',
         tweedekamer: 'configured',
+        belastingdienst: 'configured',
+        autoriteitpersoonsgegevens: 'configured',
+        acm: 'configured',
+        svb: 'configured',
+        uwv: 'configured',
+        kadaster: 'configured',
+        politie: 'configured',
+        rijksoverheid: 'configured',
         eurlex: 'planned'
       }
     })
@@ -49,7 +65,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
-    const { source, type = 'incremental' } = await request.json()
+    const { source, type = 'incremental', keyword = '' } = await request.json()
 
     if (!source) {
       return NextResponse.json({ error: 'Source parameter required' }, { status: 400 })
@@ -93,6 +109,70 @@ export async function POST(request: NextRequest) {
           console.log(`Fetched documents from Tweede Kamer`)
         }).catch(error => {
           console.error('Tweede Kamer fetch failed:', error)
+        })
+        break
+
+      case 'belastingdienst':
+        fetchBelastingdienst(keyword).then(docs => {
+          console.log(`Fetched ${docs.length} documents from Belastingdienst`)
+        }).catch(error => {
+          console.error('Belastingdienst fetch failed:', error)
+        })
+        break
+
+      case 'autoriteitpersoonsgegevens':
+        fetchAutoriteitPersoonsgegevens(keyword).then(docs => {
+          console.log(`Fetched ${docs.length} documents from AP`)
+        }).catch(error => {
+          console.error('AP fetch failed:', error)
+        })
+        break
+
+      case 'acm':
+        fetchACM(keyword).then(docs => {
+          console.log(`Fetched ${docs.length} documents from ACM`)
+        }).catch(error => {
+          console.error('ACM fetch failed:', error)
+        })
+        break
+
+      case 'svb':
+        fetchSVB(keyword).then(docs => {
+          console.log(`Fetched ${docs.length} documents from SVB`)
+        }).catch(error => {
+          console.error('SVB fetch failed:', error)
+        })
+        break
+
+      case 'uwv':
+        fetchUWV(keyword).then(docs => {
+          console.log(`Fetched ${docs.length} documents from UWV`)
+        }).catch(error => {
+          console.error('UWV fetch failed:', error)
+        })
+        break
+
+      case 'kadaster':
+        fetchKadaster(keyword).then(docs => {
+          console.log(`Fetched ${docs.length} documents from Kadaster`)
+        }).catch(error => {
+          console.error('Kadaster fetch failed:', error)
+        })
+        break
+
+      case 'politie':
+        fetchPolitie(keyword).then(docs => {
+          console.log(`Fetched ${docs.length} documents from Politie`)
+        }).catch(error => {
+          console.error('Politie fetch failed:', error)
+        })
+        break
+
+      case 'rijksoverheid':
+        fetchRijksoverheid(keyword).then(docs => {
+          console.log(`Fetched ${docs.length} documents from Rijksoverheid`)
+        }).catch(error => {
+          console.error('Rijksoverheid fetch failed:', error)
         })
         break
         

@@ -270,6 +270,186 @@ export async function fetchEURLex(query: string = ''): Promise<WetgevingDocument
   }
 }
 
+// === 7. BELASTINGDIENST ===
+
+export async function fetchBelastingdienst(query: string = ''): Promise<WetgevingDocument[]> {
+  console.log('💰 Fetching Belastingdienst documents...')
+  
+  try {
+    // Belastingdienst heeft geen publieke API, maar we kunnen de zoek URL gebruiken
+    const encodedQuery = encodeURIComponent(query)
+    console.log(`Belastingdienst search: https://www.belastingdienst.nl/zoeken?q=${encodedQuery}`)
+    
+    // Voor nu retourneren we een referentie naar de zoekpagina
+    // TODO: Implementeer web scraping van belastingdienst.nl voor relevante informatie
+    return []
+    
+  } catch (error) {
+    console.error('Error fetching Belastingdienst:', error)
+    return []
+  }
+}
+
+// === 8. AUTORITEIT PERSOONSGEGEVENS ===
+
+export async function fetchAutoriteitPersoonsgegevens(query: string = ''): Promise<WetgevingDocument[]> {
+  console.log('🔒 Fetching Autoriteit Persoonsgegevens documents...')
+  
+  try {
+    // AP heeft geen publieke API, maar wel een uitgebreide kennisbank
+    const encodedQuery = encodeURIComponent(query)
+    console.log(`AP search: https://autoriteitpersoonsgegevens.nl/zoeken?q=${encodedQuery}`)
+    
+    // Voor nu retourneren we een referentie naar de zoekpagina
+    // TODO: Implementeer web scraping van AP kennisbank
+    return []
+    
+  } catch (error) {
+    console.error('Error fetching AP:', error)
+    return []
+  }
+}
+
+// === 9. ACM (AUTORITEIT CONSUMENT & MARKT) ===
+
+export async function fetchACM(query: string = ''): Promise<WetgevingDocument[]> {
+  console.log('⚖️ Fetching ACM documents...')
+  
+  try {
+    // ACM heeft geen publieke API voor zoeken
+    const encodedQuery = encodeURIComponent(query)
+    console.log(`ACM search: https://www.acm.nl/zoeken?q=${encodedQuery}`)
+    
+    // Voor nu retourneren we een referentie naar de zoekpagina
+    // TODO: Implementeer web scraping van ACM beslissingen en publicaties
+    return []
+    
+  } catch (error) {
+    console.error('Error fetching ACM:', error)
+    return []
+  }
+}
+
+// === 10. SOCIALE VERZEKERINGSBANK (SVB) ===
+
+export async function fetchSVB(query: string = ''): Promise<WetgevingDocument[]> {
+  console.log('👥 Fetching SVB documents...')
+  
+  try {
+    // SVB heeft geen publieke API voor zoeken
+    const encodedQuery = encodeURIComponent(query)
+    console.log(`SVB search: https://www.svb.nl/zoeken?q=${encodedQuery}`)
+    
+    // Voor nu retourneren we een referentie naar de zoekpagina
+    // TODO: Implementeer web scraping van SVB regelgeving en uitleg
+    return []
+    
+  } catch (error) {
+    console.error('Error fetching SVB:', error)
+    return []
+  }
+}
+
+// === 11. UWV (UITVOERINGSINSTITUUT WERKNEMERSVERZEKERINGEN) ===
+
+export async function fetchUWV(query: string = ''): Promise<WetgevingDocument[]> {
+  console.log('💼 Fetching UWV documents...')
+  
+  try {
+    // UWV heeft geen publieke API voor zoeken
+    const encodedQuery = encodeURIComponent(query)
+    console.log(`UWV search: https://www.uwv.nl/zoeken?q=${encodedQuery}`)
+    
+    // Voor nu retourneren we een referentie naar de zoekpagina
+    // TODO: Implementeer web scraping van UWV regelgeving en werkloosheidswetten
+    return []
+    
+  } catch (error) {
+    console.error('Error fetching UWV:', error)
+    return []
+  }
+}
+
+// === 12. KADASTER ===
+
+export async function fetchKadaster(query: string = ''): Promise<WetgevingDocument[]> {
+  console.log('🏠 Fetching Kadaster documents...')
+  
+  try {
+    // Kadaster heeft geen publieke API voor zoeken in regelgeving
+    const encodedQuery = encodeURIComponent(query)
+    console.log(`Kadaster search: https://www.kadaster.nl/zoeken?q=${encodedQuery}`)
+    
+    // Voor nu retourneren we een referentie naar de zoekpagina
+    // TODO: Implementeer web scraping van Kadaster wet- en regelgeving
+    return []
+    
+  } catch (error) {
+    console.error('Error fetching Kadaster:', error)
+    return []
+  }
+}
+
+// === 13. POLITIE.NL (HANDHAVING) ===
+
+export async function fetchPolitie(query: string = ''): Promise<WetgevingDocument[]> {
+  console.log('👮 Fetching Politie.nl documents...')
+  
+  try {
+    // Politie.nl heeft geen publieke API maar wel uitgebreide informatiebank
+    const encodedQuery = encodeURIComponent(query)
+    console.log(`Politie search: https://www.politie.nl/zoeken?q=${encodedQuery}`)
+    
+    // Voor nu retourneren we een referentie naar de zoekpagina
+    // TODO: Implementeer web scraping van politie.nl procedure-informatie
+    return []
+    
+  } catch (error) {
+    console.error('Error fetching Politie:', error)
+    return []
+  }
+}
+
+// === 14. RIJKSOVERHEID.NL (BELEID) ===
+
+export async function fetchRijksoverheid(query: string = ''): Promise<WetgevingDocument[]> {
+  console.log('🏛️ Fetching Rijksoverheid.nl documents...')
+  
+  try {
+    // Rijksoverheid heeft wel een zoek-API
+    const encodedQuery = encodeURIComponent(query)
+    const url = `https://www.rijksoverheid.nl/zoeken?keyword=${encodedQuery}&format=json`
+    
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'WetHelder/1.0 (https://wethelder.nl)',
+        'Accept': 'application/json'
+      }
+    })
+    
+    if (!response.ok) {
+      console.warn('Rijksoverheid API niet beschikbaar')
+      return []
+    }
+    
+    const data = await response.json()
+    
+    return data.results?.map((item: any) => ({
+      id: item.id || item.url,
+      titel: item.title || item.naam,
+      tekst: item.content || item.samenvatting || '',
+      uri: item.url,
+      datum: item.datum ? new Date(item.datum) : undefined,
+      wetboek: 'Beleid',
+      status: 'ACTIVE' as const
+    })) || []
+    
+  } catch (error) {
+    console.error('Error fetching Rijksoverheid:', error)
+    return []
+  }
+}
+
 // === UTILITY FUNCTIES ===
 
 function extractArtikelNummer(titel: string): string | undefined {

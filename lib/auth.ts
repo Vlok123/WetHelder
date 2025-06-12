@@ -87,5 +87,8 @@ export const authOptions: NextAuthOptions = {
     signIn: '/auth/signin'
   },
   secret: process.env.NEXTAUTH_SECRET || 'development-secret-key-change-in-production-12345',
-  debug: process.env.NODE_ENV === 'development'
+  debug: process.env.NODE_ENV === 'development',
+  jwt: {
+    secret: process.env.NEXTAUTH_SECRET || 'development-secret-key-change-in-production-12345',
+  }
 }

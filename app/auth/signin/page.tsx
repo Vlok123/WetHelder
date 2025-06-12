@@ -30,142 +30,141 @@ export default function SignInPage() {
 
       if (result?.error) {
         setError('Ongeldige inloggegevens')
+        setIsLoading(false)
+        return
+      }
+
+      // Check if sign in was successful
+      const session = await getSession()
+      if (session) {
+        router.push('/dashboard')
+        router.refresh()
       } else {
-        const session = await getSession()
-        if (session) {
-          router.push('/')
-        }
+        setError('Er ging iets mis bij het inloggen')
+        setIsLoading(false)
       }
     } catch (error) {
-      setError('Er is een fout opgetreden')
-    } finally {
+      console.error('Sign in error:', error)
+      setError('Er ging iets mis bij het inloggen')
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <Link 
-            href="/" 
-            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 mb-6"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Terug naar homepage
-          </Link>
-          
-          <div className="flex items-center justify-center mb-4">
-            <Scale className="h-12 w-12 text-primary" />
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <Link 
+          href="/" 
+          className="inline-flex items-center gap-2 text-primary hover:text-primary/80 mb-8 justify-center w-full"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Terug naar homepage
+        </Link>
+        
+        <div className="flex justify-center mb-6">
+          <div className="flex items-center gap-2">
+            <Scale className="h-8 w-8 text-primary" />
+            <span className="text-2xl font-bold text-gray-900">WetHelder</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">WetHelder</h1>
-          <p className="text-gray-600">Inloggen op uw account</p>
         </div>
+        
+        <h2 className="text-center text-3xl font-bold tracking-tight text-gray-900">
+          Inloggen
+        </h2>
+        <p className="mt-2 text-center text-sm text-gray-600">
+          Toegang tot uw juridische dashboard
+        </p>
+      </div>
 
-        {/* Login Form */}
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <Card>
           <CardHeader>
-            <CardTitle>Inloggen</CardTitle>
-            <CardDescription>
-              Voer uw gegevens in om toegang te krijgen tot uw account
+            <CardTitle className="text-center">
+              <Mail className="h-6 w-6 mx-auto mb-2 text-primary" />
+              Login met uw account
+            </CardTitle>
+            <CardDescription className="text-center">
+              Voer uw inloggegevens in om toegang te krijgen tot WetHelder
             </CardDescription>
           </CardHeader>
           <CardContent>
             {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-center gap-2 text-red-700">
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700">
                 <AlertCircle className="h-4 w-4" />
-                {error}
+                <span className="text-sm">{error}</span>
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="email" className="text-sm font-medium text-gray-700 mb-1 block">
-                  E-mailadres
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                  Email
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                     id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    placeholder="uw.email@voorbeeld.nl"
                     className="pl-10"
-                    placeholder="uw@email.nl"
                     required
-                    disabled={isLoading}
                   />
+                  <Mail className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="password" className="text-sm font-medium text-gray-700 mb-1 block">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                   Wachtwoord
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                     id="password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Uw wachtwoord"
                     className="pl-10"
-                    placeholder="••••••••"
                     required
-                    disabled={isLoading}
                   />
+                  <Lock className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 </div>
               </div>
 
               <Button 
                 type="submit" 
-                className="w-full" 
+                className="w-full"
                 disabled={isLoading}
               >
-                {isLoading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Inloggen...
-                  </div>
-                ) : (
-                  'Inloggen'
-                )}
+                {isLoading ? 'Bezig met inloggen...' : 'Inloggen'}
               </Button>
             </form>
-
-            <div className="mt-4 text-center">
-              <Link 
-                href="/auth/forgot-password" 
-                className="text-sm text-primary hover:text-primary/80"
-              >
-                Wachtwoord vergeten?
-              </Link>
-            </div>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Nog geen account?{' '}
-                <Link 
-                  href="/auth/signup" 
-                  className="text-primary hover:text-primary/80 font-medium"
-                >
-                  Registreren
+                <Link href="/auth/signup" className="font-medium text-primary hover:text-primary/80">
+                  Registreer hier
                 </Link>
               </p>
             </div>
           </CardContent>
         </Card>
 
-        {/* Benefits */}
-        <div className="mt-8 text-center text-sm text-gray-600">
-          <p className="font-medium mb-2">Met een account krijgt u:</p>
-          <ul className="space-y-1">
-            <li>✓ Gratis: 3 vragen per dag</li>
-            <li>✓ Toegang tot vraaggeschiedenis</li>
-            <li>✓ Beroep-specifieke antwoorden</li>
-          </ul>
-        </div>
+        {/* Development info - alleen zichtbaar in development mode */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h3 className="font-medium text-blue-900 mb-2">🔧 Development Mode</h3>
+            <p className="text-sm text-blue-700 mb-2">
+              Voor development testing zijn er demo accounts beschikbaar:
+            </p>
+            <div className="space-y-1 text-xs text-blue-600">
+              <div>test@wethelder.nl / test</div>
+              <div>admin@wethelder.nl / admin</div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

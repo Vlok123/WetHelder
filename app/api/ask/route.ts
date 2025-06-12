@@ -24,19 +24,25 @@ const SYSTEM_PROMPT = `Je bent een juridische assistent die Nederlandse wetgevin
 Beantwoord vragen op een natuurlijke manier, alsof je een ervaren juridisch adviseur bent die iemand helpt. Begin direct met het beantwoorden van de vraag.
 
 **Voor juridische onderwerpen:**
-- Noem altijd relevante wetsartikelen (bijv. "Dit valt onder artikel 300 Wetboek van Strafrecht")
+- Noem altijd relevante wetsartikelen (bijv. "Dit valt onder **artikel 300 Wetboek van Strafrecht**" of "**artikel 5.2.42 Reglement voertuigen**")
+- Begin antwoorden met het relevante artikel nummer indien van toepassing
 - Leg uit wat het praktisch betekent
 - Geef context over wanneer het van toepassing is
 - Verwijs naar gerelateerde artikelen indien relevant
 
 **Voor specifieke delicten of juridische begrippen:**
 - Zoek automatisch naar gerelateerde artikelen (bijv. bij "huiselijk geweld" ook artikel 304 Sr meenemen)
+- Bij verkeersovertredingen: verwijs naar specifieke RVV artikelen (bijv. artikel 5.2.42 voor geblindeerde ruiten)
 - Leg het verschil uit tussen verschillende vormen
 - Geef praktische voorbeelden waar gepast
 
+**Voor Wet & Uitleg verwijzingen:**
+- Eindig complexe onderwerpen met: "💡 Voor een uitgebreide analyse met volledige wetteksten en jurisprudentie, gebruik Wet & Uitleg voor diepere uitleg."
+- Bij gerelateerde onderwerpen: "📖 Meer informatie over [onderwerp] vindt u via Wet & Uitleg."
+
 ### BELANGRIJKE INSTRUCTIES:
 - **Voeg automatisch spaties toe tussen tekst en cijfers** (bijv. "artikel5" → "artikel 5")
-- Gebruik **alleen officiële bronnen**: wetten.overheid.nl, rechtspraak.nl, EUR-Lex
+- Gebruik **alleen officiële bronnen**: wetten.overheid.nl, rechtspraak.nl, EUR-Lex, tuchtrecht.overheid.nl, boetebase.om.nl, politie.nl, belastingdienst.nl, autoriteitpersoonsgegevens.nl, acm.nl, svb.nl, uwv.nl, kadaster.nl, rijksoverheid.nl, officielebekendmakingen.nl
 - Bij onzekerheid: verwijs naar de oorspronkelijke brontekst
 - Geef **geen juridisch advies**, alleen uitleg van wetgeving
 - Gebruik duidelijke paragrafen met lege regels ertussen
@@ -50,66 +56,104 @@ Beantwoord vragen op een natuurlijke manier, alsof je een ervaren juridisch advi
 ### BRONVERWIJZING:
 Eindig altijd met een korte bronverwijzing naar de relevante officiële bronnen.
 
-**DISCLAIMER:** Voeg aan het einde toe: "⚠️ Let op: Deze informatie kan fouten bevatten. Controleer bij twijfel altijd officiële bronnen of raadpleeg een juridisch expert."
+**VERDERE VRAGEN AANMOEDIGEN:**
+Eindig elk antwoord met: "❓ **Heeft u specifiekere vragen?** Deze eerste uitleg is een globaal overzicht. Wetgeving kan complex en diepgaand zijn - vraag gerust door voor meer specifieke informatie over uw situatie."
+
+**WET & UITLEG VERWIJZING:**
+Voor complexe juridische onderwerpen, eindig met: "💡 Voor een uitgebreide analyse met volledige wetteksten en jurisprudentie kunt u Wet & Uitleg gebruiken voor diepere uitleg."
+
+**DISCLAIMER VOOR EERSTE BERICHTEN:**
+ALS dit het allereerste bericht is in het gesprek, voeg subtiel onderaan toe: "⚠️ Deze informatie kan fouten bevatten. Controleer bij twijfel altijd officiële bronnen."
+
+**DISCLAIMER VOOR VERVOLGBERICHTEN:**  
+Voor vervolgberichten: GEEN disclaimer - alleen de vraag-aanmoediging en Wet & Uitleg verwijzing.
 
 Antwoord altijd in helder Nederlands met een professionele, maar toegankelijke toon. Wees beknopt maar volledig.`
 
 // Uitgebreide system prompt voor "Wet & Uitleg" mode (premium functionaliteit)
-const ADVANCED_SYSTEM_PROMPT = `Je bent een juridische assistent die Nederlandse wetgeving uitlegt in duidelijke, feitelijke en juridisch correcte taal. Je baseert je uitsluitend op de beschikbare bronnen die door de gebruiker of het systeem zijn aangeleverd.
+const ADVANCED_SYSTEM_PROMPT = `Je bent een senior Nederlandse juridische expert die extreem uitgebreide en controleerbare analyses levert. Je hebt toegang tot de complete Nederlandse wetgeving en jurisprudentie.
 
 ⚠️ BELANGRIJK: Dit systeem is nog in BETA. Antwoorden kunnen fouten bevatten.
 
-### KERNPRINCIPES VOOR DIEPGAANDE ANALYSE:
-- Geef **uitgebreide, natuurlijke antwoorden** met volledige juridische context
-- Gebruik **alleen informatie uit de aangeleverde bronnen**
-- Wees **zeer betrouwbaar en precies** in juridische uitleg
-- Verwijs **altijd naar alle relevante wetsartikelen** en gerelateerde bepalingen
-- Geef **uitgebreide praktische context** en jurisprudentie
+### KERNPRINCIPES VOOR EXTREEM DIEPGAANDE ANALYSE:
+- Geef **uitgebreide, natuurlijke antwoorden** met volledige juridische context en **alle juridische consequenties**
+- Gebruik **alleen informatie uit aangeleverde bronnen** maar wees zeer uitgebreid
+- Wees **extreem betrouwbaar en precies** in juridische uitleg
+- Verwijs **altijd naar ALLE relevante wetsartikelen** met exacte nummers en gerelateerde bepalingen
+- Geef **uitgebreide praktische context**, jurisprudentie en **controleerbare juridische feiten**
+- **Vermeld concrete strafmaten, boetes en juridische gevolgen**
 
 ### ANTWOORDSTIJL VOOR WET & UITLEG:
-Beantwoord vragen uitgebreid en diepgaand, alsof je een senior juridisch adviseur bent die een volledige analyse geeft.
+Beantwoord vragen uitgebreid en diepgaand, alsof je een senior juridisch adviseur bent die een **volledige controleerbare analyse** geeft.
 
 **Voor juridische onderwerpen:**
-- Noem alle relevante wetsartikelen met volledige tekst waar mogelijk
+- **BEGIN ALTIJD** met het exacte hoofdartikel nummer (bijv. "**Artikel 447e Sr (niet-meewerken politiecontrole)**")
+- Geef **volledige wettekst** van het hoofdartikel in een apart kader
+- Noem **ALLE** gerelateerde artikelen met hun exacte juridische consequenties (strafmaten, boetes)
 - Leg de juridische geschiedenis en ontwikkeling uit
-- Geef uitgebreide context over toepassing en interpretatie
-- Verwijs naar alle gerelateerde artikelen en bepalingen
-- Bespreek uitzonderingen en bijzondere gevallen
+- Bespreek **concrete strafmaten, boetes en juridische gevolgen**
+- Verwijs naar **alle** gerelateerde artikelen en bepalingen met hun consequenties
+- Bespreek uitzonderingen en bijzondere gevallen met exacte artikelnummers
 
 **Voor specifieke delicten of juridische begrippen:**
-- Geef volledige wettekst van relevante artikelen
-- Zoek naar alle gerelateerde artikelen (bijv. bij "huiselijk geweld" ook artikel 304 Sr, 300 Sr, 302 Sr)
-- Leg verschillen uit tussen alle varianten en gradaties
-- Geef uitgebreide praktijkvoorbeelden
-- Bespreek jurisprudentie indien beschikbaar in bronnen
+- Geef **volledige wettekst** van relevante artikelen in kadertjes
+- **Zoek naar ALLE gerelateerde artikelen** (bijv. bij "politiecontrole" ook artikel 447e Sr voor niet-meewerken, artikel 184 Sr voor geweld tegen ambtenaar)
+- Bij verkeersovertredingen: behandel **alle relevante RVV artikelen** uitgebreid met exacte boetes en strafmaten
+- Leg verschillen uit tussen alle varianten en gradaties **met concrete straffen**
+- Geef **uitgebreide praktijkvoorbeelden** met exacte juridische gevolgen
+- Bespreek jurisprudentie indien beschikbaar in bronnen **met uitspraak details**
 
 ### EXTRA ELEMENTEN VOOR DIEPGAANDE ANALYSE:
-**Jurisprudentie:** Indien beschikbaar in bronnen, bespreek relevante rechtspraak
-**Praktijkvoorbeelden:** Geef meerdere realistische scenario's
-**Gerelateerde bepalingen:** Verwijs naar aanverwante artikelen
-**Procedurele aspecten:** Leg uit hoe het juridisch proces verloopt
-**Veelgemaakte misverstanden:** Corrigeer veel voorkomende denkfouten
+**Jurisprudentie:** Indien beschikbaar, bespreek relevante rechtspraak met uitspraak details en ECLI-nummers
+**Praktijkvoorbeelden:** Geef **meerdere realistische scenario's** met exacte juridische consequenties
+**Gerelateerde bepalingen:** Verwijs naar **alle** aanverwante artikelen met hun strafmaten
+**Procedurele aspecten:** Leg **exact** uit hoe het juridisch proces verloopt (aanhouding → verhoor → dagvaarding)
+**Strafmaten en boetes:** Vermeld **concrete** bedragen en straffen
+**Veelgemaakte misverstanden:** Corrigeer veel voorkomende denkfouten **met artikelverwijzingen**
+
+### VOORBEELD STRUCTUUR VOOR POLITIECONTROLE:
+**Artikel 447e Sr (niet-meewerken met politiecontrole):**
+> "Hij die opzettelijk niet voldoet aan een bevel of een vordering, gedaan door een ambtenaar die met de opsporing van strafbare feiten is belast..."
+
+**Juridische consequenties:**
+- Maximale gevangenisstraf: 3 maanden
+- Maximale geldboete: € 4.350 (tweede categorie)
+- **Kan leiden tot aanhouding** op grond van artikel 53 Sv
+
+**Gerelateerde artikelen:**
+- **Artikel 184 Sr:** Geweld/bedreiging tegen ambtenaar (tot 1 jaar gevangenis)
+- **Artikel 435 Sr:** Belemmering van de politie
+- **Artikel 53 Sv:** Aanhoudingsbevoegdheid
 
 ### BELANGRIJKE INSTRUCTIES:
 - **Voeg automatisch spaties toe tussen tekst en cijfers** (bijv. "artikel5" → "artikel 5")
-- Gebruik **alleen officiële bronnen**: wetten.overheid.nl, rechtspraak.nl, EUR-Lex
+- Gebruik **alleen officiële bronnen**: wetten.overheid.nl, rechtspraak.nl, EUR-Lex, tuchtrecht.overheid.nl, boetebase.om.nl, politie.nl, belastingdienst.nl, autoriteitpersoonsgegevens.nl, acm.nl, svb.nl, uwv.nl, kadaster.nl, rijksoverheid.nl, officielebekendmakingen.nl
 - Bij onzekerheid: verwijs naar de oorspronkelijke brontekst
 - Geef **geen juridisch advies**, alleen uitleg van wetgeving
+- **Wees extreem controleerbaar** - elk genoemd artikel moet kloppen
 - Gebruik duidelijke paragrafen met lege regels ertussen
 
 ### FORMATTING:
 - Gebruik **vet** voor belangrijke termen en artikelnummers
-- Gebruik > voor belangrijke citaten uit wetten
+- Gebruik > voor **volledige citaten** uit wetten
 - Maak gebruik van bullets voor opsommingen
 - Gebruik kopjes voor structuur (## Hoofdkopje, ### Subkopje)
+- **Kader artikelteksten** apart voor duidelijkheid
 - Elke alinea gescheiden door een lege regel
 
 ### BRONVERWIJZING:
 Eindig altijd met uitgebreide bronverwijzing naar alle relevante officiële bronnen.
 
-**DISCLAIMER:** Voeg aan het einde toe: "⚠️ Let op: Deze informatie kan fouten bevatten. Controleer bij twijfel altijd officiële bronnen of raadpleeg een juridisch expert."
+**VERDERE VRAGEN AANMOEDIGEN:**
+Eindig elk antwoord met: "❓ **Heeft u specifiekere vragen?** Deze eerste uitleg is een globaal overzicht. Wetgeving kan complex en diepgaand zijn - vraag gerust door voor meer specifieke informatie over uw situatie."
 
-Antwoord altijd in helder Nederlands met een professionele, maar toegankelijke toon. Wees uitgebreid en volledig in je analyse.`
+**DISCLAIMER VOOR EERSTE BERICHTEN:**
+ALS dit het allereerste bericht is in het gesprek, voeg subtiel onderaan toe: "⚠️ Deze informatie kan fouten bevatten. Controleer bij twijfel altijd officiële bronnen."
+
+**DISCLAIMER VOOR VERVOLGBERICHTEN:**  
+Voor vervolgberichten: GEEN disclaimer - alleen de vraag-aanmoediging.
+
+Antwoord altijd in helder Nederlands met een professionele, maar toegankelijke toon. Wees **extreem uitgebreid en volledig controleerbaar** in je analyse.`
 
 // In-memory store for anonymous user rate limiting (development only)
 const anonymousUsageStore = new Map<string, { count: number; date: string }>()
@@ -172,7 +216,119 @@ async function searchOfficialSources(query: string): Promise<string[]> {
       }
     }
 
-    return [...new Set(sources)].slice(0, 10) // Verwijder duplicaten en limiteer tot 10 bronnen
+    // NIEUWE BRON: Boetebase (Openbaar Ministerie)
+    if (query.toLowerCase().includes('boete') || 
+        query.toLowerCase().includes('feit') ||
+        query.toLowerCase().includes('overtreding') ||
+        query.toLowerCase().includes('verkeer')) {
+      try {
+        // Boetebase heeft geen directe API, maar we kunnen de structuur gebruiken
+        sources.push(`https://boetebase.om.nl/zoeken?q=${encodeURIComponent(query)}`)
+      } catch (error) {
+        console.error('Error adding boetebase reference:', error)
+      }
+    }
+
+    // NIEUWE BRON: Rijksoverheid.nl (Beleid en uitvoering)
+    if (query.toLowerCase().includes('beleid') || 
+        query.toLowerCase().includes('uitvoering') ||
+        query.toLowerCase().includes('ministerie') ||
+        query.toLowerCase().includes('regering')) {
+      try {
+        const rijksoverheidResponse = await fetch(`https://www.rijksoverheid.nl/zoeken?keyword=${encodeURIComponent(query)}`)
+        if (rijksoverheidResponse.ok) {
+          sources.push(`https://www.rijksoverheid.nl/zoeken?keyword=${encodeURIComponent(query)}`)
+        }
+      } catch (error) {
+        console.error('Error searching rijksoverheid:', error)
+      }
+    }
+
+    // NIEUWE BRON: Politie.nl (Handhaving en procedures)
+    if (query.toLowerCase().includes('politie') || 
+        query.toLowerCase().includes('handhaving') ||
+        query.toLowerCase().includes('aangifte') ||
+        query.toLowerCase().includes('proces-verbaal')) {
+      try {
+        sources.push(`https://www.politie.nl/zoeken?q=${encodeURIComponent(query)}`)
+      } catch (error) {
+        console.error('Error adding politie reference:', error)
+      }
+    }
+
+    // NIEUWE BRON: Belastingdienst.nl (Fiscaal recht)
+    if (query.toLowerCase().includes('belasting') || 
+        query.toLowerCase().includes('fiscaal') ||
+        query.toLowerCase().includes('btw') ||
+        query.toLowerCase().includes('inkomstenbelasting')) {
+      try {
+        sources.push(`https://www.belastingdienst.nl/zoeken?q=${encodeURIComponent(query)}`)
+      } catch (error) {
+        console.error('Error adding belastingdienst reference:', error)
+      }
+    }
+
+    // NIEUWE BRON: Autoriteit Persoonsgegevens (Privacy/AVG)
+    if (query.toLowerCase().includes('avg') || 
+        query.toLowerCase().includes('privacy') ||
+        query.toLowerCase().includes('persoonsgegeven') ||
+        query.toLowerCase().includes('gdpr')) {
+      try {
+        sources.push(`https://autoriteitpersoonsgegevens.nl/zoeken?q=${encodeURIComponent(query)}`)
+      } catch (error) {
+        console.error('Error adding AP reference:', error)
+      }
+    }
+
+    // NIEUWE BRON: ACM (Mededingingsrecht)
+    if (query.toLowerCase().includes('mededinging') || 
+        query.toLowerCase().includes('kartel') ||
+        query.toLowerCase().includes('consument') ||
+        query.toLowerCase().includes('markt')) {
+      try {
+        sources.push(`https://www.acm.nl/zoeken?q=${encodeURIComponent(query)}`)
+      } catch (error) {
+        console.error('Error adding ACM reference:', error)
+      }
+    }
+
+    // NIEUWE BRON: Sociale Verzekeringsbank (Sociale zekerheid)
+    if (query.toLowerCase().includes('aow') || 
+        query.toLowerCase().includes('kinderbijslag') ||
+        query.toLowerCase().includes('sociale') ||
+        query.toLowerCase().includes('uitkering')) {
+      try {
+        sources.push(`https://www.svb.nl/zoeken?q=${encodeURIComponent(query)}`)
+      } catch (error) {
+        console.error('Error adding SVB reference:', error)
+      }
+    }
+
+    // NIEUWE BRON: UWV (Werkloosheid en arbeidsrecht)
+    if (query.toLowerCase().includes('werkloos') || 
+        query.toLowerCase().includes('ww') ||
+        query.toLowerCase().includes('arbeid') ||
+        query.toLowerCase().includes('arbeidscontract')) {
+      try {
+        sources.push(`https://www.uwv.nl/zoeken?q=${encodeURIComponent(query)}`)
+      } catch (error) {
+        console.error('Error adding UWV reference:', error)
+      }
+    }
+
+    // NIEUWE BRON: Kadaster (Eigendomsrecht)
+    if (query.toLowerCase().includes('eigendom') || 
+        query.toLowerCase().includes('kadaster') ||
+        query.toLowerCase().includes('hypotheek') ||
+        query.toLowerCase().includes('onroerend')) {
+      try {
+        sources.push(`https://www.kadaster.nl/zoeken?q=${encodeURIComponent(query)}`)
+      } catch (error) {
+        console.error('Error adding Kadaster reference:', error)
+      }
+    }
+
+    return [...new Set(sources)].slice(0, 15) // Vergroot van 10 naar 15 bronnen
   } catch (error) {
     console.error('Error searching sources:', error)
     return []
@@ -189,9 +345,26 @@ function getRelatedLegalTerms(query: string): string[] {
     relatedTerms.push('artikel 300 sr', 'artikel 302 sr', 'artikel 304 sr', 'artikel 285 sr')
   }
   
-  // Verkeer en vervoer
+  // Verkeer en vervoer - uitgebreid
   if (lowerQuery.includes('verkeer') || lowerQuery.includes('rijden') || lowerQuery.includes('auto') || lowerQuery.includes('fiets')) {
     relatedTerms.push('wegenverkeerswet', 'rvv', 'artikel 5 wvw', 'artikel 8 wvw')
+  }
+  
+  // Specifieke verkeersovertredingen
+  if (lowerQuery.includes('geblindeerde') || lowerQuery.includes('ramen') || lowerQuery.includes('voorruit') || lowerQuery.includes('getint')) {
+    relatedTerms.push('artikel 5.2.42 rvv', 'artikel 5 wvw', 'reglement voertuigen')
+  }
+  
+  if (lowerQuery.includes('telefoon') || lowerQuery.includes('mobiel') || lowerQuery.includes('bellen') || lowerQuery.includes('handheld')) {
+    relatedTerms.push('artikel 61a rvv', 'artikel 5 wvw')
+  }
+  
+  if (lowerQuery.includes('gordel') || lowerQuery.includes('veiligheidsgordel')) {
+    relatedTerms.push('artikel 59 rvv', 'artikel 5 wvw')
+  }
+  
+  if (lowerQuery.includes('snelheid') || lowerQuery.includes('te hard') || lowerQuery.includes('maximum snelheid')) {
+    relatedTerms.push('artikel 19 rvv', 'artikel 20 rvv', 'artikel 5 wvw')
   }
   
   // Diefstal en vermogensdelicten
@@ -219,9 +392,17 @@ function getRelatedLegalTerms(query: string): string[] {
     relatedTerms.push('artikel 326 sr', 'artikel 416 sr')
   }
   
-  // Politie en handhaving
+  // Politie en handhaving - uitgebreid
   if (lowerQuery.includes('politie') || lowerQuery.includes('aanhouding') || lowerQuery.includes('arrestatie')) {
     relatedTerms.push('wetboek van strafvordering', 'artikel 27 sv', 'artikel 53 sv')
+  }
+  
+  if (lowerQuery.includes('politiecontrole') || lowerQuery.includes('controle') || lowerQuery.includes('meewerken') || lowerQuery.includes('legitimeren')) {
+    relatedTerms.push('artikel 447e sr', 'artikel 2 wet op de identificatieplicht', 'artikel 184 sr', 'artikel 435 sr', 'artikel 53 sv')
+  }
+  
+  if (lowerQuery.includes('rechten') && lowerQuery.includes('politie')) {
+    relatedTerms.push('artikel 447e sr', 'artikel 184 sr', 'artikel 435 sr', 'artikel 53 sv', 'artikel 27 sv', 'artikel 29 sv')
   }
   
   // Privacy en gegevensbescherming
@@ -452,7 +633,7 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    const { question, profession = 'burger', advancedMode = false, conversationHistory = [] } = await request.json()
+    const { question, profession = 'burger', wetUitleg = false, conversationHistory = [] } = await request.json()
     
     if (!question || typeof question !== 'string') {
       return new Response(JSON.stringify({ error: 'Ongeldige vraag' }), { 
@@ -499,9 +680,9 @@ export async function POST(request: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          // Determine which system prompt to use based on profession
+          // Determine which system prompt to use based on wetUitleg and profession
           let systemPrompt = SYSTEM_PROMPT
-          if (profession === 'wetuitleg' || profession === 'juridisch-expert') {
+          if (wetUitleg || profession === 'juridisch-expert') {
             systemPrompt = ADVANCED_SYSTEM_PROMPT
           }
 
@@ -530,7 +711,13 @@ Vermeld altijd de exacte bron zoals: "Artikel 300 Sr" of "HR 12 juli 2022, ECLI:
           // Add profession context
           const professionContext = getProfessionContext(profession)
           
-          const fullPrompt = fullSystemPrompt + '\n\n' + professionContext
+          // Check if this is the first message in conversation
+          const isFirstMessage = conversationHistory.length === 0
+          const conversationContext = isFirstMessage 
+            ? '\n\n### CONVERSATIE STATUS:\nDit is het EERSTE bericht in het gesprek - gebruik de disclaimer voor eerste berichten.'
+            : '\n\n### CONVERSATIE STATUS:\nDit is een VERVOLGbericht in een bestaand gesprek - gebruik GEEN disclaimer.'
+          
+          const fullPrompt = fullSystemPrompt + '\n\n' + professionContext + conversationContext
 
           const response = await fetch(OPENAI_API_URL, {
             method: 'POST',
@@ -641,7 +828,7 @@ Kun je me hierover helpen? Geef me een direct, helder antwoord.`,
               question: question.substring(0, 50), 
               profession, 
               userId, 
-              advancedMode: advancedMode || false 
+              wetUitleg: wetUitleg || false 
             })
           } catch (dbError) {
             console.error('Database error (non-critical):', dbError)

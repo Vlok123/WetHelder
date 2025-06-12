@@ -38,15 +38,7 @@ const MAIN_FEATURES = [
     badgeVariant: "default" as const
   },
   {
-    title: "Wet & Uitleg",
-    description: "Diepgaande juridische analyse met volledige wetteksten, jurisprudentie en praktijkvoorbeelden",
-    icon: FileText,
-    href: "/ask?profile=wetuitleg",
-    badge: "Geavanceerd",
-    badgeVariant: "default" as const
-  },
-  {
-    title: "Rechtspraak & Jurisprudentie",
+    title: "Rechtspraak & Jurisprudentie", 
     description: "Zoek in Nederlandse rechtspraak en belangrijke uitspraken",
     icon: Gavel,
     href: "/ask",
@@ -100,7 +92,6 @@ const TARGET_AUDIENCE = [
 // User profile options
 const USER_PROFILES = [
   { value: "algemeen", label: "Algemeen publiek" },
-  { value: "wetuitleg", label: "Wet & Uitleg (Diepgaand)" },
   { value: "juridisch-expert", label: "Juridisch Expert" },
   { value: "jurist", label: "Jurist/Advocaat" },
   { value: "politie", label: "Politie" },
@@ -113,9 +104,28 @@ export default function HomePage() {
   const { data: session, status } = useSession()
   const [searchQuery, setSearchQuery] = useState('')
   const [userProfile, setUserProfile] = useState('')
+  const [wetUitlegEnabled, setWetUitlegEnabled] = useState(false)
 
   const handleQuickSearch = (query: string) => {
     setSearchQuery(query)
+    
+    // Auto-navigate for quick searches (clear input before navigation)
+    setTimeout(() => {
+      setSearchQuery('')
+      let profileParam = ''
+      if (userProfile) {
+        const mappedProfile = userProfile === 'algemeen' ? 'algemeen' : 
+                             userProfile === 'juridisch-expert' ? 'juridisch-expert' :
+                             userProfile === 'jurist' ? 'advocaat' :
+                             userProfile === 'politie' ? 'politieagent' :
+                             userProfile === 'boa' ? 'politieagent' :
+                             userProfile === 'student' ? 'student' : 'algemeen'
+        profileParam = `&profile=${encodeURIComponent(mappedProfile)}`
+      }
+      
+      const wetUitlegParam = wetUitlegEnabled ? '&wetuitleg=true' : ''
+      window.location.href = `/ask?q=${encodeURIComponent(query)}${profileParam}${wetUitlegParam}`
+    }, 100)
   }
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -125,7 +135,6 @@ export default function HomePage() {
       let profileParam = ''
       if (userProfile) {
         const mappedProfile = userProfile === 'algemeen' ? 'algemeen' : 
-                             userProfile === 'wetuitleg' ? 'wetuitleg' :
                              userProfile === 'juridisch-expert' ? 'juridisch-expert' :
                              userProfile === 'jurist' ? 'advocaat' :
                              userProfile === 'politie' ? 'politieagent' :
@@ -134,8 +143,14 @@ export default function HomePage() {
         profileParam = `&profile=${encodeURIComponent(mappedProfile)}`
       }
       
+      // Add Wet & Uitleg parameter if enabled
+      const wetUitlegParam = wetUitlegEnabled ? '&wetuitleg=true' : ''
+      
+      // Clear the search input immediately after submission
+      setSearchQuery('')
+      
       // Use Next.js router for better navigation without auto-search
-      window.location.href = `/ask?q=${encodeURIComponent(searchQuery)}${profileParam}`
+      window.location.href = `/ask?q=${encodeURIComponent(searchQuery)}${profileParam}${wetUitlegParam}`
     }
   }
 
@@ -201,32 +216,32 @@ export default function HomePage() {
               </Badge>
             </div>
             
-            <h1 className="text-hero mb-6 text-balance">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-balance leading-tight">
               Nederlandse wetgeving
               <span className="text-primary block">doorzoeken en begrijpen</span>
             </h1>
             
-            <p className="text-subtitle mb-6 text-pretty max-w-2xl mx-auto">
+            <p className="text-base md:text-lg text-muted-foreground mb-8 text-pretty max-w-2xl mx-auto">
               Betrouwbare juridische zoektool voor iedereen die officiële informatie zoekt over Nederlandse wetgeving.
               Speciaal ontwikkeld voor mensen die enkel en alleen informatie willen met officiële bronnen.
             </p>
 
             {/* Beta Warning - zonder AI verwijzing */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-3xl mx-auto mb-12">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 max-w-3xl mx-auto mb-8">
               <div className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
                 </svg>
                 <div className="text-sm text-yellow-800">
                   <p className="font-semibold mb-1">⚠️ BETA-versie in ontwikkeling</p>
-                  <p>Deze applicatie is nog in ontwikkeling. Informatie kan fouten bevatten. Controleer belangrijke informatie altijd via officiële bronnen of raadpleeg een juridisch expert wanneer noodzakelijk.</p>
+                  <p className="text-xs">Deze applicatie is nog in ontwikkeling. Informatie kan fouten bevatten. Controleer belangrijke informatie altijd via officiële bronnen of raadpleeg een juridisch expert wanneer noodzakelijk.</p>
                 </div>
               </div>
             </div>
 
             {/* User Profile Selection */}
-            <div className="max-w-md mx-auto mb-8">
-              <div className="flex items-center gap-3 mb-2">
+            <div className="max-w-md mx-auto mb-6">
+              <div className="flex items-center gap-2 mb-2">
                 <User className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm font-medium text-muted-foreground">Ik ben:</span>
               </div>
@@ -247,55 +262,83 @@ export default function HomePage() {
                   Dit helpt ons de zoekresultaten beter af te stemmen op uw behoeften
                 </p>
               )}
-            </div>
-
-            {/* Main Search */}
-            <div className="max-w-2xl mx-auto mb-8">
-              <form onSubmit={handleSearch} className="relative">
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                  <Input
-                    type="text"
-                    placeholder="Stel een juridische vraag of zoek in wetsartikelen..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="input-field pl-12 pr-32 h-14 text-lg shadow-medium"
-                  />
-                  <Button 
-                    type="submit" 
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 h-10"
-                    disabled={!searchQuery.trim()}
-                  >
-                    Zoeken
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
+              
+              {/* Wet & Uitleg Extra Feature */}
+              {userProfile && (
+                <div className="mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={wetUitlegEnabled}
+                      onChange={(e) => setWetUitlegEnabled(e.target.checked)}
+                      className="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500"
+                    />
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-emerald-700" />
+                      <span className="text-sm font-medium text-emerald-800">Wet & Uitleg (Diepgaand)</span>
+                    </div>
+                  </label>
+                  <p className="text-xs text-emerald-700 mt-1 ml-7">
+                    Uitgebreide wetteksten, jurisprudentie en praktijkvoorbeelden voor diepere analyse
+                  </p>
                 </div>
-              </form>
+              )}
             </div>
 
-            {/* Juridische Voorbeeldvragen */}
-            <div className="max-w-4xl mx-auto mb-12">
-              <h3 className="text-lg font-semibold mb-4 text-muted-foreground">Juridische voorbeeldvragen:</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {/* Main Search - Prominenter gemaakt */}
+            <div className="max-w-3xl mx-auto mb-10">
+              <div className="bg-white/80 backdrop-blur-sm border border-border/60 rounded-2xl p-6 shadow-medium">
+                <h2 className="text-lg font-semibold text-center mb-4 text-foreground">
+                  <Search className="h-5 w-5 inline mr-2 text-primary" />
+                  Stel uw juridische vraag
+                </h2>
+                <form onSubmit={handleSearch} className="relative">
+                  <div className="relative">
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-6 w-6" />
+                    <Input
+                      type="text"
+                      placeholder="Stel een juridische vraag of zoek in wetsartikelen..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="input-field pl-14 pr-32 h-16 text-lg shadow-medium border-2 focus:border-primary/50"
+                    />
+                    <Button 
+                      type="submit" 
+                      size="lg"
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 h-12 px-6"
+                      disabled={!searchQuery.trim()}
+                    >
+                      Zoeken
+                      <ArrowRight className="h-5 w-5 ml-2" />
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            {/* Juridische Voorbeeldvragen - Compacter */}
+            <div className="max-w-4xl mx-auto mb-8">
+              <h3 className="text-base font-medium mb-3 text-muted-foreground text-center">Juridische voorbeeldvragen:</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {JURIDISCHE_VRAGEN.map((vraag) => (
                   <button
                     key={vraag}
                     onClick={() => handleQuickSearch(vraag)}
-                    className="text-left p-4 rounded-lg bg-muted/50 hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-colors border border-border/50 hover:border-border"
+                    className="text-left p-3 rounded-lg bg-muted/40 hover:bg-muted/70 text-sm text-muted-foreground hover:text-foreground transition-colors border border-border/30 hover:border-border/60"
                   >
-                    <BookOpen className="h-4 w-4 inline mr-2 text-primary" />
+                    <BookOpen className="h-3 w-3 inline mr-2 text-primary" />
                     {vraag}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Platform Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
+            {/* Platform Stats - Compacter */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
               {PLATFORM_STATS.map((stat) => (
                 <div key={stat.label} className="text-center">
-                  <div className="text-2xl font-bold text-primary mb-1">{stat.value}</div>
-                  <div className="text-sm text-muted-foreground">{stat.label}</div>
+                  <div className="text-lg font-bold text-primary mb-1">{stat.value}</div>
+                  <div className="text-xs text-muted-foreground">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -306,9 +349,9 @@ export default function HomePage() {
       {/* Main Features */}
       <section className="section-padding">
         <div className="container-fluid">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Krachtige juridische tools</h2>
-            <p className="text-subtitle max-w-2xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl md:text-3xl font-bold mb-3">Krachtige juridische tools</h2>
+            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
               Alles wat u nodig heeft voor betrouwbaar juridisch onderzoek met officiële bronnen
             </p>
           </div>
@@ -343,9 +386,9 @@ export default function HomePage() {
       {/* Target Audience */}
       <section className="section-padding bg-muted/30">
         <div className="container-fluid">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Voor iedereen die betrouwbare juridische informatie zoekt</h2>
-            <p className="text-subtitle max-w-2xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-xl md:text-2xl font-bold mb-3">Voor iedereen die betrouwbare juridische informatie zoekt</h2>
+            <p className="text-base text-muted-foreground max-w-2xl mx-auto">
               WetHelder is ontwikkeld voor burgers, professionals en studenten die toegang willen tot officiële Nederlandse wetgeving
             </p>
           </div>
