@@ -496,7 +496,15 @@ export default function AskPage() {
 
     // Store current question and clear input immediately
     const currentQuestion = input.trim()
-    setInput('') // Clear input first, before any async operations
+    
+    // Force clear input immediately with multiple methods
+    setInput('')
+    
+    // Additional clearing to ensure it works
+    const inputElement = document.querySelector('input[type="text"]') as HTMLInputElement
+    if (inputElement) {
+      inputElement.value = ''
+    }
     
     const questionId = crypto.randomUUID()
     const newMessage: Message = {

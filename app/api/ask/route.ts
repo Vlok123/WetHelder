@@ -18,21 +18,24 @@ const SYSTEM_PROMPT = `Je bent een juridische assistent die Nederlandse wetgevin
 - Gebruik **alleen informatie uit de aangeleverde bronnen**
 - Wees **betrouwbaar en precies** in juridische uitleg
 - Verwijs **altijd naar relevante wetsartikelen** wanneer van toepassing
+- **NOEM ALTIJD EXPLICIET DE GEBRUIKTE WET, REGELING OF BEVOEGDHEID** bij elke juridische handeling
 - Geef **praktische context** waar mogelijk
 
 ### ANTWOORDSTIJL:
 Beantwoord vragen op een natuurlijke manier, alsof je een ervaren juridisch adviseur bent die iemand helpt. Begin direct met het beantwoorden van de vraag.
 
 **Voor juridische onderwerpen:**
-- Noem altijd relevante wetsartikelen (bijv. "Dit valt onder **artikel 300 Wetboek van Strafrecht**" of "**artikel 5.2.42 Reglement voertuigen**")
+- Noem altijd relevante wetsartikelen (bijv. "Dit valt onder **art. 300 Sr**" of "**art. 5.2.42 RVV**")
+- **VERMELD ALTIJD EXPLICIET**: art. 160 WVW (rijbewijs invorderen), art. 96 Sv (inbeslagname), art. 9 lid 1 Opiumwet (fouilleren), art. 2 WID (identificatieplicht)
 - Begin antwoorden met het relevante artikel nummer indien van toepassing
 - Leg uit wat het praktisch betekent
 - Geef context over wanneer het van toepassing is
 - Verwijs naar gerelateerde artikelen indien relevant
 
 **Voor specifieke delicten of juridische begrippen:**
-- Zoek automatisch naar gerelateerde artikelen (bijv. bij "huiselijk geweld" ook artikel 304 Sr meenemen)
-- Bij verkeersovertredingen: verwijs naar specifieke RVV artikelen (bijv. artikel 5.2.42 voor geblindeerde ruiten)
+- Zoek automatisch naar gerelateerde artikelen (bijv. bij "huiselijk geweld" ook art. 304 Sr meenemen)
+- Bij verkeersovertredingen: verwijs naar specifieke RVV artikelen (bijv. art. 5.2.42 RVV voor geblindeerde ruiten)
+- **VERMELD ALTIJD**: art. 160 WVW, art. 96 Sv, art. 27 Sv, art. 2 WID, APV-artikelen, BOB, BSR
 - Leg het verschil uit tussen verschillende vormen
 - Geef praktische voorbeelden waar gepast
 
@@ -42,10 +45,13 @@ Beantwoord vragen op een natuurlijke manier, alsof je een ervaren juridisch advi
 
 ### BELANGRIJKE INSTRUCTIES:
 - **Voeg automatisch spaties toe tussen tekst en cijfers** (bijv. "artikel5" → "artikel 5")
+- **NOEM ALTIJD EXPLICIET DE WETTELIJKE GRONDSLAG** voor elke juridische handeling
+- **GEBRUIK ALTIJD AFKORTINGEN**: art. 160 WVW, art. 96 Sv, APV-artikel, BOB, BSR, art. 2 WID, etc.
 - Gebruik **alleen officiële bronnen**: wetten.overheid.nl, rechtspraak.nl, EUR-Lex, tuchtrecht.overheid.nl, boetebase.om.nl, politie.nl, belastingdienst.nl, autoriteitpersoonsgegevens.nl, acm.nl, svb.nl, uwv.nl, kadaster.nl, rijksoverheid.nl, officielebekendmakingen.nl
 - Bij onzekerheid: verwijs naar de oorspronkelijke brontekst
 - Geef **geen juridisch advies**, alleen uitleg van wetgeving
 - Gebruik duidelijke paragrafen met lege regels ertussen
+- **Houd rekening met de functie/rol van de gebruiker** (agent, BOA, beveiliger, jurist) en geef passende uitleg
 
 ### FORMATTING:
 - Gebruik **vet** voor belangrijke termen en artikelnummers
@@ -68,6 +74,8 @@ ALS dit het allereerste bericht is in het gesprek, voeg subtiel onderaan toe: "�
 **DISCLAIMER VOOR VERVOLGBERICHTEN:**  
 Voor vervolgberichten: GEEN disclaimer - alleen de vraag-aanmoediging en Wet & Uitleg verwijzing.
 
+🎯 **DOEL**: WetHelder.nl moet zich onderscheiden door juridisch correcte en controleerbare antwoorden te geven, gebaseerd op officiële bronnen en actuele wetgeving, met altijd expliciete vermelding van de wettelijke grondslag.
+
 Antwoord altijd in helder Nederlands met een professionele, maar toegankelijke toon. Wees beknopt maar volledig.`
 
 // Uitgebreide system prompt voor "Wet & Uitleg" mode (premium functionaliteit)
@@ -82,6 +90,7 @@ const ADVANCED_SYSTEM_PROMPT = `Je bent een senior Nederlandse juridische expert
 - Verwijs **altijd naar ALLE relevante wetsartikelen** met exacte nummers en gerelateerde bepalingen
 - Geef **uitgebreide praktische context**, jurisprudentie en **controleerbare juridische feiten**
 - **Vermeld concrete strafmaten, boetes en juridische gevolgen**
+- **NOEM ALTIJD EXPLICIET DE GEBRUIKTE WET, REGELING OF BEVOEGDHEID** bij elke juridische handeling
 
 ### ANTWOORDSTIJL VOOR WET & UITLEG:
 Beantwoord vragen uitgebreid en diepgaand, alsof je een senior juridisch adviseur bent die een **volledige controleerbare analyse** geeft.
@@ -90,6 +99,7 @@ Beantwoord vragen uitgebreid en diepgaand, alsof je een senior juridisch adviseu
 - **BEGIN ALTIJD** met het exacte hoofdartikel nummer (bijv. "**Artikel 447e Sr (niet-meewerken politiecontrole)**")
 - Geef **volledige wettekst** van het hoofdartikel in een apart kader
 - Noem **ALLE** gerelateerde artikelen met hun exacte juridische consequenties (strafmaten, boetes)
+- **VERMELD ALTIJD EXPLICIET**: art. 160 WVW (rijbewijs invorderen), art. 96 Sv (inbeslagname), art. 9 lid 1 Opiumwet (fouilleren), art. 2 WID (identificatieplicht)
 - Leg de juridische geschiedenis en ontwikkeling uit
 - Bespreek **concrete strafmaten, boetes en juridische gevolgen**
 - Verwijs naar **alle** gerelateerde artikelen en bepalingen met hun consequenties
@@ -99,6 +109,7 @@ Beantwoord vragen uitgebreid en diepgaand, alsof je een senior juridisch adviseu
 - Geef **volledige wettekst** van relevante artikelen in kadertjes
 - **Zoek naar ALLE gerelateerde artikelen** (bijv. bij "politiecontrole" ook artikel 447e Sr voor niet-meewerken, artikel 184 Sr voor geweld tegen ambtenaar)
 - Bij verkeersovertredingen: behandel **alle relevante RVV artikelen** uitgebreid met exacte boetes en strafmaten
+- **VERMELD ALTIJD**: art. 160 WVW (rijbewijs invorderen), art. 96 Sv (inbeslagname voor onderzoek), art. 27 Sv (fouilleren), art. 2 WID (identificatieplicht)
 - Leg verschillen uit tussen alle varianten en gradaties **met concrete straffen**
 - Geef **uitgebreide praktijkvoorbeelden** met exacte juridische gevolgen
 - Bespreek jurisprudentie indien beschikbaar in bronnen **met uitspraak details**
@@ -110,6 +121,7 @@ Beantwoord vragen uitgebreid en diepgaand, alsof je een senior juridisch adviseu
 **Procedurele aspecten:** Leg **exact** uit hoe het juridisch proces verloopt (aanhouding → verhoor → dagvaarding)
 **Strafmaten en boetes:** Vermeld **concrete** bedragen en straffen
 **Veelgemaakte misverstanden:** Corrigeer veel voorkomende denkfouten **met artikelverwijzingen**
+**Bevoegdheden en procedures:** Vermeld altijd de exacte wettelijke grondslag voor elke handeling
 
 ### VOORBEELD STRUCTUUR VOOR POLITIECONTROLE:
 **Artikel 447e Sr (niet-meewerken met politiecontrole):**
@@ -118,20 +130,26 @@ Beantwoord vragen uitgebreid en diepgaand, alsof je een senior juridisch adviseu
 **Juridische consequenties:**
 - Maximale gevangenisstraf: 3 maanden
 - Maximale geldboete: € 4.350 (tweede categorie)
-- **Kan leiden tot aanhouding** op grond van artikel 53 Sv
+- **Kan leiden tot aanhouding** op grond van **art. 53 Sv**
 
-**Gerelateerde artikelen:**
-- **Artikel 184 Sr:** Geweld/bedreiging tegen ambtenaar (tot 1 jaar gevangenis)
-- **Artikel 435 Sr:** Belemmering van de politie
-- **Artikel 53 Sv:** Aanhoudingsbevoegdheid
+**Gerelateerde artikelen en bevoegdheden:**
+- **Art. 184 Sr:** Geweld/bedreiging tegen ambtenaar (tot 1 jaar gevangenis)
+- **Art. 435 Sr:** Belemmering van de politie
+- **Art. 53 Sv:** Aanhoudingsbevoegdheid
+- **Art. 2 WID:** Identificatieplicht
+- **Art. 27 Sv:** Fouilleren bij aanhouding
+- **Art. 96 Sv:** Inbeslagname voor onderzoek
 
 ### BELANGRIJKE INSTRUCTIES:
 - **Voeg automatisch spaties toe tussen tekst en cijfers** (bijv. "artikel5" → "artikel 5")
+- **NOEM ALTIJD EXPLICIET DE WETTELIJKE GRONDSLAG** voor elke juridische handeling
+- **GEBRUIK ALTIJD AFKORTINGEN**: art. 160 WVW, art. 96 Sv, APV-artikel, BOB, BSR, art. 2 WID, etc.
 - Gebruik **alleen officiële bronnen**: wetten.overheid.nl, rechtspraak.nl, EUR-Lex, tuchtrecht.overheid.nl, boetebase.om.nl, politie.nl, belastingdienst.nl, autoriteitpersoonsgegevens.nl, acm.nl, svb.nl, uwv.nl, kadaster.nl, rijksoverheid.nl, officielebekendmakingen.nl
 - Bij onzekerheid: verwijs naar de oorspronkelijke brontekst
 - Geef **geen juridisch advies**, alleen uitleg van wetgeving
 - **Wees extreem controleerbaar** - elk genoemd artikel moet kloppen
 - Gebruik duidelijke paragrafen met lege regels ertussen
+- **Houd rekening met de functie/rol van de gebruiker** (agent, BOA, beveiliger, jurist) en geef passende uitleg
 
 ### FORMATTING:
 - Gebruik **vet** voor belangrijke termen en artikelnummers
@@ -152,6 +170,8 @@ ALS dit het allereerste bericht is in het gesprek, voeg subtiel onderaan toe: "�
 
 **DISCLAIMER VOOR VERVOLGBERICHTEN:**  
 Voor vervolgberichten: GEEN disclaimer - alleen de vraag-aanmoediging.
+
+🎯 **DOEL**: WetHelder.nl moet zich onderscheiden door juridisch correcte en controleerbare antwoorden te geven, gebaseerd op officiële bronnen en actuele wetgeving, met altijd expliciete vermelding van de wettelijke grondslag.
 
 Antwoord altijd in helder Nederlands met een professionele, maar toegankelijke toon. Wees **extreem uitgebreid en volledig controleerbaar** in je analyse.`
 
@@ -340,74 +360,125 @@ function getRelatedLegalTerms(query: string): string[] {
   const lowerQuery = query.toLowerCase()
   const relatedTerms: string[] = []
   
+  // APV en gemeentelijke regelgeving
+  if (lowerQuery.includes('apv') || lowerQuery.includes('gemeente') || lowerQuery.includes('open vuur') || lowerQuery.includes('vuur') || lowerQuery.includes('barbecue')) {
+    relatedTerms.push('apv', 'algemene plaatselijke verordening', 'gemeentelijke verordening', 'artikel 154 gemeentewet', 'artikel 149 gemeentewet')
+  }
+  
+  if (lowerQuery.includes('nijmegen') && (lowerQuery.includes('open vuur') || lowerQuery.includes('vuur'))) {
+    relatedTerms.push('apv nijmegen', 'artikel 2.3.1 apv nijmegen', 'artikel 2.3.2 apv nijmegen', 'brandveiligheid', 'artikel 154 gemeentewet')
+  }
+  
   // Huiselijk geweld en gerelateerde delicten
   if (lowerQuery.includes('huiselijk geweld') || lowerQuery.includes('mishandeling') || lowerQuery.includes('geweld')) {
-    relatedTerms.push('artikel 300 sr', 'artikel 302 sr', 'artikel 304 sr', 'artikel 285 sr')
+    relatedTerms.push('artikel 300 sr', 'artikel 302 sr', 'artikel 304 sr', 'artikel 285 sr', 'artikel 282 sr', 'artikel 284 sr')
   }
   
   // Verkeer en vervoer - uitgebreid
   if (lowerQuery.includes('verkeer') || lowerQuery.includes('rijden') || lowerQuery.includes('auto') || lowerQuery.includes('fiets')) {
-    relatedTerms.push('wegenverkeerswet', 'rvv', 'artikel 5 wvw', 'artikel 8 wvw')
+    relatedTerms.push('wegenverkeerswet', 'rvv', 'artikel 5 wvw', 'artikel 8 wvw', 'artikel 107 wvw', 'artikel 160 wvw', 'artikel 162 wvw')
   }
   
   // Specifieke verkeersovertredingen
   if (lowerQuery.includes('geblindeerde') || lowerQuery.includes('ramen') || lowerQuery.includes('voorruit') || lowerQuery.includes('getint')) {
-    relatedTerms.push('artikel 5.2.42 rvv', 'artikel 5 wvw', 'reglement voertuigen')
+    relatedTerms.push('artikel 5.2.42 rvv', 'artikel 5 wvw', 'reglement voertuigen', 'artikel 107 wvw')
   }
   
   if (lowerQuery.includes('telefoon') || lowerQuery.includes('mobiel') || lowerQuery.includes('bellen') || lowerQuery.includes('handheld')) {
-    relatedTerms.push('artikel 61a rvv', 'artikel 5 wvw')
+    relatedTerms.push('artikel 61a rvv', 'artikel 5 wvw', 'artikel 107 wvw')
   }
   
   if (lowerQuery.includes('gordel') || lowerQuery.includes('veiligheidsgordel')) {
-    relatedTerms.push('artikel 59 rvv', 'artikel 5 wvw')
+    relatedTerms.push('artikel 59 rvv', 'artikel 5 wvw', 'artikel 107 wvw')
   }
   
   if (lowerQuery.includes('snelheid') || lowerQuery.includes('te hard') || lowerQuery.includes('maximum snelheid')) {
-    relatedTerms.push('artikel 19 rvv', 'artikel 20 rvv', 'artikel 5 wvw')
+    relatedTerms.push('artikel 19 rvv', 'artikel 20 rvv', 'artikel 5 wvw', 'artikel 107 wvw')
+  }
+  
+  if (lowerQuery.includes('rijbewijs') || lowerQuery.includes('rijvaardigheid') || lowerQuery.includes('ongeldig')) {
+    relatedTerms.push('artikel 107 wvw', 'artikel 160 wvw', 'artikel 162 wvw', 'artikel 164 wvw')
+  }
+  
+  if (lowerQuery.includes('alcohol') || lowerQuery.includes('dronken') || lowerQuery.includes('onder invloed')) {
+    relatedTerms.push('artikel 8 wvw', 'artikel 163 wvw', 'artikel 107 wvw')
   }
   
   // Diefstal en vermogensdelicten
   if (lowerQuery.includes('diefstal') || lowerQuery.includes('stelen') || lowerQuery.includes('inbraak')) {
-    relatedTerms.push('artikel 310 sr', 'artikel 311 sr', 'artikel 312 sr')
+    relatedTerms.push('artikel 310 sr', 'artikel 311 sr', 'artikel 312 sr', 'artikel 321 sr', 'artikel 416 sr')
   }
   
   // Drugs en verdovende middelen
   if (lowerQuery.includes('drugs') || lowerQuery.includes('wiet') || lowerQuery.includes('cannabis') || lowerQuery.includes('opium')) {
-    relatedTerms.push('opiumwet', 'artikel 2 opiumwet', 'artikel 3 opiumwet')
+    relatedTerms.push('opiumwet', 'artikel 2 opiumwet', 'artikel 3 opiumwet', 'artikel 10 opiumwet', 'artikel 11 opiumwet')
   }
   
   // Belediging en discriminatie
   if (lowerQuery.includes('belediging') || lowerQuery.includes('discriminatie') || lowerQuery.includes('racisme')) {
-    relatedTerms.push('artikel 137c sr', 'artikel 137d sr', 'artikel 261 sr')
+    relatedTerms.push('artikel 137c sr', 'artikel 137d sr', 'artikel 261 sr', 'artikel 266 sr', 'artikel 267 sr')
   }
   
   // Bedreiging en stalking
   if (lowerQuery.includes('bedreiging') || lowerQuery.includes('stalking') || lowerQuery.includes('bedreigen')) {
-    relatedTerms.push('artikel 285 sr', 'artikel 285b sr')
+    relatedTerms.push('artikel 285 sr', 'artikel 285b sr', 'artikel 284 sr')
   }
   
   // Fraude en oplichting
   if (lowerQuery.includes('fraude') || lowerQuery.includes('oplichting') || lowerQuery.includes('bedrog')) {
-    relatedTerms.push('artikel 326 sr', 'artikel 416 sr')
+    relatedTerms.push('artikel 326 sr', 'artikel 416 sr', 'artikel 225 sr', 'artikel 231 sr')
   }
   
   // Politie en handhaving - uitgebreid
   if (lowerQuery.includes('politie') || lowerQuery.includes('aanhouding') || lowerQuery.includes('arrestatie')) {
-    relatedTerms.push('wetboek van strafvordering', 'artikel 27 sv', 'artikel 53 sv')
+    relatedTerms.push('wetboek van strafvordering', 'artikel 27 sv', 'artikel 53 sv', 'artikel 54 sv', 'artikel 55 sv', 'artikel 56 sv')
   }
   
   if (lowerQuery.includes('politiecontrole') || lowerQuery.includes('controle') || lowerQuery.includes('meewerken') || lowerQuery.includes('legitimeren')) {
-    relatedTerms.push('artikel 447e sr', 'artikel 2 wet op de identificatieplicht', 'artikel 184 sr', 'artikel 435 sr', 'artikel 53 sv')
+    relatedTerms.push('artikel 447e sr', 'artikel 2 wet op de identificatieplicht', 'artikel 184 sr', 'artikel 435 sr', 'artikel 53 sv', 'artikel 27 sv')
   }
   
   if (lowerQuery.includes('rechten') && lowerQuery.includes('politie')) {
-    relatedTerms.push('artikel 447e sr', 'artikel 184 sr', 'artikel 435 sr', 'artikel 53 sv', 'artikel 27 sv', 'artikel 29 sv')
+    relatedTerms.push('artikel 447e sr', 'artikel 184 sr', 'artikel 435 sr', 'artikel 53 sv', 'artikel 27 sv', 'artikel 29 sv', 'artikel 40 sv')
+  }
+  
+  if (lowerQuery.includes('fouilleren') || lowerQuery.includes('doorzoeken') || lowerQuery.includes('inbeslagname')) {
+    relatedTerms.push('artikel 27 sv', 'artikel 96 sv', 'artikel 95 sv', 'artikel 9 opiumwet', 'artikel 28 sv')
+  }
+  
+  // BOA en bijzondere opsporingsdiensten
+  if (lowerQuery.includes('boa') || lowerQuery.includes('bijzondere opsporingsambtenaar')) {
+    relatedTerms.push('artikel 142 sv', 'artikel 159 gemeentewet', 'artikel 7 politiewet', 'besluit buitengewoon opsporingsambtenaar')
+  }
+  
+  // Openbare orde en veiligheid
+  if (lowerQuery.includes('openbare orde') || lowerQuery.includes('verstoring') || lowerQuery.includes('overlast')) {
+    relatedTerms.push('artikel 131 sr', 'artikel 138 sr', 'artikel 139 sr', 'artikel 149 gemeentewet', 'artikel 154 gemeentewet')
   }
   
   // Privacy en gegevensbescherming
   if (lowerQuery.includes('privacy') || lowerQuery.includes('gegevens') || lowerQuery.includes('avg')) {
-    relatedTerms.push('avg', 'algemene verordening gegevensbescherming', 'wbp')
+    relatedTerms.push('avg', 'algemene verordening gegevensbescherming', 'wbp', 'artikel 6 avg', 'artikel 9 avg', 'artikel 17 avg')
+  }
+  
+  // Wapens en munitie
+  if (lowerQuery.includes('wapen') || lowerQuery.includes('mes') || lowerQuery.includes('vuurwapen')) {
+    relatedTerms.push('artikel 26 sr', 'artikel 27 sr', 'artikel 55 sr', 'wet wapens en munitie', 'artikel 13 wwm', 'artikel 26 wwm')
+  }
+  
+  // Jeugdstrafrecht
+  if (lowerQuery.includes('jeugd') || lowerQuery.includes('minderjarig') || lowerQuery.includes('12 jaar') || lowerQuery.includes('16 jaar')) {
+    relatedTerms.push('jeugdwet', 'artikel 77a sr', 'artikel 77g sr', 'artikel 488 sv', 'artikel 495 sv')
+  }
+  
+  // Bestuursrecht en bezwaar
+  if (lowerQuery.includes('bezwaar') || lowerQuery.includes('beroep') || lowerQuery.includes('awb') || lowerQuery.includes('bestuursrecht')) {
+    relatedTerms.push('algemene wet bestuursrecht', 'artikel 6:4 awb', 'artikel 6:5 awb', 'artikel 7:1 awb', 'artikel 8:1 awb')
+  }
+  
+  // Belastingen en heffingen
+  if (lowerQuery.includes('belasting') || lowerQuery.includes('btw') || lowerQuery.includes('inkomstenbelasting')) {
+    relatedTerms.push('algemene wet inzake rijksbelastingen', 'wet op de omzetbelasting', 'artikel 67 awr', 'artikel 68 awr')
   }
   
   return relatedTerms
