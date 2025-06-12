@@ -21,6 +21,12 @@ import {
   fetchOpenKVK,
   fetchEURLexWebService
 } from '@/lib/officialSources'
+import { 
+  comprehensiveJuridicalSearch,
+  extractSearchTermsFromResponse,
+  formatSearchResultsForContext,
+  GoogleSearchResult
+} from '@/lib/googleSearch'
 
 // DeepSeek API configuratie
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
@@ -217,6 +223,97 @@ async function searchOfficialSources(query: string): Promise<string[]> {
       }
     }
 
+    // === UITGEBREIDE APV EN LOKALE REGELGEVING BRONNEN ===
+    
+    // NIEUWE BRON: CVDR (Centrale Voorziening Decentrale Regelgeving) - ALLE APV's
+    if (query.toLowerCase().includes('gemeente') || 
+        query.toLowerCase().includes('provincie') ||
+        query.toLowerCase().includes('verordening') ||
+        query.toLowerCase().includes('apv') ||
+        query.toLowerCase().includes('bouwverordening') ||
+        query.toLowerCase().includes('parkeren') ||
+        query.toLowerCase().includes('evenement') ||
+        query.toLowerCase().includes('horeca') ||
+        query.toLowerCase().includes('overlast') ||
+        query.toLowerCase().includes('geluidshinder') ||
+        query.toLowerCase().includes('open vuur') ||
+        query.toLowerCase().includes('barbecue') ||
+        query.toLowerCase().includes('kampvuur') ||
+        query.toLowerCase().includes('caravan') ||
+        query.toLowerCase().includes('camper') ||
+        query.toLowerCase().includes('standplaats') ||
+        query.toLowerCase().includes('markt') ||
+        query.toLowerCase().includes('terras') ||
+        query.toLowerCase().includes('uitbating') ||
+        query.toLowerCase().includes('prostitutie') ||
+        query.toLowerCase().includes('coffeeshop') ||
+        query.toLowerCase().includes('cannabis') ||
+        query.toLowerCase().includes('gedoogbeleid')) {
+      try {
+        sources.push(`https://lokaleregelgeving.overheid.nl/zoeken?q=${encodeURIComponent(query)}`)
+        sources.push(`https://decentrale.regelgeving.overheid.nl/cvdr/zoeken?q=${encodeURIComponent(query)}`)
+      } catch (error) {
+        console.error('Error adding CVDR reference:', error)
+      }
+    }
+
+    // SPECIFIEKE APV BRONNEN PER GEMEENTE (uitgebreid)
+    const gemeenteNames = ['nijmegen', 'amsterdam', 'rotterdam', 'utrecht', 'eindhoven', 'tilburg', 'groningen', 'almere', 'breda', 'den haag', 's-gravenhage', 'haarlem', 'enschede', 'apeldoorn', 'arnhem', 'amersfoort', 'zaanstad', 'haarlemmermeer', 'zoetermeer', 'dordrecht', 'leiden', 'maastricht', 'ede', 'alphen aan den rijn', 'westland', 'delft', 'venlo', 'deventer', 'leeuwarden', 'alkmaar', 'zwolle', 'emmen', 'helmond', 'hengelo', 'purmerend', 'hilversum', 'amstelveen', 'roosendaal', 'oss', 'schiedam', 'spijkenisse', 'vlaardingen', 'almelo', 'hoorn', 'gouda', 'lelystad', 'kampen', 'meppel', 'hardenberg', 'steenwijk', 'hoogeveen', 'coevorden', 'noordoostpolder', 'urk', 'dronten', 'zeewolde', 'flevoland']
+    
+    for (const gemeente of gemeenteNames) {
+      if (query.toLowerCase().includes(gemeente)) {
+        try {
+          sources.push(`https://lokaleregelgeving.overheid.nl/${gemeente}/apv`)
+          sources.push(`https://decentrale.regelgeving.overheid.nl/cvdr/${gemeente}`)
+          // Google zoeken specifiek voor APV van die gemeente
+          sources.push(`https://www.google.com/search?q=apv+${gemeente}+site:lokaleregelgeving.overheid.nl`)
+        } catch (error) {
+          console.error(`Error adding ${gemeente} APV reference:`, error)
+        }
+      }
+    }
+
+    // PROVINCIALE VERORDENINGEN
+    const provincieNames = ['noord-holland', 'zuid-holland', 'utrecht', 'gelderland', 'overijssel', 'drenthe', 'friesland', 'groningen', 'zeeland', 'noord-brabant', 'limburg', 'flevoland']
+    
+    for (const provincie of provincieNames) {
+      if (query.toLowerCase().includes(provincie)) {
+        try {
+          sources.push(`https://lokaleregelgeving.overheid.nl/provincie-${provincie}`)
+          sources.push(`https://decentrale.regelgeving.overheid.nl/cvdr/provincie-${provincie}`)
+        } catch (error) {
+          console.error(`Error adding ${provincie} provincial reference:`, error)
+        }
+      }
+    }
+
+    // WATERSCHAP VERORDENINGEN
+    if (query.toLowerCase().includes('waterschap') || 
+        query.toLowerCase().includes('waterbeheer') ||
+        query.toLowerCase().includes('dijken') ||
+        query.toLowerCase().includes('polders') ||
+        query.toLowerCase().includes('waterkeringen')) {
+      try {
+        sources.push(`https://lokaleregelgeving.overheid.nl/waterschap`)
+        sources.push(`https://www.uvw.nl/regelgeving`) // Unie van Waterschappen
+      } catch (error) {
+        console.error('Error adding waterschap reference:', error)
+      }
+    }
+
+    // VEILIGHEIDSREGIO VERORDENINGEN
+    if (query.toLowerCase().includes('veiligheidsregio') || 
+        query.toLowerCase().includes('brandweer') ||
+        query.toLowerCase().includes('rampenbestrijding') ||
+        query.toLowerCase().includes('crisisbeheersing')) {
+      try {
+        sources.push(`https://lokaleregelgeving.overheid.nl/veiligheidsregio`)
+        sources.push(`https://www.veiligheidsregio.nl/regelgeving`)
+      } catch (error) {
+        console.error('Error adding veiligheidsregio reference:', error)
+      }
+    }
+
     // Zoek relevante tuchtrechtuitspraken voor specifieke onderwerpen
     if (query.toLowerCase().includes('tuchtrecht') || 
         query.toLowerCase().includes('beroepsgroep') ||
@@ -362,19 +459,6 @@ async function searchOfficialSources(query: string): Promise<string[]> {
       }
     }
 
-    // NIEUWE BRON: CVDR (Decentrale regelgeving)
-    if (query.toLowerCase().includes('gemeente') || 
-        query.toLowerCase().includes('provincie') ||
-        query.toLowerCase().includes('verordening') ||
-        query.toLowerCase().includes('apv') ||
-        query.toLowerCase().includes('bouwverordening')) {
-      try {
-        sources.push(`https://lokaleregelgeving.overheid.nl/zoeken?q=${encodeURIComponent(query)}`)
-      } catch (error) {
-        console.error('Error adding CVDR reference:', error)
-      }
-    }
-
     // NIEUWE BRON: Data.overheid.nl (Open datasets)
     if (query.toLowerCase().includes('statistiek') || 
         query.toLowerCase().includes('cijfers') ||
@@ -459,7 +543,7 @@ async function searchOfficialSources(query: string): Promise<string[]> {
       }
     }
 
-    return [...new Set(sources)].slice(0, 15) // Vergroot van 10 naar 15 bronnen
+    return [...new Set(sources)].slice(0, 20) // Vergroot van 15 naar 20 bronnen voor APV's
   } catch (error) {
     console.error('Error searching sources:', error)
     return []
@@ -1195,14 +1279,27 @@ async function generateThreePhaseResponse(query: string, profession: string, sou
 function detectAndCorrectLegalMistakes(response: string): string {
   let correctedResponse = response
   
-  // Fix spatiëring tussen tekst en cijfers
-  correctedResponse = correctedResponse.replace(/(\w)(\d)/g, '$1 $2')
-  correctedResponse = correctedResponse.replace(/(\d)(\w)/g, '$1 $2')
+  // Fix spaties tussen cijfers in artikelnummers (bijv. "artikel 2 7" -> "artikel 27")
+  correctedResponse = correctedResponse.replace(/artikel\s+(\d+)\s+(\d+)/gi, 'artikel $1$2')
+  correctedResponse = correctedResponse.replace(/artikel\s+(\d+)\s+(\d+)\s+(\d+)/gi, 'artikel $1$2$3')
+  correctedResponse = correctedResponse.replace(/art\.\s+(\d+)\s+(\d+)/gi, 'art. $1$2')
+  correctedResponse = correctedResponse.replace(/art\.\s+(\d+)\s+(\d+)\s+(\d+)/gi, 'art. $1$2$3')
+  correctedResponse = correctedResponse.replace(/art\s+(\d+)\s+(\d+)/gi, 'art $1$2')
+  correctedResponse = correctedResponse.replace(/art\s+(\d+)\s+(\d+)\s+(\d+)/gi, 'art $1$2$3')
+  
+  // Fix spaties in wetnamen met nummers
+  correctedResponse = correctedResponse.replace(/WVW\s+1\s+9\s+9\s+4/gi, 'WVW 1994')
+  correctedResponse = correctedResponse.replace(/Wegenverkeerswet\s+1\s+9\s+9\s+4/gi, 'Wegenverkeerswet 1994')
+  correctedResponse = correctedResponse.replace(/WED\s+(\d+)/gi, 'WED')
+  correctedResponse = correctedResponse.replace(/Sv\s+artikel\s+(\d+)\s+(\d+)/gi, 'Sv artikel $1$2')
+  
+  // Fix spaties in URL's en referenties
+  correctedResponse = correctedResponse.replace(/BWBR\s+0\s+0\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/gi, 'BWBR0$1$2$3$4')
+  correctedResponse = correctedResponse.replace(/BWBR\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/gi, 'BWBR$1$2$3$4$5$6')
   
   // Fix specifieke juridische termen
   correctedResponse = correctedResponse.replace(/artikel(\d)/g, 'artikel $1')
   correctedResponse = correctedResponse.replace(/art(\d)/g, 'art. $1')
-  correctedResponse = correctedResponse.replace(/per(\d+)(januari|februari|maart|april|mei|juni|juli|augustus|september|oktober|november|december)(\d+)/g, 'per $1 $2 $3')
   
   // Fix euro bedragen
   correctedResponse = correctedResponse.replace(/€(\d)/g, '€ $1')
@@ -1221,9 +1318,25 @@ function validateLegalResponse(query: string, response: string): string {
   
   const validationWarnings: string[] = []
   
-  // Controleer of relevante wetten worden genoemd
-  if (lowerQuery.includes('vuurwerk') && !lowerResponse.includes('wed') && !lowerResponse.includes('wet op de economische delicten')) {
-    validationWarnings.push('⚠️ WAARSCHUWING: Vuurwerk valt onder de WED (Wet op de economische delicten)')
+  // Controleer vuurwerk gerelateerde vragen
+  if (lowerQuery.includes('vuurwerk')) {
+    if (!lowerResponse.includes('wed') && !lowerResponse.includes('wet op de economische delicten')) {
+      validationWarnings.push('⚠️ WAARSCHUWING: Vuurwerk valt onder de WED (Wet op de economische delicten)')
+    }
+    
+    // Specifieke controle voor doorzoekingsbevoegdheden bij vuurwerk
+    if ((lowerQuery.includes('doorzoek') || lowerQuery.includes('controle') || lowerQuery.includes('bevoegd')) 
+        && !lowerResponse.includes('artikel 23 wed') && !lowerResponse.includes('vuurwerkbesluit')) {
+      validationWarnings.push('⚠️ AANVULLING: Voor doorzoekingsbevoegdheden bij vuurwerk: zie artikel 23 WED en het Vuurwerkbesluit. Politie mag voertuigen doorzoeken bij verdenking van overtreding WED.')
+    }
+  }
+  
+  // Controleer auto/voertuig doorzoekingen
+  if ((lowerQuery.includes('auto') || lowerQuery.includes('voertuig')) && 
+      (lowerQuery.includes('doorzoek') || lowerQuery.includes('controle'))) {
+    if (!lowerResponse.includes('artikel 96') && !lowerResponse.includes('artikel 27')) {
+      validationWarnings.push('⚠️ AANVULLING: Voor voertuigdoorzoekingen: zie artikel 96b Sv (staandehouding) en artikel 27 Sv (doorzoeking)')
+    }
   }
   
   if (lowerQuery.includes('vuurwerk') && lowerResponse.includes('artikel 18') && !lowerResponse.includes('artikel 23')) {
@@ -1251,310 +1364,343 @@ function validateLegalResponse(query: string, response: string): string {
 
 export async function POST(request: NextRequest) {
   try {
-    if (!process.env.OPENAI_API_KEY) {
-      return new Response(JSON.stringify({ error: 'API configuration error' }), { 
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      })
-    }
+    const body = await request.json()
+    const { question, profession = 'algemeen', wetUitleg = false, wetgeving = false, conversationHistory = [], useGoogleSearch = false } = body
 
-    const { question, profession = 'burger', wetUitleg = false, conversationHistory = [], useThreePhase = false } = await request.json()
-    
     if (!question || typeof question !== 'string') {
-      return new Response(JSON.stringify({ error: 'Ongeldige vraag' }), { 
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      })
+      return NextResponse.json({ error: 'Question is required' }, { status: 400 })
     }
 
-    // Temporarily handle session errors gracefully
+    // Try to get session but don't fail if database is unavailable
     let session = null
-    let userId: string | undefined = undefined
-    let clientIP: string | undefined = undefined
     try {
       session = await getServerSession(authOptions)
-      userId = session?.user?.id
-      clientIP = request.headers.get('x-forwarded-for') || undefined
-    } catch (sessionError) {
-      console.log('Session error (non-critical):', sessionError instanceof Error ? sessionError.message : 'Unknown session error')
-    }
-    
-    const { allowed, remaining, role } = await checkRateLimit(userId, clientIP)
-    
-    if (!allowed) {
-      const message = role === 'ANONYMOUS' 
-        ? 'Je hebt het maximum van 3 gratis vragen per dag bereikt. Maak een account aan voor onbeperkt gebruik van WetHelder!'
-        : 'Gratis gebruikers kunnen 3 vragen per dag stellen. Upgrade naar premium voor onbeperkt gebruik.'
-      
-      return new Response(JSON.stringify({ 
-        error: 'Dagelijkse limiet bereikt', 
-        message,
-        remaining: 0, 
-        role,
-        needsAccount: role === 'ANONYMOUS'
-      }), { 
-        status: 429,
-        headers: { 'Content-Type': 'application/json' }
-      })
+    } catch (error) {
+      console.warn('Session unavailable, continuing without authentication:', error)
     }
 
+    const clientIP = request.headers.get('x-forwarded-for') || 
+                    request.headers.get('x-real-ip') || 
+                    'unknown'
+
+    // Check rate limit (skip if database unavailable)
+    let rateLimitResult = { allowed: true, remaining: 10, role: 'ANONYMOUS' }
+    try {
+      rateLimitResult = await checkRateLimit(session?.user?.id, clientIP)
+    } catch (error) {
+      console.warn('Rate limit check failed, allowing request:', error)
+    }
+
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json({
+        error: 'Rate limit exceeded',
+        message: 'U heeft het maximale aantal vragen voor vandaag bereikt. Maak een gratis account aan voor onbeperkt gebruik.',
+        needsAccount: true
+      }, { status: 429 })
+    }
+
+    // Search official sources
     const sources = await searchOfficialSources(question)
-    
-    // 🚀 NIEUWE FUNCTIONALITEIT: 3-Fasen Juridisch Antwoord Systeem
-    // Tijdelijk uitgeschakeld - gebruik alleen bij expliciete request
-    const shouldUseThreePhase = useThreePhase && false // Uitgeschakeld voor nu
-    
-    if (shouldUseThreePhase) {
-      // Gebruik de 3-fasen aanpak voor betere juridische nauwkeurigheid
-      try {
-        const threePhaseResponse = await generateThreePhaseResponse(question, profession, sources, wetUitleg)
-        
-        return new Response(JSON.stringify({ 
-          content: threePhaseResponse,
-          sources: sources,
-          threePhaseUsed: true
-        }), {
-          headers: { 'Content-Type': 'application/json' }
-        })
-      } catch (error) {
-        console.error('3-Phase response failed, falling back to streaming:', error)
-        // Fallback naar normale streaming response
-      }
-    }
 
-    const encoder = new TextEncoder()
-    let fullAnswer = ''
-
+    // Create streaming response
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          // Determine which system prompt to use based on wetUitleg and profession
-          let systemPrompt = SYSTEM_PROMPT
-          const isAdvancedMode = wetUitleg || profession === 'juridisch-expert'
-          
-          if (isAdvancedMode) {
-            systemPrompt = ADVANCED_SYSTEM_PROMPT
+          let finalResponse = ''
+          let queryId = ''
+
+          // Generate response with Google enhancement if enabled
+          if (useGoogleSearch) {
+            finalResponse = await generateVerifiedSourceResponse(question, profession, wetUitleg, wetgeving)
+          } else {
+            finalResponse = await generateThreePhaseResponse(question, profession, sources, wetUitleg)
           }
 
-          // Add article formatting instructions for all modes
-          const articleFormattingInstructions = `
-
-**VERPLICHTE FORMATTING VOOR MOOIE OUTPUT:**
-- Gebruik **## Hoofdkopjes** voor belangrijke secties
-- Gebruik **Vetgedrukte subkopjes** voor subsecties (GEEN ### headers)
-- Gebruik **vetgedrukte tekst** voor belangrijke begrippen
-- Gebruik > citaatkaders voor wetteksten en belangrijke citaten
-- Gebruik • bullet points voor opsommingen
-- Gebruik --- voor scheidingslijnen tussen secties
-- **ZORG ALTIJD VOOR SPATIES:** "artikel160" → "artikel 160", "art5" → "art. 5"
-
-**VOORBEELDFORMATTING:**
-## Juridische Grondslag
-
-**Artikel 5 WVW:** Verkeersregels
-
-> "Het is verboden een voertuig op de weg te laten staan..."
-
-**Belangrijke Punten:**
-• Eerste punt
-• Tweede punt  
-• Derde punt
-
----
-
-**BRONVERMELDING:**
-Vermeld altijd de exacte bron zoals: "Artikel 300 Sr" of "HR 12 juli 2022, ECLI:NL:HR:2022:1234"`
-
-          // Add intelligent follow-up suggestions for advanced modes
-          const followUpSuggestions = isAdvancedMode ? `
-
-**INTELLIGENTE VERVOLGVRAGEN VOOR JURIDISCH EXPERT MODE:**
-Stel na elk antwoord automatisch 2-3 relevante vervolgvragen voor, zoals:
-- "Wilt u meer weten over de jurisprudentie hieromtrent?"
-- "Heeft u vragen over de praktische handhaving van dit artikel?"
-- "Wilt u de procedurele aspecten van deze regeling bespreken?"
-- "Zijn er gerelateerde artikelen die voor uw situatie relevant kunnen zijn?"
-- "Heeft u vragen over de boetes en sancties bij overtreding?"
-- "Wilt u meer weten over de bevoegdheden van handhavingsinstanties?"` : ''
-
-          const fullSystemPrompt = systemPrompt + articleFormattingInstructions + followUpSuggestions
-
-          // Add profession context
-          const professionContext = getProfessionContext(profession)
-          
-          // Check if this is the first message in conversation
-          const isFirstMessage = conversationHistory.length === 0
-          const conversationContext = isFirstMessage 
-            ? '\n\n**CONVERSATIE STATUS:**\nDit is het EERSTE bericht in het gesprek - gebruik de disclaimer voor eerste berichten.'
-            : '\n\n**CONVERSATIE STATUS:**\nDit is een VERVOLGbericht in een bestaand gesprek - gebruik GEEN disclaimer.'
-          
-          const fullPrompt = fullSystemPrompt + '\n\n' + professionContext + conversationContext
-
-          const response = await fetch(OPENAI_API_URL, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-            },
-            body: JSON.stringify({
-              model: 'gpt-4o',
-              messages: [
-                {
-                  role: 'system',
-                  content: fullPrompt
-                },
-                // Add conversation history
-                ...conversationHistory.map((msg: string, index: number) => ({
-                  role: index % 2 === 0 ? 'user' : 'assistant',
-                  content: msg
-                })),
-                {
-                  role: 'user',
-                  content: conversationHistory.length > 0 
-                    ? question  // Direct question if conversation exists
-                    : `Hoi! Ik heb een juridische vraag voor je:
-
-${question}
-
-Kun je me hierover helpen? Geef me een direct, helder antwoord.`,
-                },
-              ],
-              stream: true,
-              max_tokens: isAdvancedMode ? 3000 : 2000,
-              temperature: 0.3,
-              top_p: 0.9,
-            }),
-          })
-
-          if (!response.ok) {
-            throw new Error(`API Error: ${response.status}`)
-          }
-
-          const reader = response.body?.getReader()
-          const decoder = new TextDecoder()
-
-          if (!reader) {
-            throw new Error('No reader available')
-          }
-
-          let buffer = ''
-          
-          while (true) {
-            const { done, value } = await reader.read()
-            if (done) break
-
-            const chunk = decoder.decode(value, { stream: true })
-            buffer += chunk
-            
-            const lines = buffer.split('\n')
-            buffer = lines.pop() || ''
-
-            for (const line of lines) {
-              if (line.startsWith('data: ')) {
-                const data = line.slice(6).trim()
-                if (data === '[DONE]') continue
-
-                try {
-                  const parsed = JSON.parse(data)
-                  const content = parsed.choices?.[0]?.delta?.content || ''
-                  
-                  if (content) {
-                    // Behoud mooie markdown formatting - alleen essentiële fixes
-                    let cleanContent = content.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
-                    
-                    // BEHOUD alle markdown formatting (##, ###, >, •, ---, etc.)
-                    // Alleen kritieke tekstfouten oplossen:
-                    
-                    // Fix "per1januari2023" → "per 1 januari 2023"
-                    cleanContent = cleanContent.replace(/\bper(\d+)(januari|februari|maart|april|mei|juni|juli|augustus|september|oktober|november|december)(\d{4})\b/gi, 'per $1 $2 $3')
-                    
-                    // Fix "artikel5" → "artikel 5"
-                    cleanContent = cleanContent.replace(/\bartikel(\d+)/gi, 'artikel $1')
-                    
-                    // Fix "art5" → "art. 5"
-                    cleanContent = cleanContent.replace(/\bart(\d+)/gi, 'art. $1')
-                    
-                    if (cleanContent.trim()) {
-                      fullAnswer += cleanContent
-                      const responseChunk = encoder.encode(
-                        `data: ${JSON.stringify({ content: cleanContent })}\n\n`
-                      )
-                      controller.enqueue(responseChunk)
-                    }
-                  }
-                } catch (e) {
-                  console.warn('Failed to parse chunk:', data)
-                }
-              }
-            }
-          }
-
-          // Send sources at the end
-          if (sources.length > 0) {
-            const sourcesText = `\n\n**📖 Nuttige bronnen:**\n${sources.map(url => `• ${url}`).join('\n')}`
-            const sourcesChunk = encoder.encode(
-              `data: ${JSON.stringify({ content: sourcesText })}\n\n`
-            )
-            controller.enqueue(sourcesChunk)
-          }
-
-          // Valideer de response voor juridische nauwkeurigheid
-          const validatedAnswer = validateLegalResponse(question, fullAnswer)
-          if (validatedAnswer !== fullAnswer) {
-            const validationText = validatedAnswer.substring(fullAnswer.length)
-            const validationChunk = encoder.encode(
-              `data: ${JSON.stringify({ content: validationText })}\n\n`
-            )
-            controller.enqueue(validationChunk)
-          }
-
-          const doneChunk = encoder.encode('data: [DONE]\n\n')
-          controller.enqueue(doneChunk)
-
-          // Increment usage for anonymous users
-          if (!userId) {
-            incrementAnonymousUsage(clientIP)
-          }
-
-          // Save to database - temporarily disabled
+          // Try to save to database but don't fail if unavailable
           try {
-            // Database saves disabled during development
-            console.log('Question processed:', { 
-              question: question.substring(0, 50), 
-              profession, 
-              userId, 
-              wetUitleg: wetUitleg || false 
-            })
-          } catch (dbError) {
-            console.error('Database error (non-critical):', dbError)
+            if (session?.user?.id) {
+              const savedQuery = await prisma.query.create({
+                data: {
+                  question,
+                  answer: finalResponse,
+                  sources: JSON.stringify(sources),
+                  profession,
+                  userId: session.user.id
+                }
+              })
+              queryId = savedQuery.id
+            }
+          } catch (error) {
+            console.warn('Failed to save query to database:', error)
+            queryId = crypto.randomUUID() // Generate fallback ID
+          }
+
+          // Stream the response
+          const words = finalResponse.split(' ')
+          for (let i = 0; i < words.length; i++) {
+            const chunk = words[i] + (i < words.length - 1 ? ' ' : '')
+            controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'content', content: chunk })}\n\n`))
+            await new Promise(resolve => setTimeout(resolve, 50))
+          }
+
+          // Send metadata
+          controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'queryId', queryId })}\n\n`))
+          controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'sources', sources })}\n\n`))
+          controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`))
+
+          controller.close()
+
+          // Increment usage counter (skip if database unavailable)
+          try {
+            if (!session?.user?.id) {
+              incrementAnonymousUsage(clientIP)
+            }
+          } catch (error) {
+            console.warn('Failed to increment usage counter:', error)
           }
 
         } catch (error) {
           console.error('Stream error:', error)
-          const errorChunk = encoder.encode(
-            `data: ${JSON.stringify({ 
-              content: 'Sorry, er ging iets mis. Kun je je vraag opnieuw proberen?' 
-            })}\n\n`
-          )
-          controller.enqueue(errorChunk)
-        } finally {
+          controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ 
+            type: 'content', 
+            content: 'Er is een fout opgetreden bij het verwerken van uw vraag. Probeer het opnieuw.' 
+          })}\n\n`))
+          controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`))
           controller.close()
         }
-      },
+      }
     })
 
     return new Response(stream, {
       headers: {
-        'Content-Type': 'text/event-stream',
+        'Content-Type': 'text/plain; charset=utf-8',
         'Cache-Control': 'no-cache',
         'Connection': 'keep-alive',
       },
     })
+
   } catch (error) {
-    console.error('API error:', error)
-    return new Response(JSON.stringify({ error: 'Server error' }), { 
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    })
+    console.error('API Error:', error)
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      message: 'Er is een onverwachte fout opgetreden. Probeer het opnieuw.'
+    }, { status: 500 })
   }
-} 
+}
+
+/**
+ * NIEUWE GEVERIFIEERDE BRONNEN WORKFLOW
+ * Implementeert: Vraag → Zoeken geverifieerde bronnen → Filteren → ChatGPT met strikte instructies
+ */
+async function generateVerifiedSourceResponse(
+  query: string, 
+  profession: string, 
+  isWetUitleg: boolean,
+  isWetgeving: boolean = false
+): Promise<string> {
+  try {
+    console.log('🚀 Start nieuwe geverifieerde bronnen workflow')
+    
+    // STAP 1: Gebruiker stelt vraag (al ontvangen als 'query')
+    
+    // STAP 2 & 3: Zoek en filter geverifieerde bronnen
+    const { executeVerifiedSearchWorkflow } = await import('@/lib/googleSearch')
+    const workflowResult = await executeVerifiedSearchWorkflow(query)
+    
+    console.log(`🔍 Zoekresultaat: ${workflowResult.success ? 'Succes' : 'Gefaald'}`)
+    console.log(`📊 Gevonden bronnen: ${workflowResult.searchResults?.totalResults || 0}`)
+    
+    // Verbeterde routing: gebruik altijd juridische kennis, aangevuld met bronnen
+    let systemPrompt = `Je bent een Nederlandse juridische expert gespecialiseerd in het Nederlandse rechtssysteem.
+
+**BELANGRIJKE DISCLAIMER:** Deze informatie is alleen ter informatie en vervangt geen professioneel juridisch advies. Raadpleeg altijd een gekwalificeerde jurist voor specifieke juridische kwesties.
+
+**INSTRUCTIES:**
+- Gebruik je uitgebreide juridische kennis van het Nederlandse recht
+- Geef altijd concrete, bruikbare antwoorden
+- Vermeld relevante wetsartikelen met exacte nummers
+- Als er geverifieerde bronnen beschikbaar zijn, gebruik deze ter bevestiging en aanvulling
+- Geef praktische voorbeelden en toepassingen
+- Leg complexe juridische concepten uit in begrijpelijke taal
+
+**ANTWOORDSTIJL:**
+- Begin met "⚖️ **Juridisch advies van WetHelder** - Gebaseerd op geverifieerde Nederlandse bronnen"
+- Gebruik duidelijke kopjes en structuur
+- Eindig met "❓ **Heeft u specifiekere vragen?**"
+
+**PROFESSIE CONTEXT:** ${getProfessionContext(profession)}
+${isWetUitleg ? '**WET & UITLEG MODE:** Geef uitgebreide, technisch accurate analyse met alle relevante details en juridische achtergrond.' : ''}
+${isWetgeving ? `**WETGEVING MODE ACTIEF:** 
+- Ondersteun ALLE wettelijke handelingen met exacte wetsartikelen
+- Vermeld bij elke juridische stelling het specifieke artikel, lid en wet
+- Gebruik formaat: "artikel X lid Y van de [Wetnaam]" of "art. X [Wetnaam]"
+- Voor politiebevoegdheden: vermeld ALTIJD artikelen uit Wetboek van Strafvordering (Sv)
+- Voor beslagname: artikel 94 Sv, 95 Sv, 96 Sv, 96a Sv, 96b Sv, 96c Sv, 116 Sv, 552a Sv
+- Voor doorzoekingen: artikel 96 Sv, 96a Sv, 96b Sv, 96c Sv, 97 Sv, 98 Sv, 99 Sv, 110 Sv
+- Voor aanhoudingen: artikel 27 Sv, 53 Sv, 54 Sv, 55 Sv, 56 Sv, 57 Sv, 58 Sv
+- Voor fouillering: artikel 56 Sv, 195 Sv, 196 Sv
+- Voor verhoor: artikel 29 Sv, 40 Sv, 116 Sv, 184 Sr
+- Voor identificatie: artikel 2 Wet op de identificatieplicht, artikel 447e Sr
+- Voor verkeer: artikel 5 WVW, 8 WVW, 107 WVW, 160 WVW, 162 WVW, 163 WVW, 164 WVW
+- Voor WED: artikel 1a WED, 2 WED, 23 WED, 24 WED, 25 WED
+- Voor APV: artikel 149 Gemeentewet, 154 Gemeentewet + specifieke APV artikelen
+- Geef MINIMAAL 5-10 relevante artikelen per onderwerp` : ''}`
+
+    let userPrompt = query
+
+    // Als we geverifieerde bronnen hebben, voeg deze toe als aanvullende context
+    if (workflowResult.success && workflowResult.searchResults.totalResults > 0) {
+      // Combineer alle bronnen in één array
+      const allSources = [
+        ...workflowResult.searchResults.sources.wetten,
+        ...workflowResult.searchResults.sources.rechtspraak,
+        ...workflowResult.searchResults.sources.tuchtrecht,
+        ...workflowResult.searchResults.sources.boetes,
+        ...workflowResult.searchResults.sources.overheid
+      ]
+
+      systemPrompt += `
+
+**GEVERIFIEERDE BRONNEN BESCHIKBAAR:**
+De volgende informatie is gevonden in officiële Nederlandse juridische bronnen. Gebruik deze ter bevestiging en aanvulling van je antwoord:
+
+${allSources.map((source, index) => 
+  `${index + 1}. **${source.title}**
+   URL: ${source.link}
+   Inhoud: ${source.snippet}
+   Bron: ${source.source}`
+).join('\n\n')}`
+
+      userPrompt = `${query}
+
+**CONTEXT:** Er zijn ${workflowResult.searchResults.totalResults} geverifieerde bronnen gevonden die relevant kunnen zijn voor deze vraag. Gebruik je juridische expertise en bevestig/vul aan met de beschikbare bronnen waar relevant.`
+    } else {
+      systemPrompt += `
+
+**GEEN SPECIFIEKE BRONNEN GEVONDEN:**
+Er zijn geen specifieke geverifieerde bronnen gevonden voor deze vraag. Gebruik je uitgebreide juridische kennis om een volledig en accuraat antwoord te geven. Vermeld relevante wetten, artikelen en procedures die van toepassing zijn.`
+    }
+    
+    // STAP 4 & 5: ChatGPT met verbeterde instructies
+    const response = await fetch(OPENAI_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content: systemPrompt
+          },
+          {
+            role: 'user',
+            content: userPrompt
+          }
+        ],
+        max_tokens: isWetUitleg ? 3500 : 2500,
+        temperature: 0.2, // Iets hoger voor meer natuurlijke antwoorden
+        top_p: 0.95,
+      }),
+    })
+
+    if (!response.ok) {
+      console.error(`OpenAI API Error: ${response.status}`)
+      throw new Error(`OpenAI API Error: ${response.status}`)
+    }
+
+    const data = await response.json()
+    let finalResponse = data.choices?.[0]?.message?.content || 'Er is een fout opgetreden bij het genereren van het antwoord.'
+
+    // Voeg bronvermelding toe als we geverifieerde bronnen hebben gebruikt
+    if (workflowResult.success && workflowResult.searchResults.totalResults > 0) {
+      // Bronvermelding wordt niet meer getoond in de response
+      // De bronnen zijn beschikbaar via de metadata voor eventuele toekomstige functionaliteit
+    }
+
+    // Valideer en corrigeer het antwoord
+    finalResponse = validateLegalResponse(query, finalResponse)
+
+    return finalResponse
+
+  } catch (error) {
+    console.error('Error in verified source response:', error)
+    
+    // Verbeterde fallback: gebruik gewone juridische kennis
+    console.log('🔄 Fallback naar standaard juridische response')
+    return await generateStandardLegalResponse(query, profession, isWetUitleg)
+  }
+}
+
+// Nieuwe fallback functie voor standaard juridische antwoorden
+async function generateStandardLegalResponse(
+  query: string, 
+  profession: string, 
+  isWetUitleg: boolean
+): Promise<string> {
+  try {
+    const systemPrompt = `Je bent een Nederlandse juridische expert gespecialiseerd in het Nederlandse rechtssysteem.
+
+**BELANGRIJKE DISCLAIMER:** Deze informatie is alleen ter informatie en vervangt geen professioneel juridisch advies. Raadpleeg altijd een gekwalificeerde jurist voor specifieke juridische kwesties.
+
+**INSTRUCTIES:**
+- Gebruik je uitgebreide kennis van het Nederlandse recht
+- Geef altijd concrete, bruikbare antwoorden
+- Vermeld relevante wetsartikelen met exacte nummers
+- Geef praktische voorbeelden en procedures
+- Leg uit welke stappen iemand moet nemen
+- Verwijs naar relevante instanties waar nodig
+
+**ANTWOORDSTIJL:**
+- Begin met: "⚖️ **Juridisch advies van WetHelder**"
+- Geef directe, heldere antwoorden
+- Gebruik **vetgedrukte tekst** voor belangrijke begrippen
+- Structureer logisch met kopjes
+- Eindig met: "❓ **Heeft u specifiekere vragen?** Dan help ik graag verder."
+
+**PROFESSIE CONTEXT:** ${getProfessionContext(profession)}
+${isWetUitleg ? '**WET & UITLEG MODE:** Geef uitgebreide, technisch accurate analyse met alle relevante details.' : ''}`
+
+    const response = await fetch(OPENAI_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content: systemPrompt
+          },
+          {
+            role: 'user',
+            content: query
+          }
+        ],
+        max_tokens: isWetUitleg ? 3000 : 2000,
+        temperature: 0.3,
+        top_p: 0.95,
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error(`OpenAI API Error: ${response.status}`)
+    }
+
+    const data = await response.json()
+    let finalResponse = data.choices?.[0]?.message?.content || 'Er is een fout opgetreden bij het genereren van het antwoord.'
+
+    // Valideer en corrigeer het antwoord
+    finalResponse = validateLegalResponse(query, finalResponse)
+
+    return finalResponse
+
+  } catch (error) {
+    console.error('Error in standard legal response:', error)
+    return 'Er is een technische fout opgetreden. Probeer het opnieuw of neem contact op met de support.'
+  }
+}

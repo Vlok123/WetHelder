@@ -18,10 +18,8 @@ import {
   UserCheck,
   GraduationCap,
   Info,
-  Eye,
   ChevronDown,
   Settings,
-  AlertTriangle,
   BookOpen,
   Gavel,
   Briefcase,
@@ -30,14 +28,24 @@ import {
   Calculator,
   Home,
   Users,
-  CheckCircle
+  CheckCircle,
+  Heart,
+  Quote,
+  History,
+  Loader2,
+  Trash2,
+  RefreshCw,
+  Clock
 } from 'lucide-react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { format } from 'date-fns'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Loader2 } from 'lucide-react'
+import { FavoriteButton } from '@/components/favorite-button'
+import { CitationGenerator } from '@/components/citation-generator'
+import { SearchHistory } from '@/components/search-history'
+import { Favorites } from '@/components/favorites'
 
 interface Message {
   id: string
@@ -47,6 +55,7 @@ interface Message {
   isLoading?: boolean
   profession?: string
   timestamp: Date
+  queryId?: string
 }
 
 type Profession = 'aspirant' | 'student' | 'politieagent' | 'advocaat' | 'algemeen' | 'boa' | 'rechter' | 'notaris' | 'deurwaarder' | 'bedrijfsjurist' | 'gemeenteambtenaar' | 'belastingadviseur' | 'accountant' | 'makelaar' | 'verzekeringsagent' | 'hr-medewerker' | 'compliance-officer' | 'veiligheidsbeambte'
@@ -55,321 +64,209 @@ const professionConfig = {
   algemeen: {
     icon: Info,
     label: 'Algemeen',
-    fullLabel: 'Algemeen publiek',
     color: 'text-gray-700 bg-gray-50 border-gray-200',
-    description: 'Begrijpelijke uitleg in toegankelijke taal',
-    detailedExplanation: 'Voor het algemene publiek wordt juridische informatie in begrijpelijke taal uitgelegd zonder jargon.'
+    description: 'Begrijpelijke uitleg in toegankelijke taal'
   },
   advocaat: {
     icon: Scale,
     label: 'Advocaat',
-    fullLabel: 'Advocaat',
     color: 'text-purple-700 bg-purple-50 border-purple-200',
-    description: 'Juridische feiten en jurisprudentie',
-    detailedExplanation: 'Voor advocaten wordt gefocust op juridische precisie, relevante jurisprudentie en processuele aspecten.'
+    description: 'Juridische feiten en jurisprudentie'
   },
   politieagent: {
     icon: Shield,
     label: 'Politieagent',
-    fullLabel: 'Politieagent',
     color: 'text-indigo-700 bg-indigo-50 border-indigo-200',
-    description: 'Praktische kernpunten voor handhaving',
-    detailedExplanation: 'Voor politieagenten worden praktische aspecten, handhavingsmogelijkheden en operationele procedures benadrukt.'
+    description: 'Praktische kernpunten voor handhaving'
   },
   boa: {
     icon: Shield,
     label: 'BOA',
-    fullLabel: 'Bijzondere Opsporingsambtenaar',
     color: 'text-cyan-700 bg-cyan-50 border-cyan-200',
-    description: 'Handhaving binnen bevoegdheden',
-    detailedExplanation: 'Voor BOA\'s wordt gefocust op specifieke bevoegdheden, handhavingsprocedures en juridische grenzen.'
+    description: 'Handhaving binnen bevoegdheden'
   },
   rechter: {
     icon: Gavel,
     label: 'Rechter',
-    fullLabel: 'Rechter/Rechterlijk Ambtenaar',
     color: 'text-red-700 bg-red-50 border-red-200',
-    description: 'Procesrecht en jurisprudentie',
-    detailedExplanation: 'Voor rechters wordt gefocust op procesrecht, jurisprudentie en rechterlijke beslissingen.'
+    description: 'Procesrecht en jurisprudentie'
   },
   notaris: {
     icon: FileText,
     label: 'Notaris',
-    fullLabel: 'Notaris',
     color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
-    description: 'Burgerlijk recht en notariële praktijk',
-    detailedExplanation: 'Voor notarissen wordt gefocust op burgerlijk recht, notariële akten en vastgoedrecht.'
+    description: 'Burgerlijk recht en notariële praktijk'
   },
   deurwaarder: {
     icon: FileText,
     label: 'Deurwaarder',
-    fullLabel: 'Gerechtsdeurwaarder',
     color: 'text-orange-700 bg-orange-50 border-orange-200',
-    description: 'Executierecht en beslagprocedures',
-    detailedExplanation: 'Voor deurwaarders wordt gefocust op executierecht, beslagprocedures en invorderingswetgeving.'
+    description: 'Executierecht en beslagprocedures'
   },
   bedrijfsjurist: {
     icon: Building,
     label: 'Bedrijfsjurist',
-    fullLabel: 'Bedrijfsjurist',
     color: 'text-slate-700 bg-slate-50 border-slate-200',
-    description: 'Ondernemingsrecht en compliance',
-    detailedExplanation: 'Voor bedrijfsjuristen wordt gefocust op ondernemingsrecht, contractenrecht en compliance.'
+    description: 'Ondernemingsrecht en compliance'
   },
   gemeenteambtenaar: {
     icon: MapPin,
     label: 'Gemeenteambtenaar',
-    fullLabel: 'Gemeenteambtenaar',
     color: 'text-green-700 bg-green-50 border-green-200',
-    description: 'Bestuursrecht en lokale verordeningen',
-    detailedExplanation: 'Voor gemeenteambtenaren wordt gefocust op bestuursrecht, APV\'s en lokale wetgeving.'
+    description: 'Bestuursrecht en lokale verordeningen'
   },
   belastingadviseur: {
     icon: Calculator,
     label: 'Belastingadviseur',
-    fullLabel: 'Belastingadviseur',
     color: 'text-yellow-700 bg-yellow-50 border-yellow-200',
-    description: 'Fiscaal recht en belastingwetgeving',
-    detailedExplanation: 'Voor belastingadviseurs wordt gefocust op fiscaal recht en belastingwetgeving.'
+    description: 'Fiscaal recht en belastingwetgeving'
   },
   accountant: {
     icon: Calculator,
     label: 'Accountant',
-    fullLabel: 'Accountant',
     color: 'text-blue-700 bg-blue-50 border-blue-200',
-    description: 'Financieel recht en verslaggeving',
-    detailedExplanation: 'Voor accountants wordt gefocust op financieel recht en verslaggevingsverplichtingen.'
+    description: 'Financieel recht en verslaggeving'
   },
   makelaar: {
     icon: Home,
     label: 'Makelaar',
-    fullLabel: 'Makelaar',
     color: 'text-teal-700 bg-teal-50 border-teal-200',
-    description: 'Vastgoedrecht en makelaarsrecht',
-    detailedExplanation: 'Voor makelaars wordt gefocust op vastgoedrecht en makelaarsverplichtingen.'
+    description: 'Vastgoedrecht en makelaarsrecht'
   },
   verzekeringsagent: {
     icon: Shield,
     label: 'Verzekeringsagent',
-    fullLabel: 'Verzekeringsagent',
     color: 'text-purple-700 bg-purple-50 border-purple-200',
-    description: 'Verzekeringsrecht en aansprakelijkheid',
-    detailedExplanation: 'Voor verzekeringsagenten wordt gefocust op verzekeringsrecht en aansprakelijkheidswetgeving.'
+    description: 'Verzekeringsrecht en aansprakelijkheid'
   },
   'hr-medewerker': {
     icon: Users,
     label: 'HR-medewerker',
-    fullLabel: 'HR-medewerker',
     color: 'text-pink-700 bg-pink-50 border-pink-200',
-    description: 'Arbeidsrecht en personeelsbeleid',
-    detailedExplanation: 'Voor HR-medewerkers wordt gefocust op arbeidsrecht en personeelswetgeving.'
+    description: 'Arbeidsrecht en personeelsbeleid'
   },
   'compliance-officer': {
     icon: CheckCircle,
     label: 'Compliance Officer',
-    fullLabel: 'Compliance Officer',
     color: 'text-indigo-700 bg-indigo-50 border-indigo-200',
-    description: 'Toezichtrecht en compliance',
-    detailedExplanation: 'Voor compliance officers wordt gefocust op toezichtrecht en nalevingswetgeving.'
+    description: 'Toezichtrecht en compliance'
   },
   veiligheidsbeambte: {
     icon: Shield,
     label: 'Veiligheidsbeambte',
-    fullLabel: 'Veiligheidsbeambte',
     color: 'text-red-700 bg-red-50 border-red-200',
-    description: 'Veiligheidsrecht en preventie',
-    detailedExplanation: 'Voor veiligheidsbeambten wordt gefocust op veiligheidsrecht en preventiewetgeving.'
+    description: 'Veiligheidsrecht en preventie'
   },
   aspirant: {
     icon: UserCheck,
     label: 'Aspirant',
-    fullLabel: 'Aspirant (Politie/Justitie)',
     color: 'text-blue-700 bg-blue-50 border-blue-200',
-    description: 'Uitgebreide uitleg met praktijkvoorbeelden',
-    detailedExplanation: 'Voor aspiranten wordt extra aandacht besteed aan praktische toepassing, procedures en context binnen de rechtsstaat.'
+    description: 'Uitgebreide uitleg met praktijkvoorbeelden'
   },
   student: {
     icon: GraduationCap,
     label: 'Student',
-    fullLabel: 'Student (Rechten/Criminologie)',
     color: 'text-green-700 bg-green-50 border-green-200',
-    description: 'Theoretische achtergrond en verwijzingen',
-    detailedExplanation: 'Voor studenten wordt gefocust op juridische theorie, bronnen, rechtsprincipes en academische context.'
+    description: 'Educatieve uitleg met leerdoelen'
   }
 }
 
-interface MarkdownProps {
-  node?: any
-  children?: React.ReactNode
-  [key: string]: any
-}
-
-// Enhanced text formatter with proper paragraph and law article handling
 const formatText = (text: string) => {
   if (!text) return null
   
-  // Split text into paragraphs first
-  const paragraphs = text.split('\n\n').filter(p => p.trim())
-  const elements = []
-  
-  for (let i = 0; i < paragraphs.length; i++) {
-    const paragraph = paragraphs[i].trim()
-    if (!paragraph) continue
-    
-    // Check if this is a law article citation (like "Artikel 447e Sr:", "Artikel 61a RVV:")
-    const articleMatch = paragraph.match(/^(\*\*)?(?:Artikel\s+\d+[a-z]?\s+(?:Sr|WVW|RVV|BW|AWB|Gw|WET|WETBOEK)[^:]*):?\s*(\*\*)?(.*)$/im)
-    if (articleMatch) {
-      const [, , , articleContent] = articleMatch
-      const cleanArticleTitle = paragraph.replace(/\*\*/g, '').split(':')[0]
-      elements.push(
-        <div key={`article-${i}`} className="my-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
-          <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
-            <FileText className="h-4 w-4" />
-            {cleanArticleTitle}
-          </h4>
-          {articleContent && (
-            <p className="text-sm text-blue-800 leading-relaxed">{articleContent.replace(/\*\*/g, '')}</p>
-          )}
-        </div>
-      )
-      continue
-    }
-    
-    // Check if this is a law text block (quoted text or contains "luidt:" or "bepaalt:")
-    if (paragraph.includes('"') || paragraph.toLowerCase().includes('luidt:') || paragraph.toLowerCase().includes('bepaalt:') || paragraph.toLowerCase().includes('wetgeving')) {
-      elements.push(
-        <div key={`law-${i}`} className="my-3 p-4 bg-slate-50 border border-slate-200 rounded-lg">
-          <p className="text-sm text-slate-700 italic leading-relaxed font-medium">
-            {paragraph.replace(/\*\*/g, '').replace(/^"+|"+$/g, '')}
-          </p>
-        </div>
-      )
-      continue
-    }
-    
-    // Check if this is a disclaimer or important note (contains warning emojis or disclaimer words)
-    if (paragraph.includes('⚠️') || paragraph.includes('💡') || paragraph.includes('❓') || 
-        paragraph.toLowerCase().includes('disclaimer') || paragraph.toLowerCase().includes('belangrijk')) {
-      elements.push(
-        <div key={`disclaimer-${i}`} className="my-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-          <p className="text-sm text-amber-800 leading-relaxed">
-            {paragraph.replace(/\*\*/g, '')}
-          </p>
-        </div>
-      )
-      continue
-    }
-    
-    // Handle lists (bullet points or numbered)
-    if (paragraph.includes('- ') || paragraph.includes('• ') || /^\d+\.\s/.test(paragraph)) {
-      const lines = paragraph.split('\n')
-      const listItems = []
-      
-      for (let j = 0; j < lines.length; j++) {
-        const line = lines[j].trim()
-        if (line.startsWith('- ') || line.startsWith('• ') || line.match(/^\d+\.\s/)) {
-          const listContent = line.replace(/^[-•]\s*|\d+\.\s*/, '').replace(/\*\*/g, '')
-          listItems.push(
-            <li key={j} className="mb-1 text-sm leading-relaxed text-slate-700">
-              {listContent}
-            </li>
-          )
-        } else if (line) {
-          listItems.push(
-            <p key={j} className="mb-2 text-sm leading-relaxed text-slate-700">
-              {line.replace(/\*\*/g, '')}
-            </p>
-          )
-        }
-      }
-      
-      elements.push(
-        <ul key={`list-${i}`} className="my-3 ml-4 space-y-1 list-disc">
-          {listItems}
-        </ul>
-      )
-      continue
-    }
-    
-    // Regular paragraph with bold text and links
-    const processedParagraph = paragraph
-    
-    // Handle URLs
-    if (processedParagraph.includes('http')) {
-      const urlRegex = /(https?:\/\/[^\s)]+)/g
-      const parts = processedParagraph.split(urlRegex)
-      const formatted = parts.map((part, idx) => 
-        urlRegex.test(part) 
-          ? <a key={idx} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline break-all text-sm">{part}</a>
-          : part
-      )
-      elements.push(
-        <p key={`para-${i}`} className="mb-3 text-sm leading-relaxed text-slate-700">
-          {formatted}
-        </p>
-      )
-    }
-    // Handle bold text formatting
-    else if (processedParagraph.includes('**')) {
-      const boldRegex = /\*\*([^*]+)\*\*/g
-      let lastIndex = 0
-      const parts = []
-      let match
-      
-      while ((match = boldRegex.exec(processedParagraph)) !== null) {
-        // Add text before the bold part
-        if (match.index > lastIndex) {
-          parts.push(processedParagraph.slice(lastIndex, match.index))
-        }
-        // Add the bold part
-        parts.push(<strong key={match.index} className="font-semibold text-slate-900">{match[1]}</strong>)
-        lastIndex = boldRegex.lastIndex
-      }
-      
-      // Add remaining text
-      if (lastIndex < processedParagraph.length) {
-        parts.push(processedParagraph.slice(lastIndex))
-      }
-      
-      elements.push(
-        <p key={`para-${i}`} className="mb-3 text-sm leading-relaxed text-slate-700">
-          {parts.length > 0 ? parts : processedParagraph}
-        </p>
-      )
-    }
-    // Plain paragraph
-    else {
-      elements.push(
-        <p key={`para-${i}`} className="mb-3 text-sm leading-relaxed text-slate-700">
-          {processedParagraph}
-        </p>
-      )
-    }
-  }
-  
-  return <div className="space-y-2">{elements}</div>
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      components={{
+        h1: ({ children }) => <h1 className="text-xl font-bold mb-4 text-slate-900">{children}</h1>,
+        h2: ({ children }) => <h2 className="text-lg font-semibold mb-3 text-slate-800">{children}</h2>,
+        h3: ({ children }) => <h3 className="text-base font-medium mb-2 text-slate-700">{children}</h3>,
+        p: ({ children }) => <p className="mb-3 text-slate-700 leading-relaxed">{children}</p>,
+        ul: ({ children }) => <ul className="list-disc list-inside mb-3 space-y-1 text-slate-700">{children}</ul>,
+        ol: ({ children }) => <ol className="list-decimal list-inside mb-3 space-y-1 text-slate-700">{children}</ol>,
+        li: ({ children }) => <li className="text-slate-700">{children}</li>,
+        strong: ({ children }) => <strong className="font-semibold text-slate-900">{children}</strong>,
+        em: ({ children }) => <em className="italic text-slate-800">{children}</em>,
+        blockquote: ({ children }) => (
+          <blockquote className="border-l-4 border-blue-200 pl-4 py-2 mb-3 bg-blue-50 text-slate-700 italic">
+            {children}
+          </blockquote>
+        ),
+        code: ({ children }) => (
+          <code className="bg-slate-100 text-slate-800 px-1 py-0.5 rounded text-sm font-mono">
+            {children}
+          </code>
+        ),
+        pre: ({ children }) => (
+          <pre className="bg-slate-100 p-3 rounded-lg mb-3 overflow-x-auto">
+            <code className="text-sm font-mono text-slate-800">{children}</code>
+          </pre>
+        ),
+        a: ({ href, children }) => (
+          <a 
+            href={href} 
+            className="text-blue-600 hover:text-blue-800 underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {children}
+          </a>
+        ),
+        table: ({ children }) => (
+          <div className="overflow-x-auto mb-3">
+            <table className="min-w-full border border-slate-200 rounded-lg">
+              {children}
+            </table>
+          </div>
+        ),
+        thead: ({ children }) => <thead className="bg-slate-50">{children}</thead>,
+        tbody: ({ children }) => <tbody>{children}</tbody>,
+        tr: ({ children }) => <tr className="border-b border-slate-200">{children}</tr>,
+        th: ({ children }) => (
+          <th className="px-4 py-2 text-left font-semibold text-slate-900 border-r border-slate-200 last:border-r-0">
+            {children}
+          </th>
+        ),
+        td: ({ children }) => (
+          <td className="px-4 py-2 text-slate-700 border-r border-slate-200 last:border-r-0">
+            {children}
+          </td>
+        )
+      }}
+    >
+      {text}
+    </ReactMarkdown>
+  )
 }
 
-// Map homepage profile selection to ask page profession types
 const mapProfileToProfession = (profile: string): Profession => {
-  switch (profile) {
-    case 'burger':
-      return 'algemeen'
-    case 'politie':
-      return 'politieagent'
-    case 'jurist':
-      return 'advocaat'
-    case 'boa':
-      return 'boa'
-    case 'student':
-      return 'student'
-    case 'wetuitleg':
-      return 'algemeen' // wetuitleg is not a profession but a mode
-    case 'juridisch-expert':
-      return 'advocaat' // juridisch-expert maps to advocaat with wetuitleg enabled
-    default:
-      return 'algemeen'
+  const mapping: Record<string, Profession> = {
+    'juridisch-expert': 'advocaat',
+    'handhaving': 'politieagent',
+    'student': 'student',
+    'algemeen': 'algemeen',
+    'jurist': 'advocaat',
+    'politie': 'politieagent',
+    'boa': 'boa',
+    'overig': 'algemeen',
+    // Nieuwe professies - directe mapping
+    'advocaat': 'advocaat',
+    'politieagent': 'politieagent',
+    'rechter': 'rechter',
+    'notaris': 'notaris',
+    'deurwaarder': 'deurwaarder',
+    'bedrijfsjurist': 'bedrijfsjurist',
+    'gemeenteambtenaar': 'gemeenteambtenaar',
+    'belastingadviseur': 'belastingadviseur',
+    'accountant': 'accountant',
+    'makelaar': 'makelaar',
+    'verzekeringsagent': 'verzekeringsagent',
+    'hr-medewerker': 'hr-medewerker',
+    'compliance-officer': 'compliance-officer',
+    'veiligheidsbeambte': 'veiligheidsbeambte',
+    'aspirant': 'aspirant'
   }
+  return mapping[profile] || 'algemeen'
 }
 
 export default function AskPage() {
@@ -379,10 +276,12 @@ export default function AskPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [profession, setProfession] = useState<Profession>('algemeen')
   const [wetUitlegEnabled, setWetUitlegEnabled] = useState(false)
-  const [showProfessionDetails, setShowProfessionDetails] = useState(false)
-  const [rateLimit, setRateLimit] = useState<{remaining: number, role: string} | null>(null)
+  const [wetgevingEnabled, setWetgevingEnabled] = useState(false)
+  const [selectedCitationQuery, setSelectedCitationQuery] = useState<{queryId: string, question: string} | null>(null)
+  const [activeTab, setActiveTab] = useState<'history' | 'favorites'>('history')
+  const [showSidebar, setShowSidebar] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const hasAutoSubmitted = useRef<boolean>(false)
+  const hasAutoSubmitted = useRef(false)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -392,7 +291,40 @@ export default function AskPage() {
     scrollToBottom()
   }, [messages])
 
-  // Direct submit function for auto-submit from homepage
+  // Handle URL parameters
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const questionParam = urlParams.get('q')
+    const profileParam = urlParams.get('profile')
+    const wetUitlegParam = urlParams.get('wetuitleg')
+    const wetgevingParam = urlParams.get('wetgeving')
+    
+    if (profileParam) {
+      setProfession(mapProfileToProfession(profileParam))
+      if (profileParam === 'juridisch-expert') {
+        setWetUitlegEnabled(true)
+      }
+    }
+    
+    if (wetUitlegParam === 'true') {
+      setWetUitlegEnabled(true)
+    }
+    
+    if (wetgevingParam === 'true') {
+      setWetgevingEnabled(true)
+    }
+    
+    if (questionParam && !hasAutoSubmitted.current) {
+      hasAutoSubmitted.current = true
+      setInput(questionParam)
+      
+      // Auto-submit after a short delay
+      setTimeout(() => {
+        handleSubmitDirectly(questionParam)
+      }, 500)
+    }
+  }, [])
+
   const handleSubmitDirectly = useCallback(async (question: string) => {
     if (!question.trim() || isLoading) return
 
@@ -408,568 +340,314 @@ export default function AskPage() {
     }
 
     setMessages(prev => [...prev, newMessage])
-    setInput('') // Clear input after auto-submit
+    setInput('')
     setIsLoading(true)
 
-    // Build conversation history for API
-    const conversationHistory: string[] = []
-    messages.forEach(msg => {
-      conversationHistory.push(msg.question)
-      conversationHistory.push(msg.answer)
-    })
-
     try {
+      const conversationHistory: string[] = []
+      messages.forEach(msg => {
+        conversationHistory.push(msg.question)
+        conversationHistory.push(msg.answer)
+      })
+
       const response = await fetch('/api/ask', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           question: question.trim(),
-          profession: profession,
+          profession,
           wetUitleg: wetUitlegEnabled,
-          conversationHistory: conversationHistory
+          wetgeving: wetgevingEnabled,
+          useGoogleSearch: true,
+          conversationHistory
         }),
       })
 
       if (!response.ok) {
-        if (response.status === 429) {
-          const errorData = await response.json()
-          if (errorData.needsAccount) {
-            setMessages(prev =>
-              prev.map(msg =>
-                msg.id === questionId
-                  ? { 
-                      ...msg, 
-                      answer: `❌ **${errorData.error}**\n\n${errorData.message}\n\n[🔐 **Account aanmaken →**](/auth/signin)\n\nMet een gratis account krijg je:\n• Onbeperkt vragen stellen\n• Persoonlijke vraaghistorie\n• Geavanceerde juridische filters`, 
-                      isLoading: false 
-                    }
-                  : msg
-              )
-            )
-            setIsLoading(false)
-            return
-          }
-        }
-        throw new Error('Network response was not ok')
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
 
       const reader = response.body?.getReader()
-      const decoder = new TextDecoder()
-
-      if (!reader) throw new Error('No reader available')
+      if (!reader) {
+        throw new Error('No response body')
+      }
 
       let accumulatedAnswer = ''
+      let queryId = ''
 
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
 
-        const chunk = decoder.decode(value)
+        const chunk = new TextDecoder().decode(value)
         const lines = chunk.split('\n')
 
         for (const line of lines) {
           if (line.startsWith('data: ')) {
-            const data = line.slice(6)
-            if (data === '[DONE]') continue
-
             try {
-              const parsed = JSON.parse(data)
-              if (parsed.content) {
-                accumulatedAnswer += parsed.content
-                setMessages(prev =>
-                  prev.map(msg =>
-                    msg.id === questionId
-                      ? { ...msg, answer: accumulatedAnswer }
-                      : msg
-                  )
-                )
-              }
-              if (parsed.sources) {
-                setMessages(prev =>
-                  prev.map(msg =>
-                    msg.id === questionId
-                      ? { ...msg, sources: parsed.sources }
-                      : msg
-                  )
-                )
+              const data = JSON.parse(line.slice(6))
+              
+              if (data.type === 'content') {
+                accumulatedAnswer += data.content
+                setMessages(prev => prev.map(msg => 
+                  msg.id === questionId 
+                    ? { ...msg, answer: accumulatedAnswer }
+                    : msg
+                ))
+              } else if (data.type === 'queryId') {
+                queryId = data.queryId
+                setMessages(prev => prev.map(msg => 
+                  msg.id === questionId 
+                    ? { ...msg, queryId: data.queryId }
+                    : msg
+                ))
+              } else if (data.type === 'sources') {
+                setMessages(prev => prev.map(msg => 
+                  msg.id === questionId 
+                    ? { ...msg, sources: data.sources }
+                    : msg
+                ))
+              } else if (data.type === 'done') {
+                setMessages(prev => prev.map(msg => 
+                  msg.id === questionId 
+                    ? { ...msg, isLoading: false }
+                    : msg
+                ))
               }
             } catch (e) {
-              // Ignore parse errors
+              console.error('Error parsing SSE data:', e)
             }
           }
         }
       }
     } catch (error) {
       console.error('Error:', error)
-      setMessages(prev =>
-        prev.map(msg =>
-          msg.id === questionId
-            ? { ...msg, answer: 'Er is een fout opgetreden. Probeer het opnieuw.', isLoading: false }
-            : msg
-        )
-      )
+      setMessages(prev => prev.map(msg => 
+        msg.id === questionId 
+          ? { 
+              ...msg, 
+              answer: 'Er is een fout opgetreden bij het verwerken van uw vraag. Probeer het opnieuw.',
+              isLoading: false 
+            }
+          : msg
+      ))
     } finally {
       setIsLoading(false)
-      setMessages(prev =>
-        prev.map(msg =>
-          msg.id === questionId ? { ...msg, isLoading: false } : msg
-        )
-      )
-      
-      // Update rate limit for anonymous users
-      if (!session && rateLimit && rateLimit.role === 'ANONYMOUS') {
-        setRateLimit(prev => prev ? {
-          ...prev,
-          remaining: Math.max(0, prev.remaining - 1)
-        } : null)
-      }
-
-      // Clear URL parameters after successful auto-submit
-      if (window.location.search.includes('search=true')) {
-        window.history.replaceState({}, '', '/ask')
-      }
     }
-  }, [isLoading, profession, wetUitlegEnabled, messages, session, rateLimit])
-
-  // Handle URL parameters
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const questionParam = urlParams.get('q')
-    const profileParam = urlParams.get('profile')
-    const wetUitlegParam = urlParams.get('wetuitleg')
-    
-    if (questionParam) {
-      setInput(questionParam)
-      
-      // Auto-submit the question from URL
-      setTimeout(() => {
-        const form = document.querySelector('form')
-        if (form) {
-          form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
-        }
-        
-        // Clear URL parameters after auto-submit
-        const newUrl = window.location.pathname
-        window.history.replaceState({}, '', newUrl)
-      }, 500)
-    }
-    
-    if (profileParam) {
-      setProfession(mapProfileToProfession(profileParam))
-      // Auto-enable wet & uitleg for juridisch-expert
-      if (profileParam === 'juridisch-expert') {
-        setWetUitlegEnabled(true)
-      }
-    }
-    
-    if (wetUitlegParam === 'true') {
-      setWetUitlegEnabled(true)
-    }
-  }, [])
-
-  // Fetch rate limit status
-  useEffect(() => {
-    const fetchRateLimit = async () => {
-      try {
-        const response = await fetch('/api/ask')
-        if (response.ok) {
-          const data = await response.json()
-          if (data.rateLimit) {
-            setRateLimit({
-              remaining: data.rateLimit.remaining,
-              role: data.rateLimit.role
-            })
-          }
-        }
-      } catch (error) {
-        console.error('Failed to fetch rate limit:', error)
-      }
-    }
-
-    fetchRateLimit()
-  }, [session])
+  }, [profession, wetUitlegEnabled, wetgevingEnabled, messages, isLoading])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!input.trim() || isLoading) return
-
-    // Store current question and clear input immediately
-    const currentQuestion = input.trim()
     
-    // Force clear input immediately with multiple methods
-    setInput('')
-    
-    // Additional clearing to ensure it works
-    const inputElement = document.querySelector('input[type="text"]') as HTMLInputElement
-    if (inputElement) {
-      inputElement.value = ''
-    }
-    
-    const questionId = crypto.randomUUID()
-    const newMessage: Message = {
-      id: questionId,
-      question: currentQuestion,
-      answer: '',
-      sources: [],
-      isLoading: true,
-      profession,
-      timestamp: new Date()
-    }
-
-    setMessages(prev => [...prev, newMessage])
-    setIsLoading(true)
-
-    // Build conversation history for API (include previous messages for context)
-    const conversationHistory: string[] = []
-    messages.forEach(msg => {
-      conversationHistory.push(msg.question)
-      conversationHistory.push(msg.answer)
-    })
-
-    try {
-      const response = await fetch('/api/ask', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          question: currentQuestion,
-          profession: profession,
-          wetUitleg: wetUitlegEnabled,
-          conversationHistory: conversationHistory
-        }),
-      })
-
-      if (!response.ok) {
-        if (response.status === 429) {
-          const errorData = await response.json()
-          if (errorData.needsAccount) {
-            setMessages(prev =>
-              prev.map(msg =>
-                msg.id === questionId
-                  ? { 
-                      ...msg, 
-                      answer: `❌ **${errorData.error}**\n\n${errorData.message}\n\n[🔐 **Account aanmaken →**](/auth/signin)\n\nMet een gratis account krijg je:\n• Onbeperkt vragen stellen\n• Persoonlijke vraaghistorie\n• Geavanceerde juridische filters`, 
-                      isLoading: false 
-                    }
-                  : msg
-              )
-            )
-            setIsLoading(false)
-            return
-          }
-        }
-        throw new Error('Network response was not ok')
-      }
-
-      const reader = response.body?.getReader()
-      const decoder = new TextDecoder()
-
-      if (!reader) throw new Error('No reader available')
-
-      let accumulatedAnswer = ''
-
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-
-        const chunk = decoder.decode(value)
-        const lines = chunk.split('\n')
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6)
-            if (data === '[DONE]') continue
-
-            try {
-              const parsed = JSON.parse(data)
-              if (parsed.content) {
-                accumulatedAnswer += parsed.content
-                setMessages(prev =>
-                  prev.map(msg =>
-                    msg.id === questionId
-                      ? { ...msg, answer: accumulatedAnswer }
-                      : msg
-                  )
-                )
-              }
-              if (parsed.sources) {
-                setMessages(prev =>
-                  prev.map(msg =>
-                    msg.id === questionId
-                      ? { ...msg, sources: parsed.sources }
-                      : msg
-                  )
-                )
-              }
-            } catch (e) {
-              // Ignore parse errors
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error:', error)
-      setMessages(prev =>
-        prev.map(msg =>
-          msg.id === questionId
-            ? { ...msg, answer: 'Er is een fout opgetreden. Probeer het opnieuw.', isLoading: false }
-            : msg
-        )
-      )
-    } finally {
-      setIsLoading(false)
-      setMessages(prev =>
-        prev.map(msg =>
-          msg.id === questionId ? { ...msg, isLoading: false } : msg
-        )
-      )
-      
-      // Update rate limit for anonymous users
-      if (!session && rateLimit && rateLimit.role === 'ANONYMOUS') {
-        setRateLimit(prev => prev ? {
-          ...prev,
-          remaining: Math.max(0, prev.remaining - 1)
-        } : null)
-      }
-    }
+    await handleSubmitDirectly(input)
   }
 
-  const ProfessionIcon = professionConfig[profession].icon
-
-  // Function to clear conversation
   const clearConversation = () => {
     setMessages([])
     setInput('')
   }
 
+  const handleSearchSelect = (searchTerm: string, profession: string) => {
+    setInput(searchTerm)
+    setProfession(profession as Profession)
+  }
+
+  const ProfessionIcon = professionConfig[profession].icon
+
   return (
     <div className="min-h-screen bg-slate-50">
       <Navigation />
       
-      {/* Professional Header */}
-      <div className="bg-white border-b border-slate-200 shadow-sm">
-        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="p-1.5 sm:p-2 bg-blue-100 rounded-lg">
-                <MessageSquare className="h-5 w-5 sm:h-6 sm:w-6 text-blue-700" />
-              </div>
-              <div>
+      <div className="max-w-7xl mx-auto flex h-[calc(100vh-64px)]">
+        {/* Main Chat Area */}
+        <div className="flex-1 flex flex-col">
+          {/* Header */}
+          <div className="bg-white border-b border-slate-200 p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <h1 className="text-lg sm:text-xl font-semibold text-slate-900">WetHelder Consultatieplatform</h1>
-                  <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+                  <Scale className="h-6 w-6 text-blue-600" />
+                  <h1 className="text-xl font-semibold text-slate-900">WetHelder</h1>
+                  <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
                     BETA
                   </Badge>
-                  {messages.length > 0 && (
-                    <Badge variant="secondary" className="text-xs">
-                      {messages.length} {messages.length === 1 ? 'bericht' : 'berichten'}
-                    </Badge>
-                  )}
                 </div>
-                <p className="text-xs sm:text-sm text-slate-600">Nederlandse juridische kennisbank</p>
-              </div>
-            </div>
-            
-            {/* Professional Selector and Actions */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-              {messages.length > 0 && (
-                <Button
-                  onClick={clearConversation}
-                  variant="outline"
-                  size="sm"
-                  className="text-xs border-slate-300 hover:border-slate-400"
-                >
-                  🆕 Nieuw gesprek
-                </Button>
-              )}
-              <div className="flex items-center gap-2">
-                <label className="text-xs sm:text-sm font-medium text-slate-700 whitespace-nowrap">
-                  Uw professie:
-                </label>
-                <Select value={profession} onValueChange={(value) => setProfession(value as Profession)}>
-                  <SelectTrigger className="w-full sm:w-48 border-slate-300 focus:border-blue-500 focus:ring-blue-500">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(Object.entries(professionConfig) as [Profession, typeof professionConfig[Profession]][]).map(([key, config]) => {
-                      const Icon = config.icon
-                      return (
-                        <SelectItem key={key} value={key}>
-                          <div className="flex items-center gap-2">
-                            <Icon className="h-4 w-4" />
-                            <span className="text-xs sm:text-sm">{config.fullLabel}</span>
-                          </div>
-                        </SelectItem>
-                      )
-                    })}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-          
-          {/* Current profession info */}
-          <div className={`mt-3 p-3 rounded-lg border ${professionConfig[profession].color}`}>
-            <div className="flex items-center gap-2">
-              <ProfessionIcon className="h-4 w-4" />
-              <span className="text-sm font-medium">Modus: {professionConfig[profession].label}</span>
-              <span className="text-sm text-slate-600">— {professionConfig[profession].description}</span>
-              {messages.length > 0 && (
-                <span className="text-xs text-slate-500 ml-auto">
-                  📝 Gesprek actief - berichten worden onthouden
-                </span>
-              )}
-            </div>
-            
-            {/* Wet & Uitleg Toggle */}
-            <div className="mt-3 pt-3 border-t border-slate-200">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={wetUitlegEnabled}
-                  onChange={(e) => setWetUitlegEnabled(e.target.checked)}
-                  className="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500"
-                />
+                
                 <div className="flex items-center gap-2">
+                  <label className="text-sm font-medium text-slate-700">Professie:</label>
+                  <Select value={profession} onValueChange={(value) => setProfession(value as Profession)}>
+                    <SelectTrigger className="w-48">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(Object.entries(professionConfig) as [Profession, typeof professionConfig[Profession]][]).map(([key, config]) => {
+                        const Icon = config.icon
+                        return (
+                          <SelectItem key={key} value={key}>
+                            <div className="flex items-center gap-2">
+                              <Icon className="h-4 w-4" />
+                              <span>{config.label}</span>
+                            </div>
+                          </SelectItem>
+                        )
+                      })}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                {messages.length > 0 && (
+                  <Button onClick={clearConversation} variant="outline" size="sm">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Nieuw gesprek
+                  </Button>
+                )}
+                <Button 
+                  onClick={() => setShowSidebar(!showSidebar)} 
+                  variant="outline" 
+                  size="sm"
+                >
+                  <History className="h-4 w-4 mr-2" />
+                  Geschiedenis
+                </Button>
+              </div>
+            </div>
+            
+            {/* Profession Info */}
+            <div className={`mt-3 p-3 rounded-lg border ${professionConfig[profession].color}`}>
+              <div className="flex items-center gap-2">
+                <ProfessionIcon className="h-4 w-4" />
+                <span className="text-sm font-medium">{professionConfig[profession].label}</span>
+                <span className="text-sm text-slate-600">— {professionConfig[profession].description}</span>
+              </div>
+              
+              <div className="mt-2 space-y-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={wetUitlegEnabled}
+                    onChange={(e) => setWetUitlegEnabled(e.target.checked)}
+                    className="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500"
+                  />
                   <FileText className="h-4 w-4 text-emerald-700" />
                   <span className="text-sm font-medium text-emerald-800">Wet & Uitleg (Diepgaand)</span>
-                </div>
-              </label>
-              <p className="text-xs text-emerald-700 mt-1 ml-7">
-                Uitgebreide wetteksten, jurisprudentie en praktijkvoorbeelden
-              </p>
-              {wetUitlegEnabled && (
-                <div className="mt-2 ml-7 text-xs text-emerald-600">
-                  ✓ Diepgaande analyse actief - Wet & Uitleg modus
-                  <br />
-                  💡 Intelligente vervolgvragen worden automatisch voorgesteld
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Profession Details Modal */}
-      {showProfessionDetails && (
-        <div className="bg-white border-b border-slate-200 shadow-lg">
-          <div className="container mx-auto px-4 py-4">
-            <div className="max-w-4xl">
-              <h3 className="text-lg font-semibold mb-4 text-slate-900">Uitlegverschillen per Professie</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {(Object.entries(professionConfig) as [Profession, typeof professionConfig[Profession]][]).map(([key, config]) => {
-                  const Icon = config.icon
-                  return (
-                    <div key={key} className={`p-4 rounded-lg border ${config.color}`}>
-                      <div className="flex items-center gap-2 mb-2">
-                        <Icon className="h-5 w-5" />
-                        <span className="font-medium">{config.label}</span>
-                      </div>
-                      <p className="text-sm text-slate-700">{config.detailedExplanation}</p>
-                    </div>
-                  )
-                })}
-              </div>
-              <div className="mt-4 text-center">
-                <button
-                  onClick={() => setShowProfessionDetails(false)}
-                  className="text-sm text-slate-600 hover:text-slate-900"
-                >
-                  Sluiten
-                </button>
+                </label>
+                
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={wetgevingEnabled}
+                    onChange={(e) => setWetgevingEnabled(e.target.checked)}
+                    className="rounded border-blue-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  <Scale className="h-4 w-4 text-blue-700" />
+                  <span className="text-sm font-medium text-blue-800">Wetgeving (Artikelverwijzingen)</span>
+                </label>
               </div>
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Rate Limit Warning */}
-      {rateLimit && rateLimit.remaining <= 1 && (
-        <div className="bg-red-50 border-b border-red-200">
-          <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-3">
-            <div className="flex items-center gap-2 text-red-700">
-              <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5" />
-              <span className="text-xs sm:text-sm font-medium">
-                {rateLimit.remaining === 0 
-                  ? 'Geen gratis vragen meer vandaag - Maak een account aan voor onbeperkt gebruik!'
-                  : `Nog ${rateLimit.remaining} gratis vraag vandaag - Maak een account aan voor onbeperkt gebruik!`
-                }
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Chat Container */}
-      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-5xl">
-        <div className="flex flex-col h-[calc(100vh-280px)] sm:h-[calc(100vh-280px)]">
-          
-          {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto space-y-4 sm:space-y-6 mb-4 sm:mb-6">
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {messages.length === 0 && (
-              <div className="text-center py-8 sm:py-12">
-                <div className="inline-flex p-3 sm:p-4 bg-blue-100 rounded-full mb-4 sm:mb-6">
-                  <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-blue-700" />
+              <div className="text-center py-12">
+                <div className="inline-flex p-4 bg-blue-100 rounded-full mb-6">
+                  <Bot className="h-8 w-8 text-blue-700" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-slate-900">WetHelder Consultatie</h3>
-                <p className="text-slate-600 mb-4 sm:mb-6 max-w-md mx-auto text-sm sm:text-base px-4">
+                <h3 className="text-xl font-semibold mb-3 text-slate-900">WetHelder Consultatie</h3>
+                <p className="text-slate-600 mb-6 max-w-md mx-auto">
                   Stel uw juridische vraag over Nederlandse wetgeving. 
                   Antwoorden worden aangepast aan uw professie.
                 </p>
-                
-                {/* New conversation explanation */}
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-2xl mx-auto mb-4 sm:mb-6">
-                  <div className="flex items-start gap-2">
-                    <MessageSquare className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <div className="text-left">
-                      <h4 className="font-semibold text-blue-900 mb-2">💬 Intelligente gesprekken</h4>
-                      <p className="text-sm text-blue-800 mb-3">
-                        WetHelder onthoudt uw hele gesprek en kan doorvragen beantwoorden. 
-                        Stel gerust vervolgvragen zoals &ldquo;Leg dat eens anders uit&rdquo; of &ldquo;Wat zijn de uitzonderingen?&rdquo;.
-                      </p>
-                      <p className="text-xs text-blue-700">
-                        💡 Tip: Start een nieuw gesprek voor een ander onderwerp via de &ldquo;🆕 Nieuw gesprek&rdquo; knop.
-                      </p>
-                    </div>
-                  </div>
+                <div className="text-sm text-slate-500">
+                  <p>Voorbeelden: "Artikel 8 WVW uitleg" • "Procedure bij rijden onder invloed"</p>
                 </div>
                 
-                <div className="text-xs sm:text-sm text-slate-500 px-4">
-                  <p>Voorbeelden: &ldquo;Artikel 8 WVW uitleg&rdquo; • &ldquo;Procedure bij rijden onder invloed&rdquo;</p>
+                {/* Wachttijd informatie */}
+                <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg max-w-md mx-auto">
+                  <div className="flex items-center gap-2 text-amber-800 mb-2">
+                    <Clock className="h-4 w-4" />
+                    <span className="text-sm font-medium">Verwachte wachttijd</span>
+                  </div>
+                  <p className="text-xs text-amber-700">
+                    Antwoorden kunnen 10-30 seconden duren, afhankelijk van de complexiteit van uw vraag en de hoeveelheid bronnen die worden geraadpleegd.
+                  </p>
                 </div>
               </div>
             )}
 
             {messages.map((message) => (
-              <div key={message.id} className="space-y-3 sm:space-y-4">
+              <div key={message.id} className="space-y-4">
                 {/* User Question */}
                 <div className="flex justify-end">
-                  <div className="max-w-[85%] sm:max-w-[80%] bg-blue-600 text-white rounded-2xl px-3 sm:px-4 py-2 sm:py-3">
+                  <div className="max-w-[80%] bg-blue-600 text-white rounded-2xl px-4 py-3">
                     <div className="flex items-start gap-2">
-                      <User className="h-3 w-3 sm:h-4 sm:w-4 mt-0.5 flex-shrink-0" />
-                      <p className="text-xs sm:text-sm leading-relaxed">{message.question}</p>
+                      <User className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm">{message.question}</p>
                     </div>
                   </div>
                 </div>
 
-                {/* Systeem Response */}
+                {/* Bot Response */}
                 <div className="flex justify-start">
-                  <div className="max-w-[95%] sm:max-w-[90%]">
+                  <div className="max-w-[90%]">
                     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
-                      <div className="p-3 sm:p-4">
-                        <div className="flex items-start gap-2 sm:gap-3">
-                          <div className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                            <Scale className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600" />
+                      <div className="p-4">
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                            {message.isLoading ? (
+                              <Loader2 className="h-4 w-4 text-blue-600 animate-spin" />
+                            ) : (
+                              <Scale className="h-4 w-4 text-blue-600" />
+                            )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="prose prose-sm sm:prose prose-slate max-w-none text-xs sm:text-sm leading-relaxed">
-                              {formatText(message.answer)}
-                            </div>
+                            {message.isLoading ? (
+                              <div className="space-y-2">
+                                <div className="text-sm text-slate-600 flex items-center gap-2">
+                                  <span>Bezig met het formuleren van een antwoord</span>
+                                  <div className="flex space-x-1">
+                                    <div className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+                                    <div className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
+                                    <div className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+                                  </div>
+                                </div>
+                                <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded">
+                                  💡 Wachttijd kan variëren van 10-30 seconden afhankelijk van de complexiteit van uw vraag
+                                </div>
+                                {message.answer && (
+                                  <div className="prose prose-sm max-w-none">
+                                    {formatText(message.answer)}
+                                    <div className="inline-block w-2 h-4 bg-blue-600 animate-pulse ml-1"></div>
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="prose prose-sm max-w-none">
+                                {formatText(message.answer)}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
+                      
+                      {/* Action buttons */}
+                      {!message.isLoading && message.queryId && (
+                        <div className="border-t border-slate-200 px-4 py-2 flex items-center justify-end gap-2">
+                          <FavoriteButton queryId={message.queryId} />
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => setSelectedCitationQuery({ queryId: message.queryId!, question: message.question })}
+                          >
+                            <Quote className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -978,52 +656,98 @@ export default function AskPage() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Form */}
-          <div className="border-t border-slate-200 pt-3 sm:pt-4">
-            <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-3">
-              <div className="flex gap-2 sm:gap-3">
-                <div className="flex-1">
-                  <Input
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="Stel uw juridische vraag..."
-                    disabled={false}
-                    className="w-full text-sm sm:text-base py-3 sm:py-3 px-3 sm:px-4 border-slate-300 focus:border-blue-500 focus:ring-blue-500 h-12 sm:h-auto"
-                  />
-                </div>
+          {/* Input Area */}
+          <div className="border-t border-slate-200 p-4 bg-white">
+            <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
+              <div className="flex gap-3">
+                <Input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Stel uw juridische vraag..."
+                  disabled={isLoading}
+                  className="flex-1 h-12"
+                />
                 <Button 
                   type="submit" 
                   disabled={isLoading || !input.trim()}
-                  className="px-4 sm:px-6 py-3 sm:py-3 bg-blue-600 hover:bg-blue-700 h-12 sm:h-auto min-w-[60px] sm:min-w-auto"
+                  className="px-6 h-12"
                 >
                   {isLoading ? (
-                    <Loader2 className="h-4 w-4 sm:h-4 sm:w-4 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    <Send className="h-4 w-4 sm:h-4 sm:w-4" />
+                    <Send className="h-4 w-4" />
                   )}
                 </Button>
               </div>
-
-              {/* Rate Limit Status */}
-              {rateLimit && (
-                <div className="flex items-center justify-between text-xs sm:text-sm text-slate-500">
-                  <span>
-                    {rateLimit.role === 'ANONYMOUS' 
-                      ? `Gratis: ${rateLimit.remaining} vragen van 3 over vandaag`
-                      : 'Onbeperkt gebruik met account'
-                    }
-                  </span>
-                  {rateLimit.role === 'ANONYMOUS' && (
-                    <Link href="/auth/signin" className="text-blue-600 hover:text-blue-800 underline">
-                      Account aanmaken
-                    </Link>
-                  )}
-                </div>
-              )}
             </form>
           </div>
         </div>
+
+        {/* Sidebar */}
+        {showSidebar && (
+          <div className="w-96 bg-white border-l border-slate-200 flex flex-col">
+            <div className="border-b p-4">
+              <div className="flex gap-2">
+                <Button 
+                  variant={activeTab === 'history' ? 'default' : 'outline'} 
+                  className="flex-1"
+                  onClick={() => setActiveTab('history')}
+                >
+                  <History className="h-4 w-4 mr-2" />
+                  Geschiedenis
+                </Button>
+                <Button 
+                  variant={activeTab === 'favorites' ? 'default' : 'outline'} 
+                  className="flex-1"
+                  onClick={() => setActiveTab('favorites')}
+                >
+                  <Heart className="h-4 w-4 mr-2" />
+                  Favorieten
+                </Button>
+              </div>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4">
+              {activeTab === 'history' && <SearchHistory onSearchSelect={handleSearchSelect} />}
+              {activeTab === 'favorites' && <Favorites onQuerySelect={(q) => {
+                const selectedMessage: Message = {
+                  id: q.id,
+                  question: q.question,
+                  answer: q.answer,
+                  sources: JSON.parse(q.sources),
+                  profession: q.profession as Profession,
+                  timestamp: new Date(q.createdAt),
+                  queryId: q.id
+                };
+                setMessages(prev => [...prev, selectedMessage]);
+              }} />}
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Citation Modal */}
+      {selectedCitationQuery && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-4 border-b flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Citatie Generator</h2>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setSelectedCitationQuery(null)}
+              >
+                ✕
+              </Button>
+            </div>
+            <div className="p-4">
+              <CitationGenerator
+                queryId={selectedCitationQuery.queryId}
+                question={selectedCitationQuery.question}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 } 

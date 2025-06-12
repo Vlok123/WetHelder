@@ -23,7 +23,11 @@ import {
   Zap,
   Clock,
   Lock,
-  User
+  User,
+  Building,
+  MapPin,
+  Calculator,
+  Home
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -89,7 +93,7 @@ const TARGET_AUDIENCE = [
   }
 ]
 
-// User profile options - uitgebreid met beschrijvingen
+// User profile options - uitgebreid met alle professies uit ask pagina
 const USER_PROFILES = [
   { 
     value: "algemeen", 
@@ -104,14 +108,14 @@ const USER_PROFILES = [
     icon: Scale
   },
   { 
-    value: "jurist", 
-    label: "Jurist/Advocaat",
-    description: "Voor praktiserende juristen en advocaten",
-    icon: BookOpen
+    value: "advocaat", 
+    label: "Advocaat",
+    description: "Voor praktiserende advocaten",
+    icon: Scale
   },
   { 
-    value: "politie", 
-    label: "Politie",
+    value: "politieagent", 
+    label: "Politieagent",
     description: "Voor politieagenten en opsporingsambtenaren",
     icon: Shield
   },
@@ -122,16 +126,88 @@ const USER_PROFILES = [
     icon: Shield
   },
   { 
+    value: "rechter", 
+    label: "Rechter",
+    description: "Voor rechters en rechterlijke macht",
+    icon: Gavel
+  },
+  { 
+    value: "notaris", 
+    label: "Notaris",
+    description: "Voor notarissen en notariële praktijk",
+    icon: FileText
+  },
+  { 
+    value: "deurwaarder", 
+    label: "Deurwaarder",
+    description: "Voor deurwaarders en executierecht",
+    icon: FileText
+  },
+  { 
+    value: "bedrijfsjurist", 
+    label: "Bedrijfsjurist",
+    description: "Voor bedrijfsjuristen en compliance",
+    icon: Building
+  },
+  { 
+    value: "gemeenteambtenaar", 
+    label: "Gemeenteambtenaar",
+    description: "Voor gemeentelijke ambtenaren",
+    icon: MapPin
+  },
+  { 
+    value: "belastingadviseur", 
+    label: "Belastingadviseur",
+    description: "Voor belastingadviseurs en fiscalisten",
+    icon: Calculator
+  },
+  { 
+    value: "accountant", 
+    label: "Accountant",
+    description: "Voor accountants en financiële experts",
+    icon: Calculator
+  },
+  { 
+    value: "makelaar", 
+    label: "Makelaar",
+    description: "Voor makelaars en vastgoedrecht",
+    icon: Home
+  },
+  { 
+    value: "verzekeringsagent", 
+    label: "Verzekeringsagent",
+    description: "Voor verzekeringsagenten",
+    icon: Shield
+  },
+  { 
+    value: "hr-medewerker", 
+    label: "HR-medewerker",
+    description: "Voor HR-medewerkers en arbeidsrecht",
+    icon: Users
+  },
+  { 
+    value: "compliance-officer", 
+    label: "Compliance Officer",
+    description: "Voor compliance officers",
+    icon: CheckCircle
+  },
+  { 
+    value: "veiligheidsbeambte", 
+    label: "Veiligheidsbeambte",
+    description: "Voor veiligheidsbeambten",
+    icon: Shield
+  },
+  { 
+    value: "aspirant", 
+    label: "Aspirant",
+    description: "Voor aspiranten in juridische functies",
+    icon: User
+  },
+  { 
     value: "student", 
     label: "Student",
     description: "Voor studenten rechten en gerelateerde studies",
     icon: BookOpen
-  },
-  { 
-    value: "overig", 
-    label: "Overig",
-    description: "Voor andere professionele gebruikers",
-    icon: User
   }
 ]
 
@@ -140,49 +216,44 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [userProfile, setUserProfile] = useState('')
   const [wetUitlegEnabled, setWetUitlegEnabled] = useState(false)
+  const [wetgevingEnabled, setWetgevingEnabled] = useState(false)
 
   const handleQuickSearch = (query: string) => {
-    // Build profile parameter
+    // Build profile parameter - map all profession values correctly
     let profileParam = ''
     if (userProfile) {
-      const mappedProfile = userProfile === 'algemeen' ? 'algemeen' : 
-                           userProfile === 'juridisch-expert' ? 'juridisch-expert' :
-                           userProfile === 'jurist' ? 'advocaat' :
-                           userProfile === 'politie' ? 'politieagent' :
-                           userProfile === 'boa' ? 'politieagent' :
-                           userProfile === 'student' ? 'student' : 'algemeen'
+      // Direct mapping for most values, special cases for backwards compatibility
+      const mappedProfile = userProfile === 'juridisch-expert' ? 'juridisch-expert' : userProfile
       profileParam = `&profile=${encodeURIComponent(mappedProfile)}`
     }
     
     const wetUitlegParam = wetUitlegEnabled ? '&wetuitleg=true' : ''
+    const wetgevingParam = wetgevingEnabled ? '&wetgeving=true' : ''
     
     // Navigate directly without setting input field
-    window.location.href = `/ask?q=${encodeURIComponent(query)}${profileParam}${wetUitlegParam}`
+    window.location.href = `/ask?q=${encodeURIComponent(query)}${profileParam}${wetUitlegParam}${wetgevingParam}`
   }
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      // Build profile parameter - map the new profile values
+      // Build profile parameter - map all profession values correctly
       let profileParam = ''
       if (userProfile) {
-        const mappedProfile = userProfile === 'algemeen' ? 'algemeen' : 
-                             userProfile === 'juridisch-expert' ? 'juridisch-expert' :
-                             userProfile === 'jurist' ? 'advocaat' :
-                             userProfile === 'politie' ? 'politieagent' :
-                             userProfile === 'boa' ? 'politieagent' :
-                             userProfile === 'student' ? 'student' : 'algemeen'
+        // Direct mapping for most values, special cases for backwards compatibility
+        const mappedProfile = userProfile === 'juridisch-expert' ? 'juridisch-expert' : userProfile
         profileParam = `&profile=${encodeURIComponent(mappedProfile)}`
       }
       
-      // Add Wet & Uitleg parameter if enabled
+      // Add Wet & Uitleg and Wetgeving parameters if enabled
       const wetUitlegParam = wetUitlegEnabled ? '&wetuitleg=true' : ''
+      const wetgevingParam = wetgevingEnabled ? '&wetgeving=true' : ''
       
       // Clear the search input immediately after submission
       setSearchQuery('')
       
       // Use Next.js router for better navigation without auto-search
-      window.location.href = `/ask?q=${encodeURIComponent(searchQuery)}${profileParam}${wetUitlegParam}`
+      window.location.href = `/ask?q=${encodeURIComponent(searchQuery)}${profileParam}${wetUitlegParam}${wetgevingParam}`
     }
   }
 
@@ -295,24 +366,46 @@ export default function HomePage() {
                 </p>
               )}
               
-              {/* Wet & Uitleg Extra Feature */}
+              {/* Wet & Uitleg en Wetgeving Extra Features */}
               {userProfile && (
-                <div className="mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={wetUitlegEnabled}
-                      onChange={(e) => setWetUitlegEnabled(e.target.checked)}
-                      className="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500"
-                    />
-                    <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-emerald-700" />
-                      <span className="text-sm font-medium text-emerald-800">Wet & Uitleg (Diepgaand)</span>
-                    </div>
-                  </label>
-                  <p className="text-xs text-emerald-700 mt-1 ml-7">
-                    Uitgebreide wetteksten, jurisprudentie en praktijkvoorbeelden voor diepere analyse
-                  </p>
+                <div className="mt-3 space-y-3">
+                  {/* Wet & Uitleg optie */}
+                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={wetUitlegEnabled}
+                        onChange={(e) => setWetUitlegEnabled(e.target.checked)}
+                        className="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500"
+                      />
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-emerald-700" />
+                        <span className="text-sm font-medium text-emerald-800">Wet & Uitleg (Diepgaand)</span>
+                      </div>
+                    </label>
+                    <p className="text-xs text-emerald-700 mt-1 ml-7">
+                      Uitgebreide wetteksten, jurisprudentie en praktijkvoorbeelden voor diepere analyse
+                    </p>
+                  </div>
+
+                  {/* Wetgeving optie */}
+                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={wetgevingEnabled}
+                        onChange={(e) => setWetgevingEnabled(e.target.checked)}
+                        className="rounded border-blue-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <div className="flex items-center gap-2">
+                        <Scale className="h-4 w-4 text-blue-700" />
+                        <span className="text-sm font-medium text-blue-800">Wetgeving (Artikelverwijzingen)</span>
+                      </div>
+                    </label>
+                    <p className="text-xs text-blue-700 mt-1 ml-7">
+                      Alle wettelijke handelingen worden ondersteund met exacte wetsartikelen en bronverwijzingen
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
