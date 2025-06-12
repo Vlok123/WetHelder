@@ -33,8 +33,9 @@ Beantwoord vragen op een natuurlijke manier, alsof je een ervaren juridisch advi
 - **Geef concrete artikelnummers** waar van toepassing
 - **Pas je taalgebruik aan** aan de doelgroep (burger, politieagent, jurist) en geef passende uitleg
 
-**FORMATTING:**
-- Gebruik **vet** voor belangrijke termen en artikelnummers
+**FORMATTING - GEEN ### HEADERS:**
+- Gebruik **vet** voor belangrijke termen en artikelnummers  
+- Gebruik **ALLEEN** ** voor koppen, **NOOIT** ###
 - Gebruik > voor belangrijke citaten uit wetten
 - Maak gebruik van bullets voor opsommingen
 - Elke alinea gescheiden door een lege regel
@@ -91,8 +92,9 @@ Beantwoord vragen uitgebreid en diepgaand, alsof je een senior juridisch adviseu
 - **Geef concrete artikelnummers** met volledige wettekst waar relevant
 - **Pas je taalgebruik aan** aan de doelgroep (burger, politieagent, jurist) en geef passende uitleg
 
-**FORMATTING:**
+**FORMATTING - GEEN ### HEADERS:**
 - Gebruik **vet** voor belangrijke termen en artikelnummers
+- Gebruik **ALLEEN** ** voor koppen, **NOOIT** ### headers
 - Gebruik > voor **volledige citaten** uit wetten
 - Maak gebruik van bullets voor opsommingen
 - Gebruik kopjes voor structuur (**Hoofdkopje**, **Subkopje**)
@@ -140,17 +142,24 @@ async function searchOfficialSources(query: string): Promise<string[]> {
         console.error(`Error searching wetgeving for ${searchTerm}:`, error)
       }
 
-      // Zoek relevante jurisprudentie
+      // Zoek relevante jurisprudentie met verbeterde verificatie
       try {
         const jurisprudentieResponse = await fetch(`https://uitspraken.rechtspraak.nl/api/zoek?zoeken=${encodeURIComponent(searchTerm)}`)
         if (jurisprudentieResponse.ok) {
           const jurisprudentieData = await jurisprudentieResponse.json()
-          if (jurisprudentieData.results) {
-            sources.push(...jurisprudentieData.results.slice(0, 2).map((r: any) => r.ecli))
+          if (jurisprudentieData.results && Array.isArray(jurisprudentieData.results)) {
+            // Alleen toevoegen als er daadwerkelijk resultaten zijn
+            const validResults = jurisprudentieData.results
+              .filter((r: any) => r.ecli && r.ecli.startsWith('ECLI:NL:'))
+              .slice(0, 2)
+              .map((r: any) => `${r.ecli} - ${r.title || 'Rechtspraakvonnis'}`)
+            sources.push(...validResults)
           }
         }
       } catch (error) {
         console.error(`Error searching jurisprudentie for ${searchTerm}:`, error)
+        // Voeg fallback rechtspraak bronnen toe
+        sources.push('https://uitspraken.rechtspraak.nl - Voor actuele jurisprudentie')
       }
     }
 
@@ -596,6 +605,16 @@ Leg uit in **eenvoudige, begrijpelijke taal** zonder juridisch jargon. Focus op:
 - Wanneer moet je een advocaat raadplegen?
 - Concrete stappen die je kunt ondernemen
 `
+    case "advocaat":
+      return `
+**DOELGROEP: Advocaat**
+Lever **juridisch-technische precisie** met:
+- Relevante jurisprudentie en precedenten
+- Processuele aspecten en mogelijke verdedigingsstrategieën
+- Formele vereisten en termijnen
+- Technische juridische nuances
+- Verwijzingen naar relevante rechtspraak
+`
     case "politieagent":
       return `
 **DOELGROEP: Politieagent**
@@ -606,16 +625,6 @@ Focus op **operationele toepassing** en **handhavingsaspecten**:
 - Praktische tips voor de straat
 - Wanneer doorverwijzen naar andere instanties
 `
-    case "advocaat":
-      return `
-**DOELGROEP: Jurist/Advocaat**
-Lever **juridisch-technische precisie** met:
-- Relevante jurisprudentie en precedenten
-- Processuele aspecten en mogelijke verdedigingsstrategieën
-- Formele vereisten en termijnen
-- Technische juridische nuances
-- Verwijzingen naar relevante rechtspraak
-`
     case "boa":
       return `
 **DOELGROEP: BOA (Buitengewoon Opsporingsambtenaar)**
@@ -624,6 +633,136 @@ Focus op **BOA-specifieke bevoegdheden**:
 - Wanneer moet je doorverwijzen naar politie
 - Specifieke BOA-procedures en protocollen
 - Handhavingsrichtlijnen voor jouw sector
+`
+    case "rechter":
+      return `
+**DOELGROEP: Rechter/Rechterlijk Ambtenaar**
+Focus op **rechterlijke aspecten**:
+- Procesrecht en rechterlijke procedures
+- Bewijsrecht en bewijswaardering
+- Jurisprudentie en precedentwerking
+- Straftoemeting en sanctiekeuze
+- Formele vereisten voor rechterlijke beslissingen
+`
+    case "notaris":
+      return `
+**DOELGROEP: Notaris**
+Focus op **notariële praktijk**:
+- Burgerlijk recht en vermogensrecht
+- Familierecht en erfrecht
+- Vastgoedtransacties en hypotheken
+- Notariële akten en formaliteiten
+- Ondernemingsrecht en rechtspersonenrecht
+`
+    case "deurwaarder":
+      return `
+**DOELGROEP: Deurwaarder**
+Focus op **executierecht**:
+- Beslagprocedures en executiemaatregelen
+- Invorderingswetgeving en incassoproces
+- Rechten van debiteuren en crediteuren
+- Procedurele vereisten bij beslaglegging
+- Samenwerking met gerechtelijke instanties
+`
+    case "bedrijfsjurist":
+      return `
+**DOELGROEP: Bedrijfsjurist**
+Focus op **ondernemingsrecht**:
+- Contractenrecht en commerciële overeenkomsten
+- Arbeidsrecht en personeelszaken
+- Compliance en toezichtrecht
+- Intellectueel eigendomsrecht
+- Corporate governance en vennootschapsrecht
+`
+    case "gemeenteambtenaar":
+      return `
+**DOELGROEP: Gemeenteambtenaar**
+Focus op **bestuursrecht** en **lokale wetgeving**:
+- APV's en gemeentelijke verordeningen
+- Vergunningverlening en handhaving
+- Bezwaar- en beroepsprocedures
+- Bestuursdwang en dwangsommen
+- Samenwerking met toezichthouders
+`
+    case "belastingadviseur":
+      return `
+**DOELGROEP: Belastingadviseur**
+Focus op **fiscaal recht**:
+- Belastingwetgeving en tariefstructuren
+- Aftrekposten en vrijstellingen
+- Bezwaar- en beroepsprocedures bij Belastingdienst
+- Internationale belastingverdragen
+- Fiscale compliance en aangifteverplichtingen
+`
+    case "accountant":
+      return `
+**DOELGROEP: Accountant**
+Focus op **financieel recht**:
+- Verslaggevingswetgeving (BW2)
+- Controle- en assurance-standaarden
+- Fiscale aspecten van verslaggeving
+- Wet- en regelgeving accountancy
+- Fraudepreventie en compliance
+`
+    case "makelaar":
+      return `
+**DOELGROEP: Makelaar**
+Focus op **vastgoedrecht**:
+- Koopovereenkomsten en leveringsvoorwaarden
+- Makelaarsrecht en bemiddelingswetgeving
+- Hypotheekrecht en zekerheidsrechten
+- Wet op het financieel toezicht (Wft)
+- Consumentenbescherming bij vastgoedtransacties
+`
+    case "verzekeringsagent":
+      return `
+**DOELGROEP: Verzekeringsagent**
+Focus op **verzekeringsrecht**:
+- Verzekeringsovereenkomsten en polisvoorwaarden
+- Aansprakelijkheidsrecht en schadevergoeding
+- Wet op het financieel toezicht (Wft)
+- Consumentenbescherming bij verzekeringen
+- Geschillenbeslechting en ombudsprocedures
+`
+    case "hr-medewerker":
+      return `
+**DOELGROEP: HR-medewerker**
+Focus op **arbeidsrecht**:
+- Arbeidsovereenkomsten en cao's
+- Ontslagrecht en reorganisatieprocedures
+- Wet- en regelgeving arbeidsomstandigheden
+- Privacy en gegevensbescherming (AVG)
+- Discriminatiewetgeving en gelijke behandeling
+`
+    case "compliance-officer":
+      return `
+**DOELGROEP: Compliance Officer**
+Focus op **toezichtrecht**:
+- Wet- en regelgeving financiële sector
+- Integriteitsmanagement en gedragscodes
+- Meldplichten en rapportageverplichtingen
+- Sanctierecht en handhavingsmaatregelen
+- Risk management en compliance monitoring
+`
+    case "veiligheidsbeambte":
+      return `
+**DOELGROEP: Veiligheidsbeambte**
+Focus op **veiligheidsrecht**:
+- Wet particuliere beveiligingsorganisaties
+- Bevoegdheden en verantwoordelijkheden beveiliging
+- Samenwerking met politie en justitie
+- Incidentregistratie en rapportage
+- Persoonsbescherming en objectbeveiliging
+`
+    case "aspirant":
+      return `
+**DOELGROEP: Aspirant (Politie/Justitie)**
+Focus op **praktische toepassing** met **educatieve context**:
+- Uitgebreide uitleg van procedures en protocollen
+- Theoretische achtergrond van wetgeving
+- Praktijkvoorbeelden en casussen
+- Rechtsbeginselen en ethische aspecten
+- Voorbereiding op professionele praktijk
 `
     case "student":
       return `
@@ -634,27 +773,6 @@ Bied **theoretische verdieping** met:
 - Academische bronnen en literatuurverwijzingen
 - Theoretische kaders en juridische concepten
 - Examengerelateerde aspecten
-`
-    case "wetuitleg":
-      return `
-**DOELGROEP: Wet & Uitleg (Diepgaande Analyse)**
-Lever **uitgebreide juridische analyse** met:
-- Volledige wetteksten in aparte kaders
-- Relevante jurisprudentie met ECLI-nummers
-- Historische ontwikkeling en wetsgeschiedenis
-- Uitgebreide praktijkvoorbeelden
-- Technische juridische details
-- Procedurele aspecten en termijnen
-`
-    case "juridisch-expert":
-      return `
-**DOELGROEP: Juridisch Expert**
-Lever **hoogst professionele analyse** met:
-- Technische juridische precisie en nuances
-- Uitgebreide jurisprudentie en rechtsvergelijking
-- Procedurele complexiteiten en formele vereisten
-- Strategische juridische overwegingen
-- Geavanceerde rechtsdogmatische aspecten
 `
     default:
       return `
@@ -846,9 +964,19 @@ Kun je me hierover helpen? Geef me een direct, helder antwoord.`,
                     // Fix spacing issues automatically
                     let cleanContent = content.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
                     
-                    // Add spaces between "artikel" and numbers
-                    cleanContent = cleanContent.replace(/artikel(\d+)/gi, 'artikel $1')
-                    cleanContent = cleanContent.replace(/art\.?(\d+)/gi, 'art. $1')
+                    // Remove ### headers completely and replace with ** bold formatting
+                    cleanContent = cleanContent.replace(/^###\s+(.+)$/gm, '**$1**')
+                    cleanContent = cleanContent.replace(/###\s+(.+)/g, '**$1**')
+                    
+                    // Add spaces between "artikel/art" and numbers - more comprehensive
+                    cleanContent = cleanContent.replace(/\bartikel(\d+)/gi, 'artikel $1')
+                    cleanContent = cleanContent.replace(/\bart\.?(\d+)/gi, 'art. $1')
+                    cleanContent = cleanContent.replace(/\b(Wegenverkeerswet)(\d+)/gi, '$1 $2')
+                    cleanContent = cleanContent.replace(/\b(WVW|Sr|Sv|WWM|AWB)(\d+)/gi, '$1 $2')
+                    
+                    // Fix common legal text spacing issues
+                    cleanContent = cleanContent.replace(/(\w)(\d{4})\b/g, '$1 $2') // jaar nummers
+                    cleanContent = cleanContent.replace(/\b(\w+wet)(\d+)/gi, '$1 $2') // wet + jaar
                     
                     if (cleanContent.trim()) {
                       fullAnswer += cleanContent

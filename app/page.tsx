@@ -50,11 +50,11 @@ const MAIN_FEATURES = [
 // Juridische voorbeeldvragen
 const JURIDISCHE_VRAGEN = [
   "Wat zijn mijn rechten bij een politiecontrole?",
-  "Hoe lang duurt een strafprocedure?",
+  "Kan mijn werkgever mij zonder reden ontslaan?",
   "Wanneer mag de politie mijn huis doorzoeken?",
-  "Wat is het verschil tussen artikel 300 en 302 Wetboek van Strafrecht?",
+  "Wat moet ik weten over huurrechten en opzegging?",
   "Hoe werkt de Nederlandse rechtspraak?",
-  "Welke rechten heb ik als verdachte?"
+  "Welke regels gelden voor online privacy en AVG?"
 ]
 
 // Platform stats - aangepast zonder feitcodes/boetes
@@ -98,7 +98,7 @@ const USER_PROFILES = [
   { value: "boa", label: "BOA/Toezichthouder" },
   { value: "student", label: "Student" },
   { value: "overig", label: "Overig" }
-]
+  ]
 
 export default function HomePage() {
   const { data: session, status } = useSession()

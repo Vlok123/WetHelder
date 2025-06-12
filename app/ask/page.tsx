@@ -24,7 +24,13 @@ import {
   AlertTriangle,
   BookOpen,
   Gavel,
-  Briefcase
+  Briefcase,
+  Building,
+  MapPin,
+  Calculator,
+  Home,
+  Users,
+  CheckCircle
 } from 'lucide-react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
@@ -43,7 +49,7 @@ interface Message {
   timestamp: Date
 }
 
-type Profession = 'aspirant' | 'student' | 'politieagent' | 'advocaat' | 'algemeen' | 'wetuitleg' | 'juridisch-expert'
+type Profession = 'aspirant' | 'student' | 'politieagent' | 'advocaat' | 'algemeen' | 'boa' | 'rechter' | 'notaris' | 'deurwaarder' | 'bedrijfsjurist' | 'gemeenteambtenaar' | 'belastingadviseur' | 'accountant' | 'makelaar' | 'verzekeringsagent' | 'hr-medewerker' | 'compliance-officer' | 'veiligheidsbeambte'
 
 const professionConfig = {
   algemeen: {
@@ -54,29 +60,13 @@ const professionConfig = {
     description: 'Begrijpelijke uitleg in toegankelijke taal',
     detailedExplanation: 'Voor het algemene publiek wordt juridische informatie in begrijpelijke taal uitgelegd zonder jargon.'
   },
-  wetuitleg: {
-    icon: BookOpen,
-    label: 'Wet & Uitleg',
-    fullLabel: 'Wet & Uitleg (Diepgaand)',
-    color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
-    description: 'Uitgebreide wetteksten met jurisprudentie en praktijkvoorbeelden',
-    detailedExplanation: 'Diepgaande juridische analyse met volledige wetteksten, relevante jurisprudentie, praktijkvoorbeelden en achtergrondcontext.'
-  },
-  'juridisch-expert': {
-    icon: Gavel,
-    label: 'Juridisch Expert',
-    fullLabel: 'Juridisch Expert',
-    color: 'text-amber-700 bg-amber-50 border-amber-200',
-    description: 'Hoogst professionele juridische analyse met volledige bronvermelding',
-    detailedExplanation: 'Voor juridische experts: technische precisie, uitgebreide jurisprudentie, procedurele details en strategische overwegingen.'
-  },
   advocaat: {
     icon: Scale,
-    label: 'Advocaat/Jurist',
-    fullLabel: 'Advocaat/Jurist',
+    label: 'Advocaat',
+    fullLabel: 'Advocaat',
     color: 'text-purple-700 bg-purple-50 border-purple-200',
     description: 'Juridische feiten en jurisprudentie',
-    detailedExplanation: 'Voor advocaten/juristen wordt gefocust op juridische precisie, relevante jurisprudentie en processuele aspecten.'
+    detailedExplanation: 'Voor advocaten wordt gefocust op juridische precisie, relevante jurisprudentie en processuele aspecten.'
   },
   politieagent: {
     icon: Shield,
@@ -85,6 +75,110 @@ const professionConfig = {
     color: 'text-indigo-700 bg-indigo-50 border-indigo-200',
     description: 'Praktische kernpunten voor handhaving',
     detailedExplanation: 'Voor politieagenten worden praktische aspecten, handhavingsmogelijkheden en operationele procedures benadrukt.'
+  },
+  boa: {
+    icon: Shield,
+    label: 'BOA',
+    fullLabel: 'Bijzondere Opsporingsambtenaar',
+    color: 'text-cyan-700 bg-cyan-50 border-cyan-200',
+    description: 'Handhaving binnen bevoegdheden',
+    detailedExplanation: 'Voor BOA\'s wordt gefocust op specifieke bevoegdheden, handhavingsprocedures en juridische grenzen.'
+  },
+  rechter: {
+    icon: Gavel,
+    label: 'Rechter',
+    fullLabel: 'Rechter/Rechterlijk Ambtenaar',
+    color: 'text-red-700 bg-red-50 border-red-200',
+    description: 'Procesrecht en jurisprudentie',
+    detailedExplanation: 'Voor rechters wordt gefocust op procesrecht, jurisprudentie en rechterlijke beslissingen.'
+  },
+  notaris: {
+    icon: FileText,
+    label: 'Notaris',
+    fullLabel: 'Notaris',
+    color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+    description: 'Burgerlijk recht en notariële praktijk',
+    detailedExplanation: 'Voor notarissen wordt gefocust op burgerlijk recht, notariële akten en vastgoedrecht.'
+  },
+  deurwaarder: {
+    icon: FileText,
+    label: 'Deurwaarder',
+    fullLabel: 'Gerechtsdeurwaarder',
+    color: 'text-orange-700 bg-orange-50 border-orange-200',
+    description: 'Executierecht en beslagprocedures',
+    detailedExplanation: 'Voor deurwaarders wordt gefocust op executierecht, beslagprocedures en invorderingswetgeving.'
+  },
+  bedrijfsjurist: {
+    icon: Building,
+    label: 'Bedrijfsjurist',
+    fullLabel: 'Bedrijfsjurist',
+    color: 'text-slate-700 bg-slate-50 border-slate-200',
+    description: 'Ondernemingsrecht en compliance',
+    detailedExplanation: 'Voor bedrijfsjuristen wordt gefocust op ondernemingsrecht, contractenrecht en compliance.'
+  },
+  gemeenteambtenaar: {
+    icon: MapPin,
+    label: 'Gemeenteambtenaar',
+    fullLabel: 'Gemeenteambtenaar',
+    color: 'text-green-700 bg-green-50 border-green-200',
+    description: 'Bestuursrecht en lokale verordeningen',
+    detailedExplanation: 'Voor gemeenteambtenaren wordt gefocust op bestuursrecht, APV\'s en lokale wetgeving.'
+  },
+  belastingadviseur: {
+    icon: Calculator,
+    label: 'Belastingadviseur',
+    fullLabel: 'Belastingadviseur',
+    color: 'text-yellow-700 bg-yellow-50 border-yellow-200',
+    description: 'Fiscaal recht en belastingwetgeving',
+    detailedExplanation: 'Voor belastingadviseurs wordt gefocust op fiscaal recht en belastingwetgeving.'
+  },
+  accountant: {
+    icon: Calculator,
+    label: 'Accountant',
+    fullLabel: 'Accountant',
+    color: 'text-blue-700 bg-blue-50 border-blue-200',
+    description: 'Financieel recht en verslaggeving',
+    detailedExplanation: 'Voor accountants wordt gefocust op financieel recht en verslaggevingsverplichtingen.'
+  },
+  makelaar: {
+    icon: Home,
+    label: 'Makelaar',
+    fullLabel: 'Makelaar',
+    color: 'text-teal-700 bg-teal-50 border-teal-200',
+    description: 'Vastgoedrecht en makelaarsrecht',
+    detailedExplanation: 'Voor makelaars wordt gefocust op vastgoedrecht en makelaarsverplichtingen.'
+  },
+  verzekeringsagent: {
+    icon: Shield,
+    label: 'Verzekeringsagent',
+    fullLabel: 'Verzekeringsagent',
+    color: 'text-purple-700 bg-purple-50 border-purple-200',
+    description: 'Verzekeringsrecht en aansprakelijkheid',
+    detailedExplanation: 'Voor verzekeringsagenten wordt gefocust op verzekeringsrecht en aansprakelijkheidswetgeving.'
+  },
+  'hr-medewerker': {
+    icon: Users,
+    label: 'HR-medewerker',
+    fullLabel: 'HR-medewerker',
+    color: 'text-pink-700 bg-pink-50 border-pink-200',
+    description: 'Arbeidsrecht en personeelsbeleid',
+    detailedExplanation: 'Voor HR-medewerkers wordt gefocust op arbeidsrecht en personeelswetgeving.'
+  },
+  'compliance-officer': {
+    icon: CheckCircle,
+    label: 'Compliance Officer',
+    fullLabel: 'Compliance Officer',
+    color: 'text-indigo-700 bg-indigo-50 border-indigo-200',
+    description: 'Toezichtrecht en compliance',
+    detailedExplanation: 'Voor compliance officers wordt gefocust op toezichtrecht en nalevingswetgeving.'
+  },
+  veiligheidsbeambte: {
+    icon: Shield,
+    label: 'Veiligheidsbeambte',
+    fullLabel: 'Veiligheidsbeambte',
+    color: 'text-red-700 bg-red-50 border-red-200',
+    description: 'Veiligheidsrecht en preventie',
+    detailedExplanation: 'Voor veiligheidsbeambten wordt gefocust op veiligheidsrecht en preventiewetgeving.'
   },
   aspirant: {
     icon: UserCheck,
@@ -266,13 +360,13 @@ const mapProfileToProfession = (profile: string): Profession => {
     case 'jurist':
       return 'advocaat'
     case 'boa':
-      return 'politieagent' // BOA maps to politieagent for now
+      return 'boa'
     case 'student':
       return 'student'
     case 'wetuitleg':
-      return 'wetuitleg'
+      return 'algemeen' // wetuitleg is not a profession but a mode
     case 'juridisch-expert':
-      return 'juridisch-expert'
+      return 'advocaat' // juridisch-expert maps to advocaat with wetuitleg enabled
     default:
       return 'algemeen'
   }
@@ -463,6 +557,10 @@ export default function AskPage() {
     
     if (profileParam) {
       setProfession(mapProfileToProfession(profileParam))
+      // Auto-enable wet & uitleg for juridisch-expert
+      if (profileParam === 'juridisch-expert') {
+        setWetUitlegEnabled(true)
+      }
     }
     
     if (wetUitlegParam === 'true') {
@@ -742,9 +840,9 @@ export default function AskPage() {
               <p className="text-xs text-emerald-700 mt-1 ml-7">
                 Uitgebreide wetteksten, jurisprudentie en praktijkvoorbeelden
               </p>
-              {(wetUitlegEnabled || profession === 'juridisch-expert') && (
+              {wetUitlegEnabled && (
                 <div className="mt-2 ml-7 text-xs text-emerald-600">
-                  ✓ Diepgaande analyse actief - {profession === 'juridisch-expert' ? 'Juridisch Expert modus' : 'Wet & Uitleg modus'}
+                  ✓ Diepgaande analyse actief - Wet & Uitleg modus
                   <br />
                   💡 Intelligente vervolgvragen worden automatisch voorgesteld
                 </div>
