@@ -198,7 +198,7 @@ const formatText = (text: string) => {
     }
     
     // Regular paragraph with bold text and links
-    let processedParagraph = paragraph
+    const processedParagraph = paragraph
     
     // Handle URLs
     if (processedParagraph.includes('http')) {
@@ -436,7 +436,7 @@ export default function AskPage() {
         window.history.replaceState({}, '', '/ask')
       }
     }
-  }, [isLoading, profession, messages, session, rateLimit])
+  }, [isLoading, profession, wetUitlegEnabled, messages, session, rateLimit])
 
   // Handle URL parameters and auto-search
   useEffect(() => {
