@@ -1219,7 +1219,7 @@ function validateLegalResponse(query: string, response: string): string {
   const lowerQuery = query.toLowerCase()
   const lowerResponse = response.toLowerCase()
   
-  let validationWarnings: string[] = []
+  const validationWarnings: string[] = []
   
   // Controleer of relevante wetten worden genoemd
   if (lowerQuery.includes('vuurwerk') && !lowerResponse.includes('wed') && !lowerResponse.includes('wet op de economische delicten')) {
