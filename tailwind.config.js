@@ -164,6 +164,6 @@ module.exports = {
   },
   plugins: [
     require("tailwindcss-animate"),
-    ...(process.env.NODE_ENV === 'production' ? [] : [require("@tailwindcss/typography")]),
+    require("@tailwindcss/typography"),
   ],
 } 

@@ -107,25 +107,22 @@ export default function HomePage() {
   const [wetUitlegEnabled, setWetUitlegEnabled] = useState(false)
 
   const handleQuickSearch = (query: string) => {
-    setSearchQuery(query)
+    // Build profile parameter
+    let profileParam = ''
+    if (userProfile) {
+      const mappedProfile = userProfile === 'algemeen' ? 'algemeen' : 
+                           userProfile === 'juridisch-expert' ? 'juridisch-expert' :
+                           userProfile === 'jurist' ? 'advocaat' :
+                           userProfile === 'politie' ? 'politieagent' :
+                           userProfile === 'boa' ? 'politieagent' :
+                           userProfile === 'student' ? 'student' : 'algemeen'
+      profileParam = `&profile=${encodeURIComponent(mappedProfile)}`
+    }
     
-    // Auto-navigate for quick searches (clear input before navigation)
-    setTimeout(() => {
-      setSearchQuery('')
-      let profileParam = ''
-      if (userProfile) {
-        const mappedProfile = userProfile === 'algemeen' ? 'algemeen' : 
-                             userProfile === 'juridisch-expert' ? 'juridisch-expert' :
-                             userProfile === 'jurist' ? 'advocaat' :
-                             userProfile === 'politie' ? 'politieagent' :
-                             userProfile === 'boa' ? 'politieagent' :
-                             userProfile === 'student' ? 'student' : 'algemeen'
-        profileParam = `&profile=${encodeURIComponent(mappedProfile)}`
-      }
-      
-      const wetUitlegParam = wetUitlegEnabled ? '&wetuitleg=true' : ''
-      window.location.href = `/ask?q=${encodeURIComponent(query)}${profileParam}${wetUitlegParam}`
-    }, 100)
+    const wetUitlegParam = wetUitlegEnabled ? '&wetuitleg=true' : ''
+    
+    // Navigate directly without setting input field
+    window.location.href = `/ask?q=${encodeURIComponent(query)}${profileParam}${wetUitlegParam}`
   }
 
   const handleSearch = async (e: React.FormEvent) => {

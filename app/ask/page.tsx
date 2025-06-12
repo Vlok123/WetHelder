@@ -438,35 +438,37 @@ export default function AskPage() {
     }
   }, [isLoading, profession, wetUitlegEnabled, messages, session, rateLimit])
 
-  // Handle URL parameters and auto-search
+  // Handle URL parameters
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
-    const queryParam = urlParams.get('q')
+    const questionParam = urlParams.get('q')
     const profileParam = urlParams.get('profile')
     const wetUitlegParam = urlParams.get('wetuitleg')
     
+    if (questionParam) {
+      setInput(questionParam)
+      
+      // Auto-submit the question from URL
+      setTimeout(() => {
+        const form = document.querySelector('form')
+        if (form) {
+          form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
+        }
+        
+        // Clear URL parameters after auto-submit
+        const newUrl = window.location.pathname
+        window.history.replaceState({}, '', newUrl)
+      }, 500)
+    }
+    
     if (profileParam) {
-      const mappedProfession = mapProfileToProfession(profileParam)
-      setProfession(mappedProfession)
+      setProfession(mapProfileToProfession(profileParam))
     }
     
     if (wetUitlegParam === 'true') {
       setWetUitlegEnabled(true)
     }
-    
-    if (queryParam && queryParam.trim()) {
-      setInput(queryParam.trim())
-      
-      // Only auto-submit if there are no existing messages and we haven't auto-submitted yet
-      if (messages.length === 0 && !hasAutoSubmitted.current) {
-        hasAutoSubmitted.current = true
-        // Small delay to ensure state is set
-        setTimeout(() => {
-          handleSubmitDirectly(queryParam.trim())
-        }, 100)
-      }
-    }
-  }, [handleSubmitDirectly, messages.length])
+  }, [])
 
   // Fetch rate limit status
   useEffect(() => {
@@ -740,9 +742,11 @@ export default function AskPage() {
               <p className="text-xs text-emerald-700 mt-1 ml-7">
                 Uitgebreide wetteksten, jurisprudentie en praktijkvoorbeelden
               </p>
-              {wetUitlegEnabled && (
+              {(wetUitlegEnabled || profession === 'juridisch-expert') && (
                 <div className="mt-2 ml-7 text-xs text-emerald-600">
-                  ✓ Diepgaande analyse actief - Voor meer informatie wordt verwezen naar Wet & Uitleg
+                  ✓ Diepgaande analyse actief - {profession === 'juridisch-expert' ? 'Juridisch Expert modus' : 'Wet & Uitleg modus'}
+                  <br />
+                  💡 Intelligente vervolgvragen worden automatisch voorgesteld
                 </div>
               )}
             </div>
