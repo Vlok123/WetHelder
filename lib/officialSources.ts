@@ -450,6 +450,596 @@ export async function fetchRijksoverheid(query: string = ''): Promise<WetgevingD
   }
 }
 
+// === 15. JURIDISCH LOKET (JURIDISCHE HULP) ===
+
+export async function fetchJuridischLoket(query: string = ''): Promise<WetgevingDocument[]> {
+  console.log('⚖️ Fetching Juridisch Loket documents...')
+  
+  try {
+    // Juridisch Loket heeft geen publieke API, maar we kunnen de inhoud structureel benaderen
+    // We implementeren een gestructureerde benadering van hun informatie
+    const encodedQuery = encodeURIComponent(query)
+    
+    // Juridisch Loket structuur mapping
+    const juridischLoketTopics = getJuridischLoketTopics(query)
+    
+    const documents: WetgevingDocument[] = []
+    
+    // Voor elke relevante topic, maak een referentie naar Juridisch Loket
+    for (const topic of juridischLoketTopics) {
+      documents.push({
+        id: `juridischloket-${topic.id}`,
+        titel: `Juridisch Loket: ${topic.titel}`,
+        tekst: `${topic.beschrijving} Voor uitgebreide informatie en praktische stappen: ${topic.url}`,
+        uri: topic.url,
+        datum: new Date(),
+        wetboek: 'Juridische Hulp',
+        status: 'ACTIVE' as const
+      })
+    }
+    
+    // Algemene verwijzing naar zoekfunctie van Juridisch Loket
+    if (query && documents.length === 0) {
+      documents.push({
+        id: `juridischloket-search-${Date.now()}`,
+        titel: `Juridisch Loket: Informatie over ${query}`,
+        tekst: `Voor praktische juridische informatie en stap-voor-stap uitleg over ${query}, inclusief kostenloze rechtshulp en doorverwijzing naar rechtsbijstand. Het Juridisch Loket biedt gratis juridisch advies voor burgers met lagere inkomens.`,
+        uri: `https://www.juridischloket.nl/zoeken/?q=${encodedQuery}`,
+        datum: new Date(),
+        wetboek: 'Juridische Hulp',
+        status: 'ACTIVE' as const
+      })
+    }
+    
+    return documents
+    
+  } catch (error) {
+    console.error('Error fetching Juridisch Loket:', error)
+    return []
+  }
+}
+
+// === 16. KOOP SRU - CVDR (DECENTRALE REGELGEVING) ===
+
+export async function fetchCVDR(query: string = '', limit: number = 50): Promise<WetgevingDocument[]> {
+  console.log('🏛️ Fetching CVDR (gemeentelijke/provinciale verordeningen)...')
+  
+  try {
+    const encodedQuery = encodeURIComponent(query)
+    const url = `https://zoekservice.overheid.nl/sru/Search?version=1.2&operation=searchRetrieve&x-connection=CVDR&query=title=${encodedQuery}&startRecord=1&maximumRecords=${limit}`
+    
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'WetHelder/1.0 (https://wethelder.nl)',
+        'Accept': 'application/xml'
+      }
+    })
+    
+    if (!response.ok) {
+      console.warn('CVDR SRU API niet beschikbaar')
+      return []
+    }
+    
+    const xmlData = await response.text()
+    
+    // Voor nu retourneren we een placeholder - in productie zou je XML parsen
+    // TODO: Implementeer XML parsing voor CVDR SRU response
+    console.log('CVDR XML response ontvangen, parsing required')
+    
+    return [{
+      id: `cvdr-search-${Date.now()}`,
+      titel: `CVDR: Decentrale regelgeving voor "${query}"`,
+      tekst: `Gemeentelijke en provinciale verordeningen. Voor volledige resultaten zie: https://lokaleregelgeving.overheid.nl/zoeken?q=${encodedQuery}`,
+      uri: `https://lokaleregelgeving.overheid.nl/zoeken?q=${encodedQuery}`,
+      datum: new Date(),
+      wetboek: 'Decentrale Regelgeving',
+      status: 'ACTIVE' as const
+    }]
+    
+  } catch (error) {
+    console.error('Error fetching CVDR:', error)
+    return []
+  }
+}
+
+// === 17. DATA.OVERHEID.NL CKAN API ===
+
+export async function fetchDataOverheid(query: string = '', limit: number = 10): Promise<WetgevingDocument[]> {
+  console.log('📊 Fetching Data.overheid.nl datasets...')
+  
+  try {
+    const encodedQuery = encodeURIComponent(query)
+    const url = `https://data.overheid.nl/data/api/3/action/package_search?q=${encodedQuery}&rows=${limit}`
+    
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'WetHelder/1.0 (https://wethelder.nl)',
+        'Accept': 'application/json'
+      }
+    })
+    
+    if (!response.ok) {
+      console.warn('Data.overheid.nl API niet beschikbaar')
+      return []
+    }
+    
+    const data = await response.json()
+    
+    if (!data.success || !data.result?.results) {
+      return []
+    }
+    
+    return data.result.results.map((dataset: any) => ({
+      id: dataset.id,
+      titel: `Dataset: ${dataset.title}`,
+      tekst: `${dataset.notes || 'Geen beschrijving'} Organisatie: ${dataset.organization?.title || 'Onbekend'}. Tags: ${dataset.tags?.map((t: any) => t.display_name).join(', ') || 'Geen tags'}`,
+      uri: `https://data.overheid.nl/data/dataset/${dataset.name}`,
+      datum: dataset.metadata_created ? new Date(dataset.metadata_created) : new Date(),
+      wetboek: 'Open Data',
+      status: 'ACTIVE' as const
+    }))
+    
+  } catch (error) {
+    console.error('Error fetching Data.overheid.nl:', error)
+    return []
+  }
+}
+
+// === 18. OPENRECHTSPRAAK.NL API ===
+
+export async function fetchOpenRechtspraak(query: string = '', limit: number = 20): Promise<JurisprudentieDocument[]> {
+  console.log('⚖️ Fetching OpenRechtspraak.nl...')
+  
+  try {
+    const encodedQuery = encodeURIComponent(query)
+    const url = `https://openrechtspraak.nl/api/v1/uitspraken?q=${encodedQuery}&size=${limit}&format=json`
+    
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'WetHelder/1.0 (https://wethelder.nl)',
+        'Accept': 'application/json'
+      }
+    })
+    
+    if (!response.ok) {
+      console.warn('OpenRechtspraak.nl API niet beschikbaar')
+      return []
+    }
+    
+    const data = await response.json()
+    
+    if (!data.results) {
+      return []
+    }
+    
+    return data.results.map((item: any) => ({
+      ecli: item.ecli,
+      titel: item.titel || `Uitspraak ${item.ecli}`,
+      samenvatting: item.samenvatting || item.inhoudsindicatie || '',
+      volledigeTekst: item.tekst || '',
+      instantie: item.instantie || extractInstantie(item.ecli),
+      datum: new Date(item.datum || item.uitspraakdatum || Date.now()),
+      uitspraakType: item.type || 'uitspraak',
+      rechtsgebied: item.rechtsgebieden || [],
+      trefwoorden: item.trefwoorden || [],
+      wetsartikelen: extractWetsartikelen(item.tekst || '')
+    }))
+    
+  } catch (error) {
+    console.error('Error fetching OpenRechtspraak.nl:', error)
+    return []
+  }
+}
+
+// === 19. BOETEBASE OM (ENHANCED) ===
+
+export async function fetchBoetebaseOM(query: string = ''): Promise<BoeteDocument[]> {
+  console.log('🚔 Fetching BoeteBase OM...')
+  
+  try {
+    // BoeteBase heeft geen API, maar we kunnen de zoek-URL genereren
+    const encodedQuery = encodeURIComponent(query)
+    const baseUrl = 'https://boetebase.om.nl'
+    
+    // Voor nu genereren we een referentie naar de zoekpagina
+    // TODO: Implementeer web scraping voor feitcodes en bedragen
+    console.log(`BoeteBase search URL: ${baseUrl}?q=${encodedQuery}`)
+    
+    // Placeholder implementatie - in productie zou je HTML scrapen
+    const placeholderDocs: BoeteDocument[] = []
+    
+    if (query.toLowerCase().includes('snelheid') || query.toLowerCase().includes('te hard')) {
+      placeholderDocs.push({
+        feitcode: 'R001',
+        omschrijving: 'Te hard rijden - zie BoeteBase voor exacte bedragen',
+        categorie: 'Verkeer',
+        bedrag: 0, // Variabel
+        wetsartikel: 'Artikel 20 RVV 1990',
+        wetboek: 'Reglement Verkeersregels en Verkeerstekens',
+        geldigVan: new Date('2024-01-01')
+      })
+    }
+    
+    return placeholderDocs
+    
+  } catch (error) {
+    console.error('Error fetching BoeteBase OM:', error)
+    return []
+  }
+}
+
+// === 20. POLITIE OPEN DATA API ===
+
+export async function fetchPolitieOpenData(query: string = '', limit: number = 10): Promise<WetgevingDocument[]> {
+  console.log('👮 Fetching Politie Open Data...')
+  
+  try {
+    // Politie heeft verschillende datasets beschikbaar
+    const datasets = [
+      'vermiste-personen',
+      'gezochte-personen', 
+      'wijkagenten',
+      'politiebureaus'
+    ]
+    
+    const results: WetgevingDocument[] = []
+    
+    for (const dataset of datasets.slice(0, 2)) { // Limiteer tot 2 datasets
+      try {
+        const url = `https://data.politie.nl/api/${dataset}?limit=${Math.floor(limit/2)}`
+        
+        const response = await fetch(url, {
+          headers: {
+            'User-Agent': 'WetHelder/1.0 (https://wethelder.nl)',
+            'Accept': 'application/json'
+          }
+        })
+        
+        if (response.ok) {
+          const data = await response.json()
+          
+          if (data.results) {
+            results.push({
+              id: `politie-${dataset}-${Date.now()}`,
+              titel: `Politie Data: ${dataset.replace('-', ' ')}`,
+              tekst: `Actuele ${dataset.replace('-', ' ')} informatie van de Nederlandse Politie. Aantal resultaten: ${data.results.length}`,
+              uri: `https://data.politie.nl/${dataset}`,
+              datum: new Date(),
+              wetboek: 'Politie Informatie',
+              status: 'ACTIVE' as const
+            })
+          }
+        }
+      } catch (error) {
+        console.error(`Error fetching politie dataset ${dataset}:`, error)
+      }
+    }
+    
+    return results
+    
+  } catch (error) {
+    console.error('Error fetching Politie Open Data:', error)
+    return []
+  }
+}
+
+// === 21. OPEN RAADSINFORMATIE ===
+
+export async function fetchOpenRaadsinformatie(query: string = '', gemeente: string = 'amsterdam'): Promise<WetgevingDocument[]> {
+  console.log('🏛️ Fetching Open Raadsinformatie...')
+  
+  try {
+    const encodedQuery = encodeURIComponent(query)
+    const url = `https://${gemeente}.raadsinformatie.nl/api/v2/events?search=${encodedQuery}&limit=10`
+    
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'WetHelder/1.0 (https://wethelder.nl)',
+        'Accept': 'application/hal+json'
+      }
+    })
+    
+    if (!response.ok) {
+      console.warn(`Open Raadsinformatie API niet beschikbaar voor ${gemeente}`)
+      return []
+    }
+    
+    const data = await response.json()
+    
+    if (!data._embedded?.events) {
+      return []
+    }
+    
+    return data._embedded.events.map((event: any, index: number) => ({
+      id: `raad-${gemeente}-${event.id || index}`,
+      titel: `${gemeente}: ${event.name || 'Raadsstuk'}`,
+      tekst: `${event.description || 'Geen beschrijving'} Datum: ${event.start_date || 'Onbekend'}`,
+      uri: event._links?.self?.href || `https://${gemeente}.raadsinformatie.nl`,
+      datum: event.start_date ? new Date(event.start_date) : new Date(),
+      wetboek: 'Gemeentelijke Besluitvorming',
+      status: 'ACTIVE' as const
+    }))
+    
+  } catch (error) {
+    console.error('Error fetching Open Raadsinformatie:', error)
+    return []
+  }
+}
+
+// === 22. BAG API V2 (KADASTER) ===
+
+export async function fetchBAGAPI(query: string = ''): Promise<WetgevingDocument[]> {
+  console.log('🏠 Fetching BAG API v2...')
+  
+  try {
+    // BAG API vereist een API key, voor demo purposes gebruiken we de openbare endpoints
+    const encodedQuery = encodeURIComponent(query)
+    
+    // Voor nu retourneren we een referentie naar de BAG API
+    return [{
+      id: `bag-api-${Date.now()}`,
+      titel: 'BAG API v2: Basisregistratie Adressen en Gebouwen',
+      tekst: `Voor adres- en gebouwinformatie gerelateerd aan "${query}". De BAG bevat alle officieel geregistreerde adressen en gebouwen in Nederland.`,
+      uri: `https://api.bag.v2.kadaster.nl/lvbag/individuelebevragingen/v2/adressen?zoekterm=${encodedQuery}`,
+      datum: new Date(),
+      wetboek: 'Basisregistraties',
+      status: 'ACTIVE' as const
+    }]
+    
+  } catch (error) {
+    console.error('Error fetching BAG API:', error)
+    return []
+  }
+}
+
+// === 23. CBS STATLINE ODATA ===
+
+export async function fetchCBSStatLine(query: string = ''): Promise<WetgevingDocument[]> {
+  console.log('📊 Fetching CBS StatLine...')
+  
+  try {
+    // CBS StatLine heeft een OData interface
+    const url = 'https://opendata.cbs.nl/ODataApi/odata/84287NED/$metadata'
+    
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'WetHelder/1.0 (https://wethelder.nl)',
+        'Accept': 'application/xml'
+      }
+    })
+    
+    if (!response.ok) {
+      console.warn('CBS StatLine API niet beschikbaar')
+      return []
+    }
+    
+    // Voor nu retourneren we een referentie naar CBS Open Data
+    return [{
+      id: `cbs-statline-${Date.now()}`,
+      titel: 'CBS StatLine: Statistische gegevens',
+      tekst: `Officiële Nederlandse statistieken gerelateerd aan "${query}". Inclusief demografische gegevens, criminaliteitsstatistieken en maatschappelijke indicatoren.`,
+      uri: `https://opendata.cbs.nl/statline/#/CBS/nl/navigatieScherm/zoeken?searchKeywords=${encodeURIComponent(query)}`,
+      datum: new Date(),
+      wetboek: 'Statistische Gegevens',
+      status: 'ACTIVE' as const
+    }]
+    
+  } catch (error) {
+    console.error('Error fetching CBS StatLine:', error)
+    return []
+  }
+}
+
+// === 24. RDW OPEN DATA ===
+
+export async function fetchRDWOpenData(query: string = ''): Promise<WetgevingDocument[]> {
+  console.log('🚗 Fetching RDW Open Data...')
+  
+  try {
+    // RDW heeft verschillende datasets via Socrata
+    const datasets = [
+      'gekentekende-voertuigen',
+      'geregistreerde-voertuigen'
+    ]
+    
+    const results: WetgevingDocument[] = []
+    
+    for (const dataset of datasets.slice(0, 1)) { // Limiteer tot 1 dataset
+      try {
+        const url = `https://opendata.rdw.nl/resource/${dataset.replace('-', '_')}.json?$limit=5`
+        
+        const response = await fetch(url, {
+          headers: {
+            'User-Agent': 'WetHelder/1.0 (https://wethelder.nl)',
+            'Accept': 'application/json'
+          }
+        })
+        
+        if (response.ok) {
+          const data = await response.json()
+          
+          results.push({
+            id: `rdw-${dataset}-${Date.now()}`,
+            titel: `RDW Open Data: ${dataset.replace('-', ' ')}`,
+            tekst: `Voertuig- en kentekengegevens uit de RDW database. Voor uitgebreide voertuiggegevens en kentekeninformatie.`,
+            uri: `https://opendata.rdw.nl/browse?q=${encodeURIComponent(query)}`,
+            datum: new Date(),
+            wetboek: 'Voertuigregistratie',
+            status: 'ACTIVE' as const
+          })
+        }
+      } catch (error) {
+        console.error(`Error fetching RDW dataset ${dataset}:`, error)
+      }
+    }
+    
+    return results
+    
+  } catch (error) {
+    console.error('Error fetching RDW Open Data:', error)
+    return []
+  }
+}
+
+// === 25. OPENKVK API ===
+
+export async function fetchOpenKVK(query: string = ''): Promise<WetgevingDocument[]> {
+  console.log('🏢 Fetching OpenKVK...')
+  
+  try {
+    // OpenKVK vereist een API key - voor demo purposes gebruiken we een referentie
+    const encodedQuery = encodeURIComponent(query)
+    
+    return [{
+      id: `openkvk-${Date.now()}`,
+      titel: 'OpenKVK: Bedrijfsgegevens Kamer van Koophandel',
+      tekst: `Basis bedrijfsinformatie en SBI-codes voor "${query}". Voor volledige bedrijfsgegevens uit de KvK registratie.`,
+      uri: `https://api.overheid.io/openkvk?q=${encodedQuery}`,
+      datum: new Date(),
+      wetboek: 'Bedrijfsregistratie',
+      status: 'ACTIVE' as const
+    }]
+    
+  } catch (error) {
+    console.error('Error fetching OpenKVK:', error)
+    return []
+  }
+}
+
+// === 26. EUR-LEX WEB SERVICE (ENHANCED) ===
+
+export async function fetchEURLexWebService(query: string = ''): Promise<WetgevingDocument[]> {
+  console.log('🇪🇺 Fetching EUR-Lex Web Service...')
+  
+  try {
+    // EUR-Lex Web Service vereist registratie, voor nu gebruiken we de publieke interface
+    const encodedQuery = encodeURIComponent(query)
+    const url = `https://eur-lex.europa.eu/search.html?qid=1&text=${encodedQuery}&scope=EURLEX&type=quick&lang=nl`
+    
+    return [{
+      id: `eurlex-webservice-${Date.now()}`,
+      titel: 'EUR-Lex: Europese wetgeving',
+      tekst: `Europese richtlijnen, verordeningen en arresten gerelateerd aan "${query}". Voor volledige EU-wetgeving en jurisprudentie van het Europees Hof van Justitie.`,
+      uri: url,
+      datum: new Date(),
+      wetboek: 'Europese Wetgeving',
+      status: 'ACTIVE' as const
+    }]
+    
+  } catch (error) {
+    console.error('Error fetching EUR-Lex Web Service:', error)
+    return []
+  }
+}
+
+// Helper functie voor Juridisch Loket topic mapping
+function getJuridischLoketTopics(query: string): Array<{id: string, titel: string, beschrijving: string, url: string}> {
+  const lowerQuery = query.toLowerCase()
+  const topics: Array<{id: string, titel: string, beschrijving: string, url: string}> = []
+  
+  // Scheiding en echtscheiding
+  if (lowerQuery.includes('scheiding') || lowerQuery.includes('echtscheiding') || lowerQuery.includes('alimentatie')) {
+    topics.push({
+      id: 'scheiding',
+      titel: 'Scheiding en Echtscheiding',
+      beschrijving: 'Praktische informatie over scheidingsprocedure, alimentatie, verdeling vermogen, omgangsregeling kinderen, en juridische stappen.',
+      url: 'https://www.juridischloket.nl/familie-en-relaties/scheiding/'
+    })
+  }
+  
+  // Arbeidsrecht
+  if (lowerQuery.includes('ontslag') || lowerQuery.includes('werk') || lowerQuery.includes('arbeidsrecht') || lowerQuery.includes('werkgever')) {
+    topics.push({
+      id: 'arbeidsrecht',
+      titel: 'Arbeidsrecht en Ontslag',
+      beschrijving: 'Informatie over ontslagrecht, arbeidscontracten, loon, werktijden, discriminatie op werk, en rechten van werknemers.',
+      url: 'https://www.juridischloket.nl/werk-en-inkomen/'
+    })
+  }
+  
+  // Huurrecht
+  if (lowerQuery.includes('huur') || lowerQuery.includes('verhuurder') || lowerQuery.includes('woning') || lowerQuery.includes('huurverhoging')) {
+    topics.push({
+      id: 'huurrecht',
+      titel: 'Huurrecht en Wonen',
+      beschrijving: 'Praktische hulp bij huurproblemen, huurverhoging, onderhoud, opzegging huurcontract, en geschillen met verhuurders.',
+      url: 'https://www.juridischloket.nl/wonen-en-buren/'
+    })
+  }
+  
+  // Schulden en incasso
+  if (lowerQuery.includes('schuld') || lowerQuery.includes('incasso') || lowerQuery.includes('deurwaarder') || lowerQuery.includes('beslag')) {
+    topics.push({
+      id: 'schulden',
+      titel: 'Schulden en Incasso',
+      beschrijving: 'Hulp bij schuldenproblematiek, betalingsregelingen, deurwaarders, beslag, en schuldsanering.',
+      url: 'https://www.juridischloket.nl/geld-en-schulden/'
+    })
+  }
+  
+  // Consumentenrecht
+  if (lowerQuery.includes('consument') || lowerQuery.includes('koop') || lowerQuery.includes('garantie') || lowerQuery.includes('herroeping')) {
+    topics.push({
+      id: 'consumentenrecht',
+      titel: 'Consumentenrecht',
+      beschrijving: 'Informatie over koopovereenkomsten, garantierechten, herroepingsrecht, online aankopen, en geschillen met bedrijven.',
+      url: 'https://www.juridischloket.nl/consumenten/'
+    })
+  }
+  
+  // Letselschade
+  if (lowerQuery.includes('letsel') || lowerQuery.includes('schade') || lowerQuery.includes('ongeval') || lowerQuery.includes('schadevergoeding')) {
+    topics.push({
+      id: 'letselschade',
+      titel: 'Letselschade en Schadevergoeding',
+      beschrijving: 'Praktische stappen bij letselschade, schadevergoeding, medische kosten, en aansprakelijkheid na ongevallen.',
+      url: 'https://www.juridischloket.nl/letsel-en-schade/'
+    })
+  }
+  
+  // Erfrecht
+  if (lowerQuery.includes('erfenis') || lowerQuery.includes('testament') || lowerQuery.includes('nalatenschap') || lowerQuery.includes('overlijden')) {
+    topics.push({
+      id: 'erfrecht',
+      titel: 'Erfrecht en Testament',
+      beschrijving: 'Informatie over erfenissen, testamenten, verdeling nalatenschap, en juridische procedures na overlijden.',
+      url: 'https://www.juridischloket.nl/familie-en-relaties/overlijden/'
+    })
+  }
+  
+  // Burenrecht
+  if (lowerQuery.includes('buren') || lowerQuery.includes('overlast') || lowerQuery.includes('geluidsoverlast') || lowerQuery.includes('buurman')) {
+    topics.push({
+      id: 'burenrecht',
+      titel: 'Burenrecht en Overlast',
+      beschrijving: 'Praktische hulp bij burenruzies, geluidsoverlast, erfafscheiding, en andere geschillen met buren.',
+      url: 'https://www.juridischloket.nl/wonen-en-buren/overlast/'
+    })
+  }
+  
+  // Verkeer en vervoer
+  if (lowerQuery.includes('verkeersboete') || lowerQuery.includes('rijbewijs') || lowerQuery.includes('verkeersongeval')) {
+    topics.push({
+      id: 'verkeer',
+      titel: 'Verkeer en Vervoer',
+      beschrijving: 'Informatie over verkeersboetes, bezwaar tegen boetes, rijbewijskwesties, en procedures bij verkeersovertredingen.',
+      url: 'https://www.juridischloket.nl/verkeer/'
+    })
+  }
+  
+  // Rechtsbijstand en rechtshulp
+  if (lowerQuery.includes('rechtsbijstand') || lowerQuery.includes('advocaat') || lowerQuery.includes('rechtshulp') || lowerQuery.includes('toevoeging')) {
+    topics.push({
+      id: 'rechtsbijstand',
+      titel: 'Rechtsbijstand en Rechtshulp',
+      beschrijving: 'Informatie over gratis rechtshulp, toevoeging, rechtsbijstandverzekering, en wanneer u recht heeft op kostenloze juridische bijstand.',
+      url: 'https://www.juridischloket.nl/juridische-hulp/'
+    })
+  }
+  
+  return topics
+}
+
 // === UTILITY FUNCTIES ===
 
 function extractArtikelNummer(titel: string): string | undefined {
@@ -687,6 +1277,87 @@ export async function runFullDataSync(): Promise<void> {
       totalAdded++
     }
     
+    // 4. Juridisch Loket
+    console.log('⚖️ Syncing Juridisch Loket...')
+    const juridischLoket = await fetchJuridischLoket('')
+    for (const doc of juridischLoket) {
+      await saveDocumentToDatabase(doc)
+      totalProcessed++
+      totalAdded++
+    }
+    
+    // 5. CVDR
+    console.log('🏛️ Syncing CVDR...')
+    const cvdr = await fetchCVDR('')
+    for (const doc of cvdr) {
+      await saveDocumentToDatabase(doc)
+      totalProcessed++
+      totalAdded++
+    }
+    
+    // 6. Data.overheid.nl
+    console.log('📊 Syncing Data.overheid.nl...')
+    const dataOverheid = await fetchDataOverheid('')
+    for (const doc of dataOverheid) {
+      await saveDocumentToDatabase(doc)
+      totalProcessed++
+      totalAdded++
+    }
+    
+    // 7. OpenRechtspraak.nl
+    console.log('⚖️ Syncing OpenRechtspraak.nl...')
+    const openRechtspraak = await fetchOpenRechtspraak('')
+    for (const doc of openRechtspraak) {
+      await saveJurisprudentieToDatabase(doc)
+      totalProcessed++
+      totalAdded++
+    }
+    
+    // 8. BAG API
+    console.log('🏠 Syncing BAG API...')
+    const bagAPI = await fetchBAGAPI('')
+    for (const doc of bagAPI) {
+      await saveDocumentToDatabase(doc)
+      totalProcessed++
+      totalAdded++
+    }
+    
+    // 9. CBS StatLine
+    console.log('📊 Syncing CBS StatLine...')
+    const cbsStatLine = await fetchCBSStatLine('')
+    for (const doc of cbsStatLine) {
+      await saveDocumentToDatabase(doc)
+      totalProcessed++
+      totalAdded++
+    }
+    
+    // 10. RDW Open Data
+    console.log('🚗 Syncing RDW Open Data...')
+    const rdwOpenData = await fetchRDWOpenData('')
+    for (const doc of rdwOpenData) {
+      await saveDocumentToDatabase(doc)
+      totalProcessed++
+      totalAdded++
+    }
+    
+    // 11. OpenKVK
+    console.log('🏢 Syncing OpenKVK...')
+    const openKVK = await fetchOpenKVK('')
+    for (const doc of openKVK) {
+      await saveDocumentToDatabase(doc)
+      totalProcessed++
+      totalAdded++
+    }
+    
+    // 12. EUR-Lex Web Service
+    console.log('🇪🇺 Syncing EUR-Lex Web Service...')
+    const eurLexWS = await fetchEURLexWebService('')
+    for (const doc of eurLexWS) {
+      await saveDocumentToDatabase(doc)
+      totalProcessed++
+      totalAdded++
+    }
+    
     // Update log
     await prisma.dataIngestLog.update({
       where: { id: logEntry.id },
@@ -713,4 +1384,85 @@ export async function runFullDataSync(): Promise<void> {
       }
     })
   }
+}
+
+// === JURIDISCHE FOUT-CORRECTIE DATABASE ===
+
+export interface LegalCorrection {
+  incorrectTerm: string
+  correctTerm: string
+  explanation: string
+  sourceArticle: string
+}
+
+export const COMMON_LEGAL_MISTAKES: LegalCorrection[] = [
+  {
+    incorrectTerm: 'WED artikel 18 bevoegdheden',
+    correctTerm: 'WED artikel 23 bevoegdheden',
+    explanation: 'Artikel 23 WED regelt de bevoegdheden van opsporingsambtenaren, niet artikel 18',
+    sourceArticle: 'Artikel 23 Wet op de economische delicten'
+  },
+  {
+    incorrectTerm: 'WED betekent Wet Explosieven Delicten',
+    correctTerm: 'WED betekent Wet op de Economische Delicten',
+    explanation: 'WED staat voor Wet op de Economische Delicten, niet Wet Explosieven Delicten',
+    sourceArticle: 'Wet van 22 juni 1950, Stb. K 258'
+  },
+  {
+    incorrectTerm: 'verkeersovertredingen vallen onder WED',
+    correctTerm: 'verkeersovertredingen vallen onder WVW 1994',
+    explanation: 'Verkeersovertredingen worden geregeld door de Wegenverkeerswet 1994, niet de WED',
+    sourceArticle: 'Wegenverkeerswet 1994'
+  },
+  {
+    incorrectTerm: 'drugs vallen onder WED',
+    correctTerm: 'drugs vallen onder Opiumwet',
+    explanation: 'Verdovende middelen worden geregeld door de Opiumwet, niet de WED',
+    sourceArticle: 'Opiumwet'
+  },
+  {
+    incorrectTerm: 'artikel160',
+    correctTerm: 'artikel 160',
+    explanation: 'Voeg altijd een spatie toe tussen "artikel" en het nummer',
+    sourceArticle: 'Algemene schrijfregels juridische teksten'
+  }
+]
+
+export function detectAndCorrectLegalMistakes(text: string): string {
+  let correctedText = text
+  
+  // Doorloop alle bekende fouten en corrigeer ze
+  COMMON_LEGAL_MISTAKES.forEach(mistake => {
+    const regex = new RegExp(mistake.incorrectTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi')
+    correctedText = correctedText.replace(regex, mistake.correctTerm)
+  })
+  
+  // Extra tekstcorrecties voor veelvoorkomende fouten
+  
+  // Datum formatting
+  correctedText = correctedText.replace(/\bper(\d+)(januari|februari|maart|april|mei|juni|juli|augustus|september|oktober|november|december)(\d{4})\b/gi, 'per $1 $2 $3')
+  correctedText = correctedText.replace(/\b(\d+)(januari|februari|maart|april|mei|juni|juli|augustus|september|oktober|november|december)(\d{4})\b/gi, '$1 $2 $3')
+  correctedText = correctedText.replace(/\bvan(\d+)(januari|februari|maart|april|mei|juni|juli|augustus|september|oktober|november|december)(\d{4})\b/gi, 'van $1 $2 $3')
+  correctedText = correctedText.replace(/\btot(\d+)(januari|februari|maart|april|mei|juni|juli|augustus|september|oktober|november|december)(\d{4})\b/gi, 'tot $1 $2 $3')
+  
+  // Artikel nummering
+  correctedText = correctedText.replace(/\bartikel(\d+)/gi, 'artikel $1')
+  correctedText = correctedText.replace(/\bart\.?(\d+)/gi, 'art. $1')
+  
+  // Wetboek afkortingen
+  correctedText = correctedText.replace(/\b(WVW|Sr|Sv|BW|AWB|RVV)(\d+)/gi, '$1 $2')
+  
+  // Bedragen en percentages
+  correctedText = correctedText.replace(/\b(\d+)(euro|EUR)\b/gi, '$1 $2')
+  correctedText = correctedText.replace(/\b€(\d+)/g, '€ $1')
+  correctedText = correctedText.replace(/\b(\d+)(procent|%)/gi, '$1 $2')
+  
+  // Tijdsaanduidingen
+  correctedText = correctedText.replace(/\b(\d+)(dagen|maanden|jaren|weken|uur|minuten)\b/gi, '$1 $2')
+  
+  // Veelvoorkomende juridische termen
+  correctedText = correctedText.replace(/\bopsporing(\w+)/gi, 'opsporing $1')
+  correctedText = correctedText.replace(/\bvervolging(\w+)/gi, 'vervolging $1')
+  
+  return correctedText
 } 

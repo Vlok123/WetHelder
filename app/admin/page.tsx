@@ -1,485 +1,518 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { 
   Users, 
   MessageSquare, 
-  Clock, 
-  TrendingUp,
-  Activity,
-  BarChart3,
+  Calendar, 
+  Crown, 
+  Shield, 
+  Home, 
   Settings,
-  Shield,
-  RefreshCw,
-  Calendar,
-  Star,
-  AlertTriangle,
-  Database,
-  Server,
-  Globe,
+  Clock,
+  ArrowRight,
+  BarChart3,
+  Search,
+  Filter,
   Eye,
+  Edit,
+  Trash2,
+  Download,
+  RefreshCw,
+  Activity,
+  Database,
+  AlertTriangle,
+  CheckCircle,
+  TrendingUp,
   UserCheck,
-  Zap
+  UserX,
+  Lock,
+  Unlock
 } from 'lucide-react'
 
 interface AdminStats {
   totalUsers: number
-  totalQuestions: number
-  questionsToday: number
-  questionsThisWeek: number
-  questionsThisMonth: number
-  anonymousQuestions: number
-  registeredUserQuestions: number
-  averageQuestionsPerDay: number
-  topProfessions: Array<{ name: string; count: number }>
-  recentQuestions: Array<{
-    id: string
-    question: string
-    profession: string
-    timestamp: string
-    user?: string
-    isAnonymous: boolean
-  }>
-  systemHealth: {
-    apiStatus: 'healthy' | 'warning' | 'error'
-    dbStatus: 'healthy' | 'warning' | 'error'
-    responseTime: number
-    uptime: string
-  }
-  trafficStats: {
-    totalPageViews: number
-    uniqueVisitors: number
-    bounceRate: number
-    averageSessionDuration: string
-  }
-  userGrowth: {
-    newUsersToday: number
-    newUsersThisWeek: number
-    newUsersThisMonth: number
-    growthRate: number
-  }
+  activeUsers: number
+  premiumUsers: number
+  freeUsers: number
+  totalQueries: number
+  todayQueries: number
+  avgQueriesPerUser: number
+  systemHealth: 'healthy' | 'warning' | 'error'
+  databaseSize: string
+  lastBackup: string
 }
 
-export default function AdminPanel() {
-  const { data: session, status } = useSession()
-  const [stats, setStats] = useState<AdminStats | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [refreshing, setRefreshing] = useState(false)
-  const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
+interface UserData {
+  id: string
+  name: string
+  email: string
+  role: string
+  createdAt: string
+  lastActive: string
+  totalQueries: number
+  todayQueries: number
+  status: 'active' | 'suspended'
+}
 
-  // Check if user is admin
-  const isAdmin = session?.user?.email === 'sanderhelmink@gmail.com'
+interface SystemMetric {
+  name: string
+  value: string
+  change: number
+  status: 'up' | 'down' | 'stable'
+}
+
+export default function AdminDashboard() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+  const [stats, setStats] = useState<AdminStats | null>(null)
+  const [users, setUsers] = useState<UserData[]>([])
+  const [metrics, setMetrics] = useState<SystemMetric[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [roleFilter, setRoleFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState('all')
 
   useEffect(() => {
-    if (status === 'loading') return
-    
-    if (!session || !isAdmin) {
-      redirect('/')
-      return
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin')
+    } else if (session?.user) {
+      // Check if user is admin
+      if (session.user.role !== 'ADMIN') {
+        router.push('/dashboard')
+        return
+      }
+      fetchAdminData()
     }
+  }, [session, status, router])
 
-    loadAdminStats()
-  }, [session, status, isAdmin])
-
-  const loadAdminStats = async () => {
-    setLoading(true)
+  const fetchAdminData = async () => {
     try {
-      const response = await fetch('/api/admin/stats')
-      if (response.ok) {
-        const data = await response.json()
-        setStats(data)
-        setLastRefresh(new Date())
-      } else {
-        console.error('Failed to load admin stats:', response.status)
+      const [statsRes, usersRes, metricsRes] = await Promise.all([
+        fetch('/api/admin/stats'),
+        fetch('/api/admin/users'),
+        fetch('/api/admin/metrics')
+      ])
+
+      if (statsRes.ok) {
+        const statsData = await statsRes.json()
+        setStats(statsData)
+      }
+
+      if (usersRes.ok) {
+        const usersData = await usersRes.json()
+        setUsers(usersData.users || [])
+      }
+
+      if (metricsRes.ok) {
+        const metricsData = await metricsRes.json()
+        setMetrics(metricsData.metrics || [])
       }
     } catch (error) {
-      console.error('Failed to load admin stats:', error)
+      console.error('Error fetching admin data:', error)
     } finally {
-      setLoading(false)
+      setIsLoading(false)
     }
   }
 
-  const refreshStats = async () => {
-    setRefreshing(true)
-    await loadAdminStats()
-    setRefreshing(false)
+  const handleUserAction = async (userId: string, action: string) => {
+    try {
+      const response = await fetch('/api/admin/users/action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, action })
+      })
+
+      if (response.ok) {
+        await fetchAdminData() // Refresh data
+      }
+    } catch (error) {
+      console.error('Error performing user action:', error)
+    }
+  }
+
+  const exportData = async () => {
+    try {
+      const response = await fetch('/api/admin/export')
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `wethelder-export-${new Date().toISOString().split('T')[0]}.csv`
+      a.click()
+    } catch (error) {
+      console.error('Error exporting data:', error)
+    }
+  }
+
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesRole = roleFilter === 'all' || user.role === roleFilter
+    const matchesStatus = statusFilter === 'all' || user.status === statusFilter
+    
+    return matchesSearch && matchesRole && matchesStatus
+  })
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('nl-NL', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
+
+  const getRoleColor = (role: string) => {
+    switch (role) {
+      case 'ADMIN':
+        return 'bg-red-100 text-red-800 border-red-300'
+      case 'PREMIUM':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-300'
+      case 'FREE':
+        return 'bg-blue-100 text-blue-800 border-blue-300'
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-300'
+    }
   }
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'healthy': return 'text-green-600 bg-green-100'
-      case 'warning': return 'text-yellow-600 bg-yellow-100'
-      case 'error': return 'text-red-600 bg-red-100'
-      default: return 'text-gray-600 bg-gray-100'
+    return status === 'active' 
+      ? 'bg-green-100 text-green-800 border-green-300'
+      : 'bg-red-100 text-red-800 border-red-300'
+  }
+
+  const getHealthIcon = (health: string) => {
+    switch (health) {
+      case 'healthy':
+        return <CheckCircle className="h-5 w-5 text-green-600" />
+      case 'warning':
+        return <AlertTriangle className="h-5 w-5 text-yellow-600" />
+      case 'error':
+        return <AlertTriangle className="h-5 w-5 text-red-600" />
+      default:
+        return <Activity className="h-5 w-5 text-gray-600" />
     }
   }
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'healthy': return '✅'
-      case 'warning': return '⚠️'
-      case 'error': return '❌'
-      default: return '❓'
-    }
-  }
-
-  if (status === 'loading' || loading) {
+  if (status === 'loading' || isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <RefreshCw className="mx-auto h-8 w-8 animate-spin text-blue-600" />
-          <p className="mt-2 text-gray-600 dark:text-gray-400">Laden van admin panel...</p>
+          <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Admin dashboard laden...</p>
         </div>
       </div>
     )
   }
 
-  if (!session || !isAdmin) {
-    return null // Will redirect
+  if (!session || session.user?.role !== 'ADMIN') {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="w-96">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-red-600" />
+              Toegang Geweigerd
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-4">
+              U heeft geen toegang tot het admin dashboard.
+            </p>
+            <Link href="/dashboard">
+              <Button>Terug naar Dashboard</Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div className="min-h-screen bg-background">
+      {/* Admin Header */}
+      <header className="border-b bg-white">
+        <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Shield className="h-8 w-8 text-blue-600" />
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  WetHelder Admin Dashboard
-                </h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Welkom, {session.user?.email} | {lastRefresh ? `Laatste update: ${lastRefresh.toLocaleTimeString('nl-NL')}` : 'Geen data'}
-                </p>
+            <div className="flex items-center gap-4">
+              <Link href="/" className="flex items-center gap-2 text-primary hover:text-primary/80">
+                <Home className="h-5 w-5" />
+                WetHelder
+              </Link>
+              <div className="h-4 w-px bg-gray-300" />
+              <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-red-600" />
+                <h1 className="text-xl font-semibold">Admin Dashboard</h1>
               </div>
             </div>
-            <div className="flex items-center space-x-3">
-              <Button 
-                onClick={refreshStats} 
-                disabled={refreshing}
+            
+            <div className="flex items-center gap-4">
+              <Button
                 variant="outline"
-                size="sm"
+                onClick={fetchAdminData}
+                className="flex items-center gap-2"
               >
-                <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+                <RefreshCw className="h-4 w-4" />
                 Vernieuwen
               </Button>
-              <Button variant="outline" size="sm" asChild>
-                <a href="/" target="_blank">
-                  <Globe className="h-4 w-4 mr-2" />
-                  Live Site
-                </a>
+              <Button
+                variant="outline"
+                onClick={exportData}
+                className="flex items-center gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Export Data
               </Button>
+              <Link href="/dashboard">
+                <Button variant="secondary">User Dashboard</Button>
+              </Link>
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {!stats ? (
-          <div className="text-center py-12">
-            <AlertTriangle className="mx-auto h-12 w-12 text-yellow-500 mb-4" />
-            <p className="text-gray-500 dark:text-gray-400">Geen statistieken beschikbaar</p>
-            <Button onClick={refreshStats} className="mt-4">
-              Opnieuw proberen
-            </Button>
-          </div>
-        ) : (
-          <>
-            {/* System Health Alert */}
-            {(stats.systemHealth.apiStatus !== 'healthy' || stats.systemHealth.dbStatus !== 'healthy') && (
-              <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <div className="flex items-center">
-                  <AlertTriangle className="h-5 w-5 text-yellow-600 mr-2" />
-                  <span className="font-medium text-yellow-800">Systeem waarschuwing</span>
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* System Health */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Activity className="h-5 w-5" />
+                Systeemstatus
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="flex items-center gap-3">
+                  {getHealthIcon(stats?.systemHealth || 'healthy')}
+                  <div>
+                    <p className="text-sm text-muted-foreground">Systeem</p>
+                    <p className="font-medium capitalize">{stats?.systemHealth || 'Healthy'}</p>
+                  </div>
                 </div>
-                <p className="text-sm text-yellow-700 mt-1">
-                  Er zijn problemen gedetecteerd met de systeemstatus. Controleer de system health sectie hieronder.
-                </p>
+                <div className="flex items-center gap-3">
+                  <Database className="h-5 w-5 text-blue-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Database</p>
+                    <p className="font-medium">{stats?.databaseSize || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Clock className="h-5 w-5 text-green-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Laatste Backup</p>
+                    <p className="font-medium">{stats?.lastBackup || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <TrendingUp className="h-5 w-5 text-purple-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Uptime</p>
+                    <p className="font-medium">99.9%</p>
+                  </div>
+                </div>
               </div>
-            )}
+            </CardContent>
+          </Card>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Totaal Gebruikers
-                      </p>
-                      <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                        {stats.totalUsers.toLocaleString()}
-                      </p>
-                      <p className="text-xs text-green-600 mt-1">
-                        +{stats.userGrowth?.newUsersThisWeek || 0} deze week
-                      </p>
-                    </div>
-                    <Users className="h-8 w-8 text-blue-500" />
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3">
+                  <Users className="h-8 w-8 text-blue-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Totaal Gebruikers</p>
+                    <p className="text-2xl font-bold">{stats?.totalUsers || 0}</p>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </CardContent>
+            </Card>
 
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Totaal Vragen
-                      </p>
-                      <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                        {stats.totalQuestions.toLocaleString()}
-                      </p>
-                      <p className="text-xs text-blue-600 mt-1">
-                        Ø {stats.averageQuestionsPerDay || 0}/dag
-                      </p>
-                    </div>
-                    <MessageSquare className="h-8 w-8 text-green-500" />
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3">
+                  <UserCheck className="h-8 w-8 text-green-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Actieve Gebruikers</p>
+                    <p className="text-2xl font-bold">{stats?.activeUsers || 0}</p>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </CardContent>
+            </Card>
 
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Vandaag
-                      </p>
-                      <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                        {stats.questionsToday}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {stats.anonymousQuestions || 0} anoniem
-                      </p>
-                    </div>
-                    <Clock className="h-8 w-8 text-orange-500" />
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3">
+                  <Crown className="h-8 w-8 text-yellow-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Premium Gebruikers</p>
+                    <p className="text-2xl font-bold">{stats?.premiumUsers || 0}</p>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </CardContent>
+            </Card>
 
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Deze Week
-                      </p>
-                      <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                        {stats.questionsThisWeek}
-                      </p>
-                      <p className="text-xs text-purple-600 mt-1">
-                        {stats.userGrowth?.growthRate || 0}% groei
-                      </p>
-                    </div>
-                    <TrendingUp className="h-8 w-8 text-purple-500" />
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3">
+                  <MessageSquare className="h-8 w-8 text-purple-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Totaal Vragen</p>
+                    <p className="text-2xl font-bold">{stats?.totalQueries || 0}</p>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-            {/* Traffic & User Stats */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Eye className="h-5 w-5" />
-                    Website Traffic
-                  </CardTitle>
-                  <CardDescription>
-                    Bezoekersstatistieken en engagement
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Totaal pageviews</span>
-                      <span className="font-semibold">{stats.trafficStats?.totalPageViews?.toLocaleString() || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Unieke bezoekers</span>
-                      <span className="font-semibold">{stats.trafficStats?.uniqueVisitors?.toLocaleString() || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Bounce rate</span>
-                      <span className="font-semibold">{stats.trafficStats?.bounceRate || 'N/A'}%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Gem. sessieduur</span>
-                      <span className="font-semibold">{stats.trafficStats?.averageSessionDuration || 'N/A'}</span>
-                    </div>
+          {/* User Management */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Gebruikersbeheer
+              </CardTitle>
+              <CardDescription>
+                Beheer alle gebruikers en hun toegangsniveaus
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {/* Filters */}
+              <div className="flex flex-col md:flex-row gap-4 mb-6">
+                <div className="flex-1">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Zoek gebruikers..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10"
+                    />
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+                <Select value={roleFilter} onValueChange={setRoleFilter}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Filter op rol" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Alle rollen</SelectItem>
+                    <SelectItem value="FREE">Gratis</SelectItem>
+                    <SelectItem value="PREMIUM">Premium</SelectItem>
+                    <SelectItem value="ADMIN">Admin</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Filter op status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Alle statussen</SelectItem>
+                    <SelectItem value="active">Actief</SelectItem>
+                    <SelectItem value="suspended">Geschorst</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <UserCheck className="h-5 w-5" />
-                    Gebruikersgroei
-                  </CardTitle>
-                  <CardDescription>
-                    Nieuwe registraties en groeitrends
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Nieuw vandaag</span>
-                      <Badge variant="outline">{stats.userGrowth?.newUsersToday || 0}</Badge>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Nieuw deze week</span>
-                      <Badge variant="outline">{stats.userGrowth?.newUsersThisWeek || 0}</Badge>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Nieuw deze maand</span>
-                      <Badge variant="outline">{stats.userGrowth?.newUsersThisMonth || 0}</Badge>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Groeipercentage</span>
-                      <Badge variant={stats.userGrowth?.growthRate > 0 ? "default" : "secondary"}>
-                        {stats.userGrowth?.growthRate || 0}%
-                      </Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Activity className="h-5 w-5" />
-                    Systeem Status
-                  </CardTitle>
-                  <CardDescription>
-                    Real-time systeemgezondheid
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">API Status</span>
-                      <Badge className={getStatusColor(stats.systemHealth.apiStatus)}>
-                        {getStatusIcon(stats.systemHealth.apiStatus)} {stats.systemHealth.apiStatus}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">Database</span>
-                      <Badge className={getStatusColor(stats.systemHealth.dbStatus)}>
-                        {getStatusIcon(stats.systemHealth.dbStatus)} {stats.systemHealth.dbStatus}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">Response Time</span>
-                      <Badge variant="outline">
-                        <Zap className="h-3 w-3 mr-1" />
-                        {stats.systemHealth.responseTime}ms
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">Uptime</span>
-                      <Badge variant="outline">
-                        <Server className="h-3 w-3 mr-1" />
-                        {stats.systemHealth.uptime || '99.9%'}
-                      </Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Top Professions */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="h-5 w-5" />
-                    Populaire Beroepen
-                  </CardTitle>
-                  <CardDescription>
-                    Meest gebruikte beroepen in vragen ({stats.totalQuestions} totaal)
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {stats.topProfessions.map((profession, index) => {
-                      const percentage = ((profession.count / stats.totalQuestions) * 100).toFixed(1)
-                      return (
-                        <div key={profession.name} className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-xs font-bold">
-                              {index + 1}
-                            </div>
-                            <span className="font-medium text-gray-900 dark:text-white">
-                              {profession.name}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="secondary">
-                              {profession.count} ({percentage}%)
-                            </Badge>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Recent Questions */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <MessageSquare className="h-5 w-5" />
-                    Recente Vragen
-                  </CardTitle>
-                  <CardDescription>
-                    Laatste {stats.recentQuestions.length} gestelde vragen
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4 max-h-96 overflow-y-auto">
-                    {stats.recentQuestions.map((question) => (
-                      <div key={question.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-xs">
-                              {question.profession}
-                            </Badge>
-                            {question.isAnonymous && (
-                              <Badge variant="secondary" className="text-xs">
-                                Anoniem
+              {/* Users Table */}
+              <div className="overflow-x-auto">
+                <div className="space-y-4">
+                  {filteredUsers.map((user) => (
+                    <Card key={user.id} className="border-l-4 border-l-primary">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <h4 className="font-medium">{user.name}</h4>
+                              <Badge variant="outline" className={getRoleColor(user.role)}>
+                                {user.role}
                               </Badge>
-                            )}
+                              <Badge variant="outline" className={getStatusColor(user.status)}>
+                                {user.status === 'active' ? 'Actief' : 'Geschorst'}
+                              </Badge>
+                            </div>
+                            <div className="text-sm text-muted-foreground space-y-1">
+                              <p>{user.email}</p>
+                              <div className="flex items-center gap-4">
+                                <span>Aangemeld: {formatDate(user.createdAt)}</span>
+                                <span>Laatst actief: {formatDate(user.lastActive)}</span>
+                                <span>Vragen: {user.totalQueries}</span>
+                              </div>
+                            </div>
                           </div>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {new Date(question.timestamp).toLocaleString('nl-NL')}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleUserAction(user.id, 'view')}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleUserAction(user.id, 'edit')}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleUserAction(user.id, user.status === 'active' ? 'suspend' : 'activate')}
+                            >
+                              {user.status === 'active' ? <Lock className="h-4 w-4" /> : <Unlock className="h-4 w-4" />}
+                            </Button>
+                          </div>
                         </div>
-                        <p className="text-sm text-gray-900 dark:text-white line-clamp-2">
-                          {question.question}
-                        </p>
-                        {question.user && !question.isAnonymous && (
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                            Door: {question.user}
-                          </p>
-                        )}
-                      </div>
-                    ))}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* System Metrics */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5" />
+                Systeemmetrieken
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {metrics.map((metric, index) => (
+                  <div key={index} className="text-center">
+                    <p className="text-2xl font-bold">{metric.value}</p>
+                    <p className="text-sm text-muted-foreground">{metric.name}</p>
+                    <div className={`text-xs mt-1 ${
+                      metric.status === 'up' ? 'text-green-600' : 
+                      metric.status === 'down' ? 'text-red-600' : 'text-gray-600'
+                    }`}>
+                      {metric.change !== 0 && (
+                        <>
+                          {metric.change > 0 ? '+' : ''}{metric.change}%
+                        </>
+                      )}
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
-          </>
-        )}
-      </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
     </div>
   )
 } 

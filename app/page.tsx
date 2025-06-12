@@ -89,16 +89,51 @@ const TARGET_AUDIENCE = [
   }
 ]
 
-// User profile options
+// User profile options - uitgebreid met beschrijvingen
 const USER_PROFILES = [
-  { value: "algemeen", label: "Algemeen publiek" },
-  { value: "juridisch-expert", label: "Juridisch Expert" },
-  { value: "jurist", label: "Jurist/Advocaat" },
-  { value: "politie", label: "Politie" },
-  { value: "boa", label: "BOA/Toezichthouder" },
-  { value: "student", label: "Student" },
-  { value: "overig", label: "Overig" }
-  ]
+  { 
+    value: "algemeen", 
+    label: "Algemeen publiek",
+    description: "Voor burgers die juridische informatie zoeken",
+    icon: Users
+  },
+  { 
+    value: "juridisch-expert", 
+    label: "Juridisch Expert",
+    description: "Voor ervaren juristen en rechtsgeleerden",
+    icon: Scale
+  },
+  { 
+    value: "jurist", 
+    label: "Jurist/Advocaat",
+    description: "Voor praktiserende juristen en advocaten",
+    icon: BookOpen
+  },
+  { 
+    value: "politie", 
+    label: "Politie",
+    description: "Voor politieagenten en opsporingsambtenaren",
+    icon: Shield
+  },
+  { 
+    value: "boa", 
+    label: "BOA/Toezichthouder",
+    description: "Voor buitengewoon opsporingsambtenaren",
+    icon: Shield
+  },
+  { 
+    value: "student", 
+    label: "Student",
+    description: "Voor studenten rechten en gerelateerde studies",
+    icon: BookOpen
+  },
+  { 
+    value: "overig", 
+    label: "Overig",
+    description: "Voor andere professionele gebruikers",
+    icon: User
+  }
+]
 
 export default function HomePage() {
   const { data: session, status } = useSession()
@@ -286,7 +321,6 @@ export default function HomePage() {
             <div className="max-w-3xl mx-auto mb-10">
               <div className="bg-white/80 backdrop-blur-sm border border-border/60 rounded-2xl p-6 shadow-medium">
                 <h2 className="text-lg font-semibold text-center mb-4 text-foreground">
-                  <Search className="h-5 w-5 inline mr-2 text-primary" />
                   Stel uw juridische vraag
                 </h2>
                 <form onSubmit={handleSearch} className="relative">
@@ -394,19 +428,79 @@ export default function HomePage() {
             {TARGET_AUDIENCE.map((audience) => (
               <Card key={audience.title} className="card-elevated text-center">
                 <CardHeader>
-                  <div className="mx-auto mb-4 p-3 rounded-xl bg-accent/10 w-fit">
-                    <audience.icon className="h-6 w-6 text-accent" />
+                  <div className="mx-auto mb-4 p-3 rounded-xl bg-primary/10 w-fit">
+                    <audience.icon className="h-8 w-8 text-primary" />
                   </div>
-                  <CardTitle className="text-lg">{audience.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>
+                  <CardTitle className="text-lg mb-2">{audience.title}</CardTitle>
+                  <CardDescription className="text-sm">
                     {audience.description}
                   </CardDescription>
-                </CardContent>
+                </CardHeader>
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Function Profiles Selection */}
+      <section className="section-padding">
+        <div className="container-fluid">
+          <div className="text-center mb-12">
+            <h2 className="text-xl md:text-2xl font-bold mb-3">Kies uw functie voor gepersonaliseerde resultaten</h2>
+            <p className="text-base text-muted-foreground max-w-2xl mx-auto">
+              Selecteer uw profiel om zoekresultaten en uitleg af te stemmen op uw specifieke behoeften en expertise niveau
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            {USER_PROFILES.map((profile) => (
+              <Card 
+                key={profile.value} 
+                className={`card-interactive cursor-pointer transition-all duration-200 ${
+                  userProfile === profile.value 
+                    ? 'ring-2 ring-primary bg-primary/5 border-primary' 
+                    : 'hover:border-primary/50'
+                }`}
+                onClick={() => setUserProfile(profile.value)}
+              >
+                <CardHeader className="text-center pb-4">
+                  <div className={`mx-auto mb-3 p-3 rounded-xl w-fit transition-colors ${
+                    userProfile === profile.value 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-primary/10 text-primary'
+                  }`}>
+                    <profile.icon className="h-6 w-6" />
+                  </div>
+                  <CardTitle className="text-base mb-2">{profile.label}</CardTitle>
+                  <CardDescription className="text-xs leading-relaxed">
+                    {profile.description}
+                  </CardDescription>
+                  {userProfile === profile.value && (
+                    <div className="mt-3 flex items-center justify-center gap-2 text-primary">
+                      <CheckCircle className="h-4 w-4" />
+                      <span className="text-xs font-medium">Geselecteerd</span>
+                    </div>
+                  )}
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+
+          {userProfile && (
+            <div className="mt-8 max-w-2xl mx-auto">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <span className="font-medium text-green-800">
+                    Profiel geselecteerd: {USER_PROFILES.find(p => p.value === userProfile)?.label}
+                  </span>
+                </div>
+                <p className="text-sm text-green-700">
+                  Uw zoekresultaten worden nu afgestemd op uw functie en expertise niveau
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 

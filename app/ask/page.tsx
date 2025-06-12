@@ -988,18 +988,18 @@ export default function AskPage() {
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Stel uw juridische vraag..."
                     disabled={false}
-                    className="w-full text-sm sm:text-base py-2 sm:py-3 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                    className="w-full text-sm sm:text-base py-3 sm:py-3 px-3 sm:px-4 border-slate-300 focus:border-blue-500 focus:ring-blue-500 h-12 sm:h-auto"
                   />
                 </div>
                 <Button 
                   type="submit" 
                   disabled={isLoading || !input.trim()}
-                  className="px-3 sm:px-6 py-2 sm:py-3 bg-blue-600 hover:bg-blue-700"
+                  className="px-4 sm:px-6 py-3 sm:py-3 bg-blue-600 hover:bg-blue-700 h-12 sm:h-auto min-w-[60px] sm:min-w-auto"
                 >
                   {isLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className="h-4 w-4 sm:h-4 sm:w-4 animate-spin" />
                   ) : (
-                    <Send className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <Send className="h-4 w-4 sm:h-4 sm:w-4" />
                   )}
                 </Button>
               </div>

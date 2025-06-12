@@ -84,6 +84,17 @@ Het doel is dat elke gebruiker **weet wat de wet zegt**, **welke consequenties d
 • **EUR-Lex** – Europese wetgeving
 • **Officiële bekendmakingen en kamerstukken**
 • **Tuchtrecht.overheid.nl** – voor tuchtrechtelijke uitspraken
+• **Juridischloket.nl** – voor praktische juridische hulp en gratis rechtsbijstand
+• **CVDR** – voor gemeentelijke en provinciale verordeningen
+• **Data.overheid.nl** – voor open datasets en beleidsinformatie
+• **OpenRechtspraak.nl** – voor gestructureerde jurisprudentie
+• **BoeteBase OM** – voor feitcodes en boetebedragen
+• **Politie Open Data** – voor actuele politie-informatie
+• **Open Raadsinformatie** – voor gemeentelijke besluiten
+• **BAG API v2** – voor adres- en gebouwgegevens
+• **CBS StatLine** – voor officiële statistieken
+• **RDW Open Data** – voor voertuig- en kentekengegevens
+• **OpenKVK** – voor bedrijfsgegevens
 
 ## 📋 BRONVERMELDING (verplicht):
 

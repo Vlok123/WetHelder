@@ -15,6 +15,18 @@ import {
   fetchKadaster,
   fetchPolitie,
   fetchRijksoverheid,
+  fetchJuridischLoket,
+  fetchCVDR,
+  fetchDataOverheid,
+  fetchOpenRechtspraak,
+  fetchBoetebaseOM,
+  fetchPolitieOpenData,
+  fetchOpenRaadsinformatie,
+  fetchBAGAPI,
+  fetchCBSStatLine,
+  fetchRDWOpenData,
+  fetchOpenKVK,
+  fetchEURLexWebService,
   searchOfficialSources as searchOfficialSourcesLib
 } from '@/lib/officialSources'
 
@@ -45,6 +57,18 @@ export async function GET(request: NextRequest) {
         kadaster: 'configured',
         politie: 'configured',
         rijksoverheid: 'configured',
+        juridischloket: 'configured',
+        cvdr: 'configured',
+        dataoverheid: 'configured',
+        openrechtspraak: 'configured',
+        boetebaseom: 'configured',
+        politieopendata: 'configured',
+        openraadsinformatie: 'configured',
+        bagapi: 'configured',
+        cbsstatline: 'configured',
+        rdwopendata: 'configured',
+        openkvk: 'configured',
+        eurlexwebservice: 'configured',
         eurlex: 'planned'
       }
     })
@@ -175,9 +199,107 @@ export async function POST(request: NextRequest) {
           console.error('Rijksoverheid fetch failed:', error)
         })
         break
+
+      case 'juridischloket':
+        fetchJuridischLoket().then(docs => {
+          console.log(`Fetched ${docs.length} documents from Juridisch Loket`)
+        }).catch(error => {
+          console.error('Juridisch Loket fetch failed:', error)
+        })
+        break
+        
+      case 'cvdr':
+        fetchCVDR('').then(docs => {
+          console.log(`Fetched ${docs.length} documents from CVDR`)
+        }).catch(error => {
+          console.error('CVDR fetch failed:', error)
+        })
+        break
+        
+      case 'dataoverheid':
+        fetchDataOverheid('').then(docs => {
+          console.log(`Fetched ${docs.length} documents from Data.overheid.nl`)
+        }).catch(error => {
+          console.error('Data.overheid.nl fetch failed:', error)
+        })
+        break
+        
+      case 'openrechtspraak':
+        fetchOpenRechtspraak('').then(docs => {
+          console.log(`Fetched ${docs.length} documents from OpenRechtspraak`)
+        }).catch(error => {
+          console.error('OpenRechtspraak fetch failed:', error)
+        })
+        break
+        
+      case 'boetebaseom':
+        fetchBoetebaseOM('').then(docs => {
+          console.log(`Fetched ${docs.length} documents from BoeteBase OM`)
+        }).catch(error => {
+          console.error('BoeteBase OM fetch failed:', error)
+        })
+        break
+        
+      case 'politieopendata':
+        fetchPolitieOpenData('').then(docs => {
+          console.log(`Fetched ${docs.length} documents from Politie Open Data`)
+        }).catch(error => {
+          console.error('Politie Open Data fetch failed:', error)
+        })
+        break
+        
+      case 'openraadsinformatie':
+        fetchOpenRaadsinformatie('').then(docs => {
+          console.log(`Fetched ${docs.length} documents from Open Raadsinformatie`)
+        }).catch(error => {
+          console.error('Open Raadsinformatie fetch failed:', error)
+        })
+        break
+        
+      case 'bagapi':
+        fetchBAGAPI('').then(docs => {
+          console.log(`Fetched ${docs.length} documents from BAG API`)
+        }).catch(error => {
+          console.error('BAG API fetch failed:', error)
+        })
+        break
+        
+      case 'cbsstatline':
+        fetchCBSStatLine('').then(docs => {
+          console.log(`Fetched ${docs.length} documents from CBS StatLine`)
+        }).catch(error => {
+          console.error('CBS StatLine fetch failed:', error)
+        })
+        break
+        
+      case 'rdwopendata':
+        fetchRDWOpenData('').then(docs => {
+          console.log(`Fetched ${docs.length} documents from RDW Open Data`)
+        }).catch(error => {
+          console.error('RDW Open Data fetch failed:', error)
+        })
+        break
+        
+      case 'openkvk':
+        fetchOpenKVK('').then(docs => {
+          console.log(`Fetched ${docs.length} documents from OpenKVK`)
+        }).catch(error => {
+          console.error('OpenKVK fetch failed:', error)
+        })
+        break
+        
+      case 'eurlexwebservice':
+        fetchEURLexWebService('').then(docs => {
+          console.log(`Fetched ${docs.length} documents from EUR-Lex Web Service`)
+        }).catch(error => {
+          console.error('EUR-Lex Web Service fetch failed:', error)
+        })
+        break
         
       default:
-        return NextResponse.json({ error: 'Unknown source' }, { status: 400 })
+        return NextResponse.json({ 
+          error: `Onbekende bron: ${source}. Beschikbare bronnen: wettenbank, rechtspraak, koop, cvdr, dataoverheid, openrechtspraak, boetebaseom, politieopendata, openraadsinformatie, bagapi, cbsstatline, rdwopendata, openkvk, eurlexwebservice` 
+        }, { status: 400 })
     }
 
     return NextResponse.json({

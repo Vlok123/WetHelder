@@ -7,8 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Mail, MapPin, Phone, Send, CheckCircle, Scale, Clock, Users, MessageCircle } from 'lucide-react'
-
+import { Mail, MapPin, Phone, Send, CheckCircle, Clock, Users, MessageCircle, ExternalLink } from 'lucide-react'
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -92,64 +91,163 @@ export default function ContactPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-              Contact WetHelder
+              Contact
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Heeft u vragen over juridische informatie, technische ondersteuning nodig, 
-              of wilt u feedback geven? Wij helpen u graag verder.
+              Heeft u vragen, feedback of suggesties? We helpen u graag verder. 
+              Vul het onderstaande formulier in en we nemen zo spoedig mogelijk contact met u op.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageCircle className="h-5 w-5 text-primary" />
-                  Algemene Vragen
-                </CardTitle>
-                <CardDescription>
-                  Voor algemene vragen over WetHelder en juridische informatie
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">info@wethelder.nl</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">Reactie binnen 24 uur</span>
-                  </div>
+              <CardHeader className="text-center">
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-3 mx-auto">
+                  <MessageCircle className="h-6 w-6 text-blue-600" />
                 </div>
+                <CardTitle className="text-lg">Snelle Response</CardTitle>
+              </CardHeader>
+              <CardContent className="text-center">
+                <p className="text-sm text-muted-foreground">
+                  We streven ernaar om binnen 24 uur te reageren op uw bericht
+                </p>
               </CardContent>
             </Card>
 
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Phone className="h-5 w-5 text-primary" />
-                  Technische Ondersteuning
-                </CardTitle>
-                <CardDescription>
-                  Voor technische problemen en account-gerelateerde vragen
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">support@wethelder.nl</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">Ma-Vr 9:00-17:00</span>
-                  </div>
+              <CardHeader className="text-center">
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-3 mx-auto">
+                  <Users className="h-6 w-6 text-green-600" />
                 </div>
+                <CardTitle className="text-lg">Persoonlijke Aanpak</CardTitle>
+              </CardHeader>
+              <CardContent className="text-center">
+                <p className="text-sm text-muted-foreground">
+                  Elk bericht wordt persoonlijk behandeld door ons ervaren team
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="text-center">
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mb-3 mx-auto">
+                  <Mail className="h-6 w-6 text-purple-600" />
+                </div>
+                <CardTitle className="text-lg">Betrouwbaar</CardTitle>
+              </CardHeader>
+              <CardContent className="text-center">
+                <p className="text-sm text-muted-foreground">
+                  Uw gegevens worden vertrouwelijk behandeld volgens onze privacy policy
+                </p>
               </CardContent>
             </Card>
           </div>
 
+          {/* Contact Form */}
+          <Card className="mb-12">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Send className="h-5 w-5 text-primary" />
+                Contactformulier
+              </CardTitle>
+              <CardDescription>
+                Vul onderstaand formulier in voor vragen, feedback of ondersteuning
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="name" className="text-sm font-medium text-foreground">
+                      Naam <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      id="name"
+                      name="name"
+                      type="text"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      placeholder="Uw volledige naam"
+                      required
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="email" className="text-sm font-medium text-foreground">
+                      E-mailadres <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      placeholder="uw.email@voorbeeld.nl"
+                      required
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="subject" className="text-sm font-medium text-foreground">
+                    Onderwerp <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    id="subject"
+                    name="subject"
+                    type="text"
+                    value={formData.subject}
+                    onChange={handleInputChange}
+                    placeholder="Korte omschrijving van uw vraag"
+                    required
+                    className="w-full"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="message" className="text-sm font-medium text-foreground">
+                    Bericht <span className="text-red-500">*</span>
+                  </label>
+                  <Textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    placeholder="Beschrijf uw vraag of feedback in detail..."
+                    required
+                    rows={6}
+                    className="w-full resize-none"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between pt-4">
+                  <p className="text-xs text-muted-foreground">
+                    <span className="text-red-500">*</span> Verplichte velden
+                  </p>
+                  <Button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                    className="min-w-[120px]"
+                  >
+                    {isSubmitting ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Verzenden...
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Send className="h-4 w-4" />
+                        Verzenden
+                      </div>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* FAQ Section */}
           <Card className="mb-8">
             <CardHeader>
               <CardTitle>Veelgestelde Vragen</CardTitle>
@@ -157,50 +255,61 @@ export default function ContactPage() {
                 Bekijk eerst onze veelgestelde vragen voor snelle antwoorden
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               <div className="border-l-4 border-primary pl-4">
-                <h3 className="font-semibold mb-1">Is WetHelder gratis te gebruiken?</h3>
-                <p className="text-sm text-muted-foreground">
-                  Ja, WetHelder is gratis toegankelijk voor alle gebruikers. Sommige premium functies 
-                  kunnen in de toekomst beschikbaar komen.
-                </p>
-              </div>
-              
-              <div className="border-l-4 border-primary pl-4">
-                <h3 className="font-semibold mb-1">Hoe actueel is de juridische informatie?</h3>
+                <h3 className="font-semibold mb-2">Hoe actueel is de juridische informatie?</h3>
                 <p className="text-sm text-muted-foreground">
                   Onze database wordt regelmatig bijgewerkt met de meest recente wetgeving en rechtspraak. 
-                  Controleer altijd de datum van publicatie.
+                  Controleer altijd de datum van publicatie voor de meest actuele informatie.
                 </p>
               </div>
               
               <div className="border-l-4 border-primary pl-4">
-                <h3 className="font-semibold mb-1">Kan ik juridisch advies krijgen via WetHelder?</h3>
+                <h3 className="font-semibold mb-2">Kan ik juridisch advies krijgen?</h3>
                 <p className="text-sm text-muted-foreground">
-                  WetHelder biedt informatieve content, geen juridisch advies. Voor specifieke juridische 
-                  problemen raadpleegt u een gekwalificeerde jurist.
+                  Deze platform biedt informatieve content, geen juridisch advies. Voor specifieke juridische 
+                  problemen raadpleegt u altijd een gekwalificeerde jurist of advocaat.
                 </p>
               </div>
-            </CardContent>
-          </Card>
+              
+              <div className="border-l-4 border-primary pl-4">
+                <h3 className="font-semibold mb-2">Is deze service gratis?</h3>
+                <p className="text-sm text-muted-foreground">
+                  Ja, de basisservice is gratis toegankelijk voor alle gebruikers. Sommige premium functies 
+                  kunnen in de toekomst beschikbaar komen voor geregistreerde gebruikers.
+                </p>
+              </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-primary" />
-                Over WetHelder
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
-                WetHelder is een Nederlandse juridische informatieplatform dat zich richt op het 
-                toegankelijk maken van wetgeving en rechtspraak voor iedereen. Ons doel is om 
-                betrouwbare juridische informatie te bieden in begrijpelijke taal.
-              </p>
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <p className="text-sm text-yellow-800">
-                  <strong>Disclaimer:</strong> WetHelder is momenteel in beta-ontwikkeling. 
-                  Controleer belangrijke informatie altijd via officiële bronnen.
+              <div className="border-l-4 border-blue-500 pl-4 bg-blue-50 p-4 rounded-r-lg">
+                <h3 className="font-semibold mb-2 text-blue-900">Wie staat achter dit platform?</h3>
+                <p className="text-sm text-blue-800 mb-3">
+                  Dit platform is ontwikkeld door <strong>CalmPoint</strong>, een gespecialiseerd bureau voor 
+                  de-escalatie trainings en advies. De ontwikkeling kwam voort uit een concrete behoefte aan 
+                  een goede juridische kennisbasis voor professionals die dagelijks te maken hebben met complexe situaties.
+                </p>
+                <p className="text-sm text-blue-800 mb-3">
+                  Of het nu gaat om ambtenaren, klantenservice medewerkers, of andere professionals - iedereen 
+                  heeft baat bij toegankelijke en betrouwbare juridische informatie om hun werk beter te kunnen doen.
+                </p>
+                <div className="flex items-center gap-2 mt-3">
+                  <span className="text-sm text-blue-800">Meer informatie:</span>
+                  <a 
+                    href="https://www.calmpoint.nl" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 underline"
+                  >
+                    www.calmpoint.nl
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                </div>
+              </div>
+
+              <div className="border-l-4 border-primary pl-4">
+                <h3 className="font-semibold mb-2">Hoe kan ik feedback geven?</h3>
+                <p className="text-sm text-muted-foreground">
+                  We waarderen uw feedback! Gebruik het contactformulier hierboven om suggesties, 
+                  verbeterpunten of complimenten door te geven. Uw input helpt ons het platform te verbeteren.
                 </p>
               </div>
             </CardContent>

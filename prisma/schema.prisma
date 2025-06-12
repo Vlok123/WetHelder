@@ -54,6 +54,13 @@ model User {
   sessions      Session[]
   queries       Query[]
   dailyUsage    DailyUsage[]
+  
+  // Nieuwe relaties voor uitgebreid ledendeel
+  notes         UserNote[]
+  categories    UserCategory[]
+  favorites     UserFavorite[]
+  searchHistory UserSearchHistory[]
+  adminLogs     AdminLog[] @relation("AdminLogs")
 
   @@index([email])
 }
@@ -89,6 +96,12 @@ model Query {
   profession String   @default("burger")
   userId     String?  // Optional for anonymous users
   user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  // Nieuwe relaties
+  notes      UserNote[]
+  categories CategoryQuery[]
+  favorites  UserFavorite[]
+  
   createdAt  DateTime @default(now())
 
   @@index([createdAt])
@@ -248,4 +261,128 @@ model DataIngestLog {
   @@index([bron, type])
   @@index([status])
   @@index([startedAt])
+}
+
+// === NIEUWE MODELLEN VOOR UITGEBREID LEDENDEEL EN ADMIN ===
+
+// User notes - gebruikers kunnen notities maken bij hun vragen
+model UserNote {
+  id        String   @id @default(cuid())
+  userId    String
+  queryId   String?  // Optioneel gekoppeld aan een vraag
+  title     String
+  content   String   @db.Text
+  color     String   @default("blue") // Voor visuele categorisering
+  tags      String[] // Vrije tags
+  isPrivate Boolean  @default(true)
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  query     Query?   @relation(fields: [queryId], references: [id], onDelete: SetNull)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([tags])
+}
+
+// User categories - gebruikers kunnen eigen categorieën maken
+model UserCategory {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  color       String   @default("gray")
+  icon        String   @default("folder")
+  sortOrder   Int      @default(0)
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  queries     CategoryQuery[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, name])
+  @@index([userId, sortOrder])
+}
+
+// Koppeling tussen queries en user categories
+model CategoryQuery {
+  id         String       @id @default(cuid())
+  queryId    String
+  categoryId String
+  
+  query      Query        @relation(fields: [queryId], references: [id], onDelete: Cascade)
+  category   UserCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  createdAt  DateTime     @default(now())
+
+  @@unique([queryId, categoryId])
+  @@index([categoryId])
+}
+
+// User favorites - gebruikers kunnen vragen favoriet maken
+model UserFavorite {
+  id      String @id @default(cuid())
+  userId  String
+  queryId String
+  
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  query   Query  @relation(fields: [queryId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+
+  @@unique([userId, queryId])
+  @@index([userId, createdAt])
+}
+
+// Search history - zoekgeschiedenis van gebruikers
+model UserSearchHistory {
+  id         String @id @default(cuid())
+  userId     String
+  searchTerm String
+  profession String @default("algemeen")
+  resultCount Int   @default(0)
+  
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt  DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([searchTerm])
+}
+
+// Admin logs - voor audit trail
+model AdminLog {
+  id        String @id @default(cuid())
+  adminId   String
+  action    String // CREATE_USER, DELETE_USER, CHANGE_ROLE, VIEW_STATS, etc.
+  target    String? // ID van het beïnvloede object
+  details   String? @db.Text // JSON details van de actie
+  ipAddress String?
+  userAgent String? @db.Text
+  
+  admin     User   @relation("AdminLogs", fields: [adminId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+
+  @@index([adminId, createdAt])
+  @@index([action])
+  @@index([createdAt])
+}
+
+// System settings - configuratie instellingen
+model SystemSetting {
+  id          String @id @default(cuid())
+  key         String @unique
+  value       String @db.Text
+  description String?
+  category    String @default("general")
+  isPublic    Boolean @default(false)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([isPublic])
 } 
