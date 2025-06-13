@@ -1388,47 +1388,36 @@ function detectAndCorrectLegalMistakes(response: string): string {
 function cleanupResponseFormatting(response: string): string {
   let cleanedResponse = response
 
-  // STAP 1: Verwijder alle Markdown formatting voor schone tekst
+  // STAP 1: Behoud structurele elementen maar verwijder problematische Markdown
   const markdownCleanup = [
-    // Verwijder ** bold formatting
-    { pattern: /\*\*(.*?)\*\*/g, replacement: '$1' },
-    
-    // Verwijder ## headers en maak gewone tekst
-    { pattern: /^#{1,6}\s*(.*?)$/gm, replacement: '$1' },
+    // Verwijder alleen problematische ** bold formatting (behoud belangrijke structuur)
+    { pattern: /\*\*([^*\n]{1,3})\*\*/g, replacement: '$1' }, // Korte woorden
     
     // Verwijder *** en andere emphasis
-    { pattern: /\*{1,3}(.*?)\*{1,3}/g, replacement: '$1' },
+    { pattern: /\*{3,}(.*?)\*{3,}/g, replacement: '$1' },
     
-    // Verwijder _ emphasis
-    { pattern: /_{1,2}(.*?)_{1,2}/g, replacement: '$1' },
+    // Verwijder _ emphasis maar behoud belangrijke structuur
+    { pattern: /_{1,2}([^_\n]{1,10})_{1,2}/g, replacement: '$1' },
     
     // Verwijder ` code formatting
-    { pattern: /`(.*?)`/g, replacement: '$1' },
+    { pattern: /`([^`\n]+)`/g, replacement: '$1' },
     
-    // Verwijder > blockquote markers
-    { pattern: /^>\s*/gm, replacement: '' },
+    // Behoud > blockquote markers voor citaten (deze worden door frontend verwerkt)
+    // { pattern: /^>\s*/gm, replacement: '' }, // UITGESCHAKELD - behoud citaten
   ]
 
   markdownCleanup.forEach(({ pattern, replacement }) => {
     cleanedResponse = cleanedResponse.replace(pattern, replacement)
   })
 
-  // STAP 2: Fix problematische opmaak patronen
-  const formattingFixes = [
-    // Fix "punt + enter + tekst" naar "punt tekst" (vloeiende zinnen)
-    { pattern: /\.\s*\n\s*([a-z])/g, replacement: '. $1' },
+  // STAP 2: Verbeter structuur en behoud belangrijke kopjes
+  const structuralImprovements = [
+    // Verbeter kopjes - zorg dat ze op eigen regel staan
+    { pattern: /([.!?])\s*([A-Z][^.!?\n]*:)\s*/g, replacement: '$1\n\n$2\n' },
     
-    // Fix "komma + enter + tekst" naar "komma tekst"  
-    { pattern: /,\s*\n\s*([a-z])/g, replacement: ', $1' },
-    
-    // Fix "puntkomma + enter + tekst" naar "puntkomma tekst"
-    { pattern: /;\s*\n\s*([a-z])/g, replacement: '; $1' },
-    
-    // Fix "dubbelpunt + enter + tekst" naar "dubbelpunt tekst" (alleen voor korte zinnen)
-    { pattern: /:\s*\n\s*([a-z][^.\n]{1,60}[.])/g, replacement: ': $1' },
-    
-    // Fix gebroken zinnen in het midden (veelvoorkomend AI probleem)
-    { pattern: /([a-z,])\s*\n\s*([a-z])/g, replacement: '$1 $2' },
+    // Verbeter lijsten - zorg voor goede spacing
+    { pattern: /([.!?])\s*(\d+\.\s+)/g, replacement: '$1\n\n$2' },
+    { pattern: /([.!?])\s*([-•]\s+)/g, replacement: '$1\n\n$2' },
     
     // Fix gebroken wetsartikelen
     { pattern: /artikel\s*\n\s*(\d+)/gi, replacement: 'artikel $1' },
@@ -1438,6 +1427,7 @@ function cleanupResponseFormatting(response: string): string {
     { pattern: /Wetboek\s*\n\s*van/gi, replacement: 'Wetboek van' },
     { pattern: /Strafvordering\s*\n\s*\(/gi, replacement: 'Strafvordering (' },
     { pattern: /Wet\s*\n\s*op/gi, replacement: 'Wet op' },
+    { pattern: /Burgerlijk\s*\n\s*Wetboek/gi, replacement: 'Burgerlijk Wetboek' },
     
     // Fix overtollige spaties voor leestekens
     { pattern: /\s+([.,;:!?])/g, replacement: '$1' },
@@ -1447,25 +1437,46 @@ function cleanupResponseFormatting(response: string): string {
     
     // Fix spaties aan begin/eind van regels
     { pattern: /^\s+|\s+$/gm, replacement: '' },
-    
-    // Fix spatiëring rond bullets en nummering
-    { pattern: /^(\d+\.)\s*/gm, replacement: '$1 ' },
-    { pattern: /^([-•*])\s*/gm, replacement: '$1 ' },
   ]
 
-  formattingFixes.forEach(({ pattern, replacement }) => {
+  structuralImprovements.forEach(({ pattern, replacement }) => {
     cleanedResponse = cleanedResponse.replace(pattern, replacement)
   })
 
-  // STAP 3: Verbeter structuur en leesbaarheid
+  // STAP 3: Behoud en verbeter belangrijke structurele elementen
+  const structuralEnhancements = [
+    // Zorg dat belangrijke kopjes goed geformatteerd zijn
+    { pattern: /^(Wettelijke basis|Belangrijke punten?|Conclusie|Samenvatting|Kernpunten?|Hoofdpunten?|Voorwaarden?|Gevolgen?|Rechten?|Plichten?|Procedures?):\s*/gmi, replacement: '\n\n$1:\n' },
+    
+    // Verbeter artikelverwijzingen
+    { pattern: /\b(Artikel \d+[a-z]?)\b/g, replacement: '$1' },
+    { pattern: /\b(Art\. \d+[a-z]?)\b/g, replacement: '$1' },
+    
+    // Verbeter wetnamen
+    { pattern: /\b(Wet op de [A-Za-z\s]+|Wetboek van [A-Za-z\s]+|Burgerlijk Wetboek|Strafwetboek|Grondwet)\b/g, replacement: '$1' },
+    
+    // Fix problematische opmaak patronen maar behoud structuur
+    { pattern: /\.\s*\n\s*([a-z])/g, replacement: '. $1' }, // Alleen kleine letters na punt
+    { pattern: /,\s*\n\s*([a-z])/g, replacement: ', $1' },
+    { pattern: /;\s*\n\s*([a-z])/g, replacement: '; $1' },
+    
+    // Behoud structuur voor kopjes en lijsten
+    { pattern: /:\s*\n\s*([A-Z])/g, replacement: ':\n$1' }, // Behoud kopjes na dubbelpunt
+  ]
+
+  structuralEnhancements.forEach(({ pattern, replacement }) => {
+    cleanedResponse = cleanedResponse.replace(pattern, replacement)
+  })
+
+  // STAP 4: Finaliseer structuur en leesbaarheid
   // Zorg voor juiste paragraaf scheiding
   cleanedResponse = cleanedResponse.replace(/\n{3,}/g, '\n\n')
   
-  // Zorg ervoor dat er een lege regel is tussen verschillende secties
-  cleanedResponse = cleanedResponse.replace(/([.!?])\n([A-Z])/g, '$1\n\n$2')
+  // Zorg ervoor dat er een lege regel is tussen verschillende secties (maar niet teveel)
+  cleanedResponse = cleanedResponse.replace(/([.!?])\n([A-Z][^.!?\n]*:)/g, '$1\n\n$2')
   
   // Maar niet teveel lege regels
-  cleanedResponse = cleanedResponse.replace(/\n{3,}/g, '\n\n')
+  cleanedResponse = cleanedResponse.replace(/\n{4,}/g, '\n\n')
   
   // Trim begin en eind
   cleanedResponse = cleanedResponse.trim()
@@ -1736,19 +1747,24 @@ ${fragmentsText}
 
 BELANGRIJKE INSTRUCTIES VOOR JE ANTWOORD:
 - Gebruik GEEN Markdown formatting (geen **, ##, _, \`, etc.)
-- Schrijf in gewone, natuurlijke Nederlandse tekst
+- Schrijf in gewone, natuurlijke Nederlandse tekst met duidelijke structuur
 - Gebruik citaten uit de bronnen door ze tussen aanhalingstekens te plaatsen: "exacte tekst uit bron"
 - Noem altijd de bron bij het antwoord
+- Structureer je antwoord met duidelijke kopjes en secties:
+  * Begin met een korte samenvatting
+  * Gebruik kopjes zoals "Wettelijke basis:", "Belangrijke punten:", "Conclusie:"
+  * Maak gebruik van genummerde lijsten voor stappen of procedures
+  * Gebruik opsommingen voor belangrijke punten
+- Maak belangrijke juridische termen, artikelnummers en wetnamen dikgedrukt door ze te benadrukken
 - Zeg het eerlijk als de informatie niet actueel of onvolledig is
 - Bij bedragen en tarieven: vermeld altijd het geldige jaar
 - Als iets onduidelijk is uit de fragmenten, zeg dat expliciet
 - Geef geen informatie die niet in de fragmenten staat
-- Gebruik duidelijke paragrafen en structuur, maar zonder speciale opmaak
 - Begin direct met het antwoord, geen headers of titels
 
 Het is nu ${currentYear}. Als de informatie uit een ander jaar komt, vermeld dit expliciet.
 
-Schrijf je antwoord als een heldere, professionele juridische uitleg zonder opmaakcodes.`
+Schrijf je antwoord als een heldere, professionele juridische uitleg met goede structuur en leesbaarheid.`
     // Check if OpenAI API key is available
     if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-development-placeholder') {
       console.warn('OpenAI API key not configured, using fallback response')
