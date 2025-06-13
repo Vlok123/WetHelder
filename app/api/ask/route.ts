@@ -79,12 +79,15 @@ Beantwoord vragen op een natuurlijke manier, alsof je een ervaren juridisch advi
 - **Zorg voor correcte spatiëring**: schrijf "artikel 5" niet "artikel5", "per 1 januari 2023" niet "per1januari2023"
 - **Wees praktisch en realistisch** in je adviezen
 
-**FORMATTING - GEEN ### HEADERS:**
+**FORMATTING - COMPACTE OPMAAK:**
 - Gebruik **vet** voor belangrijke termen en artikelnummers  
 - Gebruik **ALLEEN** ** voor koppen, **NOOIT** ###
 - Gebruik > voor belangrijke citaten uit wetten
 - Maak gebruik van bullets voor opsommingen
-- Elke alinea gescheiden door een lege regel
+- **GEEN onnodige witregels:** schrijf vloeiende tekst zonder overtollige enters
+- **Combineer zinnen:** gebruik komma's en puntkomma's in plaats van nieuwe regels
+- **Compacte bullets:** zet bullets direct na elkaar zonder lege regels ertussen
+- Alleen lege regel tussen verschillende hoofdonderwerpen
 
 **BRONVERWIJZING:**
 Eindig altijd met een korte bronverwijzing naar de relevante officiële bronnen.
@@ -154,14 +157,17 @@ Beantwoord vragen uitgebreid en diepgaand, alsof je een senior juridisch adviseu
 - **Geef concrete artikelnummers** met volledige wettekst waar relevant
 - **Pas je taalgebruik aan** aan de doelgroep (burger, politieagent, jurist) en geef passende uitleg
 
-**FORMATTING - GEEN ### HEADERS:**
+**FORMATTING - COMPACTE OPMAAK:**
 - Gebruik **vet** voor belangrijke termen en artikelnummers
 - Gebruik **ALLEEN** ** voor koppen, **NOOIT** ### headers
 - Gebruik > voor **volledige citaten** uit wetten
 - Maak gebruik van bullets voor opsommingen
 - Gebruik kopjes voor structuur (**Hoofdkopje**, **Subkopje**)
 - **Kader artikelteksten** apart voor duidelijkheid
-- Elke alinea gescheiden door een lege regel
+- **GEEN onnodige witregels:** schrijf vloeiende tekst zonder overtollige enters
+- **Combineer zinnen:** gebruik komma's en puntkomma's in plaats van nieuwe regels
+- **Compacte bullets:** zet bullets direct na elkaar zonder lege regels ertussen
+- Alleen lege regel tussen verschillende hoofdonderwerpen
 
 **BRONVERWIJZING:**
 Eindig altijd met uitgebreide bronverwijzing naar alle relevante officiële bronnen.
@@ -1378,6 +1384,64 @@ function detectAndCorrectLegalMistakes(response: string): string {
   return correctedResponse
 }
 
+// Nieuwe functie om opmaak te verbeteren
+function cleanupResponseFormatting(response: string): string {
+  let cleanedResponse = response
+
+  // Verwijder overtollige witregels (meer dan 2 opeenvolgende enters)
+  cleanedResponse = cleanedResponse.replace(/\n{3,}/g, '\n\n')
+  
+  // Fix problematische opmaak patronen
+  const formattingFixes = [
+    // Fix "punt + enter + tekst" naar "punt tekst"
+    { pattern: /\.\s*\n\s*([a-z])/g, replacement: '. $1' },
+    
+    // Fix "komma + enter + tekst" naar "komma tekst"  
+    { pattern: /,\s*\n\s*([a-z])/g, replacement: ', $1' },
+    
+    // Fix "dubbelpunt + enter + tekst" naar "dubbelpunt tekst" (alleen voor korte zinnen)
+    { pattern: /:\s*\n\s*([a-z][^.\n]{1,50}[.])/g, replacement: ': $1' },
+    
+    // Fix overtollige spaties voor leestekens
+    { pattern: /\s+([.,;:!?])/g, replacement: '$1' },
+    
+    // Fix spaties na bullets
+    { pattern: /^(\s*[-•*])\s+/gm, replacement: '$1 ' },
+    
+    // Fix dubbele spaties
+    { pattern: /  +/g, replacement: ' ' },
+    
+    // Fix spaties aan begin/eind van regels
+    { pattern: /^\s+|\s+$/gm, replacement: '' },
+    
+    // Fix lege regels met alleen spaties
+    { pattern: /^\s*$/gm, replacement: '' },
+    
+    // Zorg voor juiste spatiëring rond **bold** tekst
+    { pattern: /\*\*\s+/g, replacement: '**' },
+    { pattern: /\s+\*\*/g, replacement: '**' },
+    
+    // Fix spatiëring rond bullets en nummering
+    { pattern: /^(\d+\.)\s*/gm, replacement: '$1 ' },
+    { pattern: /^([-•*])\s*/gm, replacement: '$1 ' },
+  ]
+
+  formattingFixes.forEach(({ pattern, replacement }) => {
+    cleanedResponse = cleanedResponse.replace(pattern, replacement)
+  })
+
+  // Zorg ervoor dat er altijd een lege regel is tussen verschillende secties
+  cleanedResponse = cleanedResponse.replace(/(\*\*[^*]+\*\*)\n([^*\n])/g, '$1\n\n$2')
+  
+  // Maar niet teveel lege regels
+  cleanedResponse = cleanedResponse.replace(/\n{3,}/g, '\n\n')
+  
+  // Trim begin en eind
+  cleanedResponse = cleanedResponse.trim()
+
+  return cleanedResponse
+}
+
 // Response validatie voor juridische nauwkeurigheid
 function validateLegalResponse(query: string, response: string): string {
   const lowerQuery = query.toLowerCase()
@@ -1420,6 +1484,9 @@ function validateLegalResponse(query: string, response: string): string {
   
   // Pas automatische correcties toe
   let correctedResponse = detectAndCorrectLegalMistakes(response)
+  
+  // Verbeter opmaak
+  correctedResponse = cleanupResponseFormatting(correctedResponse)
   
   // Voeg waarschuwingen toe aan response
   if (validationWarnings.length > 0) {
@@ -1882,12 +1949,15 @@ Beantwoord vragen uitgebreid en praktisch, alsof je een ervaren juridisch advise
 - **Zorg voor correcte spatiëring**: schrijf "artikel 5" niet "artikel5"
 - **Wees praktisch en realistisch** in je adviezen
 
-**FORMATTING:**
+**FORMATTING - COMPACTE OPMAAK:**
 - Gebruik **vet** voor belangrijke termen en artikelnummers  
 - Gebruik **ALLEEN** ** voor koppen, **NOOIT** ###
 - Gebruik > voor belangrijke citaten uit wetten
 - Maak gebruik van bullets voor opsommingen
-- Elke alinea gescheiden door een lege regel
+- **GEEN onnodige witregels:** schrijf vloeiende tekst zonder overtollige enters
+- **Combineer zinnen:** gebruik komma's en puntkomma's in plaats van nieuwe regels
+- **Compacte bullets:** zet bullets direct na elkaar zonder lege regels ertussen
+- Alleen lege regel tussen verschillende hoofdonderwerpen
 
 **BRONVERWIJZING:**
 Eindig altijd met een korte bronverwijzing naar de relevante officiële bronnen.
