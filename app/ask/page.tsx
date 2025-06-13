@@ -468,7 +468,14 @@ export default function AskPage() {
         {/* Header */}
         <div className="border-b border-slate-200 p-3 md:p-4 bg-white">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            {/* Logo en profiel info */}
             <div className="flex items-center gap-3">
+              {/* WetHelder Logo */}
+              <Link href="/" className="flex items-center gap-2 text-primary hover:text-primary/80 mr-4">
+                <Scale className="h-6 w-6 text-blue-600" />
+                <span className="text-lg font-bold text-slate-900">WetHelder</span>
+              </Link>
+              
               <div className="flex items-center gap-2">
                 <ProfessionIcon className="h-5 w-5 text-slate-600" />
                 <span className="text-sm font-medium text-slate-700">
@@ -484,6 +491,21 @@ export default function AskPage() {
             </div>
 
             <div className="flex items-center gap-2">
+              {/* Dashboard link voor ingelogde gebruikers */}
+              {session && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  asChild
+                  className="shrink-0"
+                >
+                  <Link href="/dashboard" className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    <span className="hidden sm:inline">Dashboard</span>
+                  </Link>
+                </Button>
+              )}
+              
               {/* Mobile: Hide some buttons */}
               <Button
                 variant="outline"
@@ -520,11 +542,11 @@ export default function AskPage() {
             </div>
           </div>
 
-          {/* Functieprofiel en opties sectie */}
+          {/* Functieprofiel en opties sectie - verbeterde uitlijning */}
           <div className="mt-4 space-y-4">
-            {/* Functieprofiel selector */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="flex-1">
+            {/* Functieprofiel selector en knoppen in één rij */}
+            <div className="flex flex-col lg:flex-row gap-3 lg:items-end">
+              <div className="flex-1 min-w-0">
                 <label className="block text-xs font-medium text-slate-600 mb-1">
                   Functieprofiel
                 </label>
@@ -548,29 +570,36 @@ export default function AskPage() {
                 </Select>
               </div>
 
-              {/* Wet & Uitleg en Wetgeving knoppen */}
+              {/* Wet & Uitleg en Wetgeving knoppen - uitgelijnde hoogte */}
               <div className="flex gap-2">
-                <Button
-                  variant={wetUitlegEnabled ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setWetUitlegEnabled(!wetUitlegEnabled)}
-                  className="flex items-center gap-2"
-                >
-                  <FileText className="h-4 w-4" />
-                  <span className="hidden sm:inline">Wet & Uitleg</span>
-                  <span className="sm:hidden">W&U</span>
-                </Button>
-                
-                <Button
-                  variant={wetgevingEnabled ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setWetgevingEnabled(!wetgevingEnabled)}
-                  className="flex items-center gap-2"
-                >
-                  <Scale className="h-4 w-4" />
-                  <span className="hidden sm:inline">Wetgeving</span>
-                  <span className="sm:hidden">Wet</span>
-                </Button>
+                <div className="flex flex-col">
+                  <label className="block text-xs font-medium text-slate-600 mb-1 lg:invisible">
+                    Opties
+                  </label>
+                  <div className="flex gap-2">
+                    <Button
+                      variant={wetUitlegEnabled ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setWetUitlegEnabled(!wetUitlegEnabled)}
+                      className="flex items-center gap-2 h-9"
+                    >
+                      <FileText className="h-4 w-4" />
+                      <span className="hidden sm:inline">Wet & Uitleg</span>
+                      <span className="sm:hidden">W&U</span>
+                    </Button>
+                    
+                    <Button
+                      variant={wetgevingEnabled ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setWetgevingEnabled(!wetgevingEnabled)}
+                      className="flex items-center gap-2 h-9"
+                    >
+                      <Scale className="h-4 w-4" />
+                      <span className="hidden sm:inline">Wetgeving</span>
+                      <span className="sm:hidden">Wet</span>
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
 

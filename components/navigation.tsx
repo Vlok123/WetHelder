@@ -50,17 +50,18 @@ export function Navigation() {
               <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-muted animate-pulse" />
             ) : session ? (
               <div className="flex items-center space-x-2">
+                {/* Dashboard - prominenter getoond */}
+                <Button variant="default" size="sm" asChild>
+                  <Link href="/dashboard" className="flex items-center">
+                    <User className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                    <span>Dashboard</span>
+                  </Link>
+                </Button>
+                
                 <Button variant="ghost" size="sm" asChild className="hidden sm:flex">
                   <Link href="/chat-history" className="flex items-center">
                     <History className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                     <span className="hidden md:inline">Geschiedenis</span>
-                  </Link>
-                </Button>
-                
-                <Button variant="ghost" size="sm" asChild>
-                  <Link href="/dashboard">
-                    <User className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                    <span className="hidden sm:inline">Dashboard</span>
                   </Link>
                 </Button>
                 

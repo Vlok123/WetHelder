@@ -55,10 +55,15 @@ export default function ChatHistoryPage() {
         const data = await response.json()
         console.log('Chat history data:', data)
         setQueries(data.queries || [])
+        
+        // Toon bericht als er geen queries zijn
+        if (!data.queries || data.queries.length === 0) {
+          console.log('No queries found for user')
+        }
       } else {
         const errorData = await response.json()
         console.error('Error response:', errorData)
-        setError(`Fout bij ophalen geschiedenis: ${errorData.error || 'Onbekende fout'}`)
+        setError(`Fout bij ophalen geschiedenis: ${errorData.message || errorData.error || 'Onbekende fout'}`)
       }
     } catch (error) {
       console.error('Error fetching chat history:', error)
