@@ -264,8 +264,8 @@ export default function HomePage() {
         <div className="container-fluid">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <Scale className="h-8 w-8 text-primary" />
-              <span className="text-xl font-bold text-foreground">WetHelder</span>
+              <Scale className="h-6 w-6 md:h-8 md:w-8 text-primary" />
+              <span className="text-lg md:text-xl font-bold text-foreground">WetHelder</span>
             </div>
             
             <nav className="hidden md:flex items-center space-x-6">
@@ -277,19 +277,20 @@ export default function HomePage() {
               </Link>
             </nav>
 
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 md:space-x-3">
               {status === 'loading' ? (
-                <div className="w-8 h-8 rounded-full bg-muted animate-pulse" />
+                <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-muted animate-pulse" />
               ) : session ? (
-                <div className="flex items-center space-x-3">
-                  <Button variant="outline" size="sm" asChild>
+                <div className="flex items-center space-x-2 md:space-x-3">
+                  <Button variant="outline" size="sm" asChild className="hidden sm:flex">
                     <Link href="/chat-history">
                       Geschiedenis
                     </Link>
                   </Button>
                   <Button variant="outline" size="sm" asChild>
                     <Link href="/dashboard">
-                      Dashboard
+                      <span className="hidden sm:inline">Dashboard</span>
+                      <span className="sm:hidden">Menu</span>
                       <ChevronRight className="h-4 w-4 ml-1" />
                     </Link>
                   </Button>
@@ -297,7 +298,8 @@ export default function HomePage() {
               ) : (
                 <Button onClick={() => signIn()} size="sm">
                   <LogIn className="h-4 w-4 mr-2" />
-                  Inloggen
+                  <span className="hidden sm:inline">Inloggen</span>
+                  <span className="sm:hidden">Login</span>
                 </Button>
               )}
             </div>
@@ -412,24 +414,24 @@ export default function HomePage() {
 
             {/* Main Search - Prominenter gemaakt */}
             <div className="max-w-3xl mx-auto mb-10">
-              <div className="bg-white/80 backdrop-blur-sm border border-border/60 rounded-2xl p-6 shadow-medium">
+              <div className="bg-white/80 backdrop-blur-sm border border-border/60 rounded-2xl p-4 md:p-6 shadow-medium">
                 <h2 className="text-lg font-semibold text-center mb-4 text-foreground">
                   Stel uw juridische vraag
                 </h2>
                 <form onSubmit={handleSearch} className="relative">
                   <div className="relative">
-                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-6 w-6" />
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5 md:h-6 md:w-6" />
                     <Input
                       type="text"
                       placeholder="Stel een juridische vraag of zoek in wetsartikelen..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="input-field pl-14 pr-32 h-16 text-lg shadow-medium border-2 focus:border-primary/50"
+                      className="input-field pl-12 md:pl-14 pr-4 md:pr-32 h-14 md:h-16 text-base md:text-lg shadow-medium border-2 focus:border-primary/50"
                     />
                     <Button 
                       type="submit" 
                       size="lg"
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 h-12 px-6"
+                      className="w-full mt-3 md:w-auto md:mt-0 md:absolute md:right-2 md:top-1/2 md:transform md:-translate-y-1/2 h-12 px-6"
                       disabled={!searchQuery.trim()}
                     >
                       Zoeken
@@ -443,14 +445,13 @@ export default function HomePage() {
             {/* Juridische Voorbeeldvragen - Compacter */}
             <div className="max-w-4xl mx-auto mb-8">
               <h3 className="text-base font-medium mb-3 text-muted-foreground text-center">Juridische voorbeeldvragen:</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 px-4 md:px-0">
                 {JURIDISCHE_VRAGEN.map((vraag) => (
                   <button
                     key={vraag}
                     onClick={() => handleQuickSearch(vraag)}
-                    className="text-left p-3 rounded-lg bg-muted/40 hover:bg-muted/70 text-sm text-muted-foreground hover:text-foreground transition-colors border border-border/30 hover:border-border/60"
+                    className="text-left p-3 bg-white/60 hover:bg-white/80 border border-border/40 rounded-lg transition-all hover:shadow-sm text-sm text-muted-foreground hover:text-foreground"
                   >
-                    <BookOpen className="h-3 w-3 inline mr-2 text-primary" />
                     {vraag}
                   </button>
                 ))}
@@ -470,67 +471,93 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Main Features */}
-      <section className="section-padding">
-        <div className="container-fluid">
+      {/* Features Section */}
+      <section className="section-padding bg-white/50">
+        <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold mb-3">Krachtige juridische tools</h2>
-            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-              Alles wat u nodig heeft voor betrouwbaar juridisch onderzoek met officiële bronnen
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">Juridische Tools & Zoekfuncties</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Toegang tot officiële Nederlandse juridische bronnen en zoektools
             </p>
           </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {MAIN_FEATURES.map((feature) => {
+              const Icon = feature.icon
+              return (
+                <Link key={feature.title} href={feature.href}>
+                  <Card className="card-hover h-full p-6">
+                    <CardContent className="p-0">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                          <Icon className="h-6 w-6 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h3 className="font-semibold text-lg">{feature.title}</h3>
+                            {feature.badge && (
+                              <Badge variant={feature.badgeVariant}>{feature.badge}</Badge>
+                            )}
+                          </div>
+                          <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
+                          <div className="flex items-center text-primary font-medium text-sm mt-3">
+                            Proberen
+                            <ChevronRight className="h-4 w-4 ml-1" />
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+      </section>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {MAIN_FEATURES.map((feature) => (
-              <Link key={feature.title} href={feature.href}>
-                <Card className="card-interactive h-full hover-lift">
-                  <CardHeader className="text-center pb-4">
-                    <div className="mx-auto mb-4 p-3 rounded-xl bg-primary/10 w-fit">
-                      <feature.icon className="h-8 w-8 text-primary" />
-                    </div>
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <CardTitle className="text-xl">{feature.title}</CardTitle>
-                      {feature.badge && (
-                        <Badge variant={feature.badgeVariant}>{feature.badge}</Badge>
-                      )}
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-center text-base leading-relaxed">
-                      {feature.description}
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-              </Link>
+      {/* Platform Stats */}
+      <section className="section-padding-sm bg-gradient-to-r from-primary/5 to-primary/10">
+        <div className="container">
+          <div className="text-center mb-8">
+            <h2 className="text-xl md:text-2xl font-bold mb-2">Uitgebreide Juridische Database</h2>
+            <p className="text-muted-foreground">Toegang tot de meest complete Nederlandse juridische informatie</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-3xl mx-auto">
+            {PLATFORM_STATS.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <div className="text-2xl md:text-3xl font-bold text-primary mb-1">{stat.value}</div>
+                <div className="text-sm text-muted-foreground">{stat.label}</div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Target Audience */}
-      <section className="section-padding bg-muted/30">
-        <div className="container-fluid">
+      <section className="section-padding">
+        <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-xl md:text-2xl font-bold mb-3">Voor iedereen die betrouwbare juridische informatie zoekt</h2>
-            <p className="text-base text-muted-foreground max-w-2xl mx-auto">
-              WetHelder is ontwikkeld voor burgers, professionals en studenten die toegang willen tot officiële Nederlandse wetgeving
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">Voor wie is WetHelder geschikt?</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Onze platform is ontworpen voor iedereen die betrouwbare juridische informatie nodig heeft
             </p>
           </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {TARGET_AUDIENCE.map((audience) => (
-              <Card key={audience.title} className="card-elevated text-center">
-                <CardHeader>
-                  <div className="mx-auto mb-4 p-3 rounded-xl bg-primary/10 w-fit">
-                    <audience.icon className="h-8 w-8 text-primary" />
-                  </div>
-                  <CardTitle className="text-lg mb-2">{audience.title}</CardTitle>
-                  <CardDescription className="text-sm">
-                    {audience.description}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            ))}
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {TARGET_AUDIENCE.map((audience) => {
+              const Icon = audience.icon
+              return (
+                <Card key={audience.title} className="text-center p-6 hover:shadow-lg transition-shadow">
+                  <CardContent className="p-0">
+                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                      <Icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <h3 className="font-semibold mb-2">{audience.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{audience.description}</p>
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
         </div>
       </section>

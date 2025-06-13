@@ -127,6 +127,10 @@ async function searchSpecificSource(query: string, site: string): Promise<Omit<G
       return []
     }
 
+    // Voeg actuele datum filtering toe voor specifieke onderwerpen
+    const currentYear = new Date().getFullYear()
+    const isTimeFrequentTopic = /belasting|fiscaal|jubelton|schenkingsrecht|erfenis|tarieven|premie|uitkering/i.test(query)
+    
     const params = new URLSearchParams({
       key: apiKey,
       cx: cseId,
@@ -135,6 +139,11 @@ async function searchSpecificSource(query: string, site: string): Promise<Omit<G
       safe: 'active',
       lr: 'lang_nl',
       gl: 'nl',
+      // Voeg datum filter toe voor tijd-afhankelijke onderwerpen
+      ...(isTimeFrequentTopic && {
+        dateRestrict: 'm12', // Alleen resultaten van afgelopen 12 maanden
+        sort: 'date' // Sorteer op datum (nieuwste eerst)
+      })
     })
 
     const url = `https://www.googleapis.com/customsearch/v1?${params.toString()}`
@@ -151,7 +160,31 @@ async function searchSpecificSource(query: string, site: string): Promise<Omit<G
     }
 
     const data = await response.json()
-    return data.items || []
+    
+    // Extra filtering voor actuele informatie
+    const results = data.items || []
+    
+    // Filter op recente informatie voor tijd-kritieke onderwerpen
+    if (isTimeFrequentTopic) {
+      return results.filter((item: any) => {
+        // Check of het snippet recente jaartallen bevat
+        const snippet = item.snippet?.toLowerCase() || ''
+        const title = item.title?.toLowerCase() || ''
+        const combined = `${snippet} ${title}`
+        
+        // Zoek naar huidige en vorig jaar
+        const hasRecentYear = combined.includes(currentYear.toString()) || 
+                              combined.includes((currentYear - 1).toString())
+        
+        // Exclusief verouderde termen
+        const hasOutdatedTerms = /jubelton|jubeltoeslag/i.test(combined) && 
+                                /afgeschaft|beëindigd|vervallen|niet meer/i.test(combined)
+        
+        return hasRecentYear || !hasOutdatedTerms
+      })
+    }
+    
+    return results
 
   } catch (error) {
     console.warn(`Search error voor ${site}:`, error)
@@ -200,6 +233,9 @@ function formatSnippetsForChatGPT(results: GoogleSearchResult[]): string {
  * STAP 4: Genereert de strikte ChatGPT prompt
  */
 export function generateStrictChatGPTPrompt(question: string, verifiedResults: VerifiedSearchResults): string {
+  const currentYear = new Date().getFullYear()
+  const currentMonth = new Date().toLocaleDateString('nl-NL', { month: 'long', year: 'numeric' })
+  
   return `Je bent een Nederlandse juridische assistent. Beantwoord de vraag UITSLUITEND op basis van de onderstaande geverifieerde fragmenten van officiële Nederlandse juridische bronnen.
 
 **STRIKTE REGELS:**
@@ -209,13 +245,21 @@ export function generateStrictChatGPTPrompt(question: string, verifiedResults: V
 4. Geef wetsartikelen exact weer zoals vermeld in de bronnen
 5. Voeg GEEN eigen kennis of interpretaties toe
 
+**ACTUALITEIT CONTROLE (BELANGRIJK):**
+- Het is nu ${currentMonth}
+- Controleer of de informatie actueel is voor ${currentYear}
+- Let specifiek op verouderde regelingen zoals de "jubelton" (afgeschaft in 2022)
+- Vermeld expliciet als regelgeving is gewijzigd, afgeschaft of vervangen
+- Geef alleen actuele tarieven, bedragen en procedures
+- Als je verouderde informatie tegenkomt, vermeld dan expliciet dat deze niet meer geldig is
+
 **VRAAG:** ${question}
 
 **GEVERIFIEERDE BRONNEN:**
 ${verifiedResults.combinedSnippets}
 
 **ANTWOORD:**
-Beantwoord nu de vraag op basis van uitsluitend bovenstaande informatie, met bronverwijzingen bij elke bewering.`
+Beantwoord nu de vraag op basis van uitsluitend bovenstaande informatie, met bronverwijzingen bij elke bewering. Zorg ervoor dat alle informatie actueel is voor ${currentYear} en vermeld expliciet als bepaalde regelgeving is gewijzigd of afgeschaft.`
 }
 
 /**

@@ -35,7 +35,9 @@ import {
   Loader2,
   Trash2,
   RefreshCw,
-  Clock
+  Clock,
+  RotateCcw,
+  PanelRight
 } from 'lucide-react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
@@ -46,6 +48,7 @@ import { FavoriteButton } from '@/components/favorite-button'
 import { CitationGenerator } from '@/components/citation-generator'
 import { SearchHistory } from '@/components/search-history'
 import { Favorites } from '@/components/favorites'
+import { useRouter } from 'next/navigation'
 
 interface Message {
   id: string
@@ -282,6 +285,7 @@ export default function AskPage() {
   const [showSidebar, setShowSidebar] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const hasAutoSubmitted = useRef(false)
+  const router = useRouter()
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -458,235 +462,225 @@ export default function AskPage() {
   const ProfessionIcon = professionConfig[profession].icon
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <Navigation />
-      
-      <div className="max-w-7xl mx-auto flex h-[calc(100vh-64px)]">
-        {/* Main Chat Area */}
-        <div className="flex-1 flex flex-col">
-          {/* Header */}
-          <div className="bg-white border-b border-slate-200 p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <Scale className="h-6 w-6 text-blue-600" />
-                  <h1 className="text-xl font-semibold text-slate-900">WetHelder</h1>
-                  <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
-                    BETA
-                  </Badge>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <label className="text-sm font-medium text-slate-700">Professie:</label>
-                  <Select value={profession} onValueChange={(value) => setProfession(value as Profession)}>
-                    <SelectTrigger className="w-48">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {(Object.entries(professionConfig) as [Profession, typeof professionConfig[Profession]][]).map(([key, config]) => {
-                        const Icon = config.icon
-                        return (
-                          <SelectItem key={key} value={key}>
-                            <div className="flex items-center gap-2">
-                              <Icon className="h-4 w-4" />
-                              <span>{config.label}</span>
-                            </div>
-                          </SelectItem>
-                        )
-                      })}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+    <div className="flex h-screen bg-slate-50">
+      {/* Chat Area */}
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <div className="bg-white border-b border-slate-200 p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => router.push('/')}
+                className="shrink-0"
+              >
+                <Home className="h-4 w-4" />
+                <span className="hidden sm:ml-2 sm:inline">Home</span>
+              </Button>
               
               <div className="flex items-center gap-2">
-                {messages.length > 0 && (
-                  <Button onClick={clearConversation} variant="outline" size="sm">
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Nieuw gesprek
-                  </Button>
-                )}
-                <Button 
-                  onClick={() => setShowSidebar(!showSidebar)} 
-                  variant="outline" 
-                  size="sm"
-                >
-                  <History className="h-4 w-4 mr-2" />
-                  Geschiedenis
-                </Button>
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium text-slate-700">WetHelder Online</span>
               </div>
             </div>
-            
-            {/* Profession Info */}
-            <div className={`mt-3 p-3 rounded-lg border ${professionConfig[profession].color}`}>
-              <div className="flex items-center gap-2">
-                <ProfessionIcon className="h-4 w-4" />
-                <span className="text-sm font-medium">{professionConfig[profession].label}</span>
-                <span className="text-sm text-slate-600">— {professionConfig[profession].description}</span>
-              </div>
+
+            <div className="flex items-center gap-2">
+              {/* Mobile: Hide some buttons */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={clearConversation}
+                className="shrink-0"
+              >
+                <RotateCcw className="h-4 w-4" />
+                <span className="hidden sm:ml-2 sm:inline">Nieuw</span>
+              </Button>
               
-              <div className="mt-2 space-y-2">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={wetUitlegEnabled}
-                    onChange={(e) => setWetUitlegEnabled(e.target.checked)}
-                    className="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500"
-                  />
-                  <FileText className="h-4 w-4 text-emerald-700" />
-                  <span className="text-sm font-medium text-emerald-800">Wet & Uitleg (Diepgaand)</span>
-                </label>
-                
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={wetgevingEnabled}
-                    onChange={(e) => setWetgevingEnabled(e.target.checked)}
-                    className="rounded border-blue-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <Scale className="h-4 w-4 text-blue-700" />
-                  <span className="text-sm font-medium text-blue-800">Wetgeving (Artikelverwijzingen)</span>
-                </label>
-              </div>
+              {/* Desktop only sidebar toggle */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowSidebar(!showSidebar)}
+                className="hidden lg:flex shrink-0"
+              >
+                <PanelRight className="h-4 w-4" />
+                <span className="ml-2">
+                  {showSidebar ? 'Verberg' : 'Toon'} Zijbalk
+                </span>
+              </Button>
+
+              {/* Mobile: Show history as overlay */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setActiveTab(activeTab === 'history' ? 'favorites' : 'history')}
+                className="lg:hidden shrink-0"
+              >
+                <History className="h-4 w-4" />
+              </Button>
             </div>
-          </div>
-
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
-            {messages.length === 0 && (
-              <div className="text-center py-12">
-                <div className="inline-flex p-4 bg-blue-100 rounded-full mb-6">
-                  <Bot className="h-8 w-8 text-blue-700" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3 text-slate-900">WetHelder Consultatie</h3>
-                <p className="text-slate-600 mb-6 max-w-md mx-auto">
-                  Stel uw juridische vraag over Nederlandse wetgeving. 
-                  Antwoorden worden aangepast aan uw professie.
-                </p>
-                <div className="text-sm text-slate-500">
-                  <p>Voorbeelden: &quot;Artikel 8 WVW uitleg&quot; • &quot;Procedure bij rijden onder invloed&quot;</p>
-                </div>
-                
-                {/* Wachttijd informatie */}
-                <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg max-w-md mx-auto">
-                  <div className="flex items-center gap-2 text-amber-800 mb-2">
-                    <Clock className="h-4 w-4" />
-                    <span className="text-sm font-medium">Verwachte wachttijd</span>
-                  </div>
-                  <p className="text-xs text-amber-700">
-                    Antwoorden kunnen 10-30 seconden duren, afhankelijk van de complexiteit van uw vraag en de hoeveelheid bronnen die worden geraadpleegd.
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {messages.map((message) => (
-              <div key={message.id} className="space-y-4">
-                {/* User Question */}
-                <div className="flex justify-end">
-                  <div className="max-w-[80%] bg-blue-600 text-white rounded-2xl px-4 py-3">
-                    <div className="flex items-start gap-2">
-                      <User className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm">{message.question}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bot Response */}
-                <div className="flex justify-start">
-                  <div className="max-w-[90%]">
-                    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
-                      <div className="p-4">
-                        <div className="flex items-start gap-3">
-                          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                            {message.isLoading ? (
-                              <Loader2 className="h-4 w-4 text-blue-600 animate-spin" />
-                            ) : (
-                              <Scale className="h-4 w-4 text-blue-600" />
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            {message.isLoading ? (
-                              <div className="space-y-2">
-                                <div className="text-sm text-slate-600 flex items-center gap-2">
-                                  <span>Bezig met het formuleren van een antwoord</span>
-                                  <div className="flex space-x-1">
-                                    <div className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
-                                    <div className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
-                                    <div className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
-                                  </div>
-                                </div>
-                                <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded">
-                                  💡 Wachttijd kan variëren van 10-30 seconden afhankelijk van de complexiteit van uw vraag
-                                </div>
-                                {message.answer && (
-                                  <div className="prose prose-sm max-w-none">
-                                    {formatText(message.answer)}
-                                    <div className="inline-block w-2 h-4 bg-blue-600 animate-pulse ml-1"></div>
-                                  </div>
-                                )}
-                              </div>
-                            ) : (
-                              <div className="prose prose-sm max-w-none">
-                                {formatText(message.answer)}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Action buttons */}
-                      {!message.isLoading && message.queryId && (
-                        <div className="border-t border-slate-200 px-4 py-2 flex items-center justify-end gap-2">
-                          <FavoriteButton queryId={message.queryId} />
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={() => setSelectedCitationQuery({ queryId: message.queryId!, question: message.question })}
-                          >
-                            <Quote className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* Input Area */}
-          <div className="border-t border-slate-200 p-4 bg-white">
-            <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
-              <div className="flex gap-3">
-                <Input
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Stel uw juridische vraag..."
-                  disabled={isLoading}
-                  className="flex-1 h-12"
-                />
-                <Button 
-                  type="submit" 
-                  disabled={isLoading || !input.trim()}
-                  className="px-6 h-12"
-                >
-                  {isLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Send className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
-            </form>
           </div>
         </div>
 
-        {/* Sidebar */}
-        {showSidebar && (
-          <div className="w-96 bg-white border-l border-slate-200 flex flex-col">
+        {/* Main Chat Area */}
+        <div className="flex-1 overflow-y-auto p-3 md:p-6 space-y-4 md:space-y-6">
+          {messages.length === 0 && (
+            <div className="text-center py-8 md:py-12">
+              <div className="inline-flex p-3 md:p-4 bg-blue-100 rounded-full mb-4 md:mb-6">
+                <Bot className="h-6 w-6 md:h-8 md:w-8 text-blue-700" />
+              </div>
+              <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3 text-slate-900">WetHelder Consultatie</h3>
+              <p className="text-slate-600 mb-4 md:mb-6 max-w-md mx-auto px-4">
+                Stel uw juridische vraag over Nederlandse wetgeving. 
+                Antwoorden worden aangepast aan uw professie.
+              </p>
+              <div className="text-sm text-slate-500 px-4">
+                <p>Voorbeelden: &quot;Artikel 8 WVW uitleg&quot; • &quot;Procedure bij rijden onder invloed&quot;</p>
+              </div>
+              
+              {/* Wachttijd informatie */}
+              <div className="mt-4 md:mt-6 p-3 md:p-4 bg-amber-50 border border-amber-200 rounded-lg max-w-md mx-auto">
+                <div className="flex items-center gap-2 text-amber-800 mb-2">
+                  <Clock className="h-4 w-4" />
+                  <span className="text-sm font-medium">Verwachte wachttijd</span>
+                </div>
+                <p className="text-xs text-amber-700">
+                  Antwoorden kunnen 10-30 seconden duren, afhankelijk van de complexiteit van uw vraag en de hoeveelheid bronnen die worden geraadpleegd.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {messages.map((message) => (
+            <div key={message.id} className="space-y-4">
+              {/* User Question */}
+              <div className="flex justify-end">
+                <div className="max-w-[85%] md:max-w-[80%] bg-blue-600 text-white rounded-2xl px-3 md:px-4 py-2 md:py-3">
+                  <div className="flex items-start gap-2">
+                    <User className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm break-words">{message.question}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bot Response */}
+              <div className="flex justify-start">
+                <div className="max-w-[95%] md:max-w-[90%]">
+                  <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
+                    <div className="p-3 md:p-4">
+                      <div className="flex items-start gap-2 md:gap-3">
+                        <div className="flex-shrink-0 w-6 h-6 md:w-8 md:h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                          {message.isLoading ? (
+                            <Loader2 className="h-3 w-3 md:h-4 md:w-4 text-blue-600 animate-spin" />
+                          ) : (
+                            <Scale className="h-3 w-3 md:h-4 md:w-4 text-blue-600" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          {message.isLoading ? (
+                            <div className="space-y-2">
+                              <div className="text-sm text-slate-600 flex items-center gap-2">
+                                <span>Bezig met het formuleren van een antwoord</span>
+                                <div className="flex space-x-1">
+                                  <div className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+                                  <div className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
+                                  <div className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+                                </div>
+                              </div>
+                              <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded">
+                                💡 Wachttijd kan variëren van 10-30 seconden afhankelijk van de complexiteit van uw vraag
+                              </div>
+                              {message.answer && (
+                                <div className="prose prose-sm max-w-none">
+                                  {formatText(message.answer)}
+                                  <div className="inline-block w-2 h-4 bg-blue-600 animate-pulse ml-1"></div>
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="prose prose-sm max-w-none">
+                              {formatText(message.answer)}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Action buttons */}
+                    {!message.isLoading && message.queryId && (
+                      <div className="border-t border-slate-200 px-3 md:px-4 py-2 flex items-center justify-end gap-2">
+                        <FavoriteButton queryId={message.queryId} />
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => setSelectedCitationQuery({ queryId: message.queryId!, question: message.question })}
+                        >
+                          <Quote className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input Area */}
+        <div className="border-t border-slate-200 p-3 md:p-4 bg-white">
+          <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
+            <div className="flex flex-col md:flex-row gap-3">
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Stel uw juridische vraag..."
+                disabled={isLoading}
+                className="flex-1 h-12 md:h-12 text-base"
+              />
+              <Button 
+                type="submit" 
+                disabled={isLoading || !input.trim()}
+                className="px-6 h-12 w-full md:w-auto"
+              >
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <Send className="h-4 w-4" />
+                    <span className="ml-2 md:hidden">Versturen</span>
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {/* Sidebar */}
+      {showSidebar && (
+        <>
+          {/* Mobile overlay */}
+          <div 
+            className="lg:hidden fixed inset-0 bg-black/50 z-40"
+            onClick={() => setShowSidebar(false)}
+          />
+          
+          {/* Sidebar content */}
+          <div className="fixed lg:relative right-0 top-0 lg:top-auto h-full lg:h-auto w-80 lg:w-96 bg-white border-l border-slate-200 flex flex-col z-50 lg:z-auto">
             <div className="border-b p-4">
+              <div className="flex items-center justify-between mb-2 lg:mb-0">
+                <h3 className="font-semibold lg:hidden">Menu</h3>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setShowSidebar(false)}
+                  className="lg:hidden"
+                >
+                  ✕
+                </Button>
+              </div>
               <div className="flex gap-2">
                 <Button 
                   variant={activeTab === 'history' ? 'default' : 'outline'} 
@@ -719,11 +713,15 @@ export default function AskPage() {
                   queryId: q.id
                 };
                 setMessages(prev => [...prev, selectedMessage]);
+                // Close sidebar on mobile after selection
+                if (window.innerWidth < 1024) {
+                  setShowSidebar(false);
+                }
               }} />}
             </div>
           </div>
-        )}
-      </div>
+        </>
+      )}
 
       {/* Citation Modal */}
       {selectedCitationQuery && (
