@@ -1170,9 +1170,9 @@ export async function saveJurisprudentieToDatabase(doc: JurisprudentieDocument):
         instantie: doc.instantie,
         datum: doc.datum,
         uitspraakType: doc.uitspraakType,
-        rechtsgebied: doc.rechtsgebied,
-        trefwoorden: doc.trefwoorden,
-        wetsartikelen: doc.wetsartikelen,
+        rechtsgebied: JSON.stringify(doc.rechtsgebied),
+        trefwoorden: JSON.stringify(doc.trefwoorden),
+        wetsartikelen: JSON.stringify(doc.wetsartikelen),
         embedding: JSON.stringify(embedding)
       },
       create: {
@@ -1183,9 +1183,9 @@ export async function saveJurisprudentieToDatabase(doc: JurisprudentieDocument):
         instantie: doc.instantie,
         datum: doc.datum,
         uitspraakType: doc.uitspraakType,
-        rechtsgebied: doc.rechtsgebied,
-        trefwoorden: doc.trefwoorden,
-        wetsartikelen: doc.wetsartikelen,
+        rechtsgebied: JSON.stringify(doc.rechtsgebied),
+        trefwoorden: JSON.stringify(doc.trefwoorden),
+        wetsartikelen: JSON.stringify(doc.wetsartikelen),
         embedding: JSON.stringify(embedding)
       }
     })
