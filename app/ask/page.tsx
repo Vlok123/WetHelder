@@ -977,5 +977,4 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
       )}
     </div>
   )
-} 
-} 
+}

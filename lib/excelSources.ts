@@ -63,14 +63,17 @@ export async function loadExcelSources(): Promise<ExcelBron[]> {
         try {
           const source: ExcelBron = {
             id: `excel-${index + 1}`,
-            naam: String(row[0] || '').trim(),
-            url: String(row[1] || '').trim(),
-            beschrijving: String(row[2] || '').trim(),
-            categorie: String(row[3] || 'Overig').trim(),
-            betrouwbaarheid: validateBetrouwbaarheid(String(row[4] || 'hoog').trim().toLowerCase()),
-            trefwoorden: String(row[5] || '').split(',').map(k => k.trim()).filter(k => k),
-            type: validateType(String(row[6] || 'overig').trim().toLowerCase()),
-            organisatie: String(row[7] || '').trim() || undefined,
+            naam: String(row[2] || '').trim(), // Kolom C: Bron (naam)
+            url: String(row[3] || '').trim(), // Kolom D: URL
+            beschrijving: String(row[4] || '').trim(), // Kolom E: Omschrijving
+            categorie: String(row[0] || 'Overig').trim(), // Kolom A: Categorie
+            betrouwbaarheid: 'hoog', // Alle Excel bronnen zijn hoog betrouwbaar
+            trefwoorden: [
+              String(row[1] || '').trim(), // Kolom B: Topic
+              String(row[5] || '').trim()  // Kolom F: Scope
+            ].filter(k => k),
+            type: categorizeType(String(row[0] || '').trim()), // Bepaal type op basis van categorie
+            organisatie: extractOrganization(String(row[2] || '').trim()),
             laatstGecontroleerd: new Date()
           }
           
@@ -94,6 +97,46 @@ export async function loadExcelSources(): Promise<ExcelBron[]> {
     console.error('❌ Fout bij laden Excel bronnen:', error)
     return []
   }
+}
+
+/**
+ * Bepaalt het type op basis van de categorie
+ */
+function categorizeType(categorie: string): 'wetgeving' | 'jurisprudentie' | 'cao' | 'beleid' | 'overig' {
+  const lowerCategorie = categorie.toLowerCase()
+  
+  if (lowerCategorie.includes('wetgeving') || lowerCategorie.includes('wet')) {
+    return 'wetgeving'
+  }
+  if (lowerCategorie.includes('rechtspraak') || lowerCategorie.includes('jurisprudentie')) {
+    return 'jurisprudentie'
+  }
+  if (lowerCategorie.includes('cao') || lowerCategorie.includes('arbeidsvoorwaarden')) {
+    return 'cao'
+  }
+  if (lowerCategorie.includes('beleid') || lowerCategorie.includes('richtlijn')) {
+    return 'beleid'
+  }
+  
+  return 'overig'
+}
+
+/**
+ * Extraheert organisatie uit de bron naam
+ */
+function extractOrganization(bronNaam: string): string | undefined {
+  const lowerNaam = bronNaam.toLowerCase()
+  
+  if (lowerNaam.includes('politie')) return 'Politie'
+  if (lowerNaam.includes('fnv')) return 'FNV'
+  if (lowerNaam.includes('cnv')) return 'CNV'
+  if (lowerNaam.includes('overheid')) return 'Overheid'
+  if (lowerNaam.includes('rechtspraak')) return 'Rechtspraak'
+  if (lowerNaam.includes('belastingdienst')) return 'Belastingdienst'
+  if (lowerNaam.includes('uwv')) return 'UWV'
+  if (lowerNaam.includes('svb')) return 'SVB'
+  
+  return undefined
 }
 
 /**
