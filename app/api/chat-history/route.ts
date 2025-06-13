@@ -39,18 +39,20 @@ export async function GET(request: NextRequest) {
             createdAt: true
           }
         })
-        
-        console.log(`Found ${queries.length} queries with session.user.id`)
+        console.log(`Found ${queries.length} queries for user ID: ${session.user.id}`)
       }
       
-      // Als geen queries gevonden, probeer via email lookup
-      if (queries.length === 0) {
+      // Als geen queries gevonden met session.user.id, probeer via email
+      if (queries.length === 0 && session.user.email) {
+        console.log('No queries found with user ID, trying email lookup...')
+        
+        // Zoek eerst de user in de database
         const user = await prisma.user.findUnique({
-          where: { email: session.user.email },
-          select: { id: true }
+          where: { email: session.user.email }
         })
-
+        
         if (user) {
+          console.log(`Found user in database: ${user.id}`)
           queries = await prisma.query.findMany({
             where: { userId: user.id },
             orderBy: { createdAt: 'desc' },
@@ -63,37 +65,65 @@ export async function GET(request: NextRequest) {
               createdAt: true
             }
           })
-          
-          console.log(`Found ${queries.length} queries with database user.id`)
+          console.log(`Found ${queries.length} queries for database user ID: ${user.id}`)
+        } else {
+          console.log('User not found in database, this might be a mock user')
         }
       }
+      
+      // Als nog steeds geen queries, probeer alle queries voor debugging
+      if (queries.length === 0) {
+        console.log('Still no queries found, checking all queries in database...')
+        const allQueries = await prisma.query.findMany({
+          take: 10,
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            userId: true,
+            question: true,
+            createdAt: true
+          }
+        })
+        console.log('Recent queries in database:', allQueries.map(q => ({ 
+          id: q.id, 
+          userId: q.userId, 
+          question: q.question.substring(0, 50) + '...',
+          createdAt: q.createdAt
+        })))
+      }
+
     } catch (dbError) {
-      console.error('Database error:', dbError)
-      // Return empty array if database is not available
+      console.error('Database error in chat history:', dbError)
       return NextResponse.json({ 
+        error: 'Database error', 
+        message: 'Er is een probleem met de database verbinding.',
         queries: [],
-        message: 'Database temporarily unavailable'
-      })
+        debug: {
+          userEmail: session.user.email,
+          userId: session.user.id,
+          error: dbError instanceof Error ? dbError.message : 'Unknown error'
+        }
+      }, { status: 500 })
     }
 
+    console.log(`Returning ${queries.length} queries for user`)
+    
     return NextResponse.json({ 
-      queries: queries.map(query => ({
-        ...query,
-        createdAt: query.createdAt.toISOString()
-      })),
-      total: queries.length
+      queries,
+      debug: {
+        userEmail: session.user.email,
+        userId: session.user.id,
+        totalFound: queries.length
+      }
     })
 
   } catch (error) {
-    console.error('Chat history error:', error)
-    return NextResponse.json(
-      { 
-        error: 'Failed to fetch chat history',
-        queries: [],
-        message: 'Er is een fout opgetreden bij het ophalen van de geschiedenis'
-      },
-      { status: 500 }
-    )
+    console.error('Chat history API error:', error)
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      message: 'Er is een onverwachte fout opgetreden.',
+      queries: []
+    }, { status: 500 })
   }
 }
 

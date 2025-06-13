@@ -883,175 +883,211 @@ Leg uit in **eenvoudige, begrijpelijke taal** zonder juridisch jargon. Focus op:
 - Praktische gevolgen en rechten
 - Wanneer moet je een advocaat raadplegen?
 - Concrete stappen die je kunt ondernemen
+- Gebruik alledaagse voorbeelden en situaties
 `
     case "advocaat":
       return `
 **DOELGROEP: Advocaat**
-Lever **juridisch-technische precisie** met:
-- Relevante jurisprudentie en precedenten
+Lever **juridisch-technische precisie** met advocatenjargon:
+- Relevante jurisprudentie en precedenten (ECLI-nummers)
 - Processuele aspecten en mogelijke verdedigingsstrategieën
-- Formele vereisten en termijnen
-- Technische juridische nuances
-- Verwijzingen naar relevante rechtspraak
+- Formele vereisten en termijnen (dagvaarding, dupliek, conclusie)
+- Technische juridische nuances en rechtsfiguren
+- Verwijzingen naar relevante rechtspraak en doctrine
+- Gebruik termen als: "stelligheid", "betwisting", "subsidiair", "meer subsidiair"
+- Procesrechtelijke aspecten: "exceptie", "reconventie", "interventie"
 `
     case "politieagent":
       return `
 **DOELGROEP: Politieagent**
-Focus op **operationele toepassing** en **handhavingsaspecten**:
-- Concrete bevoegdheden en procedures
-- Wat mag wel/niet tijdens handhaving
-- Proces-verbaal gerelateerde aspecten
-- Praktische tips voor de straat
-- Wanneer doorverwijzen naar andere instanties
+Focus op **operationele toepassing** met politiejargon:
+- Concrete bevoegdheden en procedures (aanhouding, fouillering, staandehouding)
+- Wat mag wel/niet tijdens handhaving (proportionaliteit, subsidiariteit)
+- Proces-verbaal gerelateerde aspecten (PV-opmaak, bewijsvoering)
+- Praktische tips voor de straat (veiligheid, de-escalatie)
+- Wanneer doorverwijzen naar andere instanties (OvJ, rechter-commissaris)
+- Gebruik politietermen: "aanhouding", "inverzekeringstelling", "verhoor", "huiszoeking"
+- Operationele termen: "backup", "surveillance", "observatie", "infiltratie"
+- Wetboek van Strafvordering artikelen zijn essentieel
 `
     case "boa":
       return `
 **DOELGROEP: BOA (Buitengewoon Opsporingsambtenaar)**
-Focus op **BOA-specifieke bevoegdheden**:
-- Welke artikelen vallen binnen jouw domein
-- Wanneer moet je doorverwijzen naar politie
-- Specifieke BOA-procedures en protocollen
-- Handhavingsrichtlijnen voor jouw sector
+Focus op **BOA-specifieke bevoegdheden** met BOA-terminologie:
+- Welke artikelen vallen binnen jouw domein (domein I, II, III, IV)
+- Wanneer moet je doorverwijzen naar politie (escalatie)
+- Specifieke BOA-procedures en protocollen (bekeuring, waarschuwing)
+- Handhavingsrichtlijnen voor jouw sector (milieu, verkeer, openbare orde)
+- Gebruik BOA-termen: "toezichthouder", "handhaver", "bevoegd gezag"
+- Domeinspecifieke begrippen: "milieutoezicht", "APV-handhaving", "verkeersovertredingen"
 `
     case "rechter":
       return `
 **DOELGROEP: Rechter/Rechterlijk Ambtenaar**
-Focus op **rechterlijke aspecten**:
-- Procesrecht en rechterlijke procedures
-- Bewijsrecht en bewijswaardering
-- Jurisprudentie en precedentwerking
-- Straftoemeting en sanctiekeuze
-- Formele vereisten voor rechterlijke beslissingen
+Focus op **rechterlijke aspecten** met juridische precisie:
+- Procesrecht en rechterlijke procedures (comparitie, pleidooi, vonnis)
+- Bewijsrecht en bewijswaardering (art. 338 Sv, bewijsminimum)
+- Jurisprudentie en precedentwerking (cassatie, prejudiciële vragen)
+- Straftoemeting en sanctiekeuze (strafmaat, bijzondere voorwaarden)
+- Formele vereisten voor rechterlijke beslissingen (motivering, rechtsmacht)
+- Gebruik rechterlijke termen: "tenlastelegging", "bewijsvoering", "strafmaat"
+- Procesrechtelijke begrippen: "dagvaarding", "conclusie", "pleidooi", "vonnis"
 `
     case "notaris":
       return `
 **DOELGROEP: Notaris**
-Focus op **notariële praktijk**:
-- Burgerlijk recht en vermogensrecht
-- Familierecht en erfrecht
-- Vastgoedtransacties en hypotheken
-- Notariële akten en formaliteiten
-- Ondernemingsrecht en rechtspersonenrecht
+Focus op **notariële praktijk** met notarisjargon:
+- Burgerlijk recht en vermogensrecht (eigendom, bezit, beperkte rechten)
+- Familierecht en erfrecht (testament, erfenis, legitieme portie)
+- Vastgoedtransacties en hypotheken (levering, inschrijving, kadaster)
+- Notariële akten en formaliteiten (authentieke akte, onderhandse akte)
+- Ondernemingsrecht en rechtspersonenrecht (BV, NV, stichting)
+- Gebruik notaristermen: "minuut", "grosse", "expeditie", "repertorium"
+- Vastgoedtermen: "levering", "overdracht", "hypotheekrecht", "erfdienstbaarheid"
 `
     case "deurwaarder":
       return `
 **DOELGROEP: Deurwaarder**
-Focus op **executierecht**:
-- Beslagprocedures en executiemaatregelen
-- Invorderingswetgeving en incassoproces
-- Rechten van debiteuren en crediteuren
-- Procedurele vereisten bij beslaglegging
-- Samenwerking met gerechtelijke instanties
+Focus op **executierecht** met deurwaardersteminologie:
+- Beslagprocedures en executiemaatregelen (conservatoir, executoriaal beslag)
+- Invorderingswetgeving en incassoproces (dwangbevel, executie)
+- Rechten van debiteuren en crediteuren (schuldsanering, betalingsregeling)
+- Procedurele vereisten bij beslaglegging (exploit, betekening)
+- Samenwerking met gerechtelijke instanties (rechtbank, kantonrechter)
+- Gebruik deurwaarderstermen: "exploit", "betekening", "executie", "beslag"
+- Invorderingstermen: "dwangbevel", "derdenbeslag", "boedelverkoop"
 `
     case "bedrijfsjurist":
       return `
 **DOELGROEP: Bedrijfsjurist**
-Focus op **ondernemingsrecht**:
-- Contractenrecht en commerciële overeenkomsten
-- Arbeidsrecht en personeelszaken
-- Compliance en toezichtrecht
-- Intellectueel eigendomsrecht
-- Corporate governance en vennootschapsrecht
+Focus op **ondernemingsrecht** met corporate jargon:
+- Contractenrecht en commerciële overeenkomsten (SLA, NDA, distributieovereenkomst)
+- Arbeidsrecht en personeelszaken (cao, arbeidsovereenkomst, ontslag)
+- Compliance en toezichtrecht (AVG, Wft, Wck)
+- Intellectueel eigendomsrecht (trademark, copyright, patent)
+- Corporate governance en vennootschapsrecht (aandeelhouders, bestuur, RvC)
+- Gebruik corporate termen: "due diligence", "compliance", "governance"
+- Contractuele begrippen: "force majeure", "hardship", "boeteclausule"
 `
     case "gemeenteambtenaar":
       return `
 **DOELGROEP: Gemeenteambtenaar**
-Focus op **bestuursrecht** en **lokale wetgeving**:
-- APV's en gemeentelijke verordeningen
-- Vergunningverlening en handhaving
-- Bezwaar- en beroepsprocedures
-- Bestuursdwang en dwangsommen
-- Samenwerking met toezichthouders
+Focus op **bestuursrecht** en **lokale wetgeving** met bestuursjargon:
+- APV's en gemeentelijke verordeningen (openbare orde, veiligheid)
+- Vergunningverlening en handhaving (omgevingsvergunning, exploitatievergunning)
+- Bezwaar- en beroepsprocedures (Awb, bestuursrecht)
+- Bestuursdwang en dwangsommen (handhaving, sancties)
+- Samenwerking met toezichthouders (provincie, Rijk, toezichthouders)
+- Gebruik bestuurstermen: "beschikking", "vergunning", "ontheffing", "vrijstelling"
+- Handhavingstermen: "bestuursdwang", "dwangsom", "stillegging", "sluiting"
 `
     case "belastingadviseur":
       return `
 **DOELGROEP: Belastingadviseur**
-Focus op **fiscaal recht**:
-- Belastingwetgeving en tariefstructuren
-- Aftrekposten en vrijstellingen
-- Bezwaar- en beroepsprocedures bij Belastingdienst
-- Internationale belastingverdragen
-- Fiscale compliance en aangifteverplichtingen
+Focus op **fiscaal recht** met fiscale terminologie:
+- Belastingwetgeving en tariefstructuren (IB, VPB, BTW, BRV)
+- Aftrekposten en vrijstellingen (ondernemersaftrek, MKB-winstvrijstelling)
+- Bezwaar- en beroepsprocedures bij Belastingdienst (AWR, bezwaarschrift)
+- Internationale belastingverdragen (voorkoming dubbele belasting)
+- Fiscale compliance en aangifteverplichtingen (aangifte, voorlopige aanslag)
+- Gebruik fiscale termen: "belastbaar inkomen", "aftrekpost", "heffingskorting"
+- Procedurele begrippen: "navorderingsaanslag", "vergrijpboete", "verzuimboete"
 `
     case "accountant":
       return `
 **DOELGROEP: Accountant**
-Focus op **financieel recht**:
-- Verslaggevingswetgeving (BW2)
-- Controle- en assurance-standaarden
-- Fiscale aspecten van verslaggeving
-- Wet- en regelgeving accountancy
-- Fraudepreventie en compliance
+Focus op **financieel recht** met accountancy-jargon:
+- Verslaggevingswetgeving (BW2, RJ, IFRS)
+- Controle- en assurance-standaarden (NBA, ISA, ISAE)
+- Fiscale aspecten van verslaggeving (commercieel vs fiscaal resultaat)
+- Wet- en regelgeving accountancy (Wta, Bta, Vta)
+- Fraudepreventie en compliance (AML, CFT, Wwft)
+- Gebruik accountancy-termen: "controleverklaring", "assurance", "materialiteit"
+- Verslaggevingstermen: "jaarrekening", "toelichting", "kasstroomoverzicht"
 `
     case "makelaar":
       return `
 **DOELGROEP: Makelaar**
-Focus op **vastgoedrecht**:
-- Koopovereenkomsten en leveringsvoorwaarden
-- Makelaarsrecht en bemiddelingswetgeving
-- Hypotheekrecht en zekerheidsrechten
-- Wet op het financieel toezicht (Wft)
-- Consumentenbescherming bij vastgoedtransacties
+Focus op **vastgoedrecht** met makelaarsjargon:
+- Koopovereenkomsten en leveringsvoorwaarden (NVM-koopovereenkomst, ontbindende voorwaarden)
+- Makelaarsrecht en bemiddelingswetgeving (courtage, bemiddelingsovereenkomst)
+- Hypotheekrecht en zekerheidsrechten (hypotheek, pandrecht, borgtocht)
+- Wet op het financieel toezicht (Wft, AFM-toezicht)
+- Consumentenbescherming bij vastgoedtransacties (bedenktijd, informatieverplichting)
+- Gebruik makelaarstermen: "courtage", "bemiddeling", "taxatie", "WOZ-waarde"
+- Vastgoedtermen: "koopovereenkomst", "levering", "eigendomsoverdracht"
 `
     case "verzekeringsagent":
       return `
 **DOELGROEP: Verzekeringsagent**
-Focus op **verzekeringsrecht**:
-- Verzekeringsovereenkomsten en polisvoorwaarden
-- Aansprakelijkheidsrecht en schadevergoeding
-- Wet op het financieel toezicht (Wft)
-- Consumentenbescherming bij verzekeringen
-- Geschillenbeslechting en ombudsprocedures
+Focus op **verzekeringsrecht** met verzekeringsjargon:
+- Verzekeringsovereenkomsten en polisvoorwaarden (dekking, uitsluitingen, eigen risico)
+- Aansprakelijkheidsrecht en schadevergoeding (causaal verband, schuldvraag)
+- Wet op het financieel toezicht (Wft, AFM-toezicht, DNB-toezicht)
+- Consumentenbescherming bij verzekeringen (informatieverplichting, bedenktijd)
+- Geschillenbeslechting en ombudsprocedures (KiFiD, arbitrage)
+- Gebruik verzekeringstermen: "premie", "dekking", "uitkering", "schaderegeling"
+- Juridische begrippen: "aansprakelijkheid", "causaal verband", "overmacht"
 `
     case "hr-medewerker":
       return `
 **DOELGROEP: HR-medewerker**
-Focus op **arbeidsrecht**:
-- Arbeidsovereenkomsten en cao's
-- Ontslagrecht en reorganisatieprocedures
-- Wet- en regelgeving arbeidsomstandigheden
-- Privacy en gegevensbescherming (AVG)
-- Discriminatiewetgeving en gelijke behandeling
+Focus op **arbeidsrecht** met HR-terminologie:
+- Arbeidsovereenkomsten en cao's (bepaalde/onbepaalde tijd, proeftijd)
+- Ontslagrecht en reorganisatieprocedures (UWV-toestemming, sociaal plan)
+- Wet- en regelgeving arbeidsomstandigheden (Arbowet, RI&E, preventie)
+- Privacy en gegevensbescherming (AVG, verwerkingsregister)
+- Discriminatiewetgeving en gelijke behandeling (AWGB, leeftijdsdiscriminatie)
+- Gebruik HR-termen: "arbeidsovereenkomst", "cao", "reorganisatie", "ontslag"
+- Procedurele begrippen: "UWV-procedure", "kantonrechter", "transitievergoeding"
 `
     case "compliance-officer":
       return `
 **DOELGROEP: Compliance Officer**
-Focus op **toezichtrecht**:
-- Wet- en regelgeving financiële sector
-- Integriteitsmanagement en gedragscodes
-- Meldplichten en rapportageverplichtingen
-- Sanctierecht en handhavingsmaatregelen
-- Risk management en compliance monitoring
+Focus op **toezichtrecht** met compliance-jargon:
+- Wet- en regelgeving financiële sector (Wft, Bgfo, Bpr)
+- Integriteitsmanagement en gedragscodes (integriteitbeleid, compliance framework)
+- Meldplichten en rapportageverplichtingen (DNB, AFM, FIU)
+- Sanctierecht en handhavingsmaatregelen (bestuurlijke boete, aanwijzing)
+- Risk management en compliance monitoring (KRI's, compliance testing)
+- Gebruik compliance-termen: "compliance framework", "risk assessment", "monitoring"
+- Toezichtstermen: "meldplicht", "rapportage", "sanctie", "handhaving"
 `
     case "veiligheidsbeambte":
       return `
 **DOELGROEP: Veiligheidsbeambte**
-Focus op **veiligheidsrecht**:
-- Wet particuliere beveiligingsorganisaties
-- Bevoegdheden en verantwoordelijkheden beveiliging
-- Samenwerking met politie en justitie
-- Incidentregistratie en rapportage
-- Persoonsbescherming en objectbeveiliging
+Focus op **veiligheidsrecht** met beveiligingsjargon:
+- Wet particuliere beveiligingsorganisaties (Wpbr, beveiligingsvergunning)
+- Bevoegdheden en verantwoordelijkheden beveiliging (burgerarrest, noodweer)
+- Samenwerking met politie en justitie (doorgifte, overdracht)
+- Incidentregistratie en rapportage (incidentrapport, logboek)
+- Persoonsbescherming en objectbeveiliging (close protection, surveillance)
+- Gebruik beveiligingstermen: "surveillance", "toegangscontrole", "incidentmanagement"
+- Operationele begrippen: "observatie", "rapportage", "escalatie", "interventie"
 `
     case "aspirant":
       return `
 **DOELGROEP: Aspirant (Politie/Justitie)**
 Focus op **praktische toepassing** met **educatieve context**:
-- Uitgebreide uitleg van procedures en protocollen
-- Theoretische achtergrond van wetgeving
-- Praktijkvoorbeelden en casussen
-- Rechtsbeginselen en ethische aspecten
-- Voorbereiding op professionele praktijk
+- Uitgebreide uitleg van procedures en protocollen (stap-voor-stap)
+- Theoretische achtergrond van wetgeving (waarom deze regels bestaan)
+- Praktijkvoorbeelden en casussen (realistische scenario's)
+- Rechtsbeginselen en ethische aspecten (proportionaliteit, subsidiariteit)
+- Voorbereiding op professionele praktijk (examenstof, competenties)
+- Gebruik educatieve termen: "leerproces", "competentie", "praktijkvoorbeeld"
+- Operationele voorbereiding: "procedure", "protocol", "bevoegdheid", "verantwoordelijkheid"
 `
     case "student":
       return `
 **DOELGROEP: Student (Rechten/Criminologie)**
-Bied **theoretische verdieping** met:
-- Juridische achtergrond en rechtsbeginselen
-- Historische ontwikkeling van de wet
-- Academische bronnen en literatuurverwijzingen
-- Theoretische kaders en juridische concepten
-- Examengerelateerde aspecten
+Bied **theoretische verdieping** met academische benadering:
+- Juridische achtergrond en rechtsbeginselen (rechtszekerheid, rechtsgelijkheid)
+- Historische ontwikkeling van de wet (totstandkomingsgeschiedenis)
+- Academische bronnen en literatuurverwijzingen (doctrine, commentaren)
+- Theoretische kaders en juridische concepten (rechtsfiguren, leerstukken)
+- Examengerelateerde aspecten (tentamenstof, jurisprudentie)
+- Gebruik academische termen: "doctrine", "rechtsfiguur", "leerstuk", "systematiek"
+- Theoretische begrippen: "rechtsbeginsel", "rechtsbron", "rechtsvinding"
 `
     default:
       return `
@@ -1411,7 +1447,7 @@ export async function POST(request: NextRequest) {
 
           // Generate response with Google enhancement if enabled
           if (useGoogleSearch) {
-            finalResponse = await generateVerifiedSourceResponse(question, profession, wetUitleg, wetgeving)
+            finalResponse = await generateVerifiedSourceResponse(question, profession, wetUitleg, wetgeving, conversationHistory)
           } else {
             finalResponse = await generateThreePhaseResponse(question, profession, sources, wetUitleg)
           }
@@ -1496,7 +1532,8 @@ async function generateVerifiedSourceResponse(
   query: string, 
   profession: string, 
   isWetUitleg: boolean,
-  isWetgeving: boolean = false
+  isWetgeving: boolean = false,
+  conversationHistory: string[] = []
 ): Promise<string> {
   try {
     console.log('🚀 Start nieuwe geverifieerde bronnen workflow')
@@ -1522,6 +1559,7 @@ async function generateVerifiedSourceResponse(
 - Als er geverifieerde bronnen beschikbaar zijn, gebruik deze ter bevestiging en aanvulling
 - Geef praktische voorbeelden en toepassingen
 - Leg complexe juridische concepten uit in begrijpelijke taal
+- Houd rekening met de eerdere conversatie en bouw voort op eerder gegeven informatie
 
 **ANTWOORDSTIJL:**
 - Begin met "⚖️ **Juridisch advies van WetHelder** - Gebaseerd op geverifieerde Nederlandse bronnen"
@@ -1548,6 +1586,24 @@ ${isWetgeving ? `**WETGEVING MODE ACTIEF:**
 
     let userPrompt = query
 
+    // Voeg conversatie geschiedenis toe als context
+    if (conversationHistory && conversationHistory.length > 0) {
+      systemPrompt += `
+
+**CONVERSATIE CONTEXT:**
+De volgende eerdere berichten zijn uitgewisseld in dit gesprek. Houd hier rekening mee en bouw voort op eerder gegeven informatie:
+
+${conversationHistory.map((msg, index) => 
+  index % 2 === 0 
+    ? `**Vraag ${Math.floor(index/2) + 1}:** ${msg}`
+    : `**Antwoord ${Math.floor(index/2) + 1}:** ${msg.substring(0, 200)}...`
+).join('\n\n')}`
+
+      userPrompt = `${query}
+
+**CONTEXT:** Dit is een vervolgvraag in een lopend gesprek. Verwijs waar relevant naar eerdere informatie en bouw voort op de context.`
+    }
+
     // Als we geverifieerde bronnen hebben, voeg deze toe als aanvullende context
     if (workflowResult.success && workflowResult.searchResults.totalResults > 0) {
       // Combineer alle bronnen in één array
@@ -1571,9 +1627,11 @@ ${allSources.map((source, index) =>
    Bron: ${source.source}`
 ).join('\n\n')}`
 
-      userPrompt = `${query}
+      if (!conversationHistory || conversationHistory.length === 0) {
+        userPrompt = `${query}
 
 **CONTEXT:** Er zijn ${workflowResult.searchResults.totalResults} geverifieerde bronnen gevonden die relevant kunnen zijn voor deze vraag. Gebruik je juridische expertise en bevestig/vul aan met de beschikbare bronnen waar relevant.`
+      }
     } else {
       systemPrompt += `
 
