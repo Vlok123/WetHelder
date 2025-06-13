@@ -195,6 +195,12 @@ const formatText = (text: string) => {
     .trim()
     // Format bullet points
     .replace(/^[-•]\s+/gm, '- ')
+    // Improve section breaks
+    .replace(/\n\n\n+/g, '\n\n')
+    // Fix spacing around headers
+    .replace(/\n(#{1,6})\s*/g, '\n\n$1 ')
+    // Ensure proper spacing after headers
+    .replace(/(#{1,6}[^\n]*)\n([^\n#])/g, '$1\n\n$2')
   
   return (
     <ReactMarkdown
@@ -202,81 +208,87 @@ const formatText = (text: string) => {
       components={{
         h1: ({ children }) => (
           <div className="mb-8 first:mt-0 mt-10">
-            <h1 className="text-2xl font-bold text-slate-900 mb-3 flex items-center">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full mr-4"></div>
-              {children}
+            <h1 className="text-2xl font-bold text-slate-900 mb-4 flex items-center">
+              <div className="w-1.5 h-10 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full mr-4 shadow-sm"></div>
+              <span className="bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                {children}
+              </span>
             </h1>
             <div className="h-px bg-gradient-to-r from-blue-200 via-blue-300 to-transparent ml-6"></div>
           </div>
         ),
         h2: ({ children }) => (
           <div className="mb-6 first:mt-0 mt-8">
-            <h2 className="text-xl font-bold text-slate-800 mb-3 bg-gradient-to-r from-blue-50 to-blue-25 border-l-4 border-blue-400 pl-4 py-3 rounded-r-lg shadow-sm">
-              {children}
+            <h2 className="text-xl font-bold text-slate-800 mb-4 bg-gradient-to-r from-blue-50 via-blue-25 to-transparent border-l-4 border-blue-400 pl-6 py-4 rounded-r-lg shadow-sm hover:shadow-md transition-all duration-200">
+              <div className="flex items-center">
+                <div className="w-2 h-2 bg-blue-500 rounded-full mr-3 animate-pulse"></div>
+                {children}
+              </div>
             </h2>
           </div>
         ),
         h3: ({ children }) => (
-          <h3 className="text-lg font-semibold mb-4 text-slate-800 mt-6 first:mt-0 flex items-center">
+          <h3 className="text-lg font-semibold mb-4 text-slate-800 mt-7 first:mt-0 flex items-center bg-slate-50 px-4 py-3 rounded-lg border border-slate-200 hover:border-slate-300 transition-colors">
             <div className="w-3 h-3 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full mr-3 shadow-sm"></div>
-            {children}
+            <span className="text-slate-800">{children}</span>
           </h3>
         ),
         h4: ({ children }) => (
-          <h4 className="text-base font-semibold mb-3 text-slate-700 mt-5 first:mt-0 border-b border-slate-200 pb-2">
+          <h4 className="text-base font-semibold mb-3 text-slate-700 mt-6 first:mt-0 border-b border-slate-200 pb-2 flex items-center">
+            <div className="w-2 h-2 bg-slate-400 rounded-full mr-2"></div>
             {children}
           </h4>
         ),
         p: ({ children }) => (
-          <p className="mb-5 text-slate-700 leading-relaxed text-base">
+          <p className="mb-5 text-slate-700 leading-relaxed text-base tracking-wide">
             {children}
           </p>
         ),
         ul: ({ children }) => (
-          <div className="mb-6">
+          <div className="mb-6 bg-slate-50 rounded-lg p-4 border border-slate-200">
             <ul className="space-y-3 text-slate-700">
               {children}
             </ul>
           </div>
         ),
         ol: ({ children }) => (
-          <div className="mb-6">
+          <div className="mb-6 bg-gradient-to-r from-blue-50 to-slate-50 rounded-lg p-4 border border-blue-200">
             <ol className="space-y-3 text-slate-700 counter-reset-list">
               {children}
             </ol>
           </div>
         ),
         li: ({ children }) => (
-          <li className="text-slate-700 leading-relaxed flex items-start group">
-            <span className="w-2 h-2 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full mr-3 mt-2.5 flex-shrink-0 group-hover:scale-110 transition-transform"></span>
+          <li className="text-slate-700 leading-relaxed flex items-start group hover:bg-white hover:shadow-sm rounded-md p-2 transition-all duration-200">
+            <span className="w-2 h-2 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full mr-3 mt-2.5 flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm"></span>
             <span className="flex-1">{children}</span>
           </li>
         ),
         strong: ({ children }) => (
-          <strong className="font-bold text-slate-900 bg-slate-50 px-1 py-0.5 rounded">
+          <strong className="font-bold text-slate-900 bg-yellow-50 px-2 py-1 rounded border border-yellow-200 shadow-sm">
             {children}
           </strong>
         ),
         em: ({ children }) => (
-          <em className="italic text-slate-800 font-medium bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">
+          <em className="italic text-slate-800 font-medium bg-blue-50 px-2 py-1 rounded border border-blue-100 shadow-sm">
             {children}
           </em>
         ),
         blockquote: ({ children }) => (
-          <div className="my-8 border-l-4 border-blue-400 bg-gradient-to-r from-blue-50 via-blue-25 to-transparent rounded-r-lg shadow-md hover:shadow-lg transition-all duration-300">
-            <div className="pl-6 pr-6 py-5">
+          <div className="my-8 border-l-4 border-blue-400 bg-gradient-to-r from-blue-50 via-blue-25 to-transparent rounded-r-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.01]">
+            <div className="pl-6 pr-6 py-6">
               <div className="flex items-start space-x-4">
                 <div className="flex-shrink-0 mt-1">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Quote className="w-4 h-4 text-blue-600" />
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center shadow-md">
+                    <Quote className="w-5 h-5 text-blue-600" />
                   </div>
                 </div>
                 <div className="flex-1">
                   <div className="text-xs font-bold text-blue-800 mb-3 uppercase tracking-wider flex items-center">
-                    <CheckCircle className="w-3 h-3 mr-1" />
-                    Officiële bron
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Officiële juridische bron
                   </div>
-                  <div className="text-slate-700 leading-relaxed font-medium">
+                  <div className="text-slate-700 leading-relaxed font-medium text-base">
                     {children}
                   </div>
                 </div>
@@ -285,29 +297,29 @@ const formatText = (text: string) => {
           </div>
         ),
         code: ({ children }) => (
-          <code className="bg-slate-100 text-slate-800 px-2 py-1 rounded-md text-sm font-mono border border-slate-200 shadow-sm hover:bg-slate-200 transition-colors">
+          <code className="bg-slate-100 text-slate-800 px-3 py-1.5 rounded-md text-sm font-mono border border-slate-200 shadow-sm hover:bg-slate-200 transition-colors">
             {children}
           </code>
         ),
         pre: ({ children }) => (
-          <div className="my-6 bg-slate-50 border border-slate-200 rounded-lg shadow-sm overflow-hidden">
-            <div className="bg-slate-100 px-4 py-2 border-b border-slate-200">
+          <div className="my-6 bg-slate-50 border border-slate-200 rounded-lg shadow-md overflow-hidden">
+            <div className="bg-gradient-to-r from-slate-100 to-slate-200 px-4 py-3 border-b border-slate-200">
               <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                <span className="text-xs text-slate-600 ml-2 font-medium">Wettekst</span>
+                <div className="w-3 h-3 bg-red-400 rounded-full shadow-sm"></div>
+                <div className="w-3 h-3 bg-yellow-400 rounded-full shadow-sm"></div>
+                <div className="w-3 h-3 bg-green-400 rounded-full shadow-sm"></div>
+                <span className="text-xs text-slate-600 ml-3 font-medium">Wettekst</span>
               </div>
             </div>
-            <pre className="p-4 overflow-x-auto">
-              <code className="text-sm font-mono text-slate-800">{children}</code>
+            <pre className="p-5 overflow-x-auto">
+              <code className="text-sm font-mono text-slate-800 leading-relaxed">{children}</code>
             </pre>
           </div>
         ),
         a: ({ href, children }) => (
           <a 
             href={href} 
-            className="text-blue-600 hover:text-blue-800 underline decoration-2 underline-offset-2 transition-all duration-200 font-medium hover:bg-blue-50 px-1 py-0.5 rounded"
+            className="text-blue-600 hover:text-blue-800 underline decoration-2 underline-offset-2 transition-all duration-200 font-medium hover:bg-blue-50 px-2 py-1 rounded-md shadow-sm"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -315,7 +327,7 @@ const formatText = (text: string) => {
           </a>
         ),
         table: ({ children }) => (
-          <div className="my-8 overflow-hidden shadow-lg rounded-lg border border-slate-200">
+          <div className="my-8 overflow-hidden shadow-xl rounded-lg border border-slate-200 bg-white">
             <div className="overflow-x-auto">
               <table className="min-w-full">
                 {children}
@@ -324,13 +336,13 @@ const formatText = (text: string) => {
           </div>
         ),
         thead: ({ children }) => (
-          <thead className="bg-gradient-to-r from-slate-100 to-slate-50 border-b-2 border-slate-300">
+          <thead className="bg-gradient-to-r from-slate-100 via-slate-50 to-slate-100 border-b-2 border-slate-300">
             {children}
           </thead>
         ),
         tbody: ({ children }) => <tbody className="bg-white divide-y divide-slate-100">{children}</tbody>,
         tr: ({ children }) => (
-          <tr className="hover:bg-slate-50 transition-colors duration-150">
+          <tr className="hover:bg-slate-50 transition-colors duration-200">
             {children}
           </tr>
         ),

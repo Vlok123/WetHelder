@@ -26,20 +26,42 @@ export async function GET(request: NextRequest) {
     const url = new URL(request.url)
     const limit = parseInt(url.searchParams.get('limit') || '50')
 
-    const searchHistory = await prisma.userSearchHistory.findMany({
+    // Haal echte query geschiedenis op uit de Query tabel
+    const queries = await prisma.query.findMany({
       where: { userId: user.id },
       orderBy: { createdAt: 'desc' },
-      take: limit
+      take: limit,
+      select: {
+        id: true,
+        question: true,
+        answer: true,
+        profession: true,
+        sources: true,
+        createdAt: true
+      }
+    })
+
+    // Transform queries to search history format
+    const searchHistory = queries.map(query => {
+      let sources = []
+      try {
+        sources = JSON.parse(query.sources || '[]')
+      } catch (e) {
+        sources = []
+      }
+
+      return {
+        id: query.id,
+        searchTerm: query.question,
+        profession: query.profession || 'algemeen',
+        resultCount: sources.length,
+        createdAt: query.createdAt.toISOString(),
+        hasAnswer: !!query.answer && query.answer.length > 0
+      }
     })
 
     return NextResponse.json({ 
-      searchHistory: searchHistory.map(item => ({
-        id: item.id,
-        searchTerm: item.searchTerm,
-        profession: item.profession,
-        resultCount: item.resultCount,
-        createdAt: item.createdAt.toISOString()
-      }))
+      searchHistory
     })
 
   } catch (error) {
@@ -51,81 +73,14 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Voeg zoekterm toe aan geschiedenis
+// POST - Niet meer nodig omdat queries automatisch worden opgeslagen
 export async function POST(request: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions)
-    
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const { searchTerm, profession = 'algemeen', resultCount = 0 } = await request.json()
-
-    if (!searchTerm || searchTerm.trim().length === 0) {
-      return NextResponse.json({ error: 'Search term is required' }, { status: 400 })
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      select: { id: true }
-    })
-
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
-    }
-
-    // Check if this exact search was done recently (within last hour)
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000)
-    const recentSearch = await prisma.userSearchHistory.findFirst({
-      where: {
-        userId: user.id,
-        searchTerm: searchTerm.trim(),
-        profession: profession,
-        createdAt: {
-          gte: oneHourAgo
-        }
-      }
-    })
-
-    // If found recent duplicate, don't add again
-    if (recentSearch) {
-      return NextResponse.json({ 
-        message: 'Search already recorded recently',
-        searchHistoryId: recentSearch.id
-      })
-    }
-
-    // Create search history entry
-    const searchHistory = await prisma.userSearchHistory.create({
-      data: {
-        userId: user.id,
-        searchTerm: searchTerm.trim(),
-        profession: profession,
-        resultCount: resultCount
-      }
-    })
-
-    return NextResponse.json({ 
-      searchHistory: {
-        id: searchHistory.id,
-        searchTerm: searchHistory.searchTerm,
-        profession: searchHistory.profession,
-        resultCount: searchHistory.resultCount,
-        createdAt: searchHistory.createdAt.toISOString()
-      }
-    })
-
-  } catch (error) {
-    console.error('Search history POST error:', error)
-    return NextResponse.json(
-      { error: 'Failed to add search history' },
-      { status: 500 }
-    )
-  }
+  return NextResponse.json({ 
+    message: 'Search history is automatically saved with queries' 
+  })
 }
 
-// DELETE - Verwijder zoekgeschiedenis item
+// DELETE - Verwijder query uit geschiedenis
 export async function DELETE(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
@@ -135,7 +90,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     const url = new URL(request.url)
-    const searchHistoryId = url.searchParams.get('id')
+    const queryId = url.searchParams.get('id')
     const clearAll = url.searchParams.get('clearAll') === 'true'
 
     const user = await prisma.user.findUnique({
@@ -148,8 +103,8 @@ export async function DELETE(request: NextRequest) {
     }
 
     if (clearAll) {
-      // Clear all search history for user
-      const result = await prisma.userSearchHistory.deleteMany({
+      // Clear all queries for user
+      const result = await prisma.query.deleteMany({
         where: { userId: user.id }
       })
 
@@ -157,11 +112,11 @@ export async function DELETE(request: NextRequest) {
         message: 'All search history cleared',
         deletedCount: result.count
       })
-    } else if (searchHistoryId) {
-      // Delete specific search history item
-      const deletedItem = await prisma.userSearchHistory.delete({
+    } else if (queryId) {
+      // Delete specific query
+      const deletedItem = await prisma.query.delete({
         where: {
-          id: searchHistoryId,
+          id: queryId,
           userId: user.id // Ensure user can only delete their own items
         }
       })
@@ -171,7 +126,7 @@ export async function DELETE(request: NextRequest) {
         deletedId: deletedItem.id
       })
     } else {
-      return NextResponse.json({ error: 'Search history ID or clearAll parameter required' }, { status: 400 })
+      return NextResponse.json({ error: 'Query ID or clearAll parameter required' }, { status: 400 })
     }
 
   } catch (error) {
