@@ -15,6 +15,8 @@ export interface SourceValidation {
   hasValidDate: boolean;
   extractedDates: number[];
   reason: string;
+  isReliable?: boolean;
+  severity?: 'info' | 'warning' | 'error';
 }
 
 /**

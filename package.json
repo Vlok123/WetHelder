@@ -18,7 +18,9 @@
     "ingest:koop": "node scripts/ingest-test.js --source=koop",
     "ingest:rechtspraak": "node scripts/ingest-test.js --source=rechtspraak",
     "ingest:all": "node scripts/ingest-test.js --source=all",
-    "search:test": "node scripts/ingest-test.js --search"
+    "search:test": "node scripts/ingest-test.js --search",
+    "excel:test": "node scripts/test-excel-integration.js",
+    "excel:search": "node scripts/test-excel-integration.js --search"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^1.6.0",
@@ -53,7 +55,8 @@
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/node": "^20",

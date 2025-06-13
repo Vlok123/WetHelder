@@ -29,6 +29,13 @@ import {
   GoogleSearchResult
 } from '@/lib/googleSearch'
 
+// Import Excel bronnen
+import { 
+  searchExcelSources, 
+  formatExcelSourcesForContext,
+  testExcelIntegration 
+} from '@/lib/excelSources'
+
 // DeepSeek API configuratie
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
 
@@ -1631,17 +1638,10 @@ export async function POST(request: NextRequest) {
               console.log('🌐 Searching Google for additional context...')
               const searchResults = await comprehensiveJuridicalSearch(question)
               // Extract the actual results from the VerifiedSearchResults object
-              if (searchResults && searchResults.sources) {
-                googleResults = [
-                  ...searchResults.sources.wetten,
-                  ...searchResults.sources.rechtspraak,
-                  ...searchResults.sources.tuchtrecht,
-                  ...searchResults.sources.boetes,
-                  ...searchResults.sources.overheid,
-                  ...searchResults.sources.apv
-                ]
+              if (searchResults && searchResults.results) {
+                googleResults = searchResults.results
               }
-              console.log(`📊 Google results: ${googleResults.length} sources found`)
+              console.log(`📊 Google results: ${googleResults.length} sources found (${searchResults.excelResults} Excel, ${searchResults.internetResults} internet)`)
             } catch (error) {
               console.error('Google search failed:', error)
               googleResults = []
@@ -1814,7 +1814,7 @@ ${contextualPrompt}
 ${searchResults.combinedSnippets}
 
 **BRONVALIDATIE:**
-${searchResults.validationSummary}
+Totaal ${searchResults.totalResults} bronnen gevonden (${searchResults.excelResults} Excel database, ${searchResults.internetResults} internet verificatie). ${searchResults.currentYearResults} actuele bronnen, ${searchResults.outdatedResults} verouderde bronnen. ${searchResults.isHistoricalQuery ? 'Historische vraag: alle bronnen toegestaan.' : 'Alleen actuele bronnen gebruikt.'}
 
 **VRAAG:** ${query}
 
