@@ -177,38 +177,94 @@ const professionConfig = {
 const formatText = (text: string) => {
   if (!text) return null
   
+  // Pre-process text to identify and format citations better
+  const processedText = text.replace(
+    /"([^"]+)"/g, 
+    (match, citation) => `> ${citation}`
+  )
+  
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
       components={{
-        h1: ({ children }) => <h1 className="text-xl font-bold mb-4 text-slate-900">{children}</h1>,
-        h2: ({ children }) => <h2 className="text-lg font-semibold mb-3 text-slate-800">{children}</h2>,
-        h3: ({ children }) => <h3 className="text-base font-medium mb-2 text-slate-700">{children}</h3>,
-        p: ({ children }) => <p className="mb-3 text-slate-700 leading-relaxed">{children}</p>,
-        ul: ({ children }) => <ul className="list-disc list-inside mb-3 space-y-1 text-slate-700">{children}</ul>,
-        ol: ({ children }) => <ol className="list-decimal list-inside mb-3 space-y-1 text-slate-700">{children}</ol>,
-        li: ({ children }) => <li className="text-slate-700">{children}</li>,
-        strong: ({ children }) => <strong className="font-semibold text-slate-900">{children}</strong>,
-        em: ({ children }) => <em className="italic text-slate-800">{children}</em>,
-        blockquote: ({ children }) => (
-          <blockquote className="border-l-4 border-blue-200 pl-4 py-2 mb-3 bg-blue-50 text-slate-700 italic">
+        h1: ({ children }) => (
+          <h1 className="text-2xl font-bold mb-6 text-slate-900 border-b border-slate-200 pb-2">
             {children}
-          </blockquote>
+          </h1>
+        ),
+        h2: ({ children }) => (
+          <h2 className="text-xl font-semibold mb-4 text-slate-800 mt-6">
+            {children}
+          </h2>
+        ),
+        h3: ({ children }) => (
+          <h3 className="text-lg font-medium mb-3 text-slate-700 mt-4">
+            {children}
+          </h3>
+        ),
+        p: ({ children }) => (
+          <p className="mb-4 text-slate-700 leading-relaxed text-base">
+            {children}
+          </p>
+        ),
+        ul: ({ children }) => (
+          <ul className="list-disc list-inside mb-4 space-y-2 text-slate-700 ml-4">
+            {children}
+          </ul>
+        ),
+        ol: ({ children }) => (
+          <ol className="list-decimal list-inside mb-4 space-y-2 text-slate-700 ml-4">
+            {children}
+          </ol>
+        ),
+        li: ({ children }) => (
+          <li className="text-slate-700 leading-relaxed">
+            {children}
+          </li>
+        ),
+        strong: ({ children }) => (
+          <strong className="font-semibold text-slate-900 bg-yellow-50 px-1 rounded">
+            {children}
+          </strong>
+        ),
+        em: ({ children }) => (
+          <em className="italic text-slate-800 font-medium">
+            {children}
+          </em>
+        ),
+        blockquote: ({ children }) => (
+          <div className="my-6 border-l-4 border-blue-400 bg-gradient-to-r from-blue-50 to-blue-25 rounded-r-lg shadow-sm">
+            <div className="pl-6 pr-4 py-4">
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0 mt-1">
+                  <svg className="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-blue-800 mb-1">Citaat uit officiële bron:</div>
+                  <div className="text-slate-700 italic leading-relaxed">
+                    {children}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         ),
         code: ({ children }) => (
-          <code className="bg-slate-100 text-slate-800 px-1 py-0.5 rounded text-sm font-mono">
+          <code className="bg-slate-100 text-slate-800 px-2 py-1 rounded text-sm font-mono border">
             {children}
           </code>
         ),
         pre: ({ children }) => (
-          <pre className="bg-slate-100 p-3 rounded-lg mb-3 overflow-x-auto">
+          <pre className="bg-slate-100 p-4 rounded-lg mb-4 overflow-x-auto border border-slate-200 shadow-sm">
             <code className="text-sm font-mono text-slate-800">{children}</code>
           </pre>
         ),
         a: ({ href, children }) => (
           <a 
             href={href} 
-            className="text-blue-600 hover:text-blue-800 underline"
+            className="text-blue-600 hover:text-blue-800 underline decoration-2 underline-offset-2 transition-colors"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -216,28 +272,36 @@ const formatText = (text: string) => {
           </a>
         ),
         table: ({ children }) => (
-          <div className="overflow-x-auto mb-3">
-            <table className="min-w-full border border-slate-200 rounded-lg">
+          <div className="overflow-x-auto mb-6 shadow-sm rounded-lg border border-slate-200">
+            <table className="min-w-full">
               {children}
             </table>
           </div>
         ),
-        thead: ({ children }) => <thead className="bg-slate-50">{children}</thead>,
-        tbody: ({ children }) => <tbody>{children}</tbody>,
-        tr: ({ children }) => <tr className="border-b border-slate-200">{children}</tr>,
+        thead: ({ children }) => (
+          <thead className="bg-slate-50 border-b border-slate-200">
+            {children}
+          </thead>
+        ),
+        tbody: ({ children }) => <tbody className="bg-white">{children}</tbody>,
+        tr: ({ children }) => (
+          <tr className="border-b border-slate-100 hover:bg-slate-25 transition-colors">
+            {children}
+          </tr>
+        ),
         th: ({ children }) => (
-          <th className="px-4 py-2 text-left font-semibold text-slate-900 border-r border-slate-200 last:border-r-0">
+          <th className="px-6 py-3 text-left font-semibold text-slate-900 border-r border-slate-200 last:border-r-0">
             {children}
           </th>
         ),
         td: ({ children }) => (
-          <td className="px-4 py-2 text-slate-700 border-r border-slate-200 last:border-r-0">
+          <td className="px-6 py-4 text-slate-700 border-r border-slate-100 last:border-r-0">
             {children}
           </td>
         )
       }}
     >
-      {text}
+      {processedText}
     </ReactMarkdown>
   )
 }

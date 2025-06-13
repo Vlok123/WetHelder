@@ -1388,7 +1388,32 @@ function detectAndCorrectLegalMistakes(response: string): string {
 function cleanupResponseFormatting(response: string): string {
   let cleanedResponse = response
 
-  // Fix problematische opmaak patronen
+  // STAP 1: Verwijder alle Markdown formatting voor schone tekst
+  const markdownCleanup = [
+    // Verwijder ** bold formatting
+    { pattern: /\*\*(.*?)\*\*/g, replacement: '$1' },
+    
+    // Verwijder ## headers en maak gewone tekst
+    { pattern: /^#{1,6}\s*(.*?)$/gm, replacement: '$1' },
+    
+    // Verwijder *** en andere emphasis
+    { pattern: /\*{1,3}(.*?)\*{1,3}/g, replacement: '$1' },
+    
+    // Verwijder _ emphasis
+    { pattern: /_{1,2}(.*?)_{1,2}/g, replacement: '$1' },
+    
+    // Verwijder ` code formatting
+    { pattern: /`(.*?)`/g, replacement: '$1' },
+    
+    // Verwijder > blockquote markers
+    { pattern: /^>\s*/gm, replacement: '' },
+  ]
+
+  markdownCleanup.forEach(({ pattern, replacement }) => {
+    cleanedResponse = cleanedResponse.replace(pattern, replacement)
+  })
+
+  // STAP 2: Fix problematische opmaak patronen
   const formattingFixes = [
     // Fix "punt + enter + tekst" naar "punt tekst" (vloeiende zinnen)
     { pattern: /\.\s*\n\s*([a-z])/g, replacement: '. $1' },
@@ -1423,10 +1448,6 @@ function cleanupResponseFormatting(response: string): string {
     // Fix spaties aan begin/eind van regels
     { pattern: /^\s+|\s+$/gm, replacement: '' },
     
-    // Zorg voor juiste spatiëring rond **bold** tekst
-    { pattern: /\*\*\s+/g, replacement: '**' },
-    { pattern: /\s+\*\*/g, replacement: '**' },
-    
     // Fix spatiëring rond bullets en nummering
     { pattern: /^(\d+\.)\s*/gm, replacement: '$1 ' },
     { pattern: /^([-•*])\s*/gm, replacement: '$1 ' },
@@ -1436,11 +1457,12 @@ function cleanupResponseFormatting(response: string): string {
     cleanedResponse = cleanedResponse.replace(pattern, replacement)
   })
 
-  // Verwijder overtollige witregels (meer dan 2 opeenvolgende enters)
+  // STAP 3: Verbeter structuur en leesbaarheid
+  // Zorg voor juiste paragraaf scheiding
   cleanedResponse = cleanedResponse.replace(/\n{3,}/g, '\n\n')
   
-  // Zorg ervoor dat er een lege regel is tussen verschillende secties (headers)
-  cleanedResponse = cleanedResponse.replace(/(\*\*[^*]+\*\*)\n([A-Z])/g, '$1\n\n$2')
+  // Zorg ervoor dat er een lege regel is tussen verschillende secties
+  cleanedResponse = cleanedResponse.replace(/([.!?])\n([A-Z])/g, '$1\n\n$2')
   
   // Maar niet teveel lege regels
   cleanedResponse = cleanedResponse.replace(/\n{3,}/g, '\n\n')
@@ -1689,21 +1711,26 @@ Voor de vraag "${query}" zijn geen relevante resultaten gevonden in de officiël
     
     const systemPrompt = `Je bent een juridisch AI-assistent. Beantwoord onderstaande vraag uitsluitend op basis van de fragmenten uit officiële bronnen.
 
-❓ Vraag:
-${query}
+Vraag: ${query}
 
-📚 Beschikbare informatie:
+Beschikbare informatie:
 ${fragmentsText}
 
-✅ Richtlijnen:
-- Gebruik uitsluitend bovenstaande tekst
+BELANGRIJKE INSTRUCTIES VOOR JE ANTWOORD:
+- Gebruik GEEN Markdown formatting (geen **, ##, _, `, etc.)
+- Schrijf in gewone, natuurlijke Nederlandse tekst
+- Gebruik citaten uit de bronnen door ze tussen aanhalingstekens te plaatsen: "exacte tekst uit bron"
 - Noem altijd de bron bij het antwoord
 - Zeg het eerlijk als de informatie niet actueel of onvolledig is
 - Bij bedragen en tarieven: vermeld altijd het geldige jaar
 - Als iets onduidelijk is uit de fragmenten, zeg dat expliciet
 - Geef geen informatie die niet in de fragmenten staat
+- Gebruik duidelijke paragrafen en structuur, maar zonder speciale opmaak
+- Begin direct met het antwoord, geen headers of titels
 
-**BELANGRIJK:** Het is nu ${currentYear}. Als de informatie uit een ander jaar komt, vermeld dit expliciet.`
+Het is nu ${currentYear}. Als de informatie uit een ander jaar komt, vermeld dit expliciet.
+
+Schrijf je antwoord als een heldere, professionele juridische uitleg zonder opmaakcodes.`
     // Check if OpenAI API key is available
     if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-development-placeholder') {
       console.warn('OpenAI API key not configured, using fallback response')
@@ -1764,126 +1791,126 @@ function generateFallbackResponse(query: string, profession: string, isWetUitleg
   const lowerQuery = query.toLowerCase()
   const currentYear = new Date().getFullYear()
   
-  let response = `⚖️ **Juridisch advies van WetHelder**
+  let response = `Juridisch advies van WetHelder
 
-**BELANGRIJK:** De geavanceerde juridische service is tijdelijk niet beschikbaar. Deze informatie is gebaseerd op algemene juridische kennis voor ${currentYear}. Voor specifiek juridisch advies over uw situatie, raadpleeg altijd een gekwalificeerde jurist.
+BELANGRIJK: De geavanceerde juridische service is tijdelijk niet beschikbaar. Deze informatie is gebaseerd op algemene juridische kennis voor ${currentYear}. Voor specifiek juridisch advies over uw situatie, raadpleeg altijd een gekwalificeerde jurist.
 
-**⚠️ ACTUALITEITSGARANTIE:** Alle bedragen en regelgeving zijn gecontroleerd voor ${currentYear}.
+ACTUALITEITSGARANTIE: Alle bedragen en regelgeving zijn gecontroleerd voor ${currentYear}.
 
-**Uw vraag:** ${query}
+Uw vraag: ${query}
 
-**Juridische informatie:**`
+Juridische informatie:`
 
   // Basis antwoorden voor veelgestelde vragen
   if (lowerQuery.includes('vuurwerk')) {
     response += `
 
-**Vuurwerk en handhaving - Juridische grondslag:**
+Vuurwerk en handhaving - Juridische grondslag:
 
-**Wettelijke basis voor controles:**
-- **Artikel 23 WED:** Opsporingsambtenaren mogen plaatsen doorzoeken bij verdenking van WED-overtreding
-- **Artikel 2 WED:** Overtredingen van het Vuurwerkbesluit zijn strafbare feiten
-- **Artikel 1.1.3 Wet milieubeheer:** Vuurwerk valt onder gevaarlijke stoffen
-- **Artikel 27 Sv:** Algemene doorzoekingsbevoegdheden bij verdenking strafbaar feit
+Wettelijke basis voor controles:
+- Artikel 23 WED: Opsporingsambtenaren mogen plaatsen doorzoeken bij verdenking van WED-overtreding
+- Artikel 2 WED: Overtredingen van het Vuurwerkbesluit zijn strafbare feiten
+- Artikel 1.1.3 Wet milieubeheer: Vuurwerk valt onder gevaarlijke stoffen
+- Artikel 27 Sv: Algemene doorzoekingsbevoegdheden bij verdenking strafbaar feit
 
-**Praktische toepassing voor politie:**
-- **Voertuigcontrole:** Toegestaan bij concrete verdenking van vuurwerktransport
-- **Doorzoekingsbevoegdheid:** Artikel 23 WED geeft specifieke bevoegdheden
-- **Inbeslagname:** Mogelijk bij illegaal vuurwerk (artikel 94 Sv)
-- **Proces-verbaal:** Opmaken conform artikel 29 Sv
+Praktische toepassing voor politie:
+- Voertuigcontrole: Toegestaan bij concrete verdenking van vuurwerktransport
+- Doorzoekingsbevoegdheid: Artikel 23 WED geeft specifieke bevoegdheden
+- Inbeslagname: Mogelijk bij illegaal vuurwerk (artikel 94 Sv)
+- Proces-verbaal: Opmaken conform artikel 29 Sv
 
-**Vuurwerkbesluit - Belangrijke bepalingen:**
+Vuurwerkbesluit - Belangrijke bepalingen:
 - Artikel 2.1: Verbod op professioneel vuurwerk voor particulieren
 - Artikel 2.2: Toegestaan consumentenvuurwerk
 - Artikel 3.1: Verkoop alleen in toegestane periodes
 - Artikel 4.1: Afsteken alleen 31 december 18:00 - 1 januari 02:00
 
-**Handhavingsstrategie:**
-1. **Verdenking vaststellen** (transport, verkoop, bezit)
-2. **Legitimatie tonen** (artikel 2 Politiewet 2012)
-3. **Doorzoekingsbevoegdheid toepassen** (artikel 23 WED)
-4. **Proces-verbaal opmaken** (artikel 29 Sv)
-5. **Inbeslagname** indien van toepassing (artikel 94 Sv)
+Handhavingsstrategie:
+1. Verdenking vaststellen (transport, verkoop, bezit)
+2. Legitimatie tonen (artikel 2 Politiewet 2012)
+3. Doorzoekingsbevoegdheid toepassen (artikel 23 WED)
+4. Proces-verbaal opmaken (artikel 29 Sv)
+5. Inbeslagname indien van toepassing (artikel 94 Sv)
 
-**ANTWOORD OP UW VRAAG:**
-**JA, u mag als politieagent een voertuig doorzoeken bij verdenking van vuurwerktransport** op basis van:
-- **Artikel 23 WED:** Specifieke doorzoekingsbevoegdheid bij WED-overtredingen
-- **Artikel 27 Sv:** Algemene doorzoekingsbevoegdheid bij verdenking strafbaar feit
-- **Vuurwerkbesluit:** Overtredingen zijn strafbare feiten onder de WED
+ANTWOORD OP UW VRAAG:
+JA, u mag als politieagent een voertuig doorzoeken bij verdenking van vuurwerktransport op basis van:
+- Artikel 23 WED: Specifieke doorzoekingsbevoegdheid bij WED-overtredingen
+- Artikel 27 Sv: Algemene doorzoekingsbevoegdheid bij verdenking strafbaar feit
+- Vuurwerkbesluit: Overtredingen zijn strafbare feiten onder de WED
 
-**Voorwaarden:**
+Voorwaarden:
 - Concrete verdenking van WED-overtreding
 - Proportionaliteit van de maatregel
 - Correcte procedure en proces-verbaal`
   } else if (lowerQuery.includes('auto') && (lowerQuery.includes('doorzoek') || lowerQuery.includes('controle'))) {
     response += `
 
-**Voertuigcontroles en doorzoekingen - Juridische basis:**
+Voertuigcontroles en doorzoekingen - Juridische basis:
 
-**Wettelijke grondslagen:**
-- **Artikel 160 WVW 1994:** Bevoegdheid tot staandehouding verkeer
-- **Artikel 164 WVW 1994:** Vordering tot medewerking aan onderzoek
-- **Artikel 27 Sv:** Algemene doorzoekingsbevoegdheden bij verdenking
-- **Artikel 96b Sv:** Specifieke regels staandehouding voertuigen
-- **Artikel 2 Politiewet 2012:** Algemene politietaak handhaving rechtsorde
+Wettelijke grondslagen:
+- Artikel 160 WVW 1994: Bevoegdheid tot staandehouding verkeer
+- Artikel 164 WVW 1994: Vordering tot medewerking aan onderzoek
+- Artikel 27 Sv: Algemene doorzoekingsbevoegdheden bij verdenking
+- Artikel 96b Sv: Specifieke regels staandehouding voertuigen
+- Artikel 2 Politiewet 2012: Algemene politietaak handhaving rechtsorde
 
-**Doorzoekingsbevoegdheden:**
-- **Artikel 23 WED:** Bij verdenking WED-overtredingen (vuurwerk, milieu, etc.)
-- **Artikel 9 Opiumwet:** Bij verdenking drugstransport
-- **Artikel 27 Sv:** Bij verdenking van elk strafbaar feit
+Doorzoekingsbevoegdheden:
+- Artikel 23 WED: Bij verdenking WED-overtredingen (vuurwerk, milieu, etc.)
+- Artikel 9 Opiumwet: Bij verdenking drugstransport
+- Artikel 27 Sv: Bij verdenking van elk strafbaar feit
 
-**Procedure voertuigcontrole:**
-1. **Staandehouding:** Duidelijk signaal geven (artikel 160 WVW)
-2. **Legitimatie:** Tonen van politielegitimatie (artikel 2 Politiewet)
-3. **Mededeling:** Reden van controle vermelden
-4. **Identificatie:** Vordering legitimatie bestuurder (artikel 2 WID)
-5. **Doorzoeken:** Alleen bij concrete verdenking strafbaar feit
+Procedure voertuigcontrole:
+1. Staandehouding: Duidelijk signaal geven (artikel 160 WVW)
+2. Legitimatie: Tonen van politielegitimatie (artikel 2 Politiewet)
+3. Mededeling: Reden van controle vermelden
+4. Identificatie: Vordering legitimatie bestuurder (artikel 2 WID)
+5. Doorzoeken: Alleen bij concrete verdenking strafbaar feit
 
-**Belangrijke voorwaarden:**
-- **Concrete verdenking** vereist voor doorzoeken
-- **Proportionaliteit:** Middel moet passen bij doel
-- **Proces-verbaal:** Vastleggen conform artikel 29 Sv
-- **Rechtsbijstand:** Recht op advocaat bij aanhouding (artikel 28 Sv)
+Belangrijke voorwaarden:
+- Concrete verdenking vereist voor doorzoeken
+- Proportionaliteit: Middel moet passen bij doel
+- Proces-verbaal: Vastleggen conform artikel 29 Sv
+- Rechtsbijstand: Recht op advocaat bij aanhouding (artikel 28 Sv)
 
-**Specifieke situaties:**
-- **Vuurwerk:** WED-bevoegdheden (artikel 23 WED)
-- **Drugs:** Opiumwet-bevoegdheden (artikel 9 Opiumwet)
-- **Wapens:** WWM-bevoegdheden (artikel 54 WWM)
-- **Alcohol:** WVW-bevoegdheden (artikel 8 WVW)`
+Specifieke situaties:
+- Vuurwerk: WED-bevoegdheden (artikel 23 WED)
+- Drugs: Opiumwet-bevoegdheden (artikel 9 Opiumwet)
+- Wapens: WWM-bevoegdheden (artikel 54 WWM)
+- Alcohol: WVW-bevoegdheden (artikel 8 WVW)`
   } else if (lowerQuery.includes('schenk') || lowerQuery.includes('ton') || lowerQuery.includes('erfenis')) {
     response += `
 
-**Schenking en erfrecht (actueel 2025):**
+Schenking en erfrecht (actueel 2025):
 
-**Voor uw situatie (3 kinderen, €300.000 beschikbaar):**
-- **Jaarlijkse vrijstelling 2025:** €6.739 per kind per jaar
-- **Totaal per jaar belastingvrij:** 3 × €6.739 = €20.217
-- **Voor €300.000 volledig belastingvrij:** ongeveer 15 jaar nodig
+Voor uw situatie (3 kinderen, €300.000 beschikbaar):
+- Jaarlijkse vrijstelling 2025: €6.739 per kind per jaar
+- Totaal per jaar belastingvrij: 3 × €6.739 = €20.217
+- Voor €300.000 volledig belastingvrij: ongeveer 15 jaar nodig
 
-**⚠️ Belangrijke wijziging sinds 2023:**
-- De **"jubelton"** (eenmalige verhoogde vrijstelling) is **AFGESCHAFT per 1 januari 2023**
+Belangrijke wijziging sinds 2023:
+- De "jubelton" (eenmalige verhoogde vrijstelling) is AFGESCHAFT per 1 januari 2023
 - Geen extra vrijstelling meer voor kinderen tussen 18-40 jaar
 - Alleen nog de gewone jaarlijkse vrijstelling van €6.739
 
-**Opties voor uw situatie:**
-1. **Spreiden over jaren:** €20.217 per jaar belastingvrij verdelen
-2. **Direct schenken:** Mogelijk, maar 10% schenkingsrecht over het meerdere
-3. **Combinatie:** Deel direct, deel gespreid
+Opties voor uw situatie:
+1. Spreiden over jaren: €20.217 per jaar belastingvrij verdelen
+2. Direct schenken: Mogelijk, maar 10% schenkingsrecht over het meerdere
+3. Combinatie: Deel direct, deel gespreid
 
-**Schenkingsrecht 2025:**
-- **Tarief:** 10% over bedragen boven de vrijstelling
-- **Voorbeeld:** €100.000 aan 1 kind = €6.739 vrijgesteld + 10% over €93.261 = €9.326 belasting
+Schenkingsrecht 2025:
+- Tarief: 10% over bedragen boven de vrijstelling
+- Voorbeeld: €100.000 aan 1 kind = €6.739 vrijgesteld + 10% over €93.261 = €9.326 belasting
 
-**Belangrijke stappen:**
+Belangrijke stappen:
 - Aangifte binnen 3 maanden na schenking
 - Notariële akte vaak verplicht bij grote bedragen
 - Overleg met belastingadviseur voor optimale strategie
 
-**Bronnen:** Belastingdienst.nl, Wet op de Successierechten 1956`
+Bronnen: Belastingdienst.nl, Wet op de Successierechten 1956`
   } else {
     response += `
 
-**Algemene juridische informatie:**
+Algemene juridische informatie:
 - Voor specifieke juridische vragen is professioneel advies nodig
 - Nederlandse wetgeving is complex en situatie-afhankelijk
 - Belangrijke bronnen: wetten.overheid.nl, rechtspraak.nl
@@ -1892,7 +1919,7 @@ function generateFallbackResponse(query: string, profession: string, isWetUitleg
 
   response += `
 
-**⚠️ Disclaimer:** Deze informatie vervangt geen professioneel juridisch advies. Voor volledige en actuele informatie over uw specifieke situatie, raadpleeg een gekwalificeerde jurist.
+⚠️ Disclaimer: Deze informatie vervangt geen professioneel juridisch advies. Voor volledige en actuele informatie over uw specifieke situatie, raadpleeg een gekwalificeerde jurist.
 
 ❓ **Service tijdelijk beperkt** - Probeer het later opnieuw voor uitgebreid juridisch advies met geavanceerde functies.`
 
