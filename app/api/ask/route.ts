@@ -39,7 +39,17 @@ import {
 // DeepSeek API configuratie
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
 
-const SYSTEM_PROMPT = `Je bent een Nederlandse juridische assistent gespecialiseerd in het Nederlandse rechtssysteem. Je hebt toegang tot uitgebreide officiële bronnen en moet betrouwbare, accurate juridische informatie verstrekken.
+const SYSTEM_PROMPT = `Je bent een Nederlandse juridische assistent gespecialiseerd in het Nederlandse rechtssysteem op WetHelder.nl. Je hebt toegang tot uitgebreide officiële bronnen en moet betrouwbare, accurate juridische informatie verstrekken op basis van de **volledige Nederlandse wetgeving**.
+
+**🔧 VOLLEDIGE WETTELIJKE DEKKING:**
+- Je begint bij de **algemene hoofdwetten** (zoals Grondwet, Wetboek van Strafrecht, Wegenverkeerswet, Algemene wet bestuursrecht)
+- Daarna controleer je of de vraag **valt onder een bijzondere wet of besluit** en neem je die ook mee in het antwoord
+- Je beperkt je dus **nooit tot alleen hoofdwetten**
+
+**✅ ALTIJD MEENEMEN (indien van toepassing):**
+- **Bijzondere wetten**: Wet Dieren, Vuurwerkbesluit, Opiumwet, WED, Geneesmiddelenwet, APV's, Arbeidstijdenwet, Alcoholwet, Wapenwetgeving, Wet BIG, Tabaks- en rookwarenwet, Wet publieke gezondheid, Arbowet, WPBR, etc.
+- **Besluiten en regelingen**: Regeling wapens en munitie, Besluit risico's zware ongevallen, Regeling geneeskundige zorg politie, etc.
+- **Lokale regelgeving**: APV's, provinciale verordeningen, waterschapsverordeningen
 
 **KERNPRINCIPES:**
 - Geef **natuurlijke, begrijpelijke antwoorden** met **flexibele juridische interpretatie**
@@ -47,6 +57,8 @@ const SYSTEM_PROMPT = `Je bent een Nederlandse juridische assistent gespecialise
 - Wees **betrouwbaar en precies** in juridische uitspraken
 - **VERPLICHT: Vermeld altijd de wettelijke grondslag (artikel + wetboek) bij elke juridische handeling of begrip**
 - **Bij juridische concepten MOET de relevante wetgeving worden genoemd, ook als deze niet expliciet in de bronnen staat**
+- **Benoem expliciet als iets onder een bijzondere wet valt**
+- **Als een specifieke wet niet relevant is, vermeld dat ook kort (ter bevestiging van volledigheid)**
 - Geef **praktische, toepasbare adviezen** die direct bruikbaar zijn
 - **CONVERSATIEGEHEUGEN: Behandel elke vraag als onderdeel van een lopend gesprek. Verwijs naar eerdere antwoorden waar relevant en bouw voort op de context.**
 
@@ -76,7 +88,20 @@ const SYSTEM_PROMPT = `Je bent een Nederlandse juridische assistent gespecialise
 - Gebruik officiële bronnen als primaire referentie
 - Geef praktische bronnen voor verdere informatie`
 
-const ADVANCED_SYSTEM_PROMPT = `Je bent een senior Nederlandse juridische expert gespecialiseerd in diepgaande juridische analyse. Je hebt toegang tot uitgebreide officiële bronnen, jurisprudentie en moet uitgebreide, wetenschappelijk onderbouwde juridische analyses verstrekken.
+const ADVANCED_SYSTEM_PROMPT = `Je bent een senior Nederlandse juridische expert gespecialiseerd in diepgaande juridische analyse op WetHelder.nl. Je hebt toegang tot uitgebreide officiële bronnen, jurisprudentie en moet uitgebreide, wetenschappelijk onderbouwde juridische analyses verstrekken op basis van de **volledige Nederlandse wetgeving**.
+
+**🔧 VOLLEDIGE WETTELIJKE DEKKING (UITGEBREID):**
+- Je begint bij de **algemene hoofdwetten** (zoals Grondwet, Wetboek van Strafrecht, Wegenverkeerswet, Algemene wet bestuursrecht)
+- Daarna controleer je **verplicht alle relevante bijzondere wetten en besluiten** en neem je die uitgebreid mee in het antwoord
+- Je beperkt je dus **nooit tot alleen hoofdwetten** - dit is cruciaal voor diepgaande analyse
+- **Geef een volledig overzicht van alle toepasselijke wetgeving per onderwerp**
+
+**✅ ALTIJD UITGEBREID MEENEMEN (indien van toepassing):**
+- **Bijzondere wetten**: Wet Dieren, Vuurwerkbesluit, Opiumwet, WED, Geneesmiddelenwet, APV's, Arbeidstijdenwet, Alcoholwet, Wapenwetgeving, Wet BIG, Tabaks- en rookwarenwet, Wet publieke gezondheid, Arbowet, WPBR, Wet milieubeheer, Flora- en faunawet, etc.
+- **Besluiten en regelingen**: Regeling wapens en munitie, Besluit risico's zware ongevallen, Regeling geneeskundige zorg politie, Warenwetbesluiten, etc.
+- **Lokale regelgeving**: APV's, provinciale verordeningen, waterschapsverordeningen
+- **Jurisprudentie**: Relevante uitspraken van Hoge Raad, Raad van State, gerechtshoven
+- **Praktijkvoorbeelden**: Concrete casusistieken en toepassingen
 
 **KERNPRINCIPES DIEPGAANDE ANALYSE:**
 - Geef **uitgebreide, wetenschappelijk onderbouwde analyses** met **volledige juridische context**
@@ -84,6 +109,9 @@ const ADVANCED_SYSTEM_PROMPT = `Je bent een senior Nederlandse juridische expert
 - Wees **extreem precies** in juridische interpretaties en nuanceringen
 - **VERPLICHT: Geef volledige wettelijke grondslagen met alle relevante artikelen en jurisprudentie**
 - **Analyseer juridische ontwikkelingen, trends en verschillende interpretaties**
+- **Benoem expliciet welke bijzondere wetten van toepassing zijn en waarom**
+- **Geef een volledig juridisch kader per onderwerp**
+- **Behandel ook randgevallen en uitzonderingen**
 - Geef **uitgebreide praktische toepassingen** met concrete casusistieken
 - **CONVERSATIEGEHEUGEN: Behandel elke vraag als onderdeel van een lopend juridisch consult. Bouw voort op eerdere analyses en verfijn waar nodig.**
 
@@ -2310,6 +2338,98 @@ function detectSpecializedLegislation(query: string, profession?: string): strin
     specializedLaws.push('Opiumwet')
     specializedLaws.push('Wet bijzondere opsporingsdiensten')
     specializedLaws.push('Ambtsinstructie voor de politie')
+  }
+  
+  // Vuurwerk en explosieven
+  if (queryLower.includes('vuurwerk') || queryLower.includes('explosie') || queryLower.includes('knalvuurwerk') ||
+      queryLower.includes('carbid') || queryLower.includes('vuurwerkbesluit')) {
+    specializedLaws.push('Vuurwerkbesluit')
+    specializedLaws.push('Wet explosieven voor civiel gebruik (WECG)')
+    specializedLaws.push('Wet op de economische delicten (WED)')
+    specializedLaws.push('Besluit risico\'s zware ongevallen 2015 (Brzo)')
+  }
+  
+  // Alcohol en tabak
+  if (queryLower.includes('alcohol') || queryLower.includes('drank') || queryLower.includes('tabak') ||
+      queryLower.includes('roken') || queryLower.includes('horeca') || queryLower.includes('café')) {
+    specializedLaws.push('Alcoholwet')
+    specializedLaws.push('Tabaks- en rookwarenwet')
+    specializedLaws.push('Drank- en Horecawet')
+    specializedLaws.push('Wet op de accijns')
+  }
+  
+  // Telecommunicatie en privacy
+  if (queryLower.includes('telefoon') || queryLower.includes('internet') || queryLower.includes('data') ||
+      queryLower.includes('privacy') || queryLower.includes('avg') || queryLower.includes('gdpr')) {
+    specializedLaws.push('Telecommunicatiewet')
+    specializedLaws.push('Algemene verordening gegevensbescherming (AVG)')
+    specializedLaws.push('Uitvoeringswet AVG')
+    specializedLaws.push('Wet politiegegevens')
+  }
+  
+  // Energie en nutsvoorzieningen
+  if (queryLower.includes('energie') || queryLower.includes('gas') || queryLower.includes('elektriciteit') ||
+      queryLower.includes('water') || queryLower.includes('warmte') || queryLower.includes('netbeheer')) {
+    specializedLaws.push('Elektriciteitswet 1998')
+    specializedLaws.push('Gaswet')
+    specializedLaws.push('Warmtewet')
+    specializedLaws.push('Drinkwaterwet')
+  }
+  
+  // Transport en logistiek
+  if (queryLower.includes('transport') || queryLower.includes('vracht') || queryLower.includes('taxi') ||
+      queryLower.includes('bus') || queryLower.includes('trein') || queryLower.includes('luchtvaart') ||
+      queryLower.includes('scheepvaart')) {
+    specializedLaws.push('Wet personenvervoer 2000')
+    specializedLaws.push('Wet goederenvervoer over de weg')
+    specializedLaws.push('Spoorwegwet')
+    specializedLaws.push('Luchtvaartwet')
+    specializedLaws.push('Scheepvaartverkeerswet')
+  }
+  
+  // Voedsel en waren
+  if (queryLower.includes('voedsel') || queryLower.includes('eten') || queryLower.includes('restaurant') ||
+      queryLower.includes('warenwet') || queryLower.includes('haccp') || queryLower.includes('hygiëne')) {
+    specializedLaws.push('Warenwet')
+    specializedLaws.push('Wet dieren (voedselketen)')
+    specializedLaws.push('Warenwetbesluit Bereiding en behandeling van levensmiddelen')
+    specializedLaws.push('Warenwetbesluit Hygiëne van levensmiddelen')
+  }
+  
+  // Cultuur en media
+  if (queryLower.includes('media') || queryLower.includes('televisie') || queryLower.includes('radio') ||
+      queryLower.includes('film') || queryLower.includes('cultuur') || queryLower.includes('auteursrecht')) {
+    specializedLaws.push('Mediawet 2008')
+    specializedLaws.push('Auteurswet')
+    specializedLaws.push('Wet op de naburige rechten')
+    specializedLaws.push('Monumentenwet 1988')
+  }
+  
+  // Sport en evenementen
+  if (queryLower.includes('sport') || queryLower.includes('evenement') || queryLower.includes('festival') ||
+      queryLower.includes('voetbal') || queryLower.includes('wedstrijd') || queryLower.includes('publiek')) {
+    specializedLaws.push('Wet veiligheidsregio\'s')
+    specializedLaws.push('Wet openbare manifestaties')
+    specializedLaws.push('Voetbalwet')
+    specializedLaws.push('Wet op de kansspelen')
+  }
+  
+  // Immigratie en nationaliteit
+  if (queryLower.includes('vreemdeling') || queryLower.includes('immigratie') || queryLower.includes('asiel') ||
+      queryLower.includes('verblijf') || queryLower.includes('nationaliteit') || queryLower.includes('naturalisatie')) {
+    specializedLaws.push('Vreemdelingenwet 2000')
+    specializedLaws.push('Rijkswet op het Nederlanderschap')
+    specializedLaws.push('Wet inburgering')
+    specializedLaws.push('Wet arbeid vreemdelingen')
+  }
+  
+  // Jeugd en familie
+  if (queryLower.includes('jeugd') || queryLower.includes('kind') || queryLower.includes('familie') ||
+      queryLower.includes('adoptie') || queryLower.includes('voogdij') || queryLower.includes('alimentatie')) {
+    specializedLaws.push('Jeugdwet')
+    specializedLaws.push('Wet op de jeugdzorg')
+    specializedLaws.push('Burgerlijk Wetboek Boek 1 (personen- en familierecht)')
+    specializedLaws.push('Wet kinderopvang')
   }
   
   return specializedLaws
