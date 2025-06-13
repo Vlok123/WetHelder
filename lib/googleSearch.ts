@@ -392,9 +392,24 @@ export async function comprehensiveJuridicalSearch(query: string): Promise<any> 
 }
 
 export function formatSearchResultsForContext(results: any): string {
-  if (results.combinedSnippets) {
+  // Handle both VerifiedSearchResults and GoogleSearchResult[] formats
+  if (results && results.combinedSnippets) {
     return results.combinedSnippets
   }
+  
+  // Handle array of GoogleSearchResult
+  if (Array.isArray(results) && results.length > 0) {
+    let formattedText = 'ZOEKRESULTATEN:\n\n'
+    
+    results.forEach((result, index) => {
+      formattedText += `[${index + 1}] ${result.title || 'Geen titel'}\n`
+      formattedText += `Bron: ${result.link || result.url || 'Geen URL'}\n`
+      formattedText += `Inhoud: ${result.snippet || result.content || 'Geen inhoud'}\n\n`
+    })
+    
+    return formattedText
+  }
+  
   return 'Geen resultaten gevonden.'
 }
 

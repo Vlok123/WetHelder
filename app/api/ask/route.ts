@@ -1590,10 +1590,22 @@ export async function POST(request: NextRequest) {
             let googleResults: GoogleSearchResult[] = []
             try {
               console.log('🌐 Searching Google for additional context...')
-              googleResults = await comprehensiveJuridicalSearch(question)
+              const searchResults = await comprehensiveJuridicalSearch(question)
+              // Extract the actual results from the VerifiedSearchResults object
+              if (searchResults && searchResults.sources) {
+                googleResults = [
+                  ...searchResults.sources.wetten,
+                  ...searchResults.sources.rechtspraak,
+                  ...searchResults.sources.tuchtrecht,
+                  ...searchResults.sources.boetes,
+                  ...searchResults.sources.overheid,
+                  ...searchResults.sources.apv
+                ]
+              }
               console.log(`📊 Google results: ${googleResults.length} sources found`)
             } catch (error) {
               console.error('Google search failed:', error)
+              googleResults = []
             }
             
             // Gebruik nieuwe uitgebreide functie
@@ -1663,12 +1675,33 @@ export async function POST(request: NextRequest) {
 
         } catch (error) {
           console.error('Stream error:', error)
-          controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ 
-            type: 'content', 
-            content: 'Er is een fout opgetreden bij het verwerken van uw vraag. Probeer het opnieuw.' 
-          })}\n\n`))
-          controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`))
-          controller.close()
+          
+          // Provide more specific error messages based on error type
+          let errorMessage = 'Er is een fout opgetreden bij het verwerken van uw vraag. Probeer het opnieuw.'
+          
+          if (error instanceof TypeError && error.message.includes('fetch')) {
+            errorMessage = 'Er is een verbindingsfout opgetreden. Controleer uw internetverbinding en probeer het opnieuw.'
+          } else if (error instanceof Error && error.message.includes('API')) {
+            errorMessage = 'Er is een probleem met de AI-service. Probeer het over een paar minuten opnieuw.'
+          } else if (error instanceof Error && error.message.includes('rate limit')) {
+            errorMessage = 'Te veel verzoeken. Wacht even en probeer het opnieuw.'
+          }
+          
+          try {
+            controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ 
+              type: 'content', 
+              content: errorMessage
+            })}\n\n`))
+            controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`))
+          } catch (encodeError) {
+            console.error('Error encoding error message:', encodeError)
+          }
+          
+          try {
+            controller.close()
+          } catch (closeError) {
+            console.error('Error closing controller:', closeError)
+          }
         }
       }
     })
