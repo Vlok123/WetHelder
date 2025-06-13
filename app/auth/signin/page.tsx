@@ -161,7 +161,8 @@ export default function SignInPage() {
             </p>
             <div className="space-y-1 text-xs text-blue-600">
               <div>test@wethelder.nl / test</div>
-              <div>admin@wethelder.nl / admin</div>
+              <div>sanderhelmink@gmail.com / admin123</div>
+              <div>demo@wethelder.nl / demo</div>
             </div>
           </div>
         )}

@@ -6,7 +6,8 @@ import bcrypt from 'bcryptjs'
 import { prisma } from './prisma'
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as any,
+  // Disable adapter for local development to avoid database connection issues
+  // adapter: PrismaAdapter(prisma) as any,
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -19,8 +20,25 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
+        // For local development, use mock users primarily
         try {
-          // Try database first
+          const { findUser } = await import('./mock-users')
+          const mockUser = findUser(credentials.email)
+          
+          if (mockUser && mockUser.password === credentials.password) {
+            return {
+              id: mockUser.id,
+              email: mockUser.email,
+              name: mockUser.name,
+              role: mockUser.role === 'admin' ? 'ADMIN' : 'USER',
+            }
+          }
+        } catch (mockError) {
+          console.error('Mock auth error:', mockError)
+        }
+
+        // Try database as fallback if available
+        try {
           let user = await prisma.user.findUnique({
             where: { email: credentials.email }
           })
@@ -54,24 +72,7 @@ export const authOptions: NextAuthOptions = {
             }
           }
         } catch (error) {
-          console.error('Database auth error, trying mock users:', error)
-        }
-
-        // Fallback to mock users if database fails
-        try {
-          const { findUser } = await import('./mock-users')
-          const mockUser = findUser(credentials.email)
-          
-          if (mockUser && mockUser.password === credentials.password) {
-            return {
-              id: mockUser.id,
-              email: mockUser.email,
-              name: mockUser.name,
-              role: mockUser.role === 'admin' ? 'ADMIN' : 'USER',
-            }
-          }
-        } catch (mockError) {
-          console.error('Mock auth error:', mockError)
+          console.log('Database unavailable, using mock users for local development')
         }
 
         return null
@@ -145,6 +146,6 @@ export const authOptions: NextAuthOptions = {
     signIn: '/auth/signin',
     error: '/auth/error'
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || 'local-development-secret-key-change-in-production',
   debug: process.env.NODE_ENV === 'development',
 }
