@@ -391,6 +391,8 @@ export default function AskPage() {
   const [profession, setProfession] = useState<Profession>('algemeen')
   const [wetUitlegEnabled, setWetUitlegEnabled] = useState(false)
   const [wetgevingEnabled, setWetgevingEnabled] = useState(false)
+  const [remainingQuestions, setRemainingQuestions] = useState<number | null>(null)
+  const [userRole, setUserRole] = useState<string>('ANONYMOUS')
   const [selectedCitationQuery, setSelectedCitationQuery] = useState<{queryId: string, question: string} | null>(null)
   const [activeTab, setActiveTab] = useState<'history' | 'favorites'>('history')
   const [showSidebar, setShowSidebar] = useState(false)
@@ -405,6 +407,33 @@ export default function AskPage() {
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
+  // Check rate limit status on page load
+  useEffect(() => {
+    const checkRateLimit = async () => {
+      if (!session) {
+        try {
+          const response = await fetch('/api/ask', {
+            method: 'GET',
+          })
+          
+          if (response.ok) {
+            const data = await response.json()
+            setRemainingQuestions(data.remaining || 2)
+            setUserRole(data.role || 'ANONYMOUS')
+          }
+        } catch (error) {
+          console.error('Error checking rate limit:', error)
+          setRemainingQuestions(2) // Default to 2 for anonymous users
+        }
+      } else {
+        setUserRole('AUTHENTICATED')
+        setRemainingQuestions(null) // Unlimited for authenticated users
+      }
+    }
+    
+    checkRateLimit()
+  }, [session])
 
   // Separate function to handle submission with specific profession
   const handleSubmitDirectlyWithProfession = useCallback(async (question: string, submissionProfession: Profession = profession) => {
@@ -473,6 +502,7 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
               }
             : msg
         ))
+        setRemainingQuestions(0)
         setIsLoading(false)
         return
       }
@@ -486,6 +516,7 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
         throw new Error('No response body')
       }
 
+      // Stream the response
       let accumulatedAnswer = ''
       let queryId = ''
 
@@ -527,6 +558,11 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
                     ? { ...msg, isLoading: false }
                     : msg
                 ))
+                
+                // Update remaining questions for anonymous users
+                if (!session && remainingQuestions !== null && remainingQuestions > 0) {
+                  setRemainingQuestions(remainingQuestions - 1)
+                }
               }
             } catch (e) {
               console.error('Error parsing SSE data:', e)
@@ -654,6 +690,29 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
             </div>
 
             <div className="flex items-center gap-2">
+              {/* Rate limiting indicator voor anonieme gebruikers */}
+              {!session && remainingQuestions !== null && (
+                <div className="flex items-center gap-2 px-3 py-1 bg-orange-50 border border-orange-200 rounded-lg">
+                  <Clock className="h-4 w-4 text-orange-600" />
+                  <span className="text-sm font-medium text-orange-800">
+                    {remainingQuestions > 0 
+                      ? `${remainingQuestions} gratis ${remainingQuestions === 1 ? 'vraag' : 'vragen'} over`
+                      : 'Gratis vragen gebruikt'
+                    }
+                  </span>
+                  {remainingQuestions === 0 && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      asChild
+                      className="ml-2 h-6 text-xs"
+                    >
+                      <Link href="/auth/signup">Account maken</Link>
+                    </Button>
+                  )}
+                </div>
+              )}
+              
               {/* Dashboard link voor ingelogde gebruikers */}
               {session && (
                 <Button
@@ -966,12 +1025,12 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Stel uw juridische vraag..."
-                disabled={false}
+                disabled={!session && remainingQuestions === 0}
                 className="flex-1 h-12 md:h-12 text-base"
               />
               <Button 
                 type="submit" 
-                disabled={!input.trim()}
+                disabled={!input.trim() || (!session && remainingQuestions === 0)}
                 className="px-6 h-12 w-full md:w-auto"
               >
                 {isLoading ? (
@@ -984,6 +1043,34 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
                 )}
               </Button>
             </div>
+
+            {/* Rate limiting info */}
+            {!session && remainingQuestions !== null && (
+              <div className="mt-3 text-center">
+                {remainingQuestions > 0 ? (
+                  <p className="text-sm text-slate-600">
+                    <span className="font-medium text-orange-600">{remainingQuestions}</span> gratis {remainingQuestions === 1 ? 'vraag' : 'vragen'} over. 
+                    <Link href="/auth/signup" className="text-blue-600 hover:text-blue-800 ml-1 underline">
+                      Maak een gratis account voor onbeperkt zoeken
+                    </Link>
+                  </p>
+                ) : (
+                  <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                    <p className="text-sm text-orange-800 font-medium mb-2">
+                      U heeft uw gratis vragen gebruikt
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                      <Button size="sm" asChild>
+                        <Link href="/auth/signup">Gratis account maken</Link>
+                      </Button>
+                      <Button size="sm" variant="outline" asChild>
+                        <Link href="/auth/signin">Inloggen</Link>
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
           </form>
         </div>

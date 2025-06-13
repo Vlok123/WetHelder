@@ -246,7 +246,25 @@ export default function HomePage() {
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      // Build profile parameter - map all profession values correctly
+      // Check rate limit for anonymous users before redirecting
+      if (!session) {
+        try {
+          const response = await fetch('/api/ask', {
+            method: 'GET',
+          })
+          
+          if (response.status === 429) {
+            // Rate limit exceeded - show modal or redirect to signup
+            alert('U heeft uw gratis vragen gebruikt. Maak een gratis account aan voor onbeperkt zoeken.')
+            window.location.href = '/auth/signup'
+            return
+          }
+        } catch (error) {
+          console.error('Error checking rate limit:', error)
+        }
+      }
+      
+      // Build URL with all parameters
       let profileParam = ''
       if (userProfile) {
         // Direct mapping for most values, special cases for backwards compatibility

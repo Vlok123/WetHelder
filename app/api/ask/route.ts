@@ -780,51 +780,35 @@ function getRelatedLegalTerms(query: string): string[] {
 // GET handler for Vercel build compatibility
 export async function GET(request: NextRequest) {
   try {
-    // Get rate limit status for current user/IP
+    // Try to get session but don't fail if database is unavailable
     let session = null
-    let userId: string | undefined = undefined
-    let clientIP: string | undefined = undefined
-    
     try {
       session = await getServerSession(authOptions)
-      userId = session?.user?.id
-      clientIP = request.headers.get('x-forwarded-for') || undefined
-    } catch (sessionError) {
-      console.log('Session error (non-critical):', sessionError instanceof Error ? sessionError.message : 'Unknown session error')
+    } catch (error) {
+      console.warn('Session unavailable, continuing without authentication:', error)
     }
+
+    const clientIP = request.headers.get('x-forwarded-for') || 
+                    request.headers.get('x-real-ip') || 
+                    'unknown'
+
+    // Check rate limit status
+    const rateLimitResult = await checkRateLimit(session?.user?.id, clientIP)
     
-    const { allowed, remaining, role } = await checkRateLimit(userId, clientIP)
-    
-    return new Response(JSON.stringify({ 
-      message: 'WetHelder API is running',
-      version: '2.0.0',
-      features: ['conversational-ai', 'thinking-process', 'profession-specific'],
-      rateLimit: {
-        allowed,
-        remaining,
-        role,
-        isAuthenticated: !!userId
-      }
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
+    return NextResponse.json({
+      remaining: rateLimitResult.remaining,
+      role: rateLimitResult.role,
+      allowed: rateLimitResult.allowed
     })
+
   } catch (error) {
-    console.error('GET error:', error)
-    return new Response(JSON.stringify({ 
-      message: 'WetHelder API is running',
-      version: '2.0.0',
-      features: ['conversational-ai', 'thinking-process', 'profession-specific'],
-      rateLimit: {
-        allowed: true,
-        remaining: 3,
-        role: 'ANONYMOUS',
-        isAuthenticated: false
-      }
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    })
+    console.error('GET API Error:', error)
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      remaining: 2, // Default fallback
+      role: 'ANONYMOUS',
+      allowed: true
+    }, { status: 500 })
   }
 }
 
