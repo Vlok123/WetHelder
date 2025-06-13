@@ -7,39 +7,39 @@
   :root {
     /* Professional Color Palette - Inspired by GOV.UK and Legal Authority */
     --background: 0 0% 100%;
-    --foreground: 222 84% 4.9%;
+    --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
-    --card-foreground: 222 84% 4.9%;
+    --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 84% 4.9%;
+    --popover-foreground: 222.2 84% 4.9%;
     
     /* Primary: Professional Blue */
-    --primary: 221 83% 53%;
+    --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 210 40% 98%;
     
     /* Secondary: Refined Gray */
     --secondary: 210 40% 96%;
-    --secondary-foreground: 222 84% 4.9%;
+    --secondary-foreground: 222.2 84% 4.9%;
     
     /* Muted: Sophisticated Grays */
     --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted-foreground: 215.4 16.3% 46.9%;
     
     /* Accent: Legal Green */
-    --accent: 142 76% 36%;
-    --accent-foreground: 355 7% 97%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
     
     /* Destructive: Professional Red */
-    --destructive: 0 84% 60%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     
     /* Borders and Inputs */
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 221 83% 53%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
     
     /* Radius */
-    --radius: 0.75rem;
+    --radius: 0.5rem;
     
     /* Success and Warning Colors */
     --success: 142 76% 36%;
@@ -57,39 +57,53 @@
     --surface-1: 0 0% 100%;
     --surface-2: 210 40% 98%;
     --surface-3: 210 40% 96%;
+    
+    /* Chart Colors */
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
   }
 
   .dark {
-    --background: 222 84% 4.9%;
+    --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-    --card: 222 84% 4.9%;
+    --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
-    --popover: 222 84% 4.9%;
+    --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 84% 4.9%;
-    --secondary: 217 32% 17.5%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217 32% 17.5%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 142 76% 36%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
-    --destructive: 0 63% 31%;
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217 32% 17.5%;
-    --input: 217 32% 17.5%;
-    --ring: 224 71% 4%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 94.1%;
     --success: 142 76% 36%;
     --success-foreground: 210 40% 98%;
     --warning: 38 92% 50%;
-    --warning-foreground: 222 84% 4.9%;
+    --warning-foreground: 222.2 84% 4.9%;
     --navy: 210 40% 98%;
-    --navy-foreground: 222 84% 4.9%;
+    --navy-foreground: 222.2 84% 4.9%;
     --slate: 210 40% 98%;
-    --slate-foreground: 222 84% 4.9%;
-    --surface-1: 222 84% 4.9%;
-    --surface-2: 217 32% 17.5%;
+    --slate-foreground: 222.2 84% 4.9%;
+    --surface-1: 222.2 84% 4.9%;
+    --surface-2: 217.2 32.6% 17.5%;
     --surface-3: 215 25% 27%;
+    
+    /* Chart Colors */
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
 }
 
@@ -222,7 +236,7 @@
 
   /* Professional animations */
   .animate-fade-in {
-    animation: fadeIn 0.5s ease-out;
+    animation: fadeIn 0.6s ease-out;
   }
   
   .animate-slide-up {
@@ -323,7 +337,7 @@
 
   /* Professional spacing */
   .section-padding {
-    @apply py-16 lg:py-24;
+    @apply py-8 md:py-12;
   }
   
   .section-padding-sm {
@@ -331,7 +345,57 @@
   }
   
   .section-padding-lg {
-    @apply py-24 lg:py-32;
+    @apply py-12 md:py-20;
+  }
+
+  /* Professional ordered list styling */
+  .counter-reset-list {
+    counter-reset: list-counter;
+  }
+  
+  .counter-reset-list li {
+    counter-increment: list-counter;
+  }
+  
+  .counter-reset-list li::before {
+    content: counter(list-counter);
+    @apply inline-flex items-center justify-center w-6 h-6 bg-blue-100 text-blue-700 text-sm font-semibold rounded-full mr-3 mt-0.5 flex-shrink-0;
+  }
+  
+  .counter-reset-list li:hover::before {
+    @apply bg-blue-200;
+  }
+  
+  /* Smooth transitions for interactive elements */
+  .transition-all-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Professional gradient backgrounds */
+  .bg-surface-1 {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  }
+  
+  .bg-surface-2 {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  }
+  
+  .bg-surface-3 {
+    background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  }
+  
+  /* Enhanced focus states */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  }
+  
+  /* Professional shadows */
+  .shadow-professional {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  .shadow-professional-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
 }
 
@@ -361,8 +425,14 @@
 
 /* Animation keyframes */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideUp {

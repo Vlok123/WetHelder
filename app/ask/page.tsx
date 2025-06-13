@@ -201,67 +201,82 @@ const formatText = (text: string) => {
       remarkPlugins={[remarkGfm]}
       components={{
         h1: ({ children }) => (
-          <h1 className="text-2xl font-bold mb-6 text-slate-900 border-b-2 border-blue-200 pb-3 mt-8 first:mt-0">
-            {children}
-          </h1>
+          <div className="mb-8 first:mt-0 mt-10">
+            <h1 className="text-2xl font-bold text-slate-900 mb-3 flex items-center">
+              <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full mr-4"></div>
+              {children}
+            </h1>
+            <div className="h-px bg-gradient-to-r from-blue-200 via-blue-300 to-transparent ml-6"></div>
+          </div>
         ),
         h2: ({ children }) => (
-          <h2 className="text-xl font-bold mb-5 text-slate-800 mt-8 first:mt-0 border-l-4 border-blue-400 pl-4 bg-blue-50 py-2 rounded-r">
-            {children}
-          </h2>
+          <div className="mb-6 first:mt-0 mt-8">
+            <h2 className="text-xl font-bold text-slate-800 mb-3 bg-gradient-to-r from-blue-50 to-blue-25 border-l-4 border-blue-400 pl-4 py-3 rounded-r-lg shadow-sm">
+              {children}
+            </h2>
+          </div>
         ),
         h3: ({ children }) => (
           <h3 className="text-lg font-semibold mb-4 text-slate-800 mt-6 first:mt-0 flex items-center">
-            <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+            <div className="w-3 h-3 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full mr-3 shadow-sm"></div>
             {children}
           </h3>
         ),
         h4: ({ children }) => (
-          <h4 className="text-base font-semibold mb-3 text-slate-700 mt-5 first:mt-0">
+          <h4 className="text-base font-semibold mb-3 text-slate-700 mt-5 first:mt-0 border-b border-slate-200 pb-2">
             {children}
           </h4>
         ),
         p: ({ children }) => (
-          <p className="mb-4 text-slate-700 leading-relaxed text-base">
+          <p className="mb-5 text-slate-700 leading-relaxed text-base">
             {children}
           </p>
         ),
         ul: ({ children }) => (
-          <ul className="list-none mb-6 space-y-3 text-slate-700">
-            {children}
-          </ul>
+          <div className="mb-6">
+            <ul className="space-y-3 text-slate-700">
+              {children}
+            </ul>
+          </div>
         ),
         ol: ({ children }) => (
-          <ol className="list-decimal list-inside mb-6 space-y-3 text-slate-700 ml-2">
-            {children}
-          </ol>
+          <div className="mb-6">
+            <ol className="space-y-3 text-slate-700 counter-reset-list">
+              {children}
+            </ol>
+          </div>
         ),
         li: ({ children }) => (
-          <li className="text-slate-700 leading-relaxed flex items-start">
-            <span className="w-2 h-2 bg-blue-400 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+          <li className="text-slate-700 leading-relaxed flex items-start group">
+            <span className="w-2 h-2 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full mr-3 mt-2.5 flex-shrink-0 group-hover:scale-110 transition-transform"></span>
             <span className="flex-1">{children}</span>
           </li>
         ),
         strong: ({ children }) => (
-          <strong className="font-bold text-slate-900">
+          <strong className="font-bold text-slate-900 bg-slate-50 px-1 py-0.5 rounded">
             {children}
           </strong>
         ),
         em: ({ children }) => (
-          <em className="italic text-slate-800 font-medium bg-slate-50 px-1 rounded">
+          <em className="italic text-slate-800 font-medium bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">
             {children}
           </em>
         ),
         blockquote: ({ children }) => (
-          <div className="my-6 border-l-4 border-blue-400 bg-gradient-to-r from-blue-50 to-blue-25 rounded-r-lg shadow-sm hover:shadow-md transition-shadow">
-            <div className="pl-6 pr-4 py-4">
-              <div className="flex items-start space-x-3">
+          <div className="my-8 border-l-4 border-blue-400 bg-gradient-to-r from-blue-50 via-blue-25 to-transparent rounded-r-lg shadow-md hover:shadow-lg transition-all duration-300">
+            <div className="pl-6 pr-6 py-5">
+              <div className="flex items-start space-x-4">
                 <div className="flex-shrink-0 mt-1">
-                  <Quote className="w-5 h-5 text-blue-500" />
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <Quote className="w-4 h-4 text-blue-600" />
+                  </div>
                 </div>
                 <div className="flex-1">
-                  <div className="text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">Citaat uit officiële bron</div>
-                  <div className="text-slate-700 italic leading-relaxed font-medium">
+                  <div className="text-xs font-bold text-blue-800 mb-3 uppercase tracking-wider flex items-center">
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    Officiële bron
+                  </div>
+                  <div className="text-slate-700 leading-relaxed font-medium">
                     {children}
                   </div>
                 </div>
@@ -270,19 +285,29 @@ const formatText = (text: string) => {
           </div>
         ),
         code: ({ children }) => (
-          <code className="bg-slate-100 text-slate-800 px-2 py-1 rounded text-sm font-mono border border-slate-300 shadow-sm">
+          <code className="bg-slate-100 text-slate-800 px-2 py-1 rounded-md text-sm font-mono border border-slate-200 shadow-sm hover:bg-slate-200 transition-colors">
             {children}
           </code>
         ),
         pre: ({ children }) => (
-          <pre className="bg-slate-100 p-4 rounded-lg mb-6 overflow-x-auto border border-slate-200 shadow-sm">
-            <code className="text-sm font-mono text-slate-800">{children}</code>
-          </pre>
+          <div className="my-6 bg-slate-50 border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+            <div className="bg-slate-100 px-4 py-2 border-b border-slate-200">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+                <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                <span className="text-xs text-slate-600 ml-2 font-medium">Wettekst</span>
+              </div>
+            </div>
+            <pre className="p-4 overflow-x-auto">
+              <code className="text-sm font-mono text-slate-800">{children}</code>
+            </pre>
+          </div>
         ),
         a: ({ href, children }) => (
           <a 
             href={href} 
-            className="text-blue-600 hover:text-blue-800 underline decoration-2 underline-offset-2 transition-colors font-medium"
+            className="text-blue-600 hover:text-blue-800 underline decoration-2 underline-offset-2 transition-all duration-200 font-medium hover:bg-blue-50 px-1 py-0.5 rounded"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -290,25 +315,27 @@ const formatText = (text: string) => {
           </a>
         ),
         table: ({ children }) => (
-          <div className="overflow-x-auto mb-6 shadow-md rounded-lg border border-slate-200">
-            <table className="min-w-full">
-              {children}
-            </table>
+          <div className="my-8 overflow-hidden shadow-lg rounded-lg border border-slate-200">
+            <div className="overflow-x-auto">
+              <table className="min-w-full">
+                {children}
+              </table>
+            </div>
           </div>
         ),
         thead: ({ children }) => (
-          <thead className="bg-slate-100 border-b-2 border-slate-300">
+          <thead className="bg-gradient-to-r from-slate-100 to-slate-50 border-b-2 border-slate-300">
             {children}
           </thead>
         ),
-        tbody: ({ children }) => <tbody className="bg-white">{children}</tbody>,
+        tbody: ({ children }) => <tbody className="bg-white divide-y divide-slate-100">{children}</tbody>,
         tr: ({ children }) => (
-          <tr className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+          <tr className="hover:bg-slate-50 transition-colors duration-150">
             {children}
           </tr>
         ),
         th: ({ children }) => (
-          <th className="px-6 py-4 text-left font-bold text-slate-900 border-r border-slate-200 last:border-r-0">
+          <th className="px-6 py-4 text-left font-bold text-slate-900 border-r border-slate-200 last:border-r-0 bg-slate-50">
             {children}
           </th>
         ),
@@ -326,6 +353,7 @@ const formatText = (text: string) => {
 
 const mapProfileToProfession = (profile: string): Profession => {
   const mapping: Record<string, Profession> = {
+    // Backwards compatibility mappings
     'juridisch-expert': 'advocaat',
     'handhaving': 'politieagent',
     'student': 'student',
@@ -334,7 +362,7 @@ const mapProfileToProfession = (profile: string): Profession => {
     'politie': 'politieagent',
     'boa': 'boa',
     'overig': 'algemeen',
-    // Nieuwe professies - directe mapping
+    // Direct mappings for all new profession values
     'advocaat': 'advocaat',
     'politieagent': 'politieagent',
     'rechter': 'rechter',
@@ -349,7 +377,8 @@ const mapProfileToProfession = (profile: string): Profession => {
     'hr-medewerker': 'hr-medewerker',
     'compliance-officer': 'compliance-officer',
     'veiligheidsbeambte': 'veiligheidsbeambte',
-    'aspirant': 'aspirant'
+    'aspirant': 'aspirant',
+    'beveiliger': 'beveiliger'
   }
   return mapping[profile] || 'algemeen'
 }
@@ -377,7 +406,8 @@ export default function AskPage() {
     scrollToBottom()
   }, [messages])
 
-  const handleSubmitDirectly = useCallback(async (question: string) => {
+  // Separate function to handle submission with specific profession
+  const handleSubmitDirectlyWithProfession = useCallback(async (question: string, submissionProfession: Profession = profession) => {
     if (!question.trim() || isLoading) return
 
     const questionId = crypto.randomUUID()
@@ -387,7 +417,7 @@ export default function AskPage() {
       answer: '',
       sources: [],
       isLoading: true,
-      profession,
+      profession: submissionProfession,
       timestamp: new Date()
     }
 
@@ -412,7 +442,7 @@ export default function AskPage() {
         },
         body: JSON.stringify({
           question: question.trim(),
-          profession,
+          profession: submissionProfession, // Use the specific profession
           wetUitleg: wetUitlegEnabled,
           wetgeving: wetgevingEnabled,
           useGoogleSearch: true,
@@ -518,7 +548,11 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
     } finally {
       setIsLoading(false)
     }
-  }, [profession, wetUitlegEnabled, wetgevingEnabled, messages, isLoading])
+  }, [wetUitlegEnabled, wetgevingEnabled, messages, isLoading])
+
+  const handleSubmitDirectly = useCallback(async (question: string) => {
+    return handleSubmitDirectlyWithProfession(question, profession)
+  }, [handleSubmitDirectlyWithProfession, profession])
 
   // Handle URL parameters
   useEffect(() => {
@@ -528,13 +562,21 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
     const wetUitlegParam = urlParams.get('wetuitleg')
     const wetgevingParam = urlParams.get('wetgeving')
     
+    let currentProfession = profession // Default to current profession
+    
+    // Set profession first, before other parameters
     if (profileParam) {
-      setProfession(mapProfileToProfession(profileParam))
+      const mappedProfession = mapProfileToProfession(profileParam)
+      currentProfession = mappedProfession
+      setProfession(mappedProfession)
+      
+      // Auto-enable Wet & Uitleg for juridisch-expert
       if (profileParam === 'juridisch-expert') {
         setWetUitlegEnabled(true)
       }
     }
     
+    // Set additional options
     if (wetUitlegParam === 'true') {
       setWetUitlegEnabled(true)
     }
@@ -543,16 +585,17 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
       setWetgevingEnabled(true)
     }
     
+    // Handle auto-submit for questions
     if (questionParam && !hasAutoSubmitted.current) {
       hasAutoSubmitted.current = true
       setInput(questionParam)
       
-      // Auto-submit after a short delay
+      // Auto-submit after a short delay with the correct profession
       setTimeout(() => {
-        handleSubmitDirectly(questionParam)
+        handleSubmitDirectlyWithProfession(questionParam, currentProfession)
       }, 500)
     }
-  }, [handleSubmitDirectly])
+  }, []) // Remove handleSubmitDirectly dependency to avoid re-running
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
