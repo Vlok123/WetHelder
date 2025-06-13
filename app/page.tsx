@@ -27,7 +27,9 @@ import {
   Building,
   MapPin,
   Calculator,
-  Home
+  Home,
+  HelpCircle,
+  X
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -217,6 +219,7 @@ export default function HomePage() {
   const [userProfile, setUserProfile] = useState('')
   const [wetUitlegEnabled, setWetUitlegEnabled] = useState(false)
   const [wetgevingEnabled, setWetgevingEnabled] = useState(false)
+  const [showProfileExplanation, setShowProfileExplanation] = useState(false)
 
   const handleQuickSearch = (query: string) => {
     // Build profile parameter - map all profession values correctly
@@ -349,6 +352,14 @@ export default function HomePage() {
               <div className="flex items-center gap-2 mb-2">
                 <User className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm font-medium text-muted-foreground">Ik ben:</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowProfileExplanation(true)}
+                  className="h-6 w-6 p-0 rounded-full hover:bg-primary/10"
+                >
+                  <HelpCircle className="h-4 w-4 text-primary" />
+                </Button>
               </div>
               <Select value={userProfile} onValueChange={setUserProfile}>
                 <SelectTrigger className="w-full">
@@ -764,6 +775,86 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+
+      {/* Functieprofiel uitleg modal */}
+      {showProfileExplanation && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <User className="h-5 w-5 text-primary" />
+                  Functieprofiel Uitleg
+                </h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowProfileExplanation(false)}
+                  className="h-8 w-8 p-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <h4 className="font-medium text-blue-900 mb-2">💡 Waarom een functieprofiel kiezen?</h4>
+                  <p className="text-sm text-blue-800">
+                    WetHelder past de antwoorden aan op uw specifieke rol en expertise niveau. 
+                    Dit zorgt voor relevantere informatie en de juiste diepgang.
+                  </p>
+                </div>
+
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                  <h4 className="font-medium text-amber-900 mb-2">🔄 Tip: Switch van profiel!</h4>
+                  <p className="text-sm text-amber-800">
+                    Voor het beste resultaat kunt u tijdens het gebruik switchen tussen profielen. 
+                    Bijvoorbeeld: start als &apos;Algemeen&apos; voor basisuitleg, schakel dan over naar &apos;Advocaat&apos; voor juridische diepgang.
+                  </p>
+                </div>
+
+                <div className="grid gap-3">
+                  <h4 className="font-medium text-gray-900">📋 Overzicht van profielen:</h4>
+                  
+                  <div className="space-y-3 max-h-60 overflow-y-auto">
+                    {USER_PROFILES.map((profile) => {
+                      const Icon = profile.icon
+                      return (
+                        <div key={profile.value} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                          <Icon className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                          <div>
+                            <h5 className="font-medium text-sm">{profile.label}</h5>
+                            <p className="text-xs text-gray-600">{profile.description}</p>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <h4 className="font-medium text-green-900 mb-2">🎯 Extra diepgang gewenst?</h4>
+                  <p className="text-sm text-green-800 mb-2">
+                    Gebruik functieprofiel voor verschillende invalshoeken:
+                  </p>
+                  <ul className="text-xs text-green-700 space-y-1">
+                    <li>• <strong>Agent:</strong> Praktische handhaving en procedures</li>
+                    <li>• <strong>Advocaat:</strong> Juridische strategie en jurisprudentie</li>
+                    <li>• <strong>Belastingadviseur:</strong> Fiscale aspecten en gevolgen</li>
+                    <li>• <strong>Student:</strong> Theoretische achtergrond en leerdoelen</li>
+                  </ul>
+                </div>
+
+                <div className="flex justify-end">
+                  <Button onClick={() => setShowProfileExplanation(false)}>
+                    Begrepen!
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 } 

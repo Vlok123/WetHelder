@@ -30,6 +30,7 @@ export default function ChatHistoryPage() {
   const [queries, setQueries] = useState<Query[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -43,27 +44,38 @@ export default function ChatHistoryPage() {
   }, [status, router])
 
   const fetchChatHistory = async () => {
+    setLoading(true)
+    setError(null)
     try {
+      console.log('Fetching chat history...')
       const response = await fetch('/api/chat-history')
+      console.log('Response status:', response.status)
+      
       if (response.ok) {
         const data = await response.json()
+        console.log('Chat history data:', data)
         setQueries(data.queries || [])
+      } else {
+        const errorData = await response.json()
+        console.error('Error response:', errorData)
+        setError(`Fout bij ophalen geschiedenis: ${errorData.error || 'Onbekende fout'}`)
       }
     } catch (error) {
       console.error('Error fetching chat history:', error)
+      setError('Netwerkfout bij ophalen geschiedenis')
     } finally {
       setLoading(false)
     }
   }
 
   const continueChat = (query: Query) => {
-    // Opslaan van de query context en navigeren naar chat pagina
+    // Opslaan van de query context en navigeren naar ask pagina
     sessionStorage.setItem('continueChat', JSON.stringify({
       question: query.question,
       answer: query.answer,
       profession: query.profession
     }))
-    router.push('/')
+    router.push('/ask')
   }
 
   const filteredQueries = queries.filter(query =>
@@ -124,14 +136,57 @@ export default function ChatHistoryPage() {
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
-              <MessageSquare className="h-8 w-8 text-blue-600" />
-              Chatgeschiedenis
-            </h1>
-            <p className="text-gray-600">
-              Bekijk je eerdere vragen en ga verder waar je gebleven was
-            </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
+                  <MessageSquare className="h-8 w-8 text-blue-600" />
+                  Chatgeschiedenis
+                </h1>
+                <p className="text-gray-600">
+                  Bekijk je eerdere vragen en ga verder waar je gebleven was
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                onClick={fetchChatHistory}
+                disabled={loading}
+                className="flex items-center gap-2"
+              >
+                <Search className="h-4 w-4" />
+                Vernieuwen
+              </Button>
+            </div>
           </div>
+
+          {/* Error message */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-800">{error}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={fetchChatHistory}
+                className="mt-2"
+              >
+                Opnieuw proberen
+              </Button>
+            </div>
+          )}
+
+          {/* Debug info in development */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+              <h4 className="font-medium mb-2">🔧 Debug Info</h4>
+              <p className="text-sm text-gray-600">
+                Status: {status} | Queries: {queries.length} | Loading: {loading.toString()}
+              </p>
+              {session?.user && (
+                <p className="text-sm text-gray-600">
+                  User: {session.user.email} | ID: {session.user.id}
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Search */}
           <div className="mb-6">
@@ -158,18 +213,33 @@ export default function ChatHistoryPage() {
                 <p className="text-gray-600 mb-4">
                   {searchTerm 
                     ? 'Probeer andere zoektermen' 
-                    : 'Start je eerste gesprek met WetHelder'
+                    : queries.length === 0 
+                      ? 'Start je eerste gesprek met WetHelder om hier je geschiedenis te zien'
+                      : 'Geen resultaten voor deze zoekopdracht'
                   }
                 </p>
-                <Button onClick={() => router.push('/')}>
-                  Nieuwe chat starten
-                </Button>
+                <div className="flex gap-2 justify-center">
+                  <Button onClick={() => router.push('/ask')}>
+                    Nieuwe vraag stellen
+                  </Button>
+                  {queries.length === 0 && (
+                    <Button variant="outline" onClick={fetchChatHistory}>
+                      Geschiedenis vernieuwen
+                    </Button>
+                  )}
+                </div>
               </CardContent>
             </Card>
           ) : (
             <div className="space-y-4">
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-sm text-gray-600">
+                  {filteredQueries.length} van {queries.length} gesprekken
+                </p>
+              </div>
+              
               {filteredQueries.map((query) => (
-                <Card key={query.id} className="hover:shadow-md transition-shadow cursor-pointer">
+                <Card key={query.id} className="hover:shadow-md transition-shadow">
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">

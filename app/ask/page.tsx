@@ -466,22 +466,20 @@ export default function AskPage() {
       {/* Chat Area */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <div className="bg-white border-b border-slate-200 p-4">
-          <div className="flex items-center justify-between">
+        <div className="border-b border-slate-200 p-3 md:p-4 bg-white">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => router.push('/')}
-                className="shrink-0"
-              >
-                <Home className="h-4 w-4" />
-                <span className="hidden sm:ml-2 sm:inline">Home</span>
-              </Button>
-              
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium text-slate-700">WetHelder Online</span>
+                <ProfessionIcon className="h-5 w-5 text-slate-600" />
+                <span className="text-sm font-medium text-slate-700">
+                  {professionConfig[profession].label}
+                </span>
+                <Badge 
+                  variant="outline" 
+                  className={`text-xs ${professionConfig[profession].color}`}
+                >
+                  {professionConfig[profession].description}
+                </Badge>
               </div>
             </div>
 
@@ -520,6 +518,77 @@ export default function AskPage() {
                 <History className="h-4 w-4" />
               </Button>
             </div>
+          </div>
+
+          {/* Functieprofiel en opties sectie */}
+          <div className="mt-4 space-y-4">
+            {/* Functieprofiel selector */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex-1">
+                <label className="block text-xs font-medium text-slate-600 mb-1">
+                  Functieprofiel
+                </label>
+                <Select value={profession} onValueChange={(value) => setProfession(value as Profession)}>
+                  <SelectTrigger className="w-full h-9">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(professionConfig).map(([key, config]) => {
+                      const Icon = config.icon
+                      return (
+                        <SelectItem key={key} value={key}>
+                          <div className="flex items-center gap-2">
+                            <Icon className="h-4 w-4" />
+                            <span>{config.label}</span>
+                          </div>
+                        </SelectItem>
+                      )
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Wet & Uitleg en Wetgeving knoppen */}
+              <div className="flex gap-2">
+                <Button
+                  variant={wetUitlegEnabled ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setWetUitlegEnabled(!wetUitlegEnabled)}
+                  className="flex items-center gap-2"
+                >
+                  <FileText className="h-4 w-4" />
+                  <span className="hidden sm:inline">Wet & Uitleg</span>
+                  <span className="sm:hidden">W&U</span>
+                </Button>
+                
+                <Button
+                  variant={wetgevingEnabled ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setWetgevingEnabled(!wetgevingEnabled)}
+                  className="flex items-center gap-2"
+                >
+                  <Scale className="h-4 w-4" />
+                  <span className="hidden sm:inline">Wetgeving</span>
+                  <span className="sm:hidden">Wet</span>
+                </Button>
+              </div>
+            </div>
+
+            {/* Uitleg van actieve opties */}
+            {(wetUitlegEnabled || wetgevingEnabled) && (
+              <div className="flex flex-wrap gap-2">
+                {wetUitlegEnabled && (
+                  <div className="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded border border-emerald-200">
+                    📚 Diepgaande analyse met jurisprudentie
+                  </div>
+                )}
+                {wetgevingEnabled && (
+                  <div className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded border border-blue-200">
+                    ⚖️ Exacte wetsartikelen en bronverwijzingen
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -636,12 +705,12 @@ export default function AskPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Stel uw juridische vraag..."
-                disabled={isLoading}
+                disabled={false}
                 className="flex-1 h-12 md:h-12 text-base"
               />
               <Button 
                 type="submit" 
-                disabled={isLoading || !input.trim()}
+                disabled={!input.trim()}
                 className="px-6 h-12 w-full md:w-auto"
               >
                 {isLoading ? (

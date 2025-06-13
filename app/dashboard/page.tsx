@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
+import { useSession, signOut } from 'next-auth/react'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -55,7 +55,8 @@ import {
   X,
   ChevronRight,
   MoreHorizontal,
-  Crown
+  Crown,
+  LogOut
 } from 'lucide-react'
 
 interface DashboardStats {
@@ -371,6 +372,14 @@ export default function MemberDashboard() {
               <Link href="/ask">
                 <Button>Nieuwe Vraag</Button>
               </Link>
+              <Button
+                variant="outline"
+                onClick={() => signOut()}
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+              >
+                <LogOut className="h-4 w-4" />
+                Uitloggen
+              </Button>
             </div>
           </div>
         </div>
