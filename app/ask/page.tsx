@@ -879,10 +879,7 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
                 )}
               </Button>
             </div>
-            {/* Subtiele disclaimer */}
-            <p className="text-xs text-slate-500 mt-2 text-center">
-              Deze informatie dient alleen ter informatie. Voor persoonlijk juridisch advies raadpleegt u een advocaat.
-            </p>
+
           </form>
         </div>
       </div>
