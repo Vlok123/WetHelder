@@ -10,7 +10,7 @@ import { Navigation } from '@/components/navigation'
 import { 
   Send, 
   MessageSquare, 
-  Bot, 
+  Bot,
   User, 
   FileText, 
   Shield,
@@ -22,7 +22,6 @@ import {
   Settings,
   BookOpen,
   Gavel,
-  Briefcase,
   Building,
   MapPin,
   Calculator,
@@ -37,7 +36,9 @@ import {
   RefreshCw,
   Clock,
   RotateCcw,
-  PanelRight
+  PanelRight,
+  Copy,
+  Share2
 } from 'lucide-react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
@@ -181,22 +182,17 @@ const professionConfig = {
 }
 
 const formatText = (text: string) => {
-  if (!text) return null
+  if (!text) return ''
   
-  // Enhanced text preprocessing for better formatting
+  // Remove **** patterns and clean up text
   const processedText = text
-    // Convert quoted text to blockquotes for citations
-    .replace(/"([^"]+)"/g, (match, citation) => `> ${citation}`)
-    // Enhance bold text patterns - detect common Dutch legal terms and important concepts
-    .replace(/\b(Artikel \d+[a-z]?)\b/g, '**$1**')
-    .replace(/\b(Wet op de|Wetboek van|Burgerlijk Wetboek|Strafwetboek|Grondwet)\b/gi, '**$1**')
-    .replace(/\b(Conclusie|Belangrijk|Let op|Samenvatting|Kernpunten?|Hoofdpunten?)\s*:/gi, '**$1:**')
-    .replace(/\b(Voorwaarden?|Gevolgen?|Rechten?|Plichten?|Procedures?)\s*:/gi, '**$1:**')
-    // Enhance section headers
-    .replace(/^([A-Z][^.!?]*):$/gm, '### $1')
-    .replace(/^(\d+\.\s+[A-Z][^.!?]*):?$/gm, '### $1')
-    // Format numbered lists better
-    .replace(/^(\d+\.\s+)/gm, '**$1**')
+    // Remove **** patterns completely
+    .replace(/\*{4,}/g, '')
+    // Clean up any remaining multiple asterisks
+    .replace(/\*{3}/g, '**')
+    // Clean up extra spaces that might be left
+    .replace(/\s+/g, ' ')
+    .trim()
     // Format bullet points
     .replace(/^[-•]\s+/gm, '- ')
   
@@ -400,10 +396,13 @@ export default function AskPage() {
     setIsLoading(true)
 
     try {
+      // Build comprehensive conversation history
       const conversationHistory: string[] = []
       messages.forEach(msg => {
-        conversationHistory.push(msg.question)
-        conversationHistory.push(msg.answer)
+        if (msg.question && msg.answer && !msg.isLoading) {
+          conversationHistory.push(`Gebruiker: ${msg.question}`)
+          conversationHistory.push(`WetHelder: ${msg.answer}`)
+        }
       })
 
       const response = await fetch('/api/ask', {
@@ -573,6 +572,14 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
   }
 
   const ProfessionIcon = professionConfig[profession].icon
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text)
+  }
+
+  const shareResponse = (question: string, answer: string) => {
+    // Implement sharing logic
+  }
 
   return (
     <div className="flex h-screen bg-slate-50">
@@ -801,98 +808,102 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
 
               {/* Bot Response */}
               <div className="flex justify-start">
-                <div className="w-full max-w-[95%] md:max-w-[85%]">
-                  <div className="bg-white rounded-2xl rounded-bl-lg border border-slate-200 shadow-lg hover:shadow-xl transition-all duration-200">
+                <div className="max-w-[95%] md:max-w-[85%]">
+                  <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-lg shadow-lg hover:shadow-xl transition-all duration-300">
                     {/* Header */}
-                    <div className="border-b border-slate-100 px-5 py-3 bg-gradient-to-r from-slate-50 to-slate-100/50 rounded-t-2xl">
-                      <div className="flex items-center gap-3">
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm">
-                          {message.isLoading ? (
-                            <Loader2 className="h-4 w-4 text-white animate-spin" />
-                          ) : (
-                            <Scale className="h-4 w-4 text-white" />
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-semibold text-slate-900 text-sm">WetHelder Juridisch Assistent</h4>
-                            {!message.isLoading && (
-                              <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 border-green-200">
-                                <CheckCircle className="h-3 w-3 mr-1" />
-                                Geverifieerd
-                              </Badge>
-                            )}
+                    <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 rounded-t-2xl border-b border-slate-200">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-md">
+                            <Scale className="h-5 w-5 text-white" />
                           </div>
-                          <div className="text-xs text-slate-500 mt-0.5">
-                            {message.isLoading ? (
-                              <span className="flex items-center gap-1">
-                                <span>Bezig met formuleren van antwoord</span>
-                                <div className="flex space-x-1">
-                                  <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
-                                  <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
-                                  <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
-                                </div>
+                          <div>
+                            <h3 className="font-bold text-slate-900 text-lg">WetHelder</h3>
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1 bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full text-xs font-medium">
+                                <CheckCircle className="h-3 w-3" />
+                                <span>Geverifieerd</span>
+                              </div>
+                              <span className="text-xs text-slate-500">
+                                {new Date(message.timestamp).toLocaleTimeString('nl-NL', { 
+                                  hour: '2-digit', 
+                                  minute: '2-digit' 
+                                })}
                               </span>
-                            ) : (
-                              <span>Antwoord gebaseerd op officiële Nederlandse wetgeving</span>
-                            )}
+                            </div>
                           </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {message.isLoading && (
+                            <div className="flex items-center gap-2 text-blue-600">
+                              <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-600 border-t-transparent"></div>
+                              <span className="text-xs font-medium">Analyseren...</span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
 
                     {/* Content */}
-                    <div className="p-5 md:p-6">
+                    <div className="px-6 py-6">
                       {message.isLoading ? (
                         <div className="space-y-4">
-                          <div className="text-sm text-slate-600 bg-blue-50 p-4 rounded-lg border border-blue-200">
-                            <div className="flex items-center gap-2 mb-2">
-                              <Clock className="h-4 w-4 text-blue-600" />
-                              <span className="font-medium text-blue-800">Verwachte wachttijd: 10-30 seconden</span>
-                            </div>
-                            <p className="text-blue-700 text-xs">
-                              De AI raadpleegt meerdere officiële bronnen en formuleert een juridisch correct antwoord aangepast aan uw professie.
-                            </p>
+                          <div className="flex items-center gap-3 text-slate-600">
+                            <div className="animate-spin rounded-full h-5 w-5 border-2 border-blue-500 border-t-transparent"></div>
+                            <span className="text-sm font-medium">WetHelder analyseert uw vraag...</span>
                           </div>
-                          {message.answer && (
-                            <div className="prose prose-sm md:prose-base max-w-none prose-slate">
-                              {formatText(message.answer)}
-                              <div className="inline-block w-2 h-5 bg-blue-600 animate-pulse ml-1 rounded-sm"></div>
-                            </div>
-                          )}
+                          <div className="space-y-3">
+                            <div className="h-4 bg-slate-200 rounded animate-pulse"></div>
+                            <div className="h-4 bg-slate-200 rounded animate-pulse w-3/4"></div>
+                            <div className="h-4 bg-slate-200 rounded animate-pulse w-1/2"></div>
+                          </div>
                         </div>
                       ) : (
-                        <div className="prose prose-sm md:prose-base max-w-none prose-slate">
+                        <div className="prose prose-slate max-w-none">
                           {formatText(message.answer)}
                         </div>
                       )}
                     </div>
-                    
-                    {/* Footer Actions */}
-                    {!message.isLoading && message.queryId && (
-                      <div className="border-t border-slate-100 px-5 py-4 bg-gradient-to-r from-slate-50/50 to-slate-100/30 rounded-b-2xl rounded-bl-lg">
+
+                    {/* Footer */}
+                    {!message.isLoading && message.answer && (
+                      <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 rounded-b-2xl border-t border-slate-200">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
-                            <div className="text-xs text-slate-500 flex items-center gap-2">
-                              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                              <span className="font-medium">Officiële bronnen</span>
+                            <div className="flex items-center gap-2 text-slate-600">
+                              <BookOpen className="h-4 w-4" />
+                              <span className="text-sm font-medium">
+                                {message.sources?.length || 0} bronnen geraadpleegd
+                              </span>
                             </div>
-                            <div className="text-xs text-slate-400">
-                              {format(message.timestamp, 'dd MMM yyyy, HH:mm')}
-                            </div>
+                            {message.profession && (
+                              <div className="flex items-center gap-2 text-slate-600">
+                                <User className="h-4 w-4" />
+                                <span className="text-sm capitalize">{message.profession}</span>
+                              </div>
+                            )}
                           </div>
                           <div className="flex items-center gap-2">
-                            <FavoriteButton queryId={message.queryId} />
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              onClick={() => setSelectedCitationQuery({ queryId: message.queryId!, question: message.question })}
-                              className="h-8 px-3 text-xs hover:bg-slate-100 transition-colors"
+                            <button 
+                              onClick={() => copyToClipboard(message.answer)}
+                              className="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-200 rounded-lg transition-colors"
+                              title="Kopieer antwoord"
                             >
-                              <Quote className="h-3 w-3 mr-1" />
-                              Citeer
-                            </Button>
+                              <Copy className="h-4 w-4" />
+                            </button>
+                            <button 
+                              onClick={() => shareResponse(message.question, message.answer)}
+                              className="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-200 rounded-lg transition-colors"
+                              title="Deel antwoord"
+                            >
+                              <Share2 className="h-4 w-4" />
+                            </button>
                           </div>
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-slate-200">
+                          <p className="text-xs text-slate-500 leading-relaxed">
+                            WetHelder raadpleegt meerdere officiële bronnen en formuleert een juridisch correct antwoord aangepast aan uw professie.
+                          </p>
                         </div>
                       </div>
                     )}
