@@ -221,10 +221,11 @@ export default function SignUpPage() {
         <div className="mt-8 text-center text-sm text-gray-600">
           <p className="font-medium mb-2">Gratis account voordelen:</p>
           <ul className="space-y-1">
-            <li>✓ 3 juridische vragen per dag</li>
+            <li>✓ Onbeperkt juridische vragen (tijdelijk)</li>
             <li>✓ Beroep-specifieke antwoorden</li>
             <li>✓ Persoonlijke vraaggeschiedenis</li>
-            <li>✓ Bronvermelding en links</li>
+            <li>✓ Favorieten opslaan</li>
+            <li>✓ Dashboard met overzicht</li>
           </ul>
         </div>
       </div>

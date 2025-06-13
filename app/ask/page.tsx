@@ -335,6 +335,33 @@ export default function AskPage() {
         }),
       })
 
+      if (response.status === 429) {
+        const errorData = await response.json()
+        setMessages(prev => prev.map(msg => 
+          msg.id === questionId 
+            ? { 
+                ...msg, 
+                answer: `**⚠️ Gratis vragen gebruikt**
+
+${errorData.message}
+
+**Waarom een account aanmaken?**
+- **Onbeperkt zoeken** in Nederlandse wetgeving
+- **Zoekgeschiedenis** bewaren en terugvinden
+- **Favorieten** opslaan voor later
+- **Persoonlijke dashboard** met overzicht
+
+[**Maak hier gratis een account aan →**](/auth/signup)
+
+Of [**log in**](/auth/signin) als u al een account heeft.`,
+                isLoading: false 
+              }
+            : msg
+        ))
+        setIsLoading(false)
+        return
+      }
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }

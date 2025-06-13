@@ -20,7 +20,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          // Check if user exists in database
+          // Try database first
           let user = await prisma.user.findUnique({
             where: { email: credentials.email }
           })
@@ -38,29 +38,43 @@ export const authOptions: NextAuthOptions = {
             })
           }
 
-          if (!user || !user.password) {
-            return null
-          }
+          if (user && user.password) {
+            const isPasswordValid = await bcrypt.compare(
+              credentials.password,
+              user.password
+            )
 
-          const isPasswordValid = await bcrypt.compare(
-            credentials.password,
-            user.password
-          )
-
-          if (!isPasswordValid) {
-            return null
-          }
-
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            role: user.role,
+            if (isPasswordValid) {
+              return {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                role: user.role,
+              }
+            }
           }
         } catch (error) {
-          console.error('Auth error:', error)
-          return null
+          console.error('Database auth error, trying mock users:', error)
         }
+
+        // Fallback to mock users if database fails
+        try {
+          const { findUser } = await import('./mock-users')
+          const mockUser = findUser(credentials.email)
+          
+          if (mockUser && mockUser.password === credentials.password) {
+            return {
+              id: mockUser.id,
+              email: mockUser.email,
+              name: mockUser.name,
+              role: mockUser.role === 'admin' ? 'ADMIN' : 'USER',
+            }
+          }
+        } catch (mockError) {
+          console.error('Mock auth error:', mockError)
+        }
+
+        return null
       }
     }),
     EmailProvider({

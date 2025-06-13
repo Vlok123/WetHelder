@@ -864,12 +864,12 @@ export async function GET(request: NextRequest) {
 
 // Rate limiting helper
 async function checkRateLimit(userId?: string, clientIP?: string): Promise<{ allowed: boolean; remaining: number; role: string }> {
-  // Voor gebruikers met account - geen limiet tijdens development
+  // Voor gebruikers met account - onbeperkt zoeken (tijdelijk)
   if (userId) {
     return { allowed: true, remaining: 999, role: 'AUTHENTICATED' }
   }
   
-  // Voor anonieme gebruikers - limiet van 3 vragen per dag
+  // Voor anonieme gebruikers - limiet van 2 vragen per dag
   const today = new Date().toISOString().split('T')[0]
   const anonymousKey = clientIP || 'anonymous'
   
@@ -878,11 +878,11 @@ async function checkRateLimit(userId?: string, clientIP?: string): Promise<{ all
   // Reset count if it's a new day
   if (!currentUsage || currentUsage.date !== today) {
     anonymousUsageStore.set(anonymousKey, { count: 0, date: today })
-    return { allowed: true, remaining: 2, role: 'ANONYMOUS' }
+    return { allowed: true, remaining: 1, role: 'ANONYMOUS' }
   }
   
-  // Check if limit is reached
-  const limit = 3
+  // Check if limit is reached - nu 2 vragen limiet
+  const limit = 2
   const used = currentUsage.count
   const remaining = Math.max(0, limit - used)
   
@@ -1388,34 +1388,40 @@ function detectAndCorrectLegalMistakes(response: string): string {
 function cleanupResponseFormatting(response: string): string {
   let cleanedResponse = response
 
-  // Verwijder overtollige witregels (meer dan 2 opeenvolgende enters)
-  cleanedResponse = cleanedResponse.replace(/\n{3,}/g, '\n\n')
-  
   // Fix problematische opmaak patronen
   const formattingFixes = [
-    // Fix "punt + enter + tekst" naar "punt tekst"
+    // Fix "punt + enter + tekst" naar "punt tekst" (vloeiende zinnen)
     { pattern: /\.\s*\n\s*([a-z])/g, replacement: '. $1' },
     
     // Fix "komma + enter + tekst" naar "komma tekst"  
     { pattern: /,\s*\n\s*([a-z])/g, replacement: ', $1' },
     
+    // Fix "puntkomma + enter + tekst" naar "puntkomma tekst"
+    { pattern: /;\s*\n\s*([a-z])/g, replacement: '; $1' },
+    
     // Fix "dubbelpunt + enter + tekst" naar "dubbelpunt tekst" (alleen voor korte zinnen)
-    { pattern: /:\s*\n\s*([a-z][^.\n]{1,50}[.])/g, replacement: ': $1' },
+    { pattern: /:\s*\n\s*([a-z][^.\n]{1,60}[.])/g, replacement: ': $1' },
+    
+    // Fix gebroken zinnen in het midden (veelvoorkomend AI probleem)
+    { pattern: /([a-z,])\s*\n\s*([a-z])/g, replacement: '$1 $2' },
+    
+    // Fix gebroken wetsartikelen
+    { pattern: /artikel\s*\n\s*(\d+)/gi, replacement: 'artikel $1' },
+    { pattern: /art\.\s*\n\s*(\d+)/gi, replacement: 'art. $1' },
+    
+    // Fix gebroken juridische termen
+    { pattern: /Wetboek\s*\n\s*van/gi, replacement: 'Wetboek van' },
+    { pattern: /Strafvordering\s*\n\s*\(/gi, replacement: 'Strafvordering (' },
+    { pattern: /Wet\s*\n\s*op/gi, replacement: 'Wet op' },
     
     // Fix overtollige spaties voor leestekens
     { pattern: /\s+([.,;:!?])/g, replacement: '$1' },
-    
-    // Fix spaties na bullets
-    { pattern: /^(\s*[-•*])\s+/gm, replacement: '$1 ' },
     
     // Fix dubbele spaties
     { pattern: /  +/g, replacement: ' ' },
     
     // Fix spaties aan begin/eind van regels
     { pattern: /^\s+|\s+$/gm, replacement: '' },
-    
-    // Fix lege regels met alleen spaties
-    { pattern: /^\s*$/gm, replacement: '' },
     
     // Zorg voor juiste spatiëring rond **bold** tekst
     { pattern: /\*\*\s+/g, replacement: '**' },
@@ -1430,8 +1436,11 @@ function cleanupResponseFormatting(response: string): string {
     cleanedResponse = cleanedResponse.replace(pattern, replacement)
   })
 
-  // Zorg ervoor dat er altijd een lege regel is tussen verschillende secties
-  cleanedResponse = cleanedResponse.replace(/(\*\*[^*]+\*\*)\n([^*\n])/g, '$1\n\n$2')
+  // Verwijder overtollige witregels (meer dan 2 opeenvolgende enters)
+  cleanedResponse = cleanedResponse.replace(/\n{3,}/g, '\n\n')
+  
+  // Zorg ervoor dat er een lege regel is tussen verschillende secties (headers)
+  cleanedResponse = cleanedResponse.replace(/(\*\*[^*]+\*\*)\n([A-Z])/g, '$1\n\n$2')
   
   // Maar niet teveel lege regels
   cleanedResponse = cleanedResponse.replace(/\n{3,}/g, '\n\n')
@@ -1517,9 +1526,17 @@ export async function POST(request: NextRequest) {
                     request.headers.get('x-real-ip') || 
                     'unknown'
 
-    // Rate limiting disabled for local development
-    const rateLimitResult = { allowed: true, remaining: 999, role: 'DEVELOPMENT' }
-    console.log('Rate limiting disabled for local development')
+    // Rate limiting - 2 gratis vragen voor niet-ingelogde gebruikers
+    const rateLimitResult = await checkRateLimit(session?.user?.id, clientIP)
+    
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json({ 
+        error: 'Rate limit exceeded',
+        message: 'U heeft uw gratis vragen gebruikt. Maak een gratis account aan voor onbeperkt zoeken.',
+        remaining: rateLimitResult.remaining,
+        requiresAuth: true
+      }, { status: 429 })
+    }
 
     // Search official sources
     const sources = await searchOfficialSources(question)
