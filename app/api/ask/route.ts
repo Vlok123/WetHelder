@@ -1518,7 +1518,7 @@ export async function POST(request: NextRequest) {
                     'unknown'
 
     // Rate limiting disabled for local development
-    let rateLimitResult = { allowed: true, remaining: 999, role: 'DEVELOPMENT' }
+    const rateLimitResult = { allowed: true, remaining: 999, role: 'DEVELOPMENT' }
     console.log('Rate limiting disabled for local development')
 
     // Search official sources
@@ -1727,7 +1727,7 @@ ${fragmentsText}
     }
 
     const data = await response.json()
-    let finalResponse = data.choices?.[0]?.message?.content || 'Er is een fout opgetreden bij het genereren van het antwoord.'
+    const finalResponse = data.choices?.[0]?.message?.content || 'Er is een fout opgetreden bij het genereren van het antwoord.'
     
     // STAP 6: Presenteer het antwoord
     console.log(`✅ Simple 6-step workflow completed successfully`)
