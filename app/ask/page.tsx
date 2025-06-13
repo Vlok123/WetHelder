@@ -178,7 +178,7 @@ const formatText = (text: string) => {
   if (!text) return null
   
   // Enhanced text preprocessing for better formatting
-  let processedText = text
+  const processedText = text
     // Convert quoted text to blockquotes for citations
     .replace(/"([^"]+)"/g, (match, citation) => `> ${citation}`)
     // Enhance bold text patterns - detect common Dutch legal terms and important concepts
