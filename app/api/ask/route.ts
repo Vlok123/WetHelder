@@ -1591,14 +1591,32 @@ export async function POST(request: NextRequest) {
 
           // Try to save to database but don't fail if unavailable
           try {
-            if (session?.user?.id) {
+            if (session?.user?.email) {
+              // Find or create user in database
+              let user = await prisma.user.findUnique({
+                where: { email: session.user.email },
+                select: { id: true }
+              })
+
+              if (!user) {
+                // Create user if doesn't exist
+                user = await prisma.user.create({
+                  data: {
+                    email: session.user.email,
+                    name: session.user.name || session.user.email.split('@')[0],
+                    role: session.user.email === 'sanderhelmink@gmail.com' ? 'ADMIN' : 'FREE'
+                  },
+                  select: { id: true }
+                })
+              }
+
               const savedQuery = await prisma.query.create({
                 data: {
                   question,
                   answer: finalResponse,
                   sources: JSON.stringify(sources),
                   profession,
-                  userId: session.user.id
+                  userId: user.id
                 }
               })
               queryId = savedQuery.id

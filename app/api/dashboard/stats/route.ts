@@ -8,23 +8,65 @@ export async function GET(request: NextRequest) {
     const session = await getServerSession(authOptions)
     
     if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json(
+        { error: 'Niet geautoriseerd' },
+        { status: 401 }
+      )
     }
 
     // Get user from database
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
-      select: { id: true, role: true }
+      select: {
+        id: true,
+        role: true,
+        createdAt: true
+      }
     })
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Gebruiker niet gevonden' },
+        { status: 404 }
+      )
     }
 
-    // Get user's queries
-    const queries = await prisma.query.findMany({
+    // Get total queries for this user
+    const totalQueries = await prisma.query.count({
+      where: { userId: user.id }
+    })
+
+    // Get this week's queries
+    const oneWeekAgo = new Date()
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+    
+    const weekQueries = await prisma.query.count({
+      where: {
+        userId: user.id,
+        createdAt: {
+          gte: oneWeekAgo
+        }
+      }
+    })
+
+    // Get profession breakdown
+    const professionStats = await prisma.query.groupBy({
+      by: ['profession'],
+      where: { userId: user.id },
+      _count: true
+    })
+
+    const mostUsedProfession = professionStats.length > 0 
+      ? professionStats.reduce((max, current) => 
+          current._count > max._count ? current : max
+        ).profession
+      : 'algemeen'
+
+    // Get recent activity (last 10 queries)
+    const recentQueries = await prisma.query.findMany({
       where: { userId: user.id },
       orderBy: { createdAt: 'desc' },
+      take: 10,
       select: {
         id: true,
         question: true,
@@ -33,65 +75,30 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // Get user's notes
-    const notes = await prisma.userNote.findMany({
-      where: { userId: user.id },
-      select: { id: true }
-    })
-
-    // Get user's categories
-    const categories = await prisma.userCategory.findMany({
-      where: { userId: user.id },
-      select: { id: true }
-    })
-
-    // Get user's favorites
-    const favorites = await prisma.userFavorite.findMany({
-      where: { userId: user.id },
-      select: { id: true }
-    })
-
-    // Calculate this week's queries
-    const oneWeekAgo = new Date()
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
-    
-    const thisWeekQueries = queries.filter(q => q.createdAt >= oneWeekAgo).length
-
-    // Calculate most used profession
-    const professionCounts = queries.reduce((acc, query) => {
-      acc[query.profession] = (acc[query.profession] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
-
-    const mostUsedProfession = Object.entries(professionCounts)
-      .sort(([,a], [,b]) => b - a)[0]?.[0] || 'Algemeen'
-
-    // Generate recent activity
-    const recentActivity = queries.slice(0, 5).map(query => ({
-      id: query.id,
-      type: 'query' as const,
-      title: query.question.length > 50 ? query.question.substring(0, 50) + '...' : query.question,
-      timestamp: query.createdAt.toISOString(),
-      details: `Vraag gesteld als ${query.profession}`
-    }))
-
     const stats = {
-      totalQueries: queries.length,
-      thisWeekQueries,
-      totalNotes: notes.length,
-      totalCategories: categories.length,
-      favoriteQueries: favorites.length,
-      averageResponseTime: '2.1s', // This would need to be calculated from actual response times
+      totalQueries,
+      weekQueries,
       mostUsedProfession,
-      recentActivity
+      memberSince: user.createdAt.toISOString(),
+      role: user.role,
+      recentActivity: recentQueries.map(query => ({
+        id: query.id,
+        question: query.question.substring(0, 100) + (query.question.length > 100 ? '...' : ''),
+        profession: query.profession,
+        createdAt: query.createdAt.toISOString()
+      })),
+      professionBreakdown: professionStats.map(stat => ({
+        profession: stat.profession,
+        count: stat._count
+      }))
     }
 
     return NextResponse.json(stats)
 
   } catch (error) {
-    console.error('Dashboard stats error:', error)
+    console.error('Error fetching dashboard stats:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch dashboard stats' },
+      { error: 'Server fout bij ophalen dashboard statistieken' },
       { status: 500 }
     )
   }

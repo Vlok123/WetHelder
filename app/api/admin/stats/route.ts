@@ -11,14 +11,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check if user is admin
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      select: { role: true }
-    })
+    // Check if user is admin - allow sanderhelmink@gmail.com or users with ADMIN role
+    if (session.user.email === 'sanderhelmink@gmail.com') {
+      // Auto-admin access for sanderhelmink@gmail.com
+    } else {
+      // Check database role for other users
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: { role: true }
+      })
 
-    if (!user || user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 })
+      if (!user || user.role !== 'ADMIN') {
+        return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 })
+      }
     }
 
     // Get total users

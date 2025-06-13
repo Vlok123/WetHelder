@@ -5,8 +5,7 @@ import bcrypt from 'bcryptjs'
 import { prisma } from './prisma'
 
 export const authOptions: NextAuthOptions = {
-  // Disable adapter for local development to avoid database connection issues
-  // adapter: PrismaAdapter(prisma) as any,
+  adapter: PrismaAdapter(prisma) as any,
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -19,24 +18,6 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        // For local development, use mock users primarily
-        try {
-          const { findUser } = await import('./mock-users')
-          const mockUser = findUser(credentials.email)
-          
-          if (mockUser && mockUser.password === credentials.password) {
-            return {
-              id: mockUser.id,
-              email: mockUser.email,
-              name: mockUser.name,
-              role: mockUser.role === 'admin' ? 'ADMIN' : 'USER',
-            }
-          }
-        } catch (mockError) {
-          console.error('Mock auth error:', mockError)
-        }
-
-        // Try database as fallback if available
         try {
           let user = await prisma.user.findUnique({
             where: { email: credentials.email }
@@ -51,6 +32,19 @@ export const authOptions: NextAuthOptions = {
                 name: 'Sander Helmink',
                 password: hashedPassword,
                 role: 'ADMIN'
+              }
+            })
+          }
+
+          // If user doesn't exist, create new user with default role
+          if (!user) {
+            const hashedPassword = await bcrypt.hash(credentials.password, 12)
+            user = await prisma.user.create({
+              data: {
+                email: credentials.email,
+                name: credentials.email.split('@')[0], // Use email prefix as name
+                password: hashedPassword,
+                role: 'FREE'
               }
             })
           }
@@ -71,7 +65,24 @@ export const authOptions: NextAuthOptions = {
             }
           }
         } catch (error) {
-          console.log('Database unavailable, using mock users for local development')
+          console.error('Database auth error:', error)
+          
+          // Fallback to mock users only if database is completely unavailable
+          try {
+            const { findUser } = await import('./mock-users')
+            const mockUser = findUser(credentials.email)
+            
+            if (mockUser && mockUser.password === credentials.password) {
+              return {
+                id: mockUser.id,
+                email: mockUser.email,
+                name: mockUser.name,
+                role: mockUser.role === 'admin' ? 'ADMIN' : 'USER',
+              }
+            }
+          } catch (mockError) {
+            console.error('Mock auth error:', mockError)
+          }
         }
 
         return null
@@ -113,7 +124,7 @@ export const authOptions: NextAuthOptions = {
       return session
     },
     async signIn({ user, account, profile }) {
-      // Auto-create admin user for sanderhelmink@gmail.com if doesn't exist
+      // Auto-create or update admin user for sanderhelmink@gmail.com
       if (user.email === 'sanderhelmink@gmail.com') {
         try {
           const existingUser = await prisma.user.findUnique({

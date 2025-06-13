@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth/next'
+import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -9,41 +10,52 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session?.user?.id) {
+    if (!session?.user?.email) {
       return NextResponse.json(
         { error: 'Niet geautoriseerd' },
         { status: 401 }
       )
     }
 
-    // Mock data voor development - in productie zou dit uit een database komen
-    const mockQueries = [
-      {
-        id: '1',
-        question: 'Wat zijn mijn rechten bij een politiecontrole?',
-        answer: '**Artikel 447e Sr (niet-meewerken politiecontrole)** - Bij een politiecontrole heeft u bepaalde rechten en plichten...',
-        profession: 'burger',
-        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() // 2 dagen geleden
-      },
-      {
-        id: '2',
-        question: 'Mag ik geblindeerde ramen hebben?',
-        answer: '**Artikel 5.2.42 RVV** - Geblindeerde ramen zijn onder bepaalde voorwaarden toegestaan...',
-        profession: 'burger',
-        createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() // 1 dag geleden
-      },
-      {
-        id: '3',
-        question: 'Wat is de maximale boete voor snelheidsovertreding?',
-        answer: '**Artikel 19-20 RVV** - De boetes voor snelheidsovertredingen variëren...',
-        profession: 'politie',
-        createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString() // 6 uur geleden
+    // Get user from database
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { id: true }
+    })
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Gebruiker niet gevonden' },
+        { status: 404 }
+      )
+    }
+
+    // Get user's queries from database
+    const queries = await prisma.query.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+      select: {
+        id: true,
+        question: true,
+        answer: true,
+        profession: true,
+        createdAt: true
       }
-    ]
+    })
+
+    // Transform to match expected format
+    const formattedQueries = queries.map(query => ({
+      id: query.id,
+      question: query.question,
+      answer: query.answer,
+      profession: query.profession,
+      createdAt: query.createdAt.toISOString()
+    }))
 
     return NextResponse.json({
-      queries: mockQueries,
-      total: mockQueries.length
+      queries: formattedQueries,
+      total: formattedQueries.length
     })
 
   } catch (error) {
