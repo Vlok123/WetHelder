@@ -216,7 +216,7 @@ const USER_PROFILES = [
 export default function HomePage() {
   const { data: session, status } = useSession()
   const [searchQuery, setSearchQuery] = useState('')
-  const [userProfile, setUserProfile] = useState('')
+  const [userProfile, setUserProfile] = useState('algemeen')
   const [wetUitlegEnabled, setWetUitlegEnabled] = useState(false)
   const [wetgevingEnabled, setWetgevingEnabled] = useState(false)
   const [showProfileExplanation, setShowProfileExplanation] = useState(false)

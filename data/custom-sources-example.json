@@ -1,0 +1,102 @@
+[
+  {
+    "id": "wetten-overheid-nl",
+    "naam": "Wetten.overheid.nl",
+    "url": "https://wetten.overheid.nl",
+    "beschrijving": "Officiële Nederlandse wetgeving - alle wetten, besluiten en regelingen",
+    "categorie": "Wetgeving",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["wet", "wetgeving", "artikel", "burgerlijk wetboek", "strafrecht", "wetboek", "regeling", "besluit"]
+  },
+  {
+    "id": "rechtspraak-nl",
+    "naam": "Rechtspraak.nl",
+    "url": "https://uitspraken.rechtspraak.nl",
+    "beschrijving": "Nederlandse jurisprudentie en uitspraken van alle rechterlijke instanties",
+    "categorie": "Jurisprudentie",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["uitspraak", "vonnis", "arrest", "rechtbank", "hof", "jurisprudentie", "ecli", "cassatie"]
+  },
+  {
+    "id": "juridisch-loket",
+    "naam": "Juridisch Loket",
+    "url": "https://www.juridischloket.nl",
+    "beschrijving": "Gratis juridische informatie en hulp voor burgers met praktische stappen",
+    "categorie": "Praktische Hulp",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["juridische hulp", "gratis advies", "rechtsbijstand", "procedure", "praktisch", "burger"]
+  },
+  {
+    "id": "belastingdienst",
+    "naam": "Belastingdienst.nl",
+    "url": "https://www.belastingdienst.nl",
+    "beschrijving": "Officiële informatie over belastingen, fiscale regelgeving en procedures",
+    "categorie": "Fiscaal Recht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["belasting", "fiscaal", "btw", "inkomstenbelasting", "vennootschapsbelasting", "aangifte"]
+  },
+  {
+    "id": "autoriteitpersoonsgegevens",
+    "naam": "Autoriteit Persoonsgegevens",
+    "url": "https://autoriteitpersoonsgegevens.nl",
+    "beschrijving": "Officiële informatie over privacy, AVG/GDPR en gegevensbescherming",
+    "categorie": "Privacy Recht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["avg", "gdpr", "privacy", "persoonsgegevens", "gegevensbescherming", "datalek"]
+  },
+  {
+    "id": "acm-nl",
+    "naam": "Autoriteit Consument & Markt",
+    "url": "https://www.acm.nl",
+    "beschrijving": "Mededingingsrecht, consumentenrecht en markttoezicht",
+    "categorie": "Mededingingsrecht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["mededinging", "kartel", "consument", "markt", "fusie", "misbruik", "dominante positie"]
+  },
+  {
+    "id": "boetebase-om",
+    "naam": "BoeteBase Openbaar Ministerie",
+    "url": "https://boetebase.om.nl",
+    "beschrijving": "Officiële database met alle boetes en sancties van het OM",
+    "categorie": "Sanctierecht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["boete", "sanctie", "overtreding", "bekeuring", "verkeer", "strafbeschikking", "transactie"]
+  },
+  {
+    "id": "cvdr-overheid",
+    "naam": "CVDR - Lokale Regelgeving",
+    "url": "https://lokaleregelgeving.overheid.nl",
+    "beschrijving": "Centrale voorziening voor alle lokale regelgeving, APV's en verordeningen",
+    "categorie": "Lokale Regelgeving",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["apv", "gemeente", "provincie", "verordening", "lokaal", "decentraal", "bouwverordening"]
+  },
+  {
+    "id": "politie-nl",
+    "naam": "Politie.nl",
+    "url": "https://www.politie.nl",
+    "beschrijving": "Officiële informatie over politieprocedures, rechten en plichten",
+    "categorie": "Politierecht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["politie", "aanhouding", "verhoor", "huiszoeking", "identificatie", "handhaving"]
+  },
+  {
+    "id": "kadaster-nl",
+    "naam": "Kadaster",
+    "url": "https://www.kadaster.nl",
+    "beschrijving": "Eigendomsrecht, hypotheken en kadastrale informatie",
+    "categorie": "Eigendomsrecht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["eigendom", "kadaster", "hypotheek", "onroerend", "eigendomsrecht", "registratie"]
+  }
+] 

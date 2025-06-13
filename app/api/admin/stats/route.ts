@@ -7,80 +7,102 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session?.user || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const now = new Date()
-    const today = now.toISOString().split('T')[0]
-    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+    // Check if user is admin
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { role: true }
+    })
 
-    // Get user statistics
+    if (!user || user.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 })
+    }
+
+    // Get total users
     const totalUsers = await prisma.user.count()
+
+    // Get users by role
+    const usersByRole = await prisma.user.groupBy({
+      by: ['role'],
+      _count: true
+    })
+
+    const premiumUsers = usersByRole.find(r => r.role === 'PREMIUM')?._count || 0
+    const freeUsers = usersByRole.find(r => r.role === 'FREE')?._count || 0
+    const adminUsers = usersByRole.find(r => r.role === 'ADMIN')?._count || 0
+
+    // Get active users (logged in within last 30 days)
+    const thirtyDaysAgo = new Date()
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
     
     const activeUsers = await prisma.user.count({
       where: {
-        queries: {
+        sessions: {
           some: {
-            createdAt: {
+            expires: {
               gte: thirtyDaysAgo
             }
           }
         }
       }
     })
-    
-    const premiumUsers = await prisma.user.count({ 
-      where: { role: 'PREMIUM' } 
-    })
-    
-    const freeUsers = await prisma.user.count({ 
-      where: { role: 'FREE' } 
-    })
-    
+
+    // Get total queries
     const totalQueries = await prisma.query.count()
-    
+
+    // Get today's queries
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+
     const todayQueries = await prisma.query.count({
       where: {
         createdAt: {
-          gte: new Date(today + 'T00:00:00.000Z'),
-          lt: new Date(today + 'T23:59:59.999Z')
+          gte: today,
+          lt: tomorrow
         }
       }
     })
 
     // Calculate average queries per user
-    const avgQueriesPerUser = totalUsers > 0 ? Math.round((totalQueries / totalUsers) * 100) / 100 : 0
+    const avgQueriesPerUser = totalUsers > 0 ? (totalQueries / totalUsers).toFixed(1) : '0'
 
-    // Get database size estimate (rough calculation)
-    const estimatedSize = Math.round((totalQueries * 2 + totalUsers * 0.5) / 1024) // Rough estimate in MB
-
-    // System health check
+    // System health check (simplified)
     let systemHealth: 'healthy' | 'warning' | 'error' = 'healthy'
-    
-    if (totalUsers > 10000 || totalQueries > 100000) {
-      systemHealth = 'warning'
+    try {
+      await prisma.$queryRaw`SELECT 1`
+    } catch (error) {
+      systemHealth = 'error'
     }
+
+    // Mock database size and backup info (would need actual implementation)
+    const databaseSize = '2.3 GB'
+    const lastBackup = new Date().toISOString()
 
     const stats = {
       totalUsers,
       activeUsers,
       premiumUsers,
       freeUsers,
+      adminUsers,
       totalQueries,
       todayQueries,
       avgQueriesPerUser,
       systemHealth,
-      databaseSize: `${estimatedSize} MB`,
-      lastBackup: '2024-12-08 03:00:00' // This would come from actual backup system
+      databaseSize,
+      lastBackup
     }
 
     return NextResponse.json(stats)
 
   } catch (error) {
-    console.error('Error fetching admin stats:', error)
+    console.error('Admin stats error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to fetch admin stats' },
       { status: 500 }
     )
   }

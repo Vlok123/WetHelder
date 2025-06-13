@@ -157,64 +157,50 @@ export default function MemberDashboard() {
   const loadDashboardData = async () => {
     setLoading(true)
     try {
-      // Mock data for now since API endpoints don't exist yet
-      setStats({
-        totalQueries: 12,
-        thisWeekQueries: 3,
-        totalNotes: 5,
-        totalCategories: 3,
-        favoriteQueries: 4,
-        averageResponseTime: '2.1s',
-        mostUsedProfession: 'Algemeen',
-        recentActivity: [
-          {
-            id: '1',
-            type: 'query',
-            title: 'Vraag over verkeersovertredingen',
-            timestamp: new Date().toISOString(),
-            details: 'Nieuwe vraag gesteld'
-          }
-        ]
-      })
+      // Load dashboard stats from API
+      const statsResponse = await fetch('/api/dashboard/stats')
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json()
+        setStats(statsData)
+      }
+
+      // Load chat history (queries)
+      const historyResponse = await fetch('/api/chat-history')
+      if (historyResponse.ok) {
+        const historyData = await historyResponse.json()
+        const formattedQueries = (historyData.queries || []).map((query: any) => ({
+          id: query.id,
+          question: query.question,
+          answer: query.answer || 'Antwoord wordt geladen...',
+          profession: query.profession,
+          createdAt: query.createdAt,
+          isFavorite: false, // Would need to implement favorites in database
+          categories: [], // Would need to implement categories in database
+          sources: query.sources ? JSON.parse(query.sources) : []
+        }))
+        setQueries(formattedQueries)
+      }
       
-      setQueries([
-        {
-          id: '1',
-          question: 'Wat zijn mijn rechten bij een politiecontrole?',
-          answer: 'Bij een politiecontrole heeft u verschillende rechten...',
-          profession: 'Algemeen',
-          createdAt: new Date().toISOString(),
-          isFavorite: true,
-          categories: ['Strafrecht'],
-          sources: ['Wetboek van Strafrecht']
-        }
-      ])
+      // For now, use empty arrays for notes and categories until we implement these features
+      setNotes([])
+      setCategories([])
       
-      setNotes([
-        {
-          id: '1',
-          title: 'Belangrijke jurisprudentie',
-          content: 'Notitie over belangrijke uitspraken...',
-          color: 'blue',
-          tags: ['jurisprudentie', 'belangrijk'],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      ])
-      
-      setCategories([
-        {
-          id: '1',
-          name: 'Strafrecht',
-          description: 'Vragen over strafrecht',
-          color: 'red',
-          icon: 'folder',
-          queryCount: 5,
-          createdAt: new Date().toISOString()
-        }
-      ])
     } catch (error) {
       console.error('Error loading dashboard data:', error)
+      // Fallback to empty data
+      setStats({
+        totalQueries: 0,
+        thisWeekQueries: 0,
+        totalNotes: 0,
+        totalCategories: 0,
+        favoriteQueries: 0,
+        averageResponseTime: '0s',
+        mostUsedProfession: 'Algemeen',
+        recentActivity: []
+      })
+      setQueries([])
+      setNotes([])
+      setCategories([])
     } finally {
       setLoading(false)
     }

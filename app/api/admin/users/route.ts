@@ -7,80 +7,79 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session?.user || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const url = new URL(request.url)
-    const page = parseInt(url.searchParams.get('page') || '1')
-    const limit = parseInt(url.searchParams.get('limit') || '50')
-    const search = url.searchParams.get('search') || ''
-    const role = url.searchParams.get('role') || 'all'
-    const status = url.searchParams.get('status') || 'all'
+    // Check if user is admin
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { role: true }
+    })
 
-    const skip = (page - 1) * limit
-
-    // Build where clause
-    const where: any = {}
-
-    if (search) {
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } }
-      ]
+    if (!user || user.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 })
     }
 
-    if (role !== 'all') {
-      where.role = role
-    }
-
-    // Get users with query count
+    // Get all users with their query counts
     const users = await prisma.user.findMany({
-      where,
-      include: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
         _count: {
           select: {
             queries: true
           }
+        },
+        sessions: {
+          select: {
+            expires: true
+          },
+          orderBy: {
+            expires: 'desc'
+          },
+          take: 1
         }
       },
       orderBy: {
         createdAt: 'desc'
-      },
-      skip,
-      take: limit
-    })
-
-    // Get total count for pagination
-    const totalUsers = await prisma.user.count({ where })
-
-    // Transform data for frontend
-    const userData = users.map(user => ({
-      id: user.id,
-      name: user.name || 'Geen naam',
-      email: user.email,
-      role: user.role || 'FREE',
-      createdAt: user.createdAt.toISOString(),
-      lastActive: user.updatedAt.toISOString(), // Using updatedAt as proxy for last active
-      totalQueries: user._count.queries,
-      todayQueries: 0, // Would need separate query for today's count
-      status: 'active' // Default for now, would be actual status field
-    }))
-
-    return NextResponse.json({
-      users: userData,
-      pagination: {
-        page,
-        limit,
-        total: totalUsers,
-        pages: Math.ceil(totalUsers / limit)
       }
     })
 
+    // Transform data for frontend
+    const transformedUsers = users.map(user => {
+      const lastSession = user.sessions[0]
+      const lastActive = lastSession ? lastSession.expires.toISOString() : user.updatedAt.toISOString()
+      
+      // Calculate today's queries
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      const tomorrow = new Date(today)
+      tomorrow.setDate(tomorrow.getDate() + 1)
+
+      return {
+        id: user.id,
+        name: user.name || 'Unnamed User',
+        email: user.email,
+        role: user.role,
+        createdAt: user.createdAt.toISOString(),
+        lastActive,
+        totalQueries: user._count.queries,
+        todayQueries: 0, // Would need separate query to calculate this efficiently
+        status: 'active' as const // Would need to implement user status in schema
+      }
+    })
+
+    return NextResponse.json({ users: transformedUsers })
+
   } catch (error) {
-    console.error('Error fetching users:', error)
+    console.error('Admin users error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to fetch users' },
       { status: 500 }
     )
   }

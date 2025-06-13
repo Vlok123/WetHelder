@@ -1,5 +1,14 @@
 // Verbeterde Google Search service voor betrouwbare juridische antwoorden
-// Workflow: Vraag → Zoeken op geverifieerde bronnen → Filteren → ChatGPT met strikte instructies
+// Workflow: Vraag → Zoeken op geverifieerde bronnen → Strikte datumvalidatie → Filteren → ChatGPT met strikte instructies
+
+import { 
+  validateSourceActuality, 
+  isHistoricalQuery, 
+  generateOutdatedMessage,
+  filterCurrentYearResults,
+  getCurrentYear,
+  type SourceValidation
+} from './dateValidation'
 
 export interface GoogleSearchResult {
   title: string
@@ -8,11 +17,16 @@ export interface GoogleSearchResult {
   displayLink: string
   formattedUrl: string
   source: 'wetten.overheid.nl' | 'rechtspraak.nl' | 'tuchtrecht.overheid.nl' | 'boetebase.om.nl' | 'overheid.nl' | 'apv'
+  validation?: SourceValidation
+  isCurrentYear?: boolean
 }
 
 export interface VerifiedSearchResults {
   query: string
   totalResults: number
+  currentYearResults: number
+  outdatedResults: number
+  isHistoricalQuery: boolean
   sources: {
     wetten: GoogleSearchResult[]
     rechtspraak: GoogleSearchResult[]
@@ -23,6 +37,7 @@ export interface VerifiedSearchResults {
   }
   combinedSnippets: string
   sourceUrls: string[]
+  validationSummary: string
 }
 
 // Geverifieerde juridische bronnen - UITGEBREID MET APV's
@@ -56,9 +71,14 @@ const VERIFIED_SOURCES = [
 export async function searchVerifiedJuridicalSources(query: string): Promise<VerifiedSearchResults> {
   console.log(`🔍 Zoeken op geverifieerde bronnen voor: "${query}"`)
   
+  const isHistorical = isHistoricalQuery(query)
+  
   const results: VerifiedSearchResults = {
     query,
     totalResults: 0,
+    currentYearResults: 0,
+    outdatedResults: 0,
+    isHistoricalQuery: isHistorical,
     sources: {
       wetten: [],
       rechtspraak: [],
@@ -68,7 +88,8 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
       apv: []
     },
     combinedSnippets: '',
-    sourceUrls: []
+    sourceUrls: [],
+    validationSummary: ''
   }
 
   try {
@@ -83,15 +104,27 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
         searchAPVSources(query)
       ])
 
-    // Categoriseer resultaten
-    results.sources.wetten = wettenResults.map(r => ({ ...r, source: 'wetten.overheid.nl' as const }))
-    results.sources.rechtspraak = rechtspraakResults.map(r => ({ ...r, source: 'rechtspraak.nl' as const }))
-    results.sources.tuchtrecht = tuchtrechtResults.map(r => ({ ...r, source: 'tuchtrecht.overheid.nl' as const }))
-    results.sources.boetes = boetesResults.map(r => ({ ...r, source: 'boetebase.om.nl' as const }))
-    results.sources.overheid = overheidResults.map(r => ({ ...r, source: 'overheid.nl' as const }))
-    results.sources.apv = apvResults.map(r => ({ ...r, source: 'apv' as const }))
+    // STAP 3: Valideer alle resultaten op actualiteit
+    const validateAndCategorize = (sourceResults: any[], sourceName: string) => {
+      return sourceResults.map(r => {
+        const validation = validateSourceActuality(r.snippet || '', r.title || '', r.link || '')
+        return { 
+          ...r, 
+          source: sourceName,
+          validation,
+          isCurrentYear: validation.isCurrentYear
+        }
+      })
+    }
 
-    // STAP 3: Filter en combineer resultaten
+    results.sources.wetten = validateAndCategorize(wettenResults, 'wetten.overheid.nl')
+    results.sources.rechtspraak = validateAndCategorize(rechtspraakResults, 'rechtspraak.nl')
+    results.sources.tuchtrecht = validateAndCategorize(tuchtrechtResults, 'tuchtrecht.overheid.nl')
+    results.sources.boetes = validateAndCategorize(boetesResults, 'boetebase.om.nl')
+    results.sources.overheid = validateAndCategorize(overheidResults, 'overheid.nl')
+    results.sources.apv = validateAndCategorize(apvResults, 'apv')
+
+    // STAP 4: Filter en combineer resultaten
     const allResults = [
       ...results.sources.wetten,
       ...results.sources.rechtspraak,
@@ -101,11 +134,29 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
       ...results.sources.apv
     ]
 
+    // Bereken statistieken
     results.totalResults = allResults.length
-    results.combinedSnippets = formatSnippetsForChatGPT(allResults)
-    results.sourceUrls = [...new Set(allResults.map(r => r.link))]
+    results.currentYearResults = allResults.filter(r => r.isCurrentYear).length
+    results.outdatedResults = allResults.filter(r => !r.isCurrentYear).length
 
-    console.log(`✅ ${results.totalResults} geverifieerde resultaten gevonden`)
+    // STRIKTE REGEL: Voor niet-historische vragen, gebruik alleen actuele bronnen
+    const finalResults = isHistorical ? allResults : allResults.filter(r => r.isCurrentYear)
+    
+    // Genereer validatie samenvatting
+    results.validationSummary = `Gevonden: ${results.totalResults} bronnen (${results.currentYearResults} actueel, ${results.outdatedResults} verouderd). ${isHistorical ? 'Historische vraag: alle bronnen toegestaan.' : 'Alleen actuele bronnen gebruikt.'}`
+    
+    // Als geen actuele bronnen en niet-historische vraag: weiger antwoord
+    if (!isHistorical && results.currentYearResults === 0 && results.totalResults > 0) {
+      results.combinedSnippets = generateOutdatedMessage(
+        `Alle gevonden bronnen (${results.totalResults}) bevatten verouderde informatie`
+      )
+    } else {
+      results.combinedSnippets = formatSnippetsForChatGPT(finalResults)
+    }
+    
+    results.sourceUrls = [...new Set(finalResults.map(r => r.link))]
+
+    console.log(`✅ ${results.totalResults} totale resultaten, ${results.currentYearResults} actueel, ${results.outdatedResults} verouderd`)
     return results
 
   } catch (error) {
@@ -176,9 +227,9 @@ async function searchSpecificSource(query: string, site: string): Promise<Omit<G
         const hasRecentYear = combined.includes(currentYear.toString()) || 
                               combined.includes((currentYear - 1).toString())
         
-        // Exclusief verouderde termen
+        // Exclusief verouderde termen - filter jubelton informatie die niet expliciet vermeldt dat het is afgeschaft
         const hasOutdatedTerms = /jubelton|jubeltoeslag/i.test(combined) && 
-                                /afgeschaft|beëindigd|vervallen|niet meer/i.test(combined)
+                                !/afgeschaft|beëindigd|vervallen|niet meer|sinds 2023|per 2023|vanaf 2023/i.test(combined)
         
         return hasRecentYear || !hasOutdatedTerms
       })
@@ -193,14 +244,15 @@ async function searchSpecificSource(query: string, site: string): Promise<Omit<G
 }
 
 /**
- * STAP 3: Formatteert snippets voor ChatGPT met strikte bronverwijzing
+ * STAP 3: Formatteert snippets voor ChatGPT met strikte bronverwijzing en datumvalidatie
  */
 function formatSnippetsForChatGPT(results: GoogleSearchResult[]): string {
   if (results.length === 0) {
     return 'Geen relevante informatie gevonden in de geverifieerde juridische bronnen.'
   }
 
-  let formattedText = 'GEVERIFIEERDE JURIDISCHE INFORMATIE:\n\n'
+  const currentYear = getCurrentYear()
+  let formattedText = `GEVERIFIEERDE JURIDISCHE INFORMATIE (${currentYear}):\n\n`
 
   // Groepeer per bron voor duidelijkheid
   const groupedBySources = results.reduce((acc, result) => {
@@ -217,14 +269,30 @@ function formatSnippetsForChatGPT(results: GoogleSearchResult[]): string {
     sourceResults.forEach((result, index) => {
       formattedText += `\n[${index + 1}] ${result.title}\n`
       formattedText += `Bron: ${result.link}\n`
+      
+      // Voeg validatie-informatie toe
+      if (result.validation) {
+        formattedText += `Actualiteit: ${result.validation.reason}\n`
+        if (result.validation.extractedDates.length > 0) {
+          formattedText += `Gevonden jaartallen: ${result.validation.extractedDates.join(', ')}\n`
+        }
+      }
+      
       formattedText += `Inhoud: ${result.snippet}\n`
     })
     
     formattedText += '\n'
   })
 
-  formattedText += '\nINSTRUCTIE: Beantwoord de vraag UITSLUITEND op basis van bovenstaande fragmenten. '
-  formattedText += 'Vermeld bij elk punt de exacte bron. Voeg NIETS toe dat niet uit de tekst blijkt.'
+  formattedText += `\n**STRIKTE ACTUALITEITSREGELS:**\n`
+  formattedText += `- Het is nu ${currentYear}\n`
+  formattedText += `- Gebruik ALLEEN informatie die geldig is voor ${currentYear}\n`
+  formattedText += `- Als informatie verouderd is, vermeld dit EXPLICIET\n`
+  formattedText += `- Voor belasting/subsidies: toon VERPLICHT het geldige jaar bij elk bedrag\n`
+  formattedText += `- Jubelton is AFGESCHAFT per 1 januari 2023\n\n`
+
+  formattedText += 'INSTRUCTIE: Beantwoord de vraag UITSLUITEND op basis van bovenstaande fragmenten. '
+  formattedText += 'Vermeld bij elk punt de exacte bron EN het geldige jaar. Voeg NIETS toe dat niet uit de tekst blijkt.'
 
   return formattedText
 }
@@ -248,9 +316,11 @@ export function generateStrictChatGPTPrompt(question: string, verifiedResults: V
 **ACTUALITEIT CONTROLE (BELANGRIJK):**
 - Het is nu ${currentMonth}
 - Controleer of de informatie actueel is voor ${currentYear}
-- Let specifiek op verouderde regelingen zoals de "jubelton" (afgeschaft in 2022)
+- Let specifiek op verouderde regelingen zoals de "jubelton" (afgeschaft per 1 januari 2023)
+- WAARSCHUWING: Veel bronnen bevatten nog verouderde informatie over de jubelton - deze is NIET meer van toepassing
 - Vermeld expliciet als regelgeving is gewijzigd, afgeschaft of vervangen
-- Geef alleen actuele tarieven, bedragen en procedures
+- Geef alleen actuele tarieven, bedragen en procedures voor ${currentYear}
+- Voor schenkingen: alleen de gewone jaarlijkse vrijstelling van €6.739 (2025) geldt nog
 - Als je verouderde informatie tegenkomt, vermeld dan expliciet dat deze niet meer geldig is
 
 **VRAAG:** ${question}
@@ -291,9 +361,13 @@ export async function executeVerifiedSearchWorkflow(question: string): Promise<{
       searchResults: {
         query: question,
         totalResults: 0,
+        currentYearResults: 0,
+        outdatedResults: 0,
+        isHistoricalQuery: false,
         sources: { wetten: [], rechtspraak: [], tuchtrecht: [], boetes: [], overheid: [], apv: [] },
         combinedSnippets: '',
-        sourceUrls: []
+        sourceUrls: [],
+        validationSummary: 'Error occurred during search'
       },
       chatGPTPrompt: '',
       success: false

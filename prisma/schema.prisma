@@ -3,7 +3,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["fullTextIndex"]
 }
 
 datasource db {
@@ -116,7 +115,7 @@ model LegalDocument {
   bron        String   // wettenbank, rechtspraak, eur-lex, etc.
   type        String   // wet, uitspraak, richtlijn, etc.
   titel       String
-  tekst       String   @db.Text
+  tekst       String
   uri         String   @unique
   datum       DateTime?
   artikelNr   String?  // Voor wetsartikelen
@@ -128,7 +127,7 @@ model LegalDocument {
   rechtsgebied String? // strafrecht, civielrecht, etc.
   
   // Vector embedding (stored as JSON for now, later pgvector)
-  embedding   String?  @db.Text // JSON array van floats
+  embedding   String? // JSON array van floats
   
   // Timestamps
   createdAt   DateTime @default(now())
@@ -176,8 +175,8 @@ model Jurisprudentie {
   id          String   @id @default(cuid())
   ecli        String   @unique
   titel       String
-  samenvatting String? @db.Text
-  volledigeTekst String @db.Text
+  samenvatting String?
+  volledigeTekst String
   
   // Rechtbank info
   instantie   String   // HR, Hof, Rechtbank, etc.
@@ -185,14 +184,14 @@ model Jurisprudentie {
   uitspraakType String // arrest, vonnis, beschikking
   
   // Juridische classificatie
-  rechtsgebied String[]
-  trefwoorden String[]
+  rechtsgebied String // JSON array
+  trefwoorden String // JSON array
   
   // Relaties
-  wetsartikelen String[] // Geciteerde artikelen
+  wetsartikelen String // JSON array - Geciteerde artikelen
   
   // Vector embedding
-  embedding   String?  @db.Text
+  embedding   String?
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -210,7 +209,7 @@ model ParlementairStuk {
   nummer      String   @unique // Kamerstuknummer
   titel       String
   type        String   // wetsvoorstel, motie, amendement, etc.
-  tekst       String   @db.Text
+  tekst       String
   
   // Metadata
   kamer       String   // TK, EK
@@ -219,11 +218,11 @@ model ParlementairStuk {
   status      String   // ingediend, aangenomen, verworpen, etc.
   
   // Relaties
-  indieners   String[] // Namen van indieners
+  indieners   String // JSON array - Namen van indieners
   onderwerp   String?
   
   // Vector embedding
-  embedding   String?  @db.Text
+  embedding   String?
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -254,7 +253,7 @@ model DataIngestLog {
   duration    Int?     // In seconden
   
   // Error handling
-  errorMessage String? @db.Text
+  errorMessage String?
   
   createdAt   DateTime @default(now())
 
@@ -271,9 +270,9 @@ model UserNote {
   userId    String
   queryId   String?  // Optioneel gekoppeld aan een vraag
   title     String
-  content   String   @db.Text
+  content   String
   color     String   @default("blue") // Voor visuele categorisering
-  tags      String[] // Vrije tags
+  tags      String // JSON array - Vrije tags
   isPrivate Boolean  @default(true)
   
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -358,9 +357,9 @@ model AdminLog {
   adminId   String
   action    String // CREATE_USER, DELETE_USER, CHANGE_ROLE, VIEW_STATS, etc.
   target    String? // ID van het beïnvloede object
-  details   String? @db.Text // JSON details van de actie
+  details   String? // JSON details van de actie
   ipAddress String?
-  userAgent String? @db.Text
+  userAgent String?
   
   admin     User   @relation("AdminLogs", fields: [adminId], references: [id], onDelete: Cascade)
   
@@ -375,7 +374,7 @@ model AdminLog {
 model SystemSetting {
   id          String @id @default(cuid())
   key         String @unique
-  value       String @db.Text
+  value       String
   description String?
   category    String @default("general")
   isPublic    Boolean @default(false)

@@ -1,0 +1,272 @@
+[
+  {
+    "id": "wetten-overheid-nl",
+    "naam": "Wetten.overheid.nl",
+    "url": "https://wetten.overheid.nl",
+    "beschrijving": "Officiële Nederlandse wetgeving - alle wetten, besluiten en regelingen",
+    "categorie": "Wetgeving",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["wet", "wetgeving", "artikel", "burgerlijk wetboek", "strafrecht", "wetboek", "regeling", "besluit"]
+  },
+  {
+    "id": "cao-register-szw",
+    "naam": "CAO-register (Ministerie SZW)",
+    "url": "https://cao.minszw.nl",
+    "beschrijving": "Alle cao-teksten, inclusief AVV-besluiten in PDF format",
+    "categorie": "Arbeidsrecht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-06-13T10:00:00.000Z",
+    "trefwoorden": ["cao", "collectieve arbeidsovereenkomst", "arbeidsvoorwaarden", "loon", "vakantie", "pensioen", "avv"]
+  },
+  {
+    "id": "cao-rijk-portal",
+    "naam": "CAO Rijk-portal",
+    "url": "https://www.caorijk.nl",
+    "beschrijving": "Actuele cao voor Rijksambtenaren met toelichtingen",
+    "categorie": "Arbeidsrecht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-06-13T10:00:00.000Z",
+    "trefwoorden": ["cao rijk", "rijksambtenaren", "ambtenaren", "overheid", "arbeidsvoorwaarden", "salaris"]
+  },
+  {
+    "id": "belastingdienst-tarieven-2025",
+    "naam": "Belastingdienst - Tarieven & Heffingskortingen 2025",
+    "url": "https://www.belastingdienst.nl",
+    "beschrijving": "Officiële tabellen voor aangifte en voorlopige aanslag 2025",
+    "categorie": "Fiscaal Recht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-06-13T10:00:00.000Z",
+    "trefwoorden": ["belasting", "tarieven", "heffingskorting", "2025", "aangifte", "voorlopige aanslag", "fiscaal"]
+  },
+  {
+    "id": "arbeidstijdenwet",
+    "naam": "Arbeidstijdenwet",
+    "url": "https://wetten.overheid.nl",
+    "beschrijving": "Regels rond arbeidstijd, rust en nachtarbeid",
+    "categorie": "Arbeidsrecht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-06-13T10:00:00.000Z",
+    "trefwoorden": ["arbeidstijd", "werktijd", "rust", "nachtarbeid", "overwerk", "pauze", "rooster"]
+  },
+  {
+    "id": "arbeidsomstandighedenwet",
+    "naam": "Arbeidsomstandighedenwet (Arbowet)",
+    "url": "https://wetten.overheid.nl",
+    "beschrijving": "Basisverplichtingen voor gezond & veilig werk",
+    "categorie": "Arbeidsrecht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-06-13T10:00:00.000Z",
+    "trefwoorden": ["arbo", "arbeidsomstandigheden", "veiligheid", "gezondheid", "werkplek", "risico", "preventie"]
+  },
+  {
+    "id": "arbeidsomstandighedenbesluit",
+    "naam": "Arbeidsomstandighedenbesluit",
+    "url": "https://wetten.overheid.nl",
+    "beschrijving": "Nadere uitwerking Arbowet (o.a. gevaarlijke stoffen)",
+    "categorie": "Arbeidsrecht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-06-13T10:00:00.000Z",
+    "trefwoorden": ["arbobesluit", "gevaarlijke stoffen", "werkplek", "veiligheidsvoorschriften", "beschermingsmiddelen"]
+  },
+  {
+    "id": "nederlandse-arbeidsinspectie",
+    "naam": "Nederlandse Arbeidsinspectie",
+    "url": "https://nlarbeidsinspectie.nl",
+    "beschrijving": "Richtlijnen en handreikingen voor werkgevers",
+    "categorie": "Arbeidsrecht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-06-13T10:00:00.000Z",
+    "trefwoorden": ["arbeidsinspectie", "handhaving", "controle", "werkgever", "richtlijnen", "boete", "overtreding"]
+  },
+  {
+    "id": "uwv-rechten-plichten",
+    "naam": "UWV - Rechten & Plichten",
+    "url": "https://www.uwv.nl",
+    "beschrijving": "Regels bij uitkeringen en re-integratie",
+    "categorie": "Sociale Zekerheid",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-06-13T10:00:00.000Z",
+    "trefwoorden": ["uwv", "uitkering", "ww", "wia", "re-integratie", "arbeidsgeschikt", "sollicitatieplicht"]
+  },
+  {
+    "id": "rechtspraak-nl",
+    "naam": "Rechtspraak.nl (ECLI)",
+    "url": "https://uitspraken.rechtspraak.nl",
+    "beschrijving": "Nederlandse jurisprudentie en uitspraken van alle rechterlijke instanties",
+    "categorie": "Jurisprudentie",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["uitspraak", "vonnis", "arrest", "rechtbank", "hof", "jurisprudentie", "ecli", "cassatie"]
+  },
+  {
+    "id": "officielebekendmakingen-staatsblad",
+    "naam": "Staatsblad & Staatscourant",
+    "url": "https://officielebekendmakingen.nl",
+    "beschrijving": "Alle wetswijzigingen en ministeriële regelingen zodra gepubliceerd (RSS beschikbaar)",
+    "categorie": "Wetgeving",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-06-13T10:00:00.000Z",
+    "trefwoorden": ["staatsblad", "staatscourant", "bekendmaking", "wetswijziging", "ministeriële regeling", "publicatie"]
+  },
+  {
+    "id": "eur-lex",
+    "naam": "EUR-Lex",
+    "url": "https://eur-lex.europa.eu",
+    "beschrijving": "EU-verordeningen, richtlijnen en geconsolideerde versies",
+    "categorie": "Europees Recht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-06-13T10:00:00.000Z",
+    "trefwoorden": ["eu", "europees", "verordening", "richtlijn", "celex", "europese unie", "europeesrecht"]
+  },
+  {
+    "id": "tractatenblad",
+    "naam": "Tractatenblad",
+    "url": "https://officielebekendmakingen.nl",
+    "beschrijving": "Internationale verdragen geratificeerd door Nederland",
+    "categorie": "Internationaal Recht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-06-13T10:00:00.000Z",
+    "trefwoorden": ["tractaat", "verdrag", "internationaal", "ratificatie", "volkenrecht", "bilateraal", "multilateraal"]
+  },
+  {
+    "id": "kamerstukken-handelingen",
+    "naam": "Kamerstukken & Handelingen",
+    "url": "https://www.overheid.nl",
+    "beschrijving": "Parlementaire geschiedenis en toelichtingen bij wetsvoorstellen",
+    "categorie": "Parlementaire Stukken",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-06-13T10:00:00.000Z",
+    "trefwoorden": ["kamerstukken", "handelingen", "parlementair", "wetsvoorstel", "toelichting", "tweede kamer", "eerste kamer"]
+  },
+  {
+    "id": "autoriteitpersoonsgegevens",
+    "naam": "Autoriteit Persoonsgegevens",
+    "url": "https://autoriteitpersoonsgegevens.nl",
+    "beschrijving": "Officiële informatie over privacy, AVG/GDPR en gegevensbescherming",
+    "categorie": "Privacy Recht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["avg", "gdpr", "privacy", "persoonsgegevens", "gegevensbescherming", "datalek"]
+  },
+  {
+    "id": "dnb-statistieken",
+    "naam": "DNB Statistieken (REST/CSV)",
+    "url": "https://www.dnb.nl",
+    "beschrijving": "Officiële kerncijfers over banken en pensioenfondsen",
+    "categorie": "Financieel Recht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-06-13T10:00:00.000Z",
+    "trefwoorden": ["dnb", "bank", "pensioenfonds", "financieel", "toezicht", "statistiek", "kerncijfers"]
+  },
+  {
+    "id": "cbs-statline",
+    "naam": "CBS Open Data (StatLine)",
+    "url": "https://opendata.cbs.nl",
+    "beschrijving": "Micro- en macro-statistieken voor beleids- en HR-onderbouwingen",
+    "categorie": "Statistiek",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-06-13T10:00:00.000Z",
+    "trefwoorden": ["cbs", "statistiek", "statline", "data", "onderzoek", "cijfers", "bevolking", "economie"]
+  },
+  {
+    "id": "nibud-richtbedragen",
+    "naam": "NIBUD-richtbedragen",
+    "url": "https://www.nibud.nl",
+    "beschrijving": "Gezaghebbende normen voor budget- en koopkrachtanalyses",
+    "categorie": "Financieel",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-06-13T10:00:00.000Z",
+    "trefwoorden": ["nibud", "budget", "koopkracht", "richtbedrag", "financieel", "huishouden", "uitgaven"]
+  },
+  {
+    "id": "developer-overheid-portal",
+    "naam": "Developer Overheid-portaal",
+    "url": "https://developer.overheid.nl",
+    "beschrijving": "API-keys, throttle-limits en Swagger-docs voor o.a. wetten.nl en BAG",
+    "categorie": "API & Data",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-06-13T10:00:00.000Z",
+    "trefwoorden": ["api", "developer", "swagger", "bag", "wetten", "overheid", "data", "technisch"]
+  },
+  {
+    "id": "data-overheid-api",
+    "naam": "data.overheid.nl API",
+    "url": "https://data.overheid.nl",
+    "beschrijving": "Centrale zoeklaag voor >12.000 datasets (CKAN-compatible)",
+    "categorie": "API & Data",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-06-13T10:00:00.000Z",
+    "trefwoorden": ["data", "overheid", "api", "ckan", "dataset", "open data", "zoeken"]
+  },
+  {
+    "id": "acm-nl",
+    "naam": "Autoriteit Consument & Markt",
+    "url": "https://www.acm.nl",
+    "beschrijving": "Mededingingsrecht, consumentenrecht en markttoezicht",
+    "categorie": "Mededingingsrecht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["mededinging", "kartel", "consument", "markt", "fusie", "misbruik", "dominante positie"]
+  },
+  {
+    "id": "boetebase-om",
+    "naam": "BoeteBase Openbaar Ministerie",
+    "url": "https://boetebase.om.nl",
+    "beschrijving": "Officiële database met alle boetes en sancties van het OM",
+    "categorie": "Sanctierecht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["boete", "sanctie", "overtreding", "bekeuring", "verkeer", "strafbeschikking", "transactie"]
+  },
+  {
+    "id": "cvdr-overheid",
+    "naam": "CVDR - Lokale Regelgeving",
+    "url": "https://lokaleregelgeving.overheid.nl",
+    "beschrijving": "Centrale voorziening voor alle lokale regelgeving, APV's en verordeningen",
+    "categorie": "Lokale Regelgeving",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["apv", "gemeente", "provincie", "verordening", "lokaal", "decentraal", "bouwverordening"]
+  },
+  {
+    "id": "politie-nl",
+    "naam": "Politie.nl",
+    "url": "https://www.politie.nl",
+    "beschrijving": "Officiële informatie over politieprocedures, rechten en plichten",
+    "categorie": "Politierecht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["politie", "aanhouding", "verhoor", "huiszoeking", "identificatie", "handhaving"]
+  },
+  {
+    "id": "kadaster-nl",
+    "naam": "Kadaster",
+    "url": "https://www.kadaster.nl",
+    "beschrijving": "Eigendomsrecht, hypotheken en kadastrale informatie",
+    "categorie": "Eigendomsrecht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["eigendom", "kadaster", "hypotheek", "onroerend", "eigendomsrecht", "registratie"]
+  },
+  {
+    "id": "juridisch-loket",
+    "naam": "Juridisch Loket",
+    "url": "https://www.juridischloket.nl",
+    "beschrijving": "Gratis juridische informatie en hulp voor burgers met praktische stappen",
+    "categorie": "Praktische Hulp",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2024-01-15T10:00:00.000Z",
+    "trefwoorden": ["juridische hulp", "gratis advies", "rechtsbijstand", "procedure", "praktisch", "burger"]
+  },
+  {
+    "id": "belastingdienst-schenkingsrecht-2025",
+    "naam": "Belastingdienst - Schenkingsrecht 2025",
+    "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/vermogen_en_aanmerkelijk_belang/schenken/",
+    "beschrijving": "Actuele informatie over schenkingsrecht, vrijstellingen en tarieven voor 2025. BELANGRIJK: De jubelton is afgeschaft per 1 januari 2023.",
+    "categorie": "Fiscaal Recht",
+    "betrouwbaarheid": "hoog",
+    "laatstGecontroleerd": "2025-01-15T10:00:00.000Z",
+    "trefwoorden": ["schenking", "schenkingsrecht", "vrijstelling", "jubelton afgeschaft", "erfenis", "belasting", "2025", "6739 euro", "ton schenken", "kinderen"]
+  }
+] 

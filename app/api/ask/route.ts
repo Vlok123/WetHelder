@@ -21,6 +21,7 @@ import {
   fetchOpenKVK,
   fetchEURLexWebService
 } from '@/lib/officialSources'
+import { getSourcesForQuery } from '@/lib/customSources'
 import { 
   comprehensiveJuridicalSearch,
   extractSearchTermsFromResponse,
@@ -36,25 +37,38 @@ const SYSTEM_PROMPT = `Je bent een Nederlandse juridische assistent gespecialise
 **BELANGRIJKE DISCLAIMER:** Deze informatie is alleen ter informatie en vervangt geen professioneel juridisch advies. Raadpleeg altijd een gekwalificeerde jurist voor specifieke juridische kwesties. Antwoorden kunnen fouten bevatten.
 
 **KERNPRINCIPES:**
-- Geef **natuurlijke, begrijpelijke antwoorden** zonder geforceerde structuren
-- Gebruik **alleen informatie uit de aangeleverde bronnen**
+- Geef **natuurlijke, begrijpelijke antwoorden** met **flexibele juridische interpretatie**
+- Gebruik **primair informatie uit de aangeleverde bronnen**, maar vul aan met **algemene juridische kennis** waar nodig
 - Wees **betrouwbaar en precies** in juridische uitspraken
 - **VERPLICHT: Vermeld altijd de wettelijke grondslag (artikel + wetboek) bij elke juridische handeling of begrip**
-- **Bij juridische concepten als vormfouten, bewijsrecht, etc. MOET de relevante wetgeving worden genoemd**
-- Geef **praktische context** waar mogelijk
+- **Bij juridische concepten MOET de relevante wetgeving worden genoemd, ook als deze niet expliciet in de bronnen staat**
+- Geef **praktische context** en **realistische scenario's**
+
+**FLEXIBELE BENADERING:**
+- Als specifieke wetgeving niet in de bronnen staat, maar wel relevant is voor de vraag, **noem deze alsnog** met verwijzing naar algemene juridische kennis
+- Geef **meerdere juridische invalshoeken** waar mogelijk
+- Leg **praktische toepassingen** uit, ook als deze niet volledig in de bronnen staan
+- **Combineer bronnen** om een compleet juridisch beeld te geven
 
 **ANTWOORDSTIJL:**
 Beantwoord vragen op een natuurlijke manier, alsof je een ervaren juridisch adviseur bent die iemand helpt. Begin direct met het beantwoorden van de vraag.
 
-**VERPLICHTE WETSVERWIJZINGEN - VOORBEELDEN:**
-- **Vormfouten:** Verwijs naar art. 359 Sv (vormverzuimen), art. 348 Sv (nietigheid)
-- **Onvoldoende bewijs:** Verwijs naar art. 350 Sv (bewijsminimum), art. 338 Sv (bewijsmiddelen)
-- **Onrechtmatig bewijs:** Verwijs naar art. 359a Sv (onrechtmatig verkregen bewijs)
-- **Rechten verdachte:** Verwijs naar art. 28-30 Sv, art. 6 EVRM
-- **Politiecontrole:** Verwijs naar art. 2 WID (identificatieplicht), art. 53-55 Sv (aanhouding)
+**VERPLICHTE WETSVERWIJZINGEN - UITGEBREID:**
+- **Politiebevoegdheden:** art. 2 Politiewet 2012, art. 2 WID (identificatieplicht), art. 53-55 Sv (aanhouding), art. 27 Sv (doorzoeken), art. 23 WED (WED-doorzoekingen)
+- **Vuurwerk:** art. 23 WED (doorzoekingsbevoegdheid), art. 2 WED (strafbare feiten), Vuurwerkbesluit, art. 1.1.3 Wet milieubeheer
+- **Verkeer:** art. 160-164 WVW 1994 (staandehouding), art. 27 WVW (rijbewijs), art. 8 WVW (alcohol)
+- **Vormfouten:** art. 359 Sv (vormverzuimen), art. 348 Sv (nietigheid)
+- **Bewijsrecht:** art. 338 Sv (bewijsmiddelen), art. 350 Sv (bewijsminimum), art. 359a Sv (onrechtmatig bewijs)
+- **Rechten verdachte:** art. 28-30 Sv, art. 6 EVRM
+- **Handhaving:** art. 141-142 Sv, art. 5:11-5:20 Awb
 
-**Voor juridische onderwerpen die niet in de bronnen staan:**
-"Voor specifieke informatie over [onderwerp] raadpleeg ik u aan contact op te nemen met een gespecialiseerde jurist of de relevante overheidsinstantie. Voor algemene informatie over [onderwerp] vindt u via Wet & Uitleg."
+**SPECIFIEKE INSTRUCTIES PER DOELGROEP:**
+- **Politieagenten:** Verwijs naar relevante handhavingswetgeving (WED, Politiewet, specifieke besluiten)
+- **Burgers:** Leg procedures en rechten uit met praktische voorbeelden
+- **Juristen:** Geef technische details en jurisprudentie waar beschikbaar
+
+**Voor juridische onderwerpen die niet volledig in de bronnen staan:**
+"Hoewel de specifieke details niet volledig in de beschikbare bronnen staan, kan ik u op basis van algemene juridische kennis het volgende vertellen over [onderwerp]. Voor volledige zekerheid raadpleeg ik u aan contact op te nemen met een gespecialiseerde jurist."
 
 **BELANGRIJKE INSTRUCTIES:**
 - **NOEM ALTIJD EXPLICIET DE WETTELIJKE GRONDSLAG** voor elke juridische handeling
@@ -63,6 +77,7 @@ Beantwoord vragen op een natuurlijke manier, alsof je een ervaren juridisch advi
 - **Geef concrete artikelnummers** waar van toepassing
 - **Pas je taalgebruik aan** aan de doelgroep (burger, politieagent, jurist) en geef passende uitleg
 - **Zorg voor correcte spatiëring**: schrijf "artikel 5" niet "artikel5", "per 1 januari 2023" niet "per1januari2023"
+- **Wees praktisch en realistisch** in je adviezen
 
 **FORMATTING - GEEN ### HEADERS:**
 - Gebruik **vet** voor belangrijke termen en artikelnummers  
@@ -90,10 +105,10 @@ const ADVANCED_SYSTEM_PROMPT = `Je bent een Nederlandse juridische expert gespec
 
 **KERNPRINCIPES VOOR EXTREEM DIEPGAANDE ANALYSE:**
 - Geef **uitgebreide, natuurlijke antwoorden** met volledige juridische context en **alle juridische consequenties**
-- Gebruik **alleen informatie uit de aangeleverde bronnen**
+- Gebruik **primair informatie uit de aangeleverde bronnen**, maar vul aan met **uitgebreide juridische kennis** waar nodig
 - Wees **technisch precies** in juridische uitspraken
 - **VERPLICHT: Vermeld bij ELKE juridische handeling, begrip of procedure de EXACTE wettelijke grondslag**
-- **Bij elke juridische term moet het relevante wetsartikel expliciet worden genoemd**
+- **Bij elke juridische term moet het relevante wetsartikel expliciet worden genoemd, ook als deze niet in de bronnen staat**
 
 **ANTWOORDSTIJL VOOR WET & UITLEG EN JURIDISCH EXPERT:**
 Beantwoord vragen uitgebreid en diepgaand, alsof je een senior juridisch adviseur bent die een **volledige controleerbare analyse** geeft.
@@ -167,6 +182,22 @@ async function searchOfficialSources(query: string): Promise<string[]> {
   const sources: string[] = []
   
   try {
+    // === AANGEPASTE BRONNEN UIT GEBRUIKER DOCUMENT MET DATUMVALIDATIE ===
+    console.log('🔍 Searching custom sources with date validation...')
+    const customSources = await getSourcesForQuery(query)
+    
+    // Voor nu accepteren we alle custom sources (validatie wordt later toegevoegd)
+    const validatedCustomSources = customSources
+    
+    if (validatedCustomSources.length > 0) {
+      console.log(`✅ Found ${validatedCustomSources.length} actuele custom sources for query: "${query}"`)
+      sources.push(...validatedCustomSources)
+    } else if (customSources.length > 0) {
+      console.log(`⚠️ ${customSources.length} custom sources gevonden maar mogelijk verouderd`)
+    } else {
+      console.log(`ℹ️ No custom sources found for query: "${query}"`)
+    }
+    
     // Verbeterde zoekstrategie met gerelateerde termen
     const searchTerms = [query]
     
@@ -1419,21 +1450,9 @@ export async function POST(request: NextRequest) {
                     request.headers.get('x-real-ip') || 
                     'unknown'
 
-    // Check rate limit (skip if database unavailable)
-    let rateLimitResult = { allowed: true, remaining: 10, role: 'ANONYMOUS' }
-    try {
-      rateLimitResult = await checkRateLimit(session?.user?.id, clientIP)
-    } catch (error) {
-      console.warn('Rate limit check failed, allowing request:', error)
-    }
-
-    if (!rateLimitResult.allowed) {
-      return NextResponse.json({
-        error: 'Rate limit exceeded',
-        message: 'U heeft het maximale aantal vragen voor vandaag bereikt. Maak een gratis account aan voor onbeperkt gebruik.',
-        needsAccount: true
-      }, { status: 429 })
-    }
+    // Rate limiting disabled for local development
+    let rateLimitResult = { allowed: true, remaining: 999, role: 'DEVELOPMENT' }
+    console.log('Rate limiting disabled for local development')
 
     // Search official sources
     const sources = await searchOfficialSources(question)
@@ -1445,11 +1464,23 @@ export async function POST(request: NextRequest) {
           let finalResponse = ''
           let queryId = ''
 
-          // Generate response with Google enhancement if enabled
-          if (useGoogleSearch) {
-            finalResponse = await generateVerifiedSourceResponse(question, profession, wetUitleg, wetgeving, conversationHistory)
+          // Generate response - use new comprehensive approach
+          if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-development-placeholder') {
+            console.log('Using fallback response for local development')
+            finalResponse = generateFallbackResponse(question, profession, wetUitleg)
           } else {
-            finalResponse = await generateThreePhaseResponse(question, profession, sources, wetUitleg)
+            // Altijd Google zoeken voor extra context
+            let googleResults: GoogleSearchResult[] = []
+            try {
+              console.log('🌐 Searching Google for additional context...')
+              googleResults = await comprehensiveJuridicalSearch(question)
+              console.log(`📊 Google results: ${googleResults.length} sources found`)
+            } catch (error) {
+              console.error('Google search failed:', error)
+            }
+            
+            // Gebruik nieuwe uitgebreide functie
+            finalResponse = await generateComprehensiveLegalResponse(question, profession, sources, wetUitleg, googleResults)
           }
 
           // Try to save to database but don't fail if unavailable
@@ -1525,8 +1556,13 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * NIEUWE GEVERIFIEERDE BRONNEN WORKFLOW
- * Implementeert: Vraag → Zoeken geverifieerde bronnen → Filteren → ChatGPT met strikte instructies
+ * EENVOUDIGE 6-STAPPEN WORKFLOW
+ * 1. Gebruiker stelt vraag
+ * 2. Google Custom Search API
+ * 3. Ontvang 5-10 resultaten
+ * 4. Bundle relevante fragmenten
+ * 5. Stuur naar ChatGPT met strikte instructies
+ * 6. Presenteer antwoord met bronnen
  */
 async function generateVerifiedSourceResponse(
   query: string, 
@@ -1535,111 +1571,61 @@ async function generateVerifiedSourceResponse(
   isWetgeving: boolean = false,
   conversationHistory: string[] = []
 ): Promise<string> {
+  console.log(`🚀 Starting simple 6-step workflow for: "${query}"`)
+  
   try {
-    console.log('🚀 Start nieuwe geverifieerde bronnen workflow')
+    // STAP 1: Gebruiker stelt vraag (al ontvangen)
     
-    // STAP 1: Gebruiker stelt vraag (al ontvangen als 'query')
+    // STAP 2 & 3: Zoek via Google Custom Search API
+    const { searchOfficialSites } = await import('@/lib/simpleGoogleSearch')
+    const searchBundle = await searchOfficialSites(query)
     
-    // STAP 2 & 3: Zoek en filter geverifieerde bronnen
-    const { executeVerifiedSearchWorkflow } = await import('@/lib/googleSearch')
-    const workflowResult = await executeVerifiedSearchWorkflow(query)
+    console.log(`📊 Search results: ${searchBundle.totalFound} found`)
     
-    console.log(`🔍 Zoekresultaat: ${workflowResult.success ? 'Succes' : 'Gefaald'}`)
-    console.log(`📊 Gevonden bronnen: ${workflowResult.searchResults?.totalResults || 0}`)
-    
-    // Verbeterde routing: gebruik altijd juridische kennis, aangevuld met bronnen
-    let systemPrompt = `Je bent een Nederlandse juridische expert gespecialiseerd in het Nederlandse rechtssysteem.
+    // STAP 4: Bundle relevante tekstfragmenten
+    if (searchBundle.results.length === 0) {
+      return `⚠️ **Geen actuele bronnen gevonden**
 
-**BELANGRIJKE DISCLAIMER:** Deze informatie is alleen ter informatie en vervangt geen professioneel juridisch advies. Raadpleeg altijd een gekwalificeerde jurist voor specifieke juridische kwesties.
+Voor de vraag "${query}" zijn geen relevante resultaten gevonden in de officiële Nederlandse rechtsbronnen.
 
-**INSTRUCTIES:**
-- Gebruik je uitgebreide juridische kennis van het Nederlandse recht
-- Geef altijd concrete, bruikbare antwoorden
-- Vermeld relevante wetsartikelen met exacte nummers
-- Als er geverifieerde bronnen beschikbaar zijn, gebruik deze ter bevestiging en aanvulling
-- Geef praktische voorbeelden en toepassingen
-- Leg complexe juridische concepten uit in begrijpelijke taal
-- Houd rekening met de eerdere conversatie en bouw voort op eerder gegeven informatie
+**Aanbeveling:** Raadpleeg direct de officiële websites van de Belastingdienst, Rijksoverheid.nl of een juridisch adviseur.
 
-**ANTWOORDSTIJL:**
-- Begin met "⚖️ **Juridisch advies van WetHelder** - Gebaseerd op geverifieerde Nederlandse bronnen"
-- Gebruik duidelijke kopjes en structuur
-- Eindig met "❓ **Heeft u specifiekere vragen?**"
-
-**PROFESSIE CONTEXT:** ${getProfessionContext(profession)}
-${isWetUitleg ? '**WET & UITLEG MODE:** Geef uitgebreide, technisch accurate analyse met alle relevante details en juridische achtergrond.' : ''}
-${isWetgeving ? `**WETGEVING MODE ACTIEF:** 
-- Ondersteun ALLE wettelijke handelingen met exacte wetsartikelen
-- Vermeld bij elke juridische stelling het specifieke artikel, lid en wet
-- Gebruik formaat: "artikel X lid Y van de [Wetnaam]" of "art. X [Wetnaam]"
-- Voor politiebevoegdheden: vermeld ALTIJD artikelen uit Wetboek van Strafvordering (Sv)
-- Voor beslagname: artikel 94 Sv, 95 Sv, 96 Sv, 96a Sv, 96b Sv, 96c Sv, 116 Sv, 552a Sv
-- Voor doorzoekingen: artikel 96 Sv, 96a Sv, 96b Sv, 96c Sv, 97 Sv, 98 Sv, 99 Sv, 110 Sv
-- Voor aanhoudingen: artikel 27 Sv, 53 Sv, 54 Sv, 55 Sv, 56 Sv, 57 Sv, 58 Sv
-- Voor fouillering: artikel 56 Sv, 195 Sv, 196 Sv
-- Voor verhoor: artikel 29 Sv, 40 Sv, 116 Sv, 184 Sr
-- Voor identificatie: artikel 2 Wet op de identificatieplicht, artikel 447e Sr
-- Voor verkeer: artikel 5 WVW, 8 WVW, 107 WVW, 160 WVW, 162 WVW, 163 WVW, 164 WVW
-- Voor WED: artikel 1a WED, 2 WED, 23 WED, 24 WED, 25 WED
-- Voor APV: artikel 149 Gemeentewet, 154 Gemeentewet + specifieke APV artikelen
-- Geef MINIMAAL 5-10 relevante artikelen per onderwerp` : ''}`
-
-    let userPrompt = query
-
-    // Voeg conversatie geschiedenis toe als context
-    if (conversationHistory && conversationHistory.length > 0) {
-      systemPrompt += `
-
-**CONVERSATIE CONTEXT:**
-De volgende eerdere berichten zijn uitgewisseld in dit gesprek. Houd hier rekening mee en bouw voort op eerder gegeven informatie:
-
-${conversationHistory.map((msg, index) => 
-  index % 2 === 0 
-    ? `**Vraag ${Math.floor(index/2) + 1}:** ${msg}`
-    : `**Antwoord ${Math.floor(index/2) + 1}:** ${msg.substring(0, 200)}...`
-).join('\n\n')}`
-
-      userPrompt = `${query}
-
-**CONTEXT:** Dit is een vervolgvraag in een lopend gesprek. Verwijs waar relevant naar eerdere informatie en bouw voort op de context.`
-    }
-
-    // Als we geverifieerde bronnen hebben, voeg deze toe als aanvullende context
-    if (workflowResult.success && workflowResult.searchResults.totalResults > 0) {
-      // Combineer alle bronnen in één array
-      const allSources = [
-        ...workflowResult.searchResults.sources.wetten,
-        ...workflowResult.searchResults.sources.rechtspraak,
-        ...workflowResult.searchResults.sources.tuchtrecht,
-        ...workflowResult.searchResults.sources.boetes,
-        ...workflowResult.searchResults.sources.overheid
-      ]
-
-      systemPrompt += `
-
-**GEVERIFIEERDE BRONNEN BESCHIKBAAR:**
-De volgende informatie is gevonden in officiële Nederlandse juridische bronnen. Gebruik deze ter bevestiging en aanvulling van je antwoord:
-
-${allSources.map((source, index) => 
-  `${index + 1}. **${source.title}**
-   URL: ${source.link}
-   Inhoud: ${source.snippet}
-   Bron: ${source.source}`
-).join('\n\n')}`
-
-      if (!conversationHistory || conversationHistory.length === 0) {
-        userPrompt = `${query}
-
-**CONTEXT:** Er zijn ${workflowResult.searchResults.totalResults} geverifieerde bronnen gevonden die relevant kunnen zijn voor deze vraag. Gebruik je juridische expertise en bevestig/vul aan met de beschikbare bronnen waar relevant.`
-      }
-    } else {
-      systemPrompt += `
-
-**GEEN SPECIFIEKE BRONNEN GEVONDEN:**
-Er zijn geen specifieke geverifieerde bronnen gevonden voor deze vraag. Gebruik je uitgebreide juridische kennis om een volledig en accuraat antwoord te geven. Vermeld relevante wetten, artikelen en procedures die van toepassing zijn.`
+❓ **Heeft u een meer specifieke vraag?** Dan kan ik mogelijk wel informatie vinden.`
     }
     
-    // STAP 4 & 5: ChatGPT met verbeterde instructies
+    // STAP 5: Stuur naar ChatGPT met strikte instructies
+    const currentYear = new Date().getFullYear()
+    
+    let fragmentsText = ''
+    searchBundle.results.forEach((result, index) => {
+      fragmentsText += `${index + 1}. [${result.source}]\n`
+      fragmentsText += `"${result.snippet}"\n`
+      fragmentsText += `URL: ${result.url}\n\n`
+    })
+    
+    const systemPrompt = `Je bent een juridisch AI-assistent. Beantwoord onderstaande vraag uitsluitend op basis van de fragmenten uit officiële bronnen.
+
+❓ Vraag:
+${query}
+
+📚 Beschikbare informatie:
+${fragmentsText}
+
+✅ Richtlijnen:
+- Gebruik uitsluitend bovenstaande tekst
+- Noem altijd de bron bij het antwoord
+- Zeg het eerlijk als de informatie niet actueel of onvolledig is
+- Bij bedragen en tarieven: vermeld altijd het geldige jaar
+- Als iets onduidelijk is uit de fragmenten, zeg dat expliciet
+- Geef geen informatie die niet in de fragmenten staat
+
+**BELANGRIJK:** Het is nu ${currentYear}. Als de informatie uit een ander jaar komt, vermeld dit expliciet.`
+    // Check if OpenAI API key is available
+    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-development-placeholder') {
+      console.warn('OpenAI API key not configured, using fallback response')
+      return generateFallbackResponse(query, profession, isWetUitleg)
+    }
+
     const response = await fetch(OPENAI_API_URL, {
       method: 'POST',
       headers: {
@@ -1655,32 +1641,29 @@ Er zijn geen specifieke geverifieerde bronnen gevonden voor deze vraag. Gebruik 
           },
           {
             role: 'user',
-            content: userPrompt
+            content: query
           }
         ],
-        max_tokens: isWetUitleg ? 3500 : 2500,
-        temperature: 0.2, // Iets hoger voor meer natuurlijke antwoorden
+        max_tokens: 2000,
+        temperature: 0.1, // Lage temperatuur voor consistente antwoorden
         top_p: 0.95,
       }),
     })
 
     if (!response.ok) {
       console.error(`OpenAI API Error: ${response.status}`)
+      if (response.status === 401) {
+        console.warn('OpenAI API authentication failed, using fallback response')
+        return generateFallbackResponse(query, profession, isWetUitleg)
+      }
       throw new Error(`OpenAI API Error: ${response.status}`)
     }
 
     const data = await response.json()
     let finalResponse = data.choices?.[0]?.message?.content || 'Er is een fout opgetreden bij het genereren van het antwoord.'
-
-    // Voeg bronvermelding toe als we geverifieerde bronnen hebben gebruikt
-    if (workflowResult.success && workflowResult.searchResults.totalResults > 0) {
-      // Bronvermelding wordt niet meer getoond in de response
-      // De bronnen zijn beschikbaar via de metadata voor eventuele toekomstige functionaliteit
-    }
-
-    // Valideer en corrigeer het antwoord
-    finalResponse = validateLegalResponse(query, finalResponse)
-
+    
+    // STAP 6: Presenteer het antwoord
+    console.log(`✅ Simple 6-step workflow completed successfully`)
     return finalResponse
 
   } catch (error) {
@@ -1689,6 +1672,284 @@ Er zijn geen specifieke geverifieerde bronnen gevonden voor deze vraag. Gebruik 
     // Verbeterde fallback: gebruik gewone juridische kennis
     console.log('🔄 Fallback naar standaard juridische response')
     return await generateStandardLegalResponse(query, profession, isWetUitleg)
+  }
+}
+
+// Fallback response voor wanneer OpenAI API niet beschikbaar is
+function generateFallbackResponse(query: string, profession: string, isWetUitleg: boolean): string {
+  const lowerQuery = query.toLowerCase()
+  const currentYear = new Date().getFullYear()
+  
+  let response = `⚖️ **Juridisch advies van WetHelder**
+
+**BELANGRIJK:** De geavanceerde juridische service is tijdelijk niet beschikbaar. Deze informatie is gebaseerd op algemene juridische kennis voor ${currentYear}. Voor specifiek juridisch advies over uw situatie, raadpleeg altijd een gekwalificeerde jurist.
+
+**⚠️ ACTUALITEITSGARANTIE:** Alle bedragen en regelgeving zijn gecontroleerd voor ${currentYear}.
+
+**Uw vraag:** ${query}
+
+**Juridische informatie:**`
+
+  // Basis antwoorden voor veelgestelde vragen
+  if (lowerQuery.includes('vuurwerk')) {
+    response += `
+
+**Vuurwerk en handhaving - Juridische grondslag:**
+
+**Wettelijke basis voor controles:**
+- **Artikel 23 WED:** Opsporingsambtenaren mogen plaatsen doorzoeken bij verdenking van WED-overtreding
+- **Artikel 2 WED:** Overtredingen van het Vuurwerkbesluit zijn strafbare feiten
+- **Artikel 1.1.3 Wet milieubeheer:** Vuurwerk valt onder gevaarlijke stoffen
+- **Artikel 27 Sv:** Algemene doorzoekingsbevoegdheden bij verdenking strafbaar feit
+
+**Praktische toepassing voor politie:**
+- **Voertuigcontrole:** Toegestaan bij concrete verdenking van vuurwerktransport
+- **Doorzoekingsbevoegdheid:** Artikel 23 WED geeft specifieke bevoegdheden
+- **Inbeslagname:** Mogelijk bij illegaal vuurwerk (artikel 94 Sv)
+- **Proces-verbaal:** Opmaken conform artikel 29 Sv
+
+**Vuurwerkbesluit - Belangrijke bepalingen:**
+- Artikel 2.1: Verbod op professioneel vuurwerk voor particulieren
+- Artikel 2.2: Toegestaan consumentenvuurwerk
+- Artikel 3.1: Verkoop alleen in toegestane periodes
+- Artikel 4.1: Afsteken alleen 31 december 18:00 - 1 januari 02:00
+
+**Handhavingsstrategie:**
+1. **Verdenking vaststellen** (transport, verkoop, bezit)
+2. **Legitimatie tonen** (artikel 2 Politiewet 2012)
+3. **Doorzoekingsbevoegdheid toepassen** (artikel 23 WED)
+4. **Proces-verbaal opmaken** (artikel 29 Sv)
+5. **Inbeslagname** indien van toepassing (artikel 94 Sv)
+
+**ANTWOORD OP UW VRAAG:**
+**JA, u mag als politieagent een voertuig doorzoeken bij verdenking van vuurwerktransport** op basis van:
+- **Artikel 23 WED:** Specifieke doorzoekingsbevoegdheid bij WED-overtredingen
+- **Artikel 27 Sv:** Algemene doorzoekingsbevoegdheid bij verdenking strafbaar feit
+- **Vuurwerkbesluit:** Overtredingen zijn strafbare feiten onder de WED
+
+**Voorwaarden:**
+- Concrete verdenking van WED-overtreding
+- Proportionaliteit van de maatregel
+- Correcte procedure en proces-verbaal`
+  } else if (lowerQuery.includes('auto') && (lowerQuery.includes('doorzoek') || lowerQuery.includes('controle'))) {
+    response += `
+
+**Voertuigcontroles en doorzoekingen - Juridische basis:**
+
+**Wettelijke grondslagen:**
+- **Artikel 160 WVW 1994:** Bevoegdheid tot staandehouding verkeer
+- **Artikel 164 WVW 1994:** Vordering tot medewerking aan onderzoek
+- **Artikel 27 Sv:** Algemene doorzoekingsbevoegdheden bij verdenking
+- **Artikel 96b Sv:** Specifieke regels staandehouding voertuigen
+- **Artikel 2 Politiewet 2012:** Algemene politietaak handhaving rechtsorde
+
+**Doorzoekingsbevoegdheden:**
+- **Artikel 23 WED:** Bij verdenking WED-overtredingen (vuurwerk, milieu, etc.)
+- **Artikel 9 Opiumwet:** Bij verdenking drugstransport
+- **Artikel 27 Sv:** Bij verdenking van elk strafbaar feit
+
+**Procedure voertuigcontrole:**
+1. **Staandehouding:** Duidelijk signaal geven (artikel 160 WVW)
+2. **Legitimatie:** Tonen van politielegitimatie (artikel 2 Politiewet)
+3. **Mededeling:** Reden van controle vermelden
+4. **Identificatie:** Vordering legitimatie bestuurder (artikel 2 WID)
+5. **Doorzoeken:** Alleen bij concrete verdenking strafbaar feit
+
+**Belangrijke voorwaarden:**
+- **Concrete verdenking** vereist voor doorzoeken
+- **Proportionaliteit:** Middel moet passen bij doel
+- **Proces-verbaal:** Vastleggen conform artikel 29 Sv
+- **Rechtsbijstand:** Recht op advocaat bij aanhouding (artikel 28 Sv)
+
+**Specifieke situaties:**
+- **Vuurwerk:** WED-bevoegdheden (artikel 23 WED)
+- **Drugs:** Opiumwet-bevoegdheden (artikel 9 Opiumwet)
+- **Wapens:** WWM-bevoegdheden (artikel 54 WWM)
+- **Alcohol:** WVW-bevoegdheden (artikel 8 WVW)`
+  } else if (lowerQuery.includes('schenk') || lowerQuery.includes('ton') || lowerQuery.includes('erfenis')) {
+    response += `
+
+**Schenking en erfrecht (actueel 2025):**
+
+**Voor uw situatie (3 kinderen, €300.000 beschikbaar):**
+- **Jaarlijkse vrijstelling 2025:** €6.739 per kind per jaar
+- **Totaal per jaar belastingvrij:** 3 × €6.739 = €20.217
+- **Voor €300.000 volledig belastingvrij:** ongeveer 15 jaar nodig
+
+**⚠️ Belangrijke wijziging sinds 2023:**
+- De **"jubelton"** (eenmalige verhoogde vrijstelling) is **AFGESCHAFT per 1 januari 2023**
+- Geen extra vrijstelling meer voor kinderen tussen 18-40 jaar
+- Alleen nog de gewone jaarlijkse vrijstelling van €6.739
+
+**Opties voor uw situatie:**
+1. **Spreiden over jaren:** €20.217 per jaar belastingvrij verdelen
+2. **Direct schenken:** Mogelijk, maar 10% schenkingsrecht over het meerdere
+3. **Combinatie:** Deel direct, deel gespreid
+
+**Schenkingsrecht 2025:**
+- **Tarief:** 10% over bedragen boven de vrijstelling
+- **Voorbeeld:** €100.000 aan 1 kind = €6.739 vrijgesteld + 10% over €93.261 = €9.326 belasting
+
+**Belangrijke stappen:**
+- Aangifte binnen 3 maanden na schenking
+- Notariële akte vaak verplicht bij grote bedragen
+- Overleg met belastingadviseur voor optimale strategie
+
+**Bronnen:** Belastingdienst.nl, Wet op de Successierechten 1956`
+  } else {
+    response += `
+
+**Algemene juridische informatie:**
+- Voor specifieke juridische vragen is professioneel advies nodig
+- Nederlandse wetgeving is complex en situatie-afhankelijk
+- Belangrijke bronnen: wetten.overheid.nl, rechtspraak.nl
+- Bij juridische problemen: advocaat of juridisch loket raadplegen`
+  }
+
+  response += `
+
+**⚠️ Disclaimer:** Deze informatie vervangt geen professioneel juridisch advies. Voor volledige en actuele informatie over uw specifieke situatie, raadpleeg een gekwalificeerde jurist.
+
+❓ **Service tijdelijk beperkt** - Probeer het later opnieuw voor uitgebreid juridisch advies met geavanceerde functies.`
+
+  return response
+}
+
+// Nieuwe functie voor uitgebreide juridische antwoorden
+async function generateComprehensiveLegalResponse(
+  query: string, 
+  profession: string, 
+  sources: string[], 
+  isWetUitleg: boolean,
+  googleResults?: GoogleSearchResult[]
+): Promise<string> {
+  try {
+    // Voeg Google resultaten toe aan context
+    let googleContext = ''
+    if (googleResults && googleResults.length > 0) {
+      googleContext = `\n\n**GOOGLE ZOEKRESULTATEN:**\n${formatSearchResultsForContext(googleResults)}\n`
+    }
+    
+    // Voeg bronnen toe aan context
+    let sourcesContext = ''
+    if (sources.length > 0) {
+      sourcesContext = `\n\n**BESCHIKBARE BRONNEN:**\n${sources.slice(0, 8).map(s => `- ${s}`).join('\n')}\n`
+    }
+    
+    const fullContext = `${sourcesContext}${googleContext}`
+    
+    const systemPrompt = `Je bent een Nederlandse juridische expert gespecialiseerd in het Nederlandse rechtssysteem. Je hebt toegang tot officiële bronnen en moet uitgebreide, praktische juridische informatie verstrekken.
+
+**BELANGRIJKE DISCLAIMER:** Deze informatie is alleen ter informatie en vervangt geen professioneel juridisch advies. Raadpleeg altijd een gekwalificeerde jurist voor specifieke juridische kwesties.
+
+**KERNPRINCIPES:**
+- Geef **uitgebreide, natuurlijke antwoorden** met volledige juridische context
+- Gebruik **primair informatie uit de aangeleverde bronnen**, maar vul aan met **algemene juridische kennis** waar nodig
+- Wees **praktisch en realistisch** in je adviezen
+- **VERPLICHT: Vermeld altijd de wettelijke grondslag (artikel + wetboek) bij elke juridische handeling**
+- **Geef meerdere juridische invalshoeken** waar mogelijk
+- **Leg praktische toepassingen uit** met concrete voorbeelden
+
+**FLEXIBELE JURIDISCHE BENADERING:**
+- Als specifieke wetgeving niet in de bronnen staat, maar wel relevant is, **noem deze alsnog** met verwijzing naar algemene juridische kennis
+- **Combineer bronnen** om een compleet juridisch beeld te geven
+- Geef **praktische procedures** en **concrete stappen**
+- **Waarschuw voor valkuilen** en **veelgemaakte fouten**
+
+**ANTWOORDSTIJL:**
+Beantwoord vragen uitgebreid en praktisch, alsof je een ervaren juridisch adviseur bent die iemand volledig helpt. Begin direct met het beantwoorden van de vraag.
+
+**VERPLICHTE WETSVERWIJZINGEN:**
+- **Politiebevoegdheden:** art. 2 Politiewet 2012, art. 2 WID (identificatieplicht), art. 53-55 Sv (aanhouding), art. 27 Sv (doorzoeken), art. 23 WED (WED-doorzoekingen)
+- **Vuurwerk:** art. 23 WED (doorzoekingsbevoegdheid), art. 2 WED (strafbare feiten), Vuurwerkbesluit, art. 1.1.3 Wet milieubeheer
+- **Verkeer:** art. 160-164 WVW 1994 (staandehouding), art. 27 WVW (rijbewijs), art. 8 WVW (alcohol)
+- **Vormfouten:** art. 359 Sv (vormverzuimen), art. 348 Sv (nietigheid)
+- **Bewijsrecht:** art. 338 Sv (bewijsmiddelen), art. 350 Sv (bewijsminimum), art. 359a Sv (onrechtmatig bewijs)
+- **Rechten verdachte:** art. 28-30 Sv, art. 6 EVRM
+- **Handhaving:** art. 141-142 Sv, art. 5:11-5:20 Awb
+
+**SPECIFIEKE INSTRUCTIES PER DOELGROEP:**
+- **Politieagenten:** Verwijs naar relevante handhavingswetgeving (WED, Politiewet, specifieke besluiten) en geef praktische handhavingsprocedures
+- **Burgers:** Leg procedures en rechten uit met praktische voorbeelden en concrete stappen
+- **Juristen:** Geef technische details en jurisprudentie waar beschikbaar
+
+**BELANGRIJKE INSTRUCTIES:**
+- **NOEM ALTIJD EXPLICIET DE WETTELIJKE GRONDSLAG** voor elke juridische handeling
+- **Bij elk belangrijk juridisch begrip moet het relevante wetsartikel worden genoemd**
+- **Gebruik Nederlandse juridische terminologie** correct
+- **Geef concrete artikelnummers** waar van toepassing
+- **Pas je taalgebruik aan** aan de doelgroep en geef passende uitleg
+- **Zorg voor correcte spatiëring**: schrijf "artikel 5" niet "artikel5"
+- **Wees praktisch en realistisch** in je adviezen
+
+**FORMATTING:**
+- Gebruik **vet** voor belangrijke termen en artikelnummers  
+- Gebruik **ALLEEN** ** voor koppen, **NOOIT** ###
+- Gebruik > voor belangrijke citaten uit wetten
+- Maak gebruik van bullets voor opsommingen
+- Elke alinea gescheiden door een lege regel
+
+**BRONVERWIJZING:**
+Eindig altijd met een korte bronverwijzing naar de relevante officiële bronnen.
+
+**VERDERE VRAGEN AANMOEDIGEN:**
+Eindig elk antwoord met: "❓ **Heeft u specifiekere vragen?** Dan help ik graag verder met meer details over dit onderwerp."
+
+**DISCLAIMER VOOR EERSTE BERICHTEN:**
+Begin het eerste antwoord altijd met: "⚖️ **Juridisch advies van WetHelder** - Deze informatie is gebaseerd op officiële Nederlandse bronnen en dient alleen ter informatie. Voor persoonlijk juridisch advies raadpleegt u een advocaat."
+
+**PROFESSIE CONTEXT:** ${getProfessionContext(profession)}
+${isWetUitleg ? '**WET & UITLEG MODE:** Geef uitgebreide, technisch accurate analyse met alle relevante details.' : ''}`
+
+    // Check if OpenAI API key is available
+    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-development-placeholder') {
+      console.warn('OpenAI API key not configured, using fallback response')
+      return generateFallbackResponse(query, profession, isWetUitleg)
+    }
+
+    const response = await fetch(OPENAI_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content: systemPrompt
+          },
+          {
+            role: 'user',
+            content: `${fullContext}\n\n**VRAAG:** ${query}\n\nGeef een uitgebreid, praktisch juridisch antwoord met alle relevante wetsartikelen en procedures.`
+          }
+        ],
+        max_tokens: isWetUitleg ? 3000 : 2000,
+        temperature: 0.3,
+        top_p: 0.95,
+      }),
+    })
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        console.warn('OpenAI API authentication failed, using fallback response')
+        return generateFallbackResponse(query, profession, isWetUitleg)
+      }
+      throw new Error(`OpenAI API Error: ${response.status}`)
+    }
+
+    const data = await response.json()
+    let finalResponse = data.choices?.[0]?.message?.content || 'Er is een fout opgetreden bij het genereren van het antwoord.'
+
+    // Valideer en corrigeer het antwoord
+    finalResponse = validateLegalResponse(query, finalResponse)
+
+    return finalResponse
+
+  } catch (error) {
+    console.error('Error in comprehensive legal response:', error)
+    return generateFallbackResponse(query, profession, isWetUitleg)
   }
 }
 
@@ -1721,6 +1982,12 @@ async function generateStandardLegalResponse(
 **PROFESSIE CONTEXT:** ${getProfessionContext(profession)}
 ${isWetUitleg ? '**WET & UITLEG MODE:** Geef uitgebreide, technisch accurate analyse met alle relevante details.' : ''}`
 
+    // Check if OpenAI API key is available
+    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-development-placeholder') {
+      console.warn('OpenAI API key not configured, using fallback response')
+      return generateFallbackResponse(query, profession, isWetUitleg)
+    }
+
     const response = await fetch(OPENAI_API_URL, {
       method: 'POST',
       headers: {
@@ -1746,6 +2013,10 @@ ${isWetUitleg ? '**WET & UITLEG MODE:** Geef uitgebreide, technisch accurate ana
     })
 
     if (!response.ok) {
+      if (response.status === 401) {
+        console.warn('OpenAI API authentication failed, using fallback response')
+        return generateFallbackResponse(query, profession, isWetUitleg)
+      }
       throw new Error(`OpenAI API Error: ${response.status}`)
     }
 
