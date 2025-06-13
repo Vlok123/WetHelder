@@ -49,6 +49,22 @@ const SYSTEM_PROMPT = `Je bent een Nederlandse juridische assistent gespecialise
 - **Bij juridische concepten MOET de relevante wetgeving worden genoemd, ook als deze niet expliciet in de bronnen staat**
 - Geef **praktische context** en **realistische scenario's**
 
+**GESPECIALISEERDE WETGEVING:**
+- **Automatisch detecteren** van gespecialiseerde wetgeving op basis van vraaginhoud en professie
+- **Voor beveiligers:** WPBR (Wet particuliere beveiligingsorganisaties en recherchebureaus)
+- **Voor dierenvragen:** Wet dieren, Besluit houders van dieren
+- **Voor milieuvragen:** Wet milieubeheer, Wet natuurbescherming
+- **Voor gezondheidszorg:** WGBO, Wet BIG, Geneesmiddelenwet
+- **Voor onderwijs:** WPO, WVO, WHW, Leerplichtwet
+- **Voor verkeer:** WVW 1994, RVV 1990, WAM
+- **Voor bouw:** Wabo, Bouwbesluit 2012, Woningwet
+- **Voor arbeidsrecht:** BW Boek 7, WWZ, ATW, Arbo-wet
+- **Voor belastingen:** Wet IB 2001, Wet Vpb 1969, Wet OB 1968
+- **Voor sociale zekerheid:** WIA, WW, Participatiewet, AOW
+- **Voor financiën:** Wft, Wwft, Wet kredietregistratie
+- **Voor vastgoed:** BW Boek 7 (huur), Wet makelaardij, Kadasterwet
+- **Voor politie/handhaving:** Politiewet 2012, WID, WWM, Opiumwet
+
 **UITGEBREIDE BRONNEN BESCHIKBAAR:**
 - **Wetten en regelgeving:** wetten.overheid.nl, rijksoverheid.nl
 - **Rechtspraak:** uitspraken.rechtspraak.nl, tuchtrecht.overheid.nl
@@ -135,6 +151,23 @@ const ADVANCED_SYSTEM_PROMPT = `Je bent een Nederlandse juridische expert gespec
 - **VERPLICHT: Vermeld bij ELKE juridische handeling, begrip of procedure de EXACTE wettelijke grondslag**
 - **Bij elke juridische term moet het relevante wetsartikel expliciet worden genoemd, ook als deze niet in de bronnen staat**
 
+**WET & UITLEG MODUS - DIEPGAANDE ANALYSE:**
+- **Uitgebreide juridische context** met historische achtergrond waar relevant
+- **Jurisprudentie en rechtspraak** met concrete uitspraken en ECLI-nummers
+- **Casusistieken en praktijkvoorbeelden** met verschillende scenario's
+- **Procedurele aspecten** met volledige uitleg van procedures en termijnen
+- **Gerelateerde wetgeving** en onderlinge samenhang tussen wetten
+- **Handhavingsaspecten** met praktische toepassing door verschillende instanties
+- **Rechtsvergelijking** waar relevant (EU-recht, andere landen)
+- **Maatschappelijke context** en ratio legis van wetgeving
+
+**GESPECIALISEERDE WETGEVING - UITGEBREID:**
+- **Automatisch detecteren** van alle relevante gespecialiseerde wetgeving
+- **Diepgaande analyse** van specifieke wetten per rechtsgebied
+- **Onderlinge samenhang** tussen verschillende wetten
+- **Recente wijzigingen** en overgangsrecht waar relevant
+- **Implementatie** van EU-richtlijnen in Nederlandse wetgeving
+
 **UITGEBREIDE BRONNEN VOOR DIEPGAANDE ANALYSE:**
 - **Primaire wetgeving:** wetten.overheid.nl, rijksoverheid.nl (alle wetten en besluiten)
 - **Rechtspraak en jurisprudentie:** uitspraken.rechtspraak.nl, tuchtrecht.overheid.nl
@@ -147,8 +180,15 @@ const ADVANCED_SYSTEM_PROMPT = `Je bent een Nederlandse juridische expert gespec
 - **Gemeentelijke verordeningen:** APV's van alle Nederlandse gemeenten
 - **Europese wetgeving:** EUR-Lex voor EU-richtlijnen en verordeningen
 
-**ANTWOORDSTIJL VOOR WET & UITLEG EN JURIDISCH EXPERT:**
-Beantwoord vragen uitgebreid en diepgaand, alsof je een senior juridisch adviseur bent die een **volledige controleerbare analyse** geeft.
+**ANTWOORDSTIJL VOOR WET & UITLEG:**
+Beantwoord vragen uitgebreid en diepgaand, alsof je een senior juridisch adviseur bent die een **volledige controleerbare analyse** geeft met:
+- **Hoofdstructuur:** Duidelijke opbouw met hoofdpunten
+- **Juridische grondslag:** Alle relevante wetsartikelen met exacte verwijzingen
+- **Praktische toepassing:** Concrete voorbeelden en scenario's
+- **Jurisprudentie:** Relevante uitspraken met ECLI-nummers waar beschikbaar
+- **Procedurele aspecten:** Volledige uitleg van procedures, termijnen, bevoegde instanties
+- **Gerelateerde wetgeving:** Verwijzingen naar aanverwante bepalingen
+- **Handhavingsaspecten:** Praktische toepassing door verschillende instanties
 
 **CONVERSATIE-CONTINUÏTEIT:**
 - Als de gebruiker een vervolgvraag stelt, zie je dit als onderdeel van het lopende gesprek
@@ -198,28 +238,16 @@ Beantwoord vragen uitgebreid en diepgaand, alsof je een senior juridisch adviseu
 - **Formateer tijdsaanduidingen correct** (bijv. "30dagen" → "30 dagen", "2jaren" → "2 jaren")
 - **NOEM ALTIJD EXPLICIET DE WETTELIJKE GRONDSLAG** voor elke juridische handeling
 - **Bij elke juridische term MOET een wetsartikel worden genoemd**
-- **Gebruik Nederlandse juridische terminologie** correct en technisch precies
-- **Geef concrete artikelnummers** met volledige wettekst waar relevant
-- **Pas je taalgebruik aan** aan de doelgroep (burger, politieagent, jurist) en geef passende uitleg
-- **Combineer alle beschikbare bronnen** voor een volledig juridisch beeld
 
-**FORMATTING - COMPACTE OPMAAK:**
-- Gebruik **vet** voor belangrijke termen en artikelnummers
-- Gebruik **ALLEEN** ** voor koppen, **NOOIT** ### headers
-- Gebruik > voor **volledige citaten** uit wetten
-- Maak gebruik van bullets voor opsommingen
-- Gebruik kopjes voor structuur (**Hoofdkopje**, **Subkopje**)
-- **Kader artikelteksten** apart voor duidelijkheid
-- **GEEN onnodige witregels:** schrijf vloeiende tekst zonder overtollige enters
-- **Combineer zinnen:** gebruik komma's en puntkomma's in plaats van nieuwe regels
-- **Compacte bullets:** zet bullets direct na elkaar zonder lege regels ertussen
-- Alleen lege regel tussen verschillende hoofdonderwerpen
-
-**BRONVERWIJZING:**
-Eindig altijd met uitgebreide bronverwijzing naar alle relevante officiële bronnen.
-
-**VERDERE VRAGEN AANMOEDIGEN:**
-Eindig elk antwoord met: "❓ **Heeft u specifiekere vragen?** Dan help ik graag verder met meer technische details over dit onderwerp."
+**WETGEVING MODUS - EXACTE ARTIKELEN:**
+Wanneer specifiek om "Wetgeving" wordt gevraagd, focus op:
+- **Exacte wetsartikelen** met volledige tekst waar relevant
+- **Bronverwijzingen** naar officiële publicaties
+- **Overzicht van relevante wetgeving** per rechtsgebied
+- **Wettelijke definities** en begrippen
+- **Verwijzingen naar besluiten en regelingen**
+- **Inwerkingtreding** en overgangsrecht
+- **Relatie tot andere wetten** en regelgeving
 
 **GEEN DISCLAIMER IN BERICHTEN:**
 Begin NOOIT met een disclaimer in antwoorden. Ga direct door met beantwoorden van de vraag.`
@@ -1789,7 +1817,11 @@ async function generateVerifiedSourceResponse(
   conversationHistory: string[] = []
 ): Promise<string> {
   try {
-    console.log(`🔍 Starting verified source search for: "${query}"`)
+    console.log(`🔍 Generating ${isWetUitleg ? 'Wet & Uitleg' : isWetgeving ? 'Wetgeving' : 'standard'} response for query: ${query}`)
+    
+    // Detecteer gespecialiseerde wetgeving
+    const specializedLaws = detectSpecializedLegislation(query, profession)
+    console.log(`📚 Detected specialized legislation:`, specializedLaws)
     
     // STAP 1: Gebruik de uitgebreide zoekfunctionaliteit
     const searchResults = await comprehensiveJuridicalSearch(query)
@@ -1801,19 +1833,30 @@ async function generateVerifiedSourceResponse(
 
     console.log(`✅ Found ${searchResults.totalResults} total sources (${searchResults.currentYearResults} current, ${searchResults.outdatedResults} outdated)`)
     
-    // STAP 2: Genereer context met conversatiegeschiedenis
+    // STAP 2: Voeg gespecialiseerde wetgeving toe aan context
+    let specializedContext = ''
+    if (specializedLaws.length > 0) {
+      specializedContext = `\n\n**GESPECIALISEERDE WETGEVING VOOR DEZE VRAAG:**\n${specializedLaws.map(law => `- ${law}`).join('\n')}\n\nZorg ervoor dat deze specifieke wetgeving wordt meegenomen in het antwoord waar relevant.`
+    }
+    
+    // STAP 3: Genereer context met conversatiegeschiedenis
     let contextualPrompt = ''
     if (conversationHistory.length > 0) {
       contextualPrompt = `\n\n**CONVERSATIECONTEXT:**\nDit is een vervolgvraag in een lopend gesprek. Eerdere vragen en antwoorden:\n${conversationHistory.join('\n\n')}\n\nHoud rekening met deze context bij het beantwoorden van de huidige vraag.\n\n`
     }
 
-    // STAP 3: Bepaal de juiste system prompt
-    const systemPrompt = (isWetUitleg || isWetgeving) ? ADVANCED_SYSTEM_PROMPT : SYSTEM_PROMPT
+    // STAP 4: Bepaal de juiste system prompt
+    let systemPrompt = SYSTEM_PROMPT
+    if (isWetUitleg) {
+      systemPrompt = ADVANCED_SYSTEM_PROMPT + `\n\n**MODUS: WET & UITLEG - DIEPGAANDE ANALYSE**\nGeef een uitgebreide juridische analyse met jurisprudentie, casusistieken, procedurele aspecten en praktijkvoorbeelden.`
+    } else if (isWetgeving) {
+      systemPrompt = SYSTEM_PROMPT + `\n\n**MODUS: WETGEVING - EXACTE ARTIKELEN**\nFocus op exacte wetsartikelen, bronverwijzingen en overzicht van relevante wetgeving. Geef precieze wetteksten en definities.`
+    }
     
-    // STAP 4: Voeg profession-specifieke context toe
+    // STAP 5: Voeg profession-specifieke context toe
     const professionContext = getProfessionContext(profession)
     
-    // STAP 5: Genereer uitgebreide prompt met alle bronnen
+    // STAP 6: Genereer uitgebreide prompt met alle bronnen
     const fullPrompt = `${systemPrompt}
 
 ${professionContext}
@@ -1821,7 +1864,7 @@ ${professionContext}
 ${contextualPrompt}
 
 **BESCHIKBARE BRONNEN (UITGEBREID):**
-${searchResults.combinedSnippets}
+${searchResults.combinedSnippets}${specializedContext}
 
 **BRONVALIDATIE:**
 Totaal ${searchResults.totalResults} bronnen gevonden (${searchResults.excelResults} Excel database, ${searchResults.internetResults} internet verificatie). ${searchResults.currentYearResults} actuele bronnen, ${searchResults.outdatedResults} verouderde bronnen. ${searchResults.isHistoricalQuery ? 'Historische vraag: alle bronnen toegestaan.' : 'Alleen actuele bronnen gebruikt.'}
@@ -1835,10 +1878,11 @@ Totaal ${searchResults.totalResults} bronnen gevonden (${searchResults.excelResu
 - Voor politievragen: gebruik zowel ATW als BARP informatie waar relevant
 - Voor arbeidsrecht: combineer CAO's met vakbondsinformatie
 - Zorg voor juridische onderbouwing met officiële documenten
+${isWetUitleg ? '- Geef een diepgaande analyse met jurisprudentie en praktijkvoorbeelden' : isWetgeving ? '- Focus op exacte wetsartikelen en bronverwijzingen' : '- Geef een helder en praktisch antwoord'}
 
 Beantwoord nu de vraag volledig op basis van alle beschikbare bronnen:`
 
-    // STAP 6: Roep OpenAI API aan
+    // STAP 7: Roep OpenAI API aan
     const response = await fetch(OPENAI_API_URL, {
       method: 'POST',
       headers: {
@@ -1853,7 +1897,7 @@ Beantwoord nu de vraag volledig op basis van alle beschikbare bronnen:`
             content: fullPrompt
           }
         ],
-        max_tokens: isWetUitleg ? 3000 : 2000,
+        max_tokens: isWetUitleg ? 4000 : isWetgeving ? 3000 : 2500,
         temperature: 0.1,
         top_p: 0.9,
         frequency_penalty: 0.1,
@@ -1874,12 +1918,12 @@ Beantwoord nu de vraag volledig op basis van alle beschikbare bronnen:`
       return generateFallbackResponse(query, profession, isWetUitleg)
     }
 
-    // STAP 7: Post-processing
+    // STAP 8: Post-processing
     answer = detectAndCorrectLegalMistakes(answer)
     answer = cleanupResponseFormatting(answer)
     answer = validateLegalResponse(query, answer)
 
-    console.log(`✅ Generated verified response with ${searchResults.totalResults} sources`)
+    console.log(`✅ Generated ${isWetUitleg ? 'Wet & Uitleg' : isWetgeving ? 'Wetgeving' : 'standard'} response with ${searchResults.totalResults} sources`)
     return answer
 
   } catch (error) {
@@ -2250,4 +2294,146 @@ ${isWetUitleg ? '**WET & UITLEG MODE:** Geef uitgebreide, technisch accurate ana
     console.error('Error in standard legal response:', error)
     return 'Er is een technische fout opgetreden. Probeer het opnieuw of neem contact op met de support.'
   }
+}
+
+// Functie om gespecialiseerde wetgeving te detecteren en toe te voegen
+function detectSpecializedLegislation(query: string, profession?: string): string[] {
+  const specializedLaws: string[] = []
+  const queryLower = query.toLowerCase()
+  
+  // Beveiligingswetgeving
+  if (queryLower.includes('beveiliger') || queryLower.includes('beveiliging') || queryLower.includes('security') || 
+      queryLower.includes('particuliere beveiliging') || profession === 'beveiliger') {
+    specializedLaws.push('Wet particuliere beveiligingsorganisaties en recherchebureaus (WPBR)')
+    specializedLaws.push('Besluit particuliere beveiligingsorganisaties en recherchebureaus')
+    specializedLaws.push('Regeling particuliere beveiligingsorganisaties en recherchebureaus')
+  }
+  
+  // Dierenwetgeving
+  if (queryLower.includes('dier') || queryLower.includes('hond') || queryLower.includes('kat') || 
+      queryLower.includes('paard') || queryLower.includes('vee') || queryLower.includes('dierenmishandeling') ||
+      queryLower.includes('dierenwelzijn') || queryLower.includes('fokken') || queryLower.includes('dierenarts')) {
+    specializedLaws.push('Wet dieren')
+    specializedLaws.push('Besluit houders van dieren')
+    specializedLaws.push('Besluit diergeneeskundigen')
+    specializedLaws.push('Wet op de dierproeven')
+  }
+  
+  // Milieuwetgeving
+  if (queryLower.includes('milieu') || queryLower.includes('vervuiling') || queryLower.includes('afval') ||
+      queryLower.includes('geluid') || queryLower.includes('lucht') || queryLower.includes('water') ||
+      queryLower.includes('bodem') || queryLower.includes('natuur')) {
+    specializedLaws.push('Wet milieubeheer')
+    specializedLaws.push('Wet natuurbescherming')
+    specializedLaws.push('Wet bodembescherming')
+    specializedLaws.push('Wet geluidhinder')
+  }
+  
+  // Gezondheidswetgeving
+  if (queryLower.includes('gezondheid') || queryLower.includes('ziekenhuis') || queryLower.includes('arts') ||
+      queryLower.includes('medicijn') || queryLower.includes('geneesmiddel') || queryLower.includes('zorg') ||
+      queryLower.includes('patient') || queryLower.includes('medisch')) {
+    specializedLaws.push('Wet op de geneeskundige behandelingsovereenkomst (WGBO)')
+    specializedLaws.push('Wet op de beroepen in de individuele gezondheidszorg (Wet BIG)')
+    specializedLaws.push('Geneesmiddelenwet')
+    specializedLaws.push('Wet publieke gezondheid')
+  }
+  
+  // Onderwijswetgeving
+  if (queryLower.includes('onderwijs') || queryLower.includes('school') || queryLower.includes('student') ||
+      queryLower.includes('leraar') || queryLower.includes('docent') || queryLower.includes('universiteit') ||
+      queryLower.includes('hogeschool') || queryLower.includes('leerplicht')) {
+    specializedLaws.push('Wet op het primair onderwijs (WPO)')
+    specializedLaws.push('Wet op het voortgezet onderwijs (WVO)')
+    specializedLaws.push('Wet op het hoger onderwijs en wetenschappelijk onderzoek (WHW)')
+    specializedLaws.push('Leerplichtwet')
+  }
+  
+  // Verkeerswetgeving (uitgebreid)
+  if (queryLower.includes('verkeer') || queryLower.includes('rijden') || queryLower.includes('auto') ||
+      queryLower.includes('motor') || queryLower.includes('fiets') || queryLower.includes('voertuig') ||
+      queryLower.includes('rijbewijs') || queryLower.includes('kenteken') || queryLower.includes('parkeren')) {
+    specializedLaws.push('Wegenverkeerswet 1994 (WVW)')
+    specializedLaws.push('Reglement verkeersregels en verkeerstekens 1990 (RVV)')
+    specializedLaws.push('Wet aansprakelijkheidsverzekering motorrijtuigen (WAM)')
+    specializedLaws.push('Regeling voertuigen')
+  }
+  
+  // Bouwwetgeving
+  if (queryLower.includes('bouw') || queryLower.includes('woning') || queryLower.includes('huis') ||
+      queryLower.includes('gebouw') || queryLower.includes('verbouw') || queryLower.includes('sloop') ||
+      queryLower.includes('vergunning') || queryLower.includes('omgevingsvergunning')) {
+    specializedLaws.push('Wet algemene bepalingen omgevingsrecht (Wabo)')
+    specializedLaws.push('Bouwbesluit 2012')
+    specializedLaws.push('Woningwet')
+    specializedLaws.push('Omgevingswet')
+  }
+  
+  // Arbeidsrecht (uitgebreid)
+  if (queryLower.includes('werk') || queryLower.includes('arbeider') || queryLower.includes('werknemer') ||
+      queryLower.includes('werkgever') || queryLower.includes('ontslag') || queryLower.includes('salaris') ||
+      queryLower.includes('cao') || queryLower.includes('vakantie') || queryLower.includes('ziekte') ||
+      profession === 'hr-medewerker') {
+    specializedLaws.push('Burgerlijk Wetboek Boek 7 (arbeidsovereenkomst)')
+    specializedLaws.push('Wet werk en zekerheid (WWZ)')
+    specializedLaws.push('Arbeidstijdenwet (ATW)')
+    specializedLaws.push('Arbeidsomstandighedenwet (Arbo-wet)')
+    specializedLaws.push('Wet op de ondernemingsraden (WOR)')
+  }
+  
+  // Belastingwetgeving
+  if (queryLower.includes('belasting') || queryLower.includes('btw') || queryLower.includes('inkomstenbelasting') ||
+      queryLower.includes('vennootschapsbelasting') || queryLower.includes('erfbelasting') ||
+      profession === 'belastingadviseur' || profession === 'accountant') {
+    specializedLaws.push('Wet inkomstenbelasting 2001')
+    specializedLaws.push('Wet op de vennootschapsbelasting 1969')
+    specializedLaws.push('Wet op de omzetbelasting 1968')
+    specializedLaws.push('Successiewet 1956')
+    specializedLaws.push('Algemene wet inzake rijksbelastingen (AWR)')
+  }
+  
+  // Sociale zekerheid
+  if (queryLower.includes('uitkering') || queryLower.includes('wao') || queryLower.includes('ww') ||
+      queryLower.includes('bijstand') || queryLower.includes('aow') || queryLower.includes('sociale zekerheid') ||
+      queryLower.includes('uwv') || queryLower.includes('gemeente')) {
+    specializedLaws.push('Wet werk en inkomen naar arbeidsvermogen (WIA)')
+    specializedLaws.push('Werkloosheidswet (WW)')
+    specializedLaws.push('Participatiewet')
+    specializedLaws.push('Algemene Ouderdomswet (AOW)')
+    specializedLaws.push('Zorgverzekeringswet')
+  }
+  
+  // Financiële wetgeving
+  if (queryLower.includes('bank') || queryLower.includes('verzekering') || queryLower.includes('financieel') ||
+      queryLower.includes('krediet') || queryLower.includes('hypotheek') || queryLower.includes('belegging') ||
+      profession === 'verzekeringsagent') {
+    specializedLaws.push('Wet op het financieel toezicht (Wft)')
+    specializedLaws.push('Wet ter voorkoming van witwassen en financieren van terrorisme (Wwft)')
+    specializedLaws.push('Wet op de kredietregistratie')
+    specializedLaws.push('Wet financiële dienstverlening')
+  }
+  
+  // Vastgoedwetgeving
+  if (queryLower.includes('vastgoed') || queryLower.includes('makelaar') || queryLower.includes('huur') ||
+      queryLower.includes('koop') || queryLower.includes('eigendom') || queryLower.includes('hypotheek') ||
+      profession === 'makelaar' || profession === 'notaris') {
+    specializedLaws.push('Burgerlijk Wetboek Boek 7 (huur en verhuur)')
+    specializedLaws.push('Wet op de makelaardij')
+    specializedLaws.push('Kadasterwet')
+    specializedLaws.push('Wet waardering onroerende zaken (WOZ)')
+  }
+  
+  // Politie en handhaving (uitgebreid)
+  if (queryLower.includes('politie') || queryLower.includes('handhaving') || queryLower.includes('boa') ||
+      queryLower.includes('aanhouding') || queryLower.includes('doorzoeken') || queryLower.includes('staandehouding') ||
+      profession === 'politieagent' || profession === 'boa' || profession === 'veiligheidsbeambte') {
+    specializedLaws.push('Politiewet 2012')
+    specializedLaws.push('Wet op de identificatieplicht (WID)')
+    specializedLaws.push('Wet wapens en munitie (WWM)')
+    specializedLaws.push('Opiumwet')
+    specializedLaws.push('Wet bijzondere opsporingsdiensten')
+    specializedLaws.push('Ambtsinstructie voor de politie')
+  }
+  
+  return specializedLaws
 }

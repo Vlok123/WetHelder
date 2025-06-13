@@ -720,13 +720,21 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
             {(wetUitlegEnabled || wetgevingEnabled) && (
               <div className="flex flex-wrap gap-2">
                 {wetUitlegEnabled && (
-                  <div className="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded border border-emerald-200">
-                    📚 Diepgaande analyse met jurisprudentie
+                  <div className="text-xs bg-emerald-50 text-emerald-700 px-3 py-2 rounded-lg border border-emerald-200">
+                    <div className="flex items-center gap-2 mb-1">
+                      <BookOpen className="h-3 w-3" />
+                      <span className="font-semibold">Wet & Uitleg - Diepgaande Analyse</span>
+                    </div>
+                    <p className="text-emerald-600">Uitgebreide juridische analyse met jurisprudentie, casusistieken en praktijkvoorbeelden</p>
                   </div>
                 )}
                 {wetgevingEnabled && (
-                  <div className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded border border-blue-200">
-                    ⚖️ Exacte wetsartikelen en bronverwijzingen
+                  <div className="text-xs bg-blue-50 text-blue-700 px-3 py-2 rounded-lg border border-blue-200">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Scale className="h-3 w-3" />
+                      <span className="font-semibold">Wetgeving - Exacte Artikelen</span>
+                    </div>
+                    <p className="text-blue-600">Precieze wetsartikelen, bronverwijzingen en overzicht van relevante wetgeving</p>
                   </div>
                 )}
               </div>
@@ -764,13 +772,29 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
           )}
 
           {messages.map((message) => (
-            <div key={message.id} className="space-y-4">
+            <div key={message.id} className="space-y-6">
               {/* User Question */}
               <div className="flex justify-end">
-                <div className="max-w-[85%] md:max-w-[75%] bg-blue-600 text-white rounded-2xl rounded-br-md px-4 py-3 shadow-sm">
-                  <div className="flex items-start gap-3">
-                    <User className="h-4 w-4 mt-0.5 flex-shrink-0 opacity-90" />
-                    <p className="text-sm leading-relaxed break-words">{message.question}</p>
+                <div className="max-w-[85%] md:max-w-[70%]">
+                  <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl rounded-br-lg px-5 py-4 shadow-lg">
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
+                        <User className="h-4 w-4 text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm leading-relaxed break-words font-medium">{message.question}</p>
+                        <div className="flex items-center gap-2 mt-2 text-xs text-blue-100">
+                          <Clock className="h-3 w-3" />
+                          <span>{format(message.timestamp, 'HH:mm')}</span>
+                          {message.profession && (
+                            <>
+                              <span>•</span>
+                              <span className="capitalize">{professionConfig[message.profession as Profession]?.label || message.profession}</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -778,57 +802,84 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
               {/* Bot Response */}
               <div className="flex justify-start">
                 <div className="w-full max-w-[95%] md:max-w-[85%]">
-                  <div className="bg-white rounded-2xl rounded-bl-md border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="p-4 md:p-6">
-                      <div className="flex items-start gap-3">
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center shadow-sm">
+                  <div className="bg-white rounded-2xl rounded-bl-lg border border-slate-200 shadow-lg hover:shadow-xl transition-all duration-200">
+                    {/* Header */}
+                    <div className="border-b border-slate-100 px-5 py-3 bg-gradient-to-r from-slate-50 to-slate-100/50 rounded-t-2xl">
+                      <div className="flex items-center gap-3">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm">
                           {message.isLoading ? (
-                            <Loader2 className="h-4 w-4 text-blue-600 animate-spin" />
+                            <Loader2 className="h-4 w-4 text-white animate-spin" />
                           ) : (
-                            <Scale className="h-4 w-4 text-blue-600" />
+                            <Scale className="h-4 w-4 text-white" />
                           )}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          {message.isLoading ? (
-                            <div className="space-y-3">
-                              <div className="text-sm text-slate-600 flex items-center gap-2">
-                                <span className="font-medium">Bezig met het formuleren van een antwoord</span>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-semibold text-slate-900 text-sm">WetHelder Juridisch Assistent</h4>
+                            {!message.isLoading && (
+                              <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 border-green-200">
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                Geverifieerd
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="text-xs text-slate-500 mt-0.5">
+                            {message.isLoading ? (
+                              <span className="flex items-center gap-1">
+                                <span>Bezig met formuleren van antwoord</span>
                                 <div className="flex space-x-1">
-                                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
-                                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
-                                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+                                  <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+                                  <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
+                                  <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
                                 </div>
-                              </div>
-                              <div className="text-xs text-slate-500 bg-slate-50 p-3 rounded-lg border border-slate-200">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <Clock className="h-3 w-3" />
-                                  <span className="font-medium">Verwachte wachttijd: 10-30 seconden</span>
-                                </div>
-                                <p>Afhankelijk van de complexiteit van uw vraag en de hoeveelheid bronnen die worden geraadpleegd.</p>
-                              </div>
-                              {message.answer && (
-                                <div className="prose prose-sm md:prose-base max-w-none">
-                                  {formatText(message.answer)}
-                                  <div className="inline-block w-2 h-5 bg-blue-600 animate-pulse ml-1 rounded-sm"></div>
-                                </div>
-                              )}
-                            </div>
-                          ) : (
-                            <div className="prose prose-sm md:prose-base max-w-none">
-                              {formatText(message.answer)}
-                            </div>
-                          )}
+                              </span>
+                            ) : (
+                              <span>Antwoord gebaseerd op officiële Nederlandse wetgeving</span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
+
+                    {/* Content */}
+                    <div className="p-5 md:p-6">
+                      {message.isLoading ? (
+                        <div className="space-y-4">
+                          <div className="text-sm text-slate-600 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Clock className="h-4 w-4 text-blue-600" />
+                              <span className="font-medium text-blue-800">Verwachte wachttijd: 10-30 seconden</span>
+                            </div>
+                            <p className="text-blue-700 text-xs">
+                              De AI raadpleegt meerdere officiële bronnen en formuleert een juridisch correct antwoord aangepast aan uw professie.
+                            </p>
+                          </div>
+                          {message.answer && (
+                            <div className="prose prose-sm md:prose-base max-w-none prose-slate">
+                              {formatText(message.answer)}
+                              <div className="inline-block w-2 h-5 bg-blue-600 animate-pulse ml-1 rounded-sm"></div>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="prose prose-sm md:prose-base max-w-none prose-slate">
+                          {formatText(message.answer)}
+                        </div>
+                      )}
+                    </div>
                     
-                    {/* Action buttons */}
+                    {/* Footer Actions */}
                     {!message.isLoading && message.queryId && (
-                      <div className="border-t border-slate-100 px-4 md:px-6 py-3 bg-slate-50/50 rounded-b-2xl rounded-bl-md">
+                      <div className="border-t border-slate-100 px-5 py-4 bg-gradient-to-r from-slate-50/50 to-slate-100/30 rounded-b-2xl rounded-bl-lg">
                         <div className="flex items-center justify-between">
-                          <div className="text-xs text-slate-500 flex items-center gap-2">
-                            <CheckCircle className="h-3 w-3" />
-                            <span>Antwoord gebaseerd op officiële bronnen</span>
+                          <div className="flex items-center gap-4">
+                            <div className="text-xs text-slate-500 flex items-center gap-2">
+                              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                              <span className="font-medium">Officiële bronnen</span>
+                            </div>
+                            <div className="text-xs text-slate-400">
+                              {format(message.timestamp, 'dd MMM yyyy, HH:mm')}
+                            </div>
                           </div>
                           <div className="flex items-center gap-2">
                             <FavoriteButton queryId={message.queryId} />
@@ -836,7 +887,7 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
                               variant="ghost" 
                               size="sm"
                               onClick={() => setSelectedCitationQuery({ queryId: message.queryId!, question: message.question })}
-                              className="h-8 px-3 text-xs"
+                              className="h-8 px-3 text-xs hover:bg-slate-100 transition-colors"
                             >
                               <Quote className="h-3 w-3 mr-1" />
                               Citeer
