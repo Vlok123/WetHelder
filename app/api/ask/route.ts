@@ -1643,14 +1643,14 @@ export async function POST(request: NextRequest) {
           console.error('Stream error:', error)
           
           // Provide more specific error messages based on error type
-          let errorMessage = 'Er is een fout opgetreden bij het verwerken van uw vraag. Probeer het opnieuw.'
+          let errorMessage = '**Er is een fout opgetreden**\n\nEr is een onverwachte fout opgetreden bij het verwerken van uw vraag. Dit kan verschillende oorzaken hebben:\n\n- **Tijdelijke serverprobleem:** Probeer het over een paar minuten opnieuw\n- **Verbindingsprobleem:** Controleer uw internetverbinding\n- **Overbelasting:** De service is momenteel druk bezocht\n\n**Wat kunt u doen:**\n- Probeer het opnieuw over een paar minuten\n- Formuleer uw vraag eventueel anders\n- Voor dringende juridische vragen: raadpleeg het Juridisch Loket (0900-8020) of een advocaat\n\n❓ **Probeer het gerust opnieuw** - de meeste problemen zijn tijdelijk.'
           
           if (error instanceof TypeError && error.message.includes('fetch')) {
-            errorMessage = 'Er is een verbindingsfout opgetreden. Controleer uw internetverbinding en probeer het opnieuw.'
+            errorMessage = '**Verbindingsfout**\n\nEr is een probleem met de internetverbinding opgetreden.\n\n**Wat kunt u doen:**\n- Controleer uw internetverbinding\n- Probeer de pagina te vernieuwen\n- Probeer het over een paar minuten opnieuw\n\n❓ **Probeer het opnieuw** zodra uw verbinding stabiel is.'
           } else if (error instanceof Error && error.message.includes('API')) {
-            errorMessage = 'Er is een probleem met de AI-service. Probeer het over een paar minuten opnieuw.'
+            errorMessage = '**Service tijdelijk niet beschikbaar**\n\nDe juridische AI-service is momenteel niet beschikbaar.\n\n**Wat kunt u doen:**\n- Probeer het over 5-10 minuten opnieuw\n- Voor dringende vragen: bel het Juridisch Loket (0900-8020)\n- Raadpleeg wetten.overheid.nl voor directe toegang tot wetgeving\n\n❓ **Service wordt hersteld** - probeer het later opnieuw.'
           } else if (error instanceof Error && error.message.includes('rate limit')) {
-            errorMessage = 'Te veel verzoeken. Wacht even en probeer het opnieuw.'
+            errorMessage = '**Te veel verzoeken**\n\nEr zijn te veel verzoeken tegelijk binnengekomen.\n\n**Wat kunt u doen:**\n- Wacht 1-2 minuten en probeer het opnieuw\n- Maak een gratis account aan voor onbeperkt gebruik\n- Voor directe hulp: bel het Juridisch Loket (0900-8020)\n\n❓ **Account aanmaken** voorkomt deze beperking.'
           }
           
           try {
@@ -1826,137 +1826,182 @@ function generateFallbackResponse(query: string, profession: string, isWetUitleg
   const lowerQuery = query.toLowerCase()
   const currentYear = new Date().getFullYear()
   
-  let response = `Juridisch advies van WetHelder
+  console.log('📝 Generating fallback response for query:', query)
+  
+  let response = `**Juridisch advies van WetHelder**
 
-BELANGRIJK: De geavanceerde juridische service is tijdelijk niet beschikbaar. Deze informatie is gebaseerd op algemene juridische kennis voor ${currentYear}. Voor specifiek juridisch advies over uw situatie, raadpleeg altijd een gekwalificeerde jurist.
+**Uw vraag:** ${query}
 
-ACTUALITEITSGARANTIE: Alle bedragen en regelgeving zijn gecontroleerd voor ${currentYear}.
+**Juridische informatie:**`
 
-Uw vraag: ${query}
-
-Juridische informatie:`
-
-  // Basis antwoorden voor veelgestelde vragen
+  // Uitgebreide antwoorden voor veelgestelde vragen
   if (lowerQuery.includes('vuurwerk')) {
     response += `
 
-Vuurwerk en handhaving - Juridische grondslag:
+**Vuurwerk en politiebevoegdheden**
 
-Wettelijke basis voor controles:
-- Artikel 23 WED: Opsporingsambtenaren mogen plaatsen doorzoeken bij verdenking van WED-overtreding
-- Artikel 2 WED: Overtredingen van het Vuurwerkbesluit zijn strafbare feiten
-- Artikel 1.1.3 Wet milieubeheer: Vuurwerk valt onder gevaarlijke stoffen
-- Artikel 27 Sv: Algemene doorzoekingsbevoegdheden bij verdenking strafbaar feit
+**Wettelijke basis voor controles:**
+- **Artikel 23 WED:** Opsporingsambtenaren mogen plaatsen doorzoeken bij verdenking van WED-overtreding
+- **Artikel 2 WED:** Overtredingen van het Vuurwerkbesluit zijn strafbare feiten
+- **Artikel 1.1.3 Wet milieubeheer:** Vuurwerk valt onder gevaarlijke stoffen
+- **Artikel 27 Sv:** Algemene doorzoekingsbevoegdheden bij verdenking strafbaar feit
 
-Praktische toepassing voor politie:
-- Voertuigcontrole: Toegestaan bij concrete verdenking van vuurwerktransport
-- Doorzoekingsbevoegdheid: Artikel 23 WED geeft specifieke bevoegdheden
-- Inbeslagname: Mogelijk bij illegaal vuurwerk (artikel 94 Sv)
-- Proces-verbaal: Opmaken conform artikel 29 Sv
+**Praktische handhaving:**
+- **Voertuigcontrole:** Toegestaan bij concrete verdenking van vuurwerktransport
+- **Doorzoekingsbevoegdheid:** Artikel 23 WED geeft specifieke bevoegdheden
+- **Inbeslagname:** Mogelijk bij illegaal vuurwerk (artikel 94 Sv)
+- **Proces-verbaal:** Opmaken conform artikel 29 Sv
 
-Vuurwerkbesluit - Belangrijke bepalingen:
-- Artikel 2.1: Verbod op professioneel vuurwerk voor particulieren
-- Artikel 2.2: Toegestaan consumentenvuurwerk
-- Artikel 3.1: Verkoop alleen in toegestane periodes
-- Artikel 4.1: Afsteken alleen 31 december 18:00 - 1 januari 02:00
+**Vuurwerkbesluit - Belangrijke bepalingen:**
+- **Artikel 2.1:** Verbod op professioneel vuurwerk voor particulieren
+- **Artikel 2.2:** Toegestaan consumentenvuurwerk
+- **Artikel 3.1:** Verkoop alleen in toegestane periodes
+- **Artikel 4.1:** Afsteken alleen 31 december 18:00 - 1 januari 02:00
 
-Handhavingsstrategie:
+**Handhavingsprocedure:**
 1. Verdenking vaststellen (transport, verkoop, bezit)
 2. Legitimatie tonen (artikel 2 Politiewet 2012)
 3. Doorzoekingsbevoegdheid toepassen (artikel 23 WED)
 4. Proces-verbaal opmaken (artikel 29 Sv)
-5. Inbeslagname indien van toepassing (artikel 94 Sv)
+5. Inbeslagname indien van toepassing (artikel 94 Sv)`
 
-ANTWOORD OP UW VRAAG:
-JA, u mag als politieagent een voertuig doorzoeken bij verdenking van vuurwerktransport op basis van:
-- Artikel 23 WED: Specifieke doorzoekingsbevoegdheid bij WED-overtredingen
-- Artikel 27 Sv: Algemene doorzoekingsbevoegdheid bij verdenking strafbaar feit
-- Vuurwerkbesluit: Overtredingen zijn strafbare feiten onder de WED
-
-Voorwaarden:
-- Concrete verdenking van WED-overtreding
-- Proportionaliteit van de maatregel
-- Correcte procedure en proces-verbaal`
   } else if (lowerQuery.includes('auto') && (lowerQuery.includes('doorzoek') || lowerQuery.includes('controle'))) {
     response += `
 
-Voertuigcontroles en doorzoekingen - Juridische basis:
+**Voertuigcontroles en doorzoekingen**
 
-Wettelijke grondslagen:
-- Artikel 160 WVW 1994: Bevoegdheid tot staandehouding verkeer
-- Artikel 164 WVW 1994: Vordering tot medewerking aan onderzoek
-- Artikel 27 Sv: Algemene doorzoekingsbevoegdheden bij verdenking
-- Artikel 96b Sv: Specifieke regels staandehouding voertuigen
-- Artikel 2 Politiewet 2012: Algemene politietaak handhaving rechtsorde
+**Wettelijke grondslagen:**
+- **Artikel 160 WVW 1994:** Bevoegdheid tot staandehouding verkeer
+- **Artikel 164 WVW 1994:** Vordering tot medewerking aan onderzoek
+- **Artikel 27 Sv:** Algemene doorzoekingsbevoegdheden bij verdenking
+- **Artikel 96b Sv:** Specifieke regels staandehouding voertuigen
+- **Artikel 2 Politiewet 2012:** Algemene politietaak handhaving rechtsorde
 
-Doorzoekingsbevoegdheden:
-- Artikel 23 WED: Bij verdenking WED-overtredingen (vuurwerk, milieu, etc.)
-- Artikel 9 Opiumwet: Bij verdenking drugstransport
-- Artikel 27 Sv: Bij verdenking van elk strafbaar feit
+**Doorzoekingsbevoegdheden:**
+- **Artikel 23 WED:** Bij verdenking WED-overtredingen (vuurwerk, milieu, etc.)
+- **Artikel 9 Opiumwet:** Bij verdenking drugstransport
+- **Artikel 27 Sv:** Bij verdenking van elk strafbaar feit
 
-Procedure voertuigcontrole:
-1. Staandehouding: Duidelijk signaal geven (artikel 160 WVW)
-2. Legitimatie: Tonen van politielegitimatie (artikel 2 Politiewet)
-3. Mededeling: Reden van controle vermelden
-4. Identificatie: Vordering legitimatie bestuurder (artikel 2 WID)
-5. Doorzoeken: Alleen bij concrete verdenking strafbaar feit
+**Procedure voertuigcontrole:**
+1. **Staandehouding:** Duidelijk signaal geven (artikel 160 WVW)
+2. **Legitimatie:** Tonen van politielegitimatie (artikel 2 Politiewet)
+3. **Mededeling:** Reden van controle vermelden
+4. **Identificatie:** Vordering legitimatie bestuurder (artikel 2 WID)
+5. **Doorzoeken:** Alleen bij concrete verdenking strafbaar feit
 
-Belangrijke voorwaarden:
+**Belangrijke voorwaarden:**
 - Concrete verdenking vereist voor doorzoeken
 - Proportionaliteit: Middel moet passen bij doel
 - Proces-verbaal: Vastleggen conform artikel 29 Sv
-- Rechtsbijstand: Recht op advocaat bij aanhouding (artikel 28 Sv)
+- Rechtsbijstand: Recht op advocaat bij aanhouding (artikel 28 Sv)`
 
-Specifieke situaties:
-- Vuurwerk: WED-bevoegdheden (artikel 23 WED)
-- Drugs: Opiumwet-bevoegdheden (artikel 9 Opiumwet)
-- Wapens: WWM-bevoegdheden (artikel 54 WWM)
-- Alcohol: WVW-bevoegdheden (artikel 8 WVW)`
   } else if (lowerQuery.includes('schenk') || lowerQuery.includes('ton') || lowerQuery.includes('erfenis')) {
     response += `
 
-Schenking en erfrecht (actueel 2025):
+**Schenking en erfrecht (${currentYear})**
 
-Voor uw situatie (3 kinderen, €300.000 beschikbaar):
-- Jaarlijkse vrijstelling 2025: €6.739 per kind per jaar
-- Totaal per jaar belastingvrij: 3 × €6.739 = €20.217
-- Voor €300.000 volledig belastingvrij: ongeveer 15 jaar nodig
+**Actuele vrijstellingen ${currentYear}:**
+- **Jaarlijkse vrijstelling:** €6.739 per kind per jaar
+- **Eenmalige verhoogde vrijstelling:** AFGESCHAFT per 1 januari 2023
+- **Geen "jubelton" meer** voor kinderen tussen 18-40 jaar
 
-Belangrijke wijziging sinds 2023:
-- De "jubelton" (eenmalige verhoogde vrijstelling) is AFGESCHAFT per 1 januari 2023
-- Geen extra vrijstelling meer voor kinderen tussen 18-40 jaar
-- Alleen nog de gewone jaarlijkse vrijstelling van €6.739
+**Voor uw situatie (3 kinderen, €300.000):**
+- **Totaal per jaar belastingvrij:** 3 × €6.739 = €20.217
+- **Voor €300.000 volledig belastingvrij:** ongeveer 15 jaar nodig
 
-Opties voor uw situatie:
-1. Spreiden over jaren: €20.217 per jaar belastingvrij verdelen
-2. Direct schenken: Mogelijk, maar 10% schenkingsrecht over het meerdere
-3. Combinatie: Deel direct, deel gespreid
+**Schenkingsrecht ${currentYear}:**
+- **Tarief:** 10% over bedragen boven de vrijstelling
+- **Voorbeeld:** €100.000 aan 1 kind = €6.739 vrijgesteld + 10% over €93.261 = €9.326 belasting
 
-Schenkingsrecht 2025:
-- Tarief: 10% over bedragen boven de vrijstelling
-- Voorbeeld: €100.000 aan 1 kind = €6.739 vrijgesteld + 10% over €93.261 = €9.326 belasting
+**Opties:**
+1. **Spreiden over jaren:** €20.217 per jaar belastingvrij verdelen
+2. **Direct schenken:** Mogelijk, maar 10% schenkingsrecht over het meerdere
+3. **Combinatie:** Deel direct, deel gespreid
 
-Belangrijke stappen:
+**Belangrijke stappen:**
 - Aangifte binnen 3 maanden na schenking
 - Notariële akte vaak verplicht bij grote bedragen
-- Overleg met belastingadviseur voor optimale strategie
+- Overleg met belastingadviseur voor optimale strategie`
 
-Bronnen: Belastingdienst.nl, Wet op de Successierechten 1956`
+  } else if (lowerQuery.includes('politie') || lowerQuery.includes('bevoegd')) {
+    response += `
+
+**Politiebevoegdheden en procedures**
+
+**Algemene bevoegdheden:**
+- **Artikel 2 Politiewet 2012:** Handhaving rechtsorde en hulpverlening
+- **Artikel 2 WID:** Identificatieplicht - iedereen vanaf 14 jaar
+- **Artikel 53-55 Sv:** Aanhouding bij verdenking strafbaar feit
+- **Artikel 27 Sv:** Doorzoeken van personen en plaatsen
+
+**Specifieke handhavingswetten:**
+- **WED (Wet economische delicten):** Artikel 23 - doorzoekingsbevoegdheden
+- **Opiumwet:** Artikel 9 - bevoegdheden bij drugszaken
+- **WWM (Wet wapens en munitie):** Artikel 54 - wapengerelateerde controles
+- **WVW (Wegenverkeerswet):** Artikel 160-164 - verkeerscontroles
+
+**Belangrijke procedures:**
+- **Legitimatie tonen:** Altijd verplicht bij optreden
+- **Reden mededelen:** Waarom controle/actie plaatsvindt
+- **Proportionaliteit:** Middel moet passen bij doel
+- **Proces-verbaal:** Vastleggen van bevindingen (artikel 29 Sv)`
+
+  } else if (lowerQuery.includes('straf') || lowerQuery.includes('boete')) {
+    response += `
+
+**Strafrecht en sancties**
+
+**Soorten sancties:**
+- **Geldboete:** Artikel 23 Sr - maximum €870.000 (categorie 6)
+- **Gevangenisstraf:** Artikel 10 Sr - tijdelijk of levenslang
+- **Taakstraf:** Artikel 22c Sr - werkstraf of leerstraf
+- **Voorwaardelijke straffen:** Artikel 14a Sr
+
+**Strafmaten per categorie:**
+- **Categorie 1:** €435 (lichte overtredingen)
+- **Categorie 2:** €4.350 (zware overtredingen)
+- **Categorie 3:** €8.700 (lichte misdrijven)
+- **Categorie 4:** €21.750 (zware misdrijven)
+- **Categorie 5:** €87.000 (zeer zware misdrijven)
+- **Categorie 6:** €870.000 (zwaarste misdrijven)
+
+**Belangrijke beginselen:**
+- **Legaliteitsbeginsel:** Artikel 1 Sr - geen straf zonder wet
+- **Schuldbeginsel:** Alleen straffen bij schuld
+- **Proportionaliteit:** Straf moet passen bij delict
+- **Individualisering:** Rekening houden met persoon en omstandigheden`
+
   } else {
     response += `
 
-Algemene juridische informatie:
-- Voor specifieke juridische vragen is professioneel advies nodig
-- Nederlandse wetgeving is complex en situatie-afhankelijk
-- Belangrijke bronnen: wetten.overheid.nl, rechtspraak.nl
-- Bij juridische problemen: advocaat of juridisch loket raadplegen`
+**Algemene juridische informatie**
+
+**Voor uw specifieke vraag adviseren wij:**
+- **Juridisch Loket:** Gratis juridisch advies voor eenvoudige vragen
+- **Advocaat:** Voor complexe juridische kwesties
+- **Notaris:** Voor contracten, testamenten en onroerend goed
+- **Belastingadviseur:** Voor fiscale vraagstukken
+
+**Belangrijke juridische bronnen:**
+- **wetten.overheid.nl:** Alle Nederlandse wetgeving
+- **rechtspraak.nl:** Jurisprudentie en uitspraken
+- **rijksoverheid.nl:** Overheidsinformatie en procedures
+- **belastingdienst.nl:** Fiscale informatie en regelingen
+
+**Algemene juridische beginselen:**
+- **Rechtszekerheid:** Iedereen moet kunnen weten wat het recht is
+- **Rechtsgelijkheid:** Gelijke behandeling voor iedereen
+- **Proportionaliteit:** Maatregelen moeten passen bij het doel
+- **Zorgvuldigheid:** Overheid moet zorgvuldig handelen`
   }
 
   response += `
 
+**Bronnen:** Nederlandse wetgeving via wetten.overheid.nl, Rechtspraak.nl
 
+**⚠️ Belangrijk:** Deze informatie is gebaseerd op algemene juridische kennis voor ${currentYear}. Voor specifiek juridisch advies over uw situatie, raadpleeg altijd een gekwalificeerde jurist.
 
-❓ **Service tijdelijk beperkt** - Probeer het later opnieuw voor uitgebreid juridisch advies met geavanceerde functies.`
+❓ **Heeft u specifiekere vragen?** Dan help ik graag verder met meer details over dit onderwerp.`
 
   return response
 }
@@ -1970,16 +2015,26 @@ async function generateComprehensiveLegalResponse(
   googleResults?: GoogleSearchResult[]
 ): Promise<string> {
   try {
+    console.log('🤖 Starting comprehensive legal response generation...')
+    
+    // Check if OpenAI API key is available first
+    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-development-placeholder') {
+      console.warn('OpenAI API key not configured, using fallback response')
+      return generateFallbackResponse(query, profession, isWetUitleg)
+    }
+    
     // Voeg Google resultaten toe aan context
     let googleContext = ''
     if (googleResults && googleResults.length > 0) {
       googleContext = `\n\n**GOOGLE ZOEKRESULTATEN:**\n${formatSearchResultsForContext(googleResults)}\n`
+      console.log(`📊 Added ${googleResults.length} Google results to context`)
     }
     
     // Voeg bronnen toe aan context
     let sourcesContext = ''
     if (sources.length > 0) {
       sourcesContext = `\n\n**BESCHIKBARE BRONNEN:**\n${sources.slice(0, 8).map(s => `- ${s}`).join('\n')}\n`
+      console.log(`📚 Added ${sources.length} sources to context`)
     }
     
     const fullContext = `${sourcesContext}${googleContext}`
@@ -2043,17 +2098,11 @@ Eindig altijd met een korte bronverwijzing naar de relevante officiële bronnen.
 **VERDERE VRAGEN AANMOEDIGEN:**
 Eindig elk antwoord met: "❓ **Heeft u specifiekere vragen?** Dan help ik graag verder met meer details over dit onderwerp."
 
-
-
 **PROFESSIE CONTEXT:** ${getProfessionContext(profession)}
 ${isWetUitleg ? '**WET & UITLEG MODE:** Geef uitgebreide, technisch accurate analyse met alle relevante details.' : ''}`
 
-    // Check if OpenAI API key is available
-    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-development-placeholder') {
-      console.warn('OpenAI API key not configured, using fallback response')
-      return generateFallbackResponse(query, profession, isWetUitleg)
-    }
-
+    console.log('🔄 Making OpenAI API request...')
+    
     const response = await fetch(OPENAI_API_URL, {
       method: 'POST',
       headers: {
@@ -2079,15 +2128,38 @@ ${isWetUitleg ? '**WET & UITLEG MODE:** Geef uitgebreide, technisch accurate ana
     })
 
     if (!response.ok) {
+      const errorText = await response.text()
+      console.error(`OpenAI API Error: ${response.status} - ${errorText}`)
+      
       if (response.status === 401) {
         console.warn('OpenAI API authentication failed, using fallback response')
         return generateFallbackResponse(query, profession, isWetUitleg)
+      } else if (response.status === 429) {
+        console.warn('OpenAI API rate limit exceeded, using fallback response')
+        return generateFallbackResponse(query, profession, isWetUitleg)
+      } else if (response.status >= 500) {
+        console.warn('OpenAI API server error, using fallback response')
+        return generateFallbackResponse(query, profession, isWetUitleg)
       }
-      throw new Error(`OpenAI API Error: ${response.status}`)
+      
+      throw new Error(`OpenAI API Error: ${response.status} - ${errorText}`)
     }
 
     const data = await response.json()
-    let finalResponse = data.choices?.[0]?.message?.content || 'Er is een fout opgetreden bij het genereren van het antwoord.'
+    
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Invalid OpenAI API response structure:', data)
+      return generateFallbackResponse(query, profession, isWetUitleg)
+    }
+    
+    let finalResponse = data.choices[0].message.content
+    
+    if (!finalResponse || finalResponse.trim() === '') {
+      console.error('Empty response from OpenAI API')
+      return generateFallbackResponse(query, profession, isWetUitleg)
+    }
+
+    console.log('✅ Successfully generated OpenAI response')
 
     // Valideer en corrigeer het antwoord
     finalResponse = validateLegalResponse(query, finalResponse)
@@ -2096,6 +2168,15 @@ ${isWetUitleg ? '**WET & UITLEG MODE:** Geef uitgebreide, technisch accurate ana
 
   } catch (error) {
     console.error('Error in comprehensive legal response:', error)
+    
+    // Log more details about the error
+    if (error instanceof Error) {
+      console.error('Error name:', error.name)
+      console.error('Error message:', error.message)
+      console.error('Error stack:', error.stack)
+    }
+    
+    // Always return fallback response on any error
     return generateFallbackResponse(query, profession, isWetUitleg)
   }
 }
