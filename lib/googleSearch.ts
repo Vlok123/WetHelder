@@ -39,6 +39,14 @@ export interface VerifiedSearchResults {
   isHistoricalQuery: boolean
   searchTerms: string[]
   timestamp: Date
+  sources?: {
+    wetten?: GoogleSearchResult[]
+    rechtspraak?: GoogleSearchResult[]
+    tuchtrecht?: GoogleSearchResult[]
+    boetes?: GoogleSearchResult[]
+    overheid?: GoogleSearchResult[]
+    apv?: GoogleSearchResult[]
+  }
 }
 
 // UITGEBREIDE geverifieerde juridische bronnen - inclusief vakbonden, CAO's en officiële documenten
@@ -180,19 +188,36 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
       })
     }
 
+    const categorizedWetten = validateAndCategorize(wettenResults, 'wetten.overheid.nl')
+    const categorizedRechtspraak = validateAndCategorize(rechtspraakResults, 'rechtspraak.nl')
+    const categorizedTuchtrecht = validateAndCategorize(tuchtrechtResults, 'tuchtrecht.overheid.nl')
+    const categorizedBoetes = validateAndCategorize(boetesResults, 'boetebase.om.nl')
+    const categorizedOverheid = validateAndCategorize(overheidResults, 'overheid.nl')
+    const categorizedAPV = validateAndCategorize(apvResults, 'apv')
+
     results.results = [
-      ...validateAndCategorize(wettenResults, 'wetten.overheid.nl'),
-      ...validateAndCategorize(rechtspraakResults, 'rechtspraak.nl'),
-      ...validateAndCategorize(tuchtrechtResults, 'tuchtrecht.overheid.nl'),
-      ...validateAndCategorize(boetesResults, 'boetebase.om.nl'),
-      ...validateAndCategorize(overheidResults, 'overheid.nl'),
-      ...validateAndCategorize(apvResults, 'apv'),
+      ...categorizedWetten,
+      ...categorizedRechtspraak,
+      ...categorizedTuchtrecht,
+      ...categorizedBoetes,
+      ...categorizedOverheid,
+      ...categorizedAPV,
       ...validateAndCategorize(caoResults, 'cao'),
       ...validateAndCategorize(politiebondResults, 'politiebond'),
       ...validateAndCategorize(fnvResults, 'fnv'),
       ...validateAndCategorize(barpResults, 'barp'),
       ...validateAndCategorize(officieleDocumentenResults, 'officiele_documenten')
     ]
+
+    // Vul de sources property
+    results.sources = {
+      wetten: categorizedWetten,
+      rechtspraak: categorizedRechtspraak,
+      tuchtrecht: categorizedTuchtrecht,
+      boetes: categorizedBoetes,
+      overheid: categorizedOverheid,
+      apv: categorizedAPV
+    }
 
     // STAP 4: Filter en combineer resultaten
     const allResults = results.results
@@ -533,19 +558,36 @@ export async function comprehensiveJuridicalSearch(query: string): Promise<Verif
     ])
 
     // Valideer en categoriseer internet resultaten
+    const categorizedWetten = validateAndCategorize(wettenResults, 'wetten.overheid.nl')
+    const categorizedRechtspraak = validateAndCategorize(rechtspraakResults, 'rechtspraak.nl')
+    const categorizedTuchtrecht = validateAndCategorize(tuchtrechtResults, 'tuchtrecht.overheid.nl')
+    const categorizedBoetes = validateAndCategorize(boetesResults, 'boetebase.om.nl')
+    const categorizedOverheid = validateAndCategorize(overheidResults, 'overheid.nl')
+    const categorizedAPV = validateAndCategorize(apvResults, 'apv')
+    
     const internetResults = [
-      ...validateAndCategorize(wettenResults, 'wetten.overheid.nl'),
-      ...validateAndCategorize(rechtspraakResults, 'rechtspraak.nl'),
-      ...validateAndCategorize(tuchtrechtResults, 'tuchtrecht.overheid.nl'),
-      ...validateAndCategorize(boetesResults, 'boetebase.om.nl'),
-      ...validateAndCategorize(overheidResults, 'overheid.nl'),
-      ...validateAndCategorize(apvResults, 'apv'),
+      ...categorizedWetten,
+      ...categorizedRechtspraak,
+      ...categorizedTuchtrecht,
+      ...categorizedBoetes,
+      ...categorizedOverheid,
+      ...categorizedAPV,
       ...validateAndCategorize(caoResults, 'cao'),
       ...validateAndCategorize(politiebondResults, 'politiebond'),
       ...validateAndCategorize(fnvResults, 'fnv'),
       ...validateAndCategorize(barpResults, 'barp'),
       ...validateAndCategorize(officieleDocumentenResults, 'officiele_documenten')
     ]
+
+    // Vul de sources property
+    results.sources = {
+      wetten: categorizedWetten,
+      rechtspraak: categorizedRechtspraak,
+      tuchtrecht: categorizedTuchtrecht,
+      boetes: categorizedBoetes,
+      overheid: categorizedOverheid,
+      apv: categorizedAPV
+    }
 
     results.results.push(...internetResults)
     results.internetResults = internetResults.length
