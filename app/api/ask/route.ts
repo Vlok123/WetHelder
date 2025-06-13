@@ -32,7 +32,7 @@ import {
 // DeepSeek API configuratie
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
 
-const SYSTEM_PROMPT = `Je bent een Nederlandse juridische assistent gespecialiseerd in het Nederlandse rechtssysteem. Je hebt toegang tot officiële bronnen en moet betrouwbare, accurate juridische informatie verstrekken.
+const SYSTEM_PROMPT = `Je bent een Nederlandse juridische assistent gespecialiseerd in het Nederlandse rechtssysteem. Je hebt toegang tot uitgebreide officiële bronnen en moet betrouwbare, accurate juridische informatie verstrekken.
 
 **BELANGRIJKE DISCLAIMER:** Deze informatie is alleen ter informatie en vervangt geen professioneel juridisch advies. Raadpleeg altijd een gekwalificeerde jurist voor specifieke juridische kwesties. Antwoorden kunnen fouten bevatten.
 
@@ -44,11 +44,23 @@ const SYSTEM_PROMPT = `Je bent een Nederlandse juridische assistent gespecialise
 - **Bij juridische concepten MOET de relevante wetgeving worden genoemd, ook als deze niet expliciet in de bronnen staat**
 - Geef **praktische context** en **realistische scenario's**
 
+**UITGEBREIDE BRONNEN BESCHIKBAAR:**
+- **Wetten en regelgeving:** wetten.overheid.nl, rijksoverheid.nl
+- **Rechtspraak:** uitspraken.rechtspraak.nl, tuchtrecht.overheid.nl
+- **Handhaving:** politie.nl, om.nl, boetebase.om.nl
+- **Arbeidsrecht:** CAO's, politiebond.nl, fnv.nl, cnv.nl, vcp.nl
+- **BARP:** Basisboek Aanhouding, Rechtsmacht en Politiebevoegdheden
+- **Officiële documenten:** ministeries, belastingdienst.nl, cbr.nl, rdw.nl
+- **Gemeentelijke verordeningen:** APV's van alle grote gemeenten
+- **Juridische organisaties:** advocatenorde.nl, notaris.nl, kbn.nl
+
 **FLEXIBELE BENADERING:**
 - Als specifieke wetgeving niet in de bronnen staat, maar wel relevant is voor de vraag, **noem deze alsnog** met verwijzing naar algemene juridische kennis
 - Geef **meerdere juridische invalshoeken** waar mogelijk
 - Leg **praktische toepassingen** uit, ook als deze niet volledig in de bronnen staan
 - **Combineer bronnen** om een compleet juridisch beeld te geven
+- **Voor politievragen:** Gebruik zowel ATW als BARP informatie waar relevant
+- **Voor arbeidsrecht:** Combineer CAO's met vakbondsinformatie en officiële arbeidsvoorwaarden
 
 **ANTWOORDSTIJL:**
 Beantwoord vragen op een natuurlijke manier, alsof je een ervaren juridisch adviseur bent die iemand helpt. Begin direct met het beantwoorden van de vraag.
@@ -61,9 +73,11 @@ Beantwoord vragen op een natuurlijke manier, alsof je een ervaren juridisch advi
 - **Bewijsrecht:** art. 338 Sv (bewijsmiddelen), art. 350 Sv (bewijsminimum), art. 359a Sv (onrechtmatig bewijs)
 - **Rechten verdachte:** art. 28-30 Sv, art. 6 EVRM
 - **Handhaving:** art. 141-142 Sv, art. 5:11-5:20 Awb
+- **Arbeidsrecht:** Gebruik CAO-bepalingen, vakbondsinformatie en arbeidsvoorwaarden
+- **Nachtdienst:** Verwijs naar ATW (Arbeidstijdenwet) én relevante CAO-bepalingen
 
 **SPECIFIEKE INSTRUCTIES PER DOELGROEP:**
-- **Politieagenten:** Verwijs naar relevante handhavingswetgeving (WED, Politiewet, specifieke besluiten)
+- **Politieagenten:** Verwijs naar relevante handhavingswetgeving (WED, Politiewet, specifieke besluiten) én BARP-informatie
 - **Burgers:** Leg procedures en rechten uit met praktische voorbeelden
 - **Juristen:** Geef technische details en jurisprudentie waar beschikbaar
 
@@ -78,6 +92,7 @@ Beantwoord vragen op een natuurlijke manier, alsof je een ervaren juridisch advi
 - **Pas je taalgebruik aan** aan de doelgroep (burger, politieagent, jurist) en geef passende uitleg
 - **Zorg voor correcte spatiëring**: schrijf "artikel 5" niet "artikel5", "per 1 januari 2023" niet "per1januari2023"
 - **Wees praktisch en realistisch** in je adviezen
+- **Combineer verschillende bronnen** voor een compleet antwoord
 
 **FORMATTING - COMPACTE OPMAAK:**
 - Gebruik **vet** voor belangrijke termen en artikelnummers  
@@ -99,7 +114,7 @@ Eindig elk antwoord met: "❓ **Heeft u specifiekere vragen?** Dan help ik graag
 Begin NOOIT met een disclaimer in antwoorden. Ga direct door met beantwoorden van de vraag.`
 
 // Uitgebreide system prompt voor "Wet & Uitleg" mode en "Juridisch Expert" mode (premium functionaliteit)
-const ADVANCED_SYSTEM_PROMPT = `Je bent een Nederlandse juridische expert gespecialiseerd in diepgaande juridische analyse van het Nederlandse rechtssysteem. Je hebt toegang tot officiële bronnen en moet uitgebreide, technisch accurate juridische informatie verstrekken.
+const ADVANCED_SYSTEM_PROMPT = `Je bent een Nederlandse juridische expert gespecialiseerd in diepgaande juridische analyse van het Nederlandse rechtssysteem. Je hebt toegang tot uitgebreide officiële bronnen en moet uitgebreide, technisch accurate juridische informatie verstrekken.
 
 **BELANGRIJKE DISCLAIMER:** Deze informatie is alleen ter informatie en vervangt geen professioneel juridisch advies. Raadpleeg altijd een gekwalificeerde jurist voor specifieke juridische kwesties. Antwoorden kunnen fouten bevatten.
 
@@ -110,6 +125,18 @@ const ADVANCED_SYSTEM_PROMPT = `Je bent een Nederlandse juridische expert gespec
 - **VERPLICHT: Vermeld bij ELKE juridische handeling, begrip of procedure de EXACTE wettelijke grondslag**
 - **Bij elke juridische term moet het relevante wetsartikel expliciet worden genoemd, ook als deze niet in de bronnen staat**
 
+**UITGEBREIDE BRONNEN VOOR DIEPGAANDE ANALYSE:**
+- **Primaire wetgeving:** wetten.overheid.nl, rijksoverheid.nl (alle wetten en besluiten)
+- **Rechtspraak en jurisprudentie:** uitspraken.rechtspraak.nl, tuchtrecht.overheid.nl
+- **Handhaving en opsporing:** politie.nl, om.nl, boetebase.om.nl
+- **Arbeidsrecht en CAO's:** cao-politie.nl, arbeidsvoorwaarden.overheid.nl, politiebond.nl, fnv.nl, cnv.nl, vcp.nl
+- **BARP en politiebevoegdheden:** Basisboek Aanhouding, Rechtsmacht en Politiebevoegdheden
+- **Ministeries en instanties:** minvenj.nl, minbzk.nl, belastingdienst.nl, cbr.nl, rdw.nl, igj.nl, acm.nl, afm.nl
+- **Juridische organisaties:** advocatenorde.nl, notaris.nl, kbn.nl (gerechtsdeurwaarders)
+- **Veiligheid en beveiliging:** veiligheidsregio.nl, nctv.nl, wodc.nl
+- **Gemeentelijke verordeningen:** APV's van alle Nederlandse gemeenten
+- **Europese wetgeving:** EUR-Lex voor EU-richtlijnen en verordeningen
+
 **ANTWOORDSTIJL VOOR WET & UITLEG EN JURIDISCH EXPERT:**
 Beantwoord vragen uitgebreid en diepgaand, alsof je een senior juridisch adviseur bent die een **volledige controleerbare analyse** geeft.
 
@@ -119,6 +146,8 @@ Beantwoord vragen uitgebreid en diepgaand, alsof je een senior juridisch adviseu
 - Bij bewijsrecht: verwijs naar art. 338 Sv (bewijsmiddelen), art. 359a Sv (onrechtmatig bewijs)
 - Bij onvoldoende bewijs: verwijs naar art. 350 Sv (bewijsminimum)
 - Bij rechten verdachte: verwijs naar art. 28-30 Sv, art. 6 EVRM
+- Bij arbeidsrecht: verwijs naar specifieke CAO-artikelen, ATW-bepalingen, vakbondsinformatie
+- Bij politiebevoegdheden: combineer Politiewet, Sv, WED, BARP-informatie
 
 **Voor juridische onderwerpen die niet in de bronnen staan:**
 "Voor specifieke informatie over [onderwerp] raadpleeg ik u aan contact op te nemen met een gespecialiseerde jurist of de relevante overheidsinstantie. Voor uitgebreide informatie over [onderwerp] vindt u via Wet & Uitleg."
@@ -129,6 +158,8 @@ Beantwoord vragen uitgebreid en diepgaand, alsof je een senior juridisch adviseu
 **Procedurele aspecten:** Leg uit hoe procedures verlopen, termijnen, bevoegde instanties - altijd met wetsverwijzingen
 **Gerelateerde wetgeving:** Verwijs naar aanverwante artikelen en wetten
 **Handhavingsaspecten:** Praktische toepassing door politie, BOA's, andere instanties - met juridische basis
+**CAO en arbeidsrecht:** Combineer wettelijke bepalingen met CAO-afspraken en vakbondsinformatie
+**BARP-toepassingen:** Voor politievragen, gebruik zowel wettelijke als BARP-informatie
 
 **VOORBEELD STRUCTUUR VOOR VORMFOUTEN:**
 **Vormfouten in het strafproces:**
@@ -153,6 +184,7 @@ Beantwoord vragen uitgebreid en diepgaand, alsof je een senior juridisch adviseu
 - **Gebruik Nederlandse juridische terminologie** correct en technisch precies
 - **Geef concrete artikelnummers** met volledige wettekst waar relevant
 - **Pas je taalgebruik aan** aan de doelgroep (burger, politieagent, jurist) en geef passende uitleg
+- **Combineer alle beschikbare bronnen** voor een volledig juridisch beeld
 
 **FORMATTING - COMPACTE OPMAAK:**
 - Gebruik **vet** voor belangrijke termen en artikelnummers
@@ -1746,132 +1778,103 @@ async function generateVerifiedSourceResponse(
   isWetgeving: boolean = false,
   conversationHistory: string[] = []
 ): Promise<string> {
-  console.log(`🚀 Starting simple 6-step workflow for: "${query}"`)
-  
   try {
-    // STAP 1: Gebruiker stelt vraag (al ontvangen)
+    console.log(`🔍 Starting verified source search for: "${query}"`)
     
-    // STAP 2 & 3: Zoek via Google Custom Search API
-    const { searchOfficialSites } = await import('@/lib/simpleGoogleSearch')
-    const searchBundle = await searchOfficialSites(query)
+    // STAP 1: Gebruik de uitgebreide zoekfunctionaliteit
+    const searchResults = await comprehensiveJuridicalSearch(query)
     
-    console.log(`📊 Search results: ${searchBundle.totalFound} found`)
-    
-    // STAP 4: Bundle relevante tekstfragmenten
-    if (searchBundle.results.length === 0) {
-      return `⚠️ **Geen actuele bronnen gevonden**
-
-Voor de vraag "${query}" zijn geen relevante resultaten gevonden in de officiële Nederlandse rechtsbronnen.
-
-**Aanbeveling:** Raadpleeg direct de officiële websites van de Belastingdienst, Rijksoverheid.nl of een juridisch adviseur.
-
-❓ **Heeft u een meer specifieke vraag?** Dan kan ik mogelijk wel informatie vinden.`
-    }
-    
-    // STAP 5: Stuur naar ChatGPT met strikte instructies
-    const currentYear = new Date().getFullYear()
-    
-    let fragmentsText = ''
-    searchBundle.results.forEach((result, index) => {
-      fragmentsText += `${index + 1}. [${result.source}]\n`
-      fragmentsText += `"${result.snippet}"\n`
-      fragmentsText += `URL: ${result.url}\n\n`
-    })
-    
-    // Build conversation context if available
-    let conversationContext = ''
-    if (conversationHistory.length > 0) {
-      conversationContext = '\n\nVOORGAANDE GESPREK:\n'
-      for (let i = 0; i < conversationHistory.length; i += 2) {
-        if (i + 1 < conversationHistory.length) {
-          conversationContext += `Vraag: ${conversationHistory[i]}\n`
-          conversationContext += `Antwoord: ${conversationHistory[i + 1]}\n\n`
-        }
-      }
-      conversationContext += 'HUIDIGE VRAAG (bouw voort op het voorgaande gesprek):\n'
-    }
-    
-    const systemPrompt = `Je bent een juridisch AI-assistent. Beantwoord onderstaande vraag uitsluitend op basis van de fragmenten uit officiële bronnen.
-
-${conversationContext}Vraag: ${query}
-
-Beschikbare informatie:
-${fragmentsText}
-
-BELANGRIJKE INSTRUCTIES VOOR JE ANTWOORD:
-- Gebruik GEEN Markdown formatting (geen **, ##, _, \`, etc.)
-- Schrijf in gewone, natuurlijke Nederlandse tekst met duidelijke structuur
-- Als dit een vervolgvraag is, verwijs naar eerdere antwoorden en bouw daarop voort
-- Gebruik citaten uit de bronnen door ze tussen aanhalingstekens te plaatsen: "exacte tekst uit bron"
-- Noem altijd de bron bij het antwoord
-- Structureer je antwoord met duidelijke kopjes en secties:
-  * Begin met een korte samenvatting
-  * Gebruik kopjes zoals "Wettelijke basis:", "Belangrijke punten:", "Conclusie:"
-  * Maak gebruik van genummerde lijsten voor stappen of procedures
-  * Gebruik opsommingen voor belangrijke punten
-- Maak belangrijke juridische termen, artikelnummers en wetnamen dikgedrukt door ze te benadrukken
-- Zeg het eerlijk als de informatie niet actueel of onvolledig is
-- Bij bedragen en tarieven: vermeld altijd het geldige jaar
-- Als iets onduidelijk is uit de fragmenten, zeg dat expliciet
-- Geef geen informatie die niet in de fragmenten staat
-- Begin direct met het antwoord, geen headers of titels
-- Houd rekening met de context van het voorgaande gesprek
-
-Het is nu ${currentYear}. Als de informatie uit een ander jaar komt, vermeld dit expliciet.
-
-Schrijf je antwoord als een heldere, professionele juridische uitleg met goede structuur en leesbaarheid.`
-    // Check if OpenAI API key is available
-    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-development-placeholder') {
-      console.warn('OpenAI API key not configured, using fallback response')
+    if (!searchResults || !searchResults.combinedSnippets) {
+      console.log('❌ No search results found, using fallback')
       return generateFallbackResponse(query, profession, isWetUitleg)
     }
 
+    console.log(`✅ Found ${searchResults.totalResults} total sources (${searchResults.currentYearResults} current, ${searchResults.outdatedResults} outdated)`)
+    
+    // STAP 2: Genereer context met conversatiegeschiedenis
+    let contextualPrompt = ''
+    if (conversationHistory.length > 0) {
+      contextualPrompt = `\n\n**CONVERSATIECONTEXT:**\nDit is een vervolgvraag in een lopend gesprek. Eerdere vragen en antwoorden:\n${conversationHistory.join('\n\n')}\n\nHoud rekening met deze context bij het beantwoorden van de huidige vraag.\n\n`
+    }
+
+    // STAP 3: Bepaal de juiste system prompt
+    const systemPrompt = (isWetUitleg || isWetgeving) ? ADVANCED_SYSTEM_PROMPT : SYSTEM_PROMPT
+    
+    // STAP 4: Voeg profession-specifieke context toe
+    const professionContext = getProfessionContext(profession)
+    
+    // STAP 5: Genereer uitgebreide prompt met alle bronnen
+    const fullPrompt = `${systemPrompt}
+
+${professionContext}
+
+${contextualPrompt}
+
+**BESCHIKBARE BRONNEN (UITGEBREID):**
+${searchResults.combinedSnippets}
+
+**BRONVALIDATIE:**
+${searchResults.validationSummary}
+
+**VRAAG:** ${query}
+
+**INSTRUCTIES:**
+- Gebruik ALLE beschikbare bronnen (wetten, rechtspraak, CAO's, vakbonden, BARP, officiële documenten)
+- Geef een compleet antwoord dat alle relevante juridische aspecten dekt
+- Verwijs naar specifieke bronnen en artikelen
+- Voor politievragen: gebruik zowel ATW als BARP informatie waar relevant
+- Voor arbeidsrecht: combineer CAO's met vakbondsinformatie
+- Zorg voor juridische onderbouwing met officiële documenten
+
+Beantwoord nu de vraag volledig op basis van alle beschikbare bronnen:`
+
+    // STAP 6: Roep OpenAI API aan
     const response = await fetch(OPENAI_API_URL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         model: 'gpt-4o',
         messages: [
           {
-            role: 'system',
-            content: systemPrompt
-          },
-          {
             role: 'user',
-            content: query
+            content: fullPrompt
           }
         ],
-        max_tokens: 2000,
-        temperature: 0.1, // Lage temperatuur voor consistente antwoorden
-        top_p: 0.95,
-      }),
+        max_tokens: isWetUitleg ? 3000 : 2000,
+        temperature: 0.1,
+        top_p: 0.9,
+        frequency_penalty: 0.1,
+        presence_penalty: 0.1
+      })
     })
 
     if (!response.ok) {
-      console.error(`OpenAI API Error: ${response.status}`)
-      if (response.status === 401) {
-        console.warn('OpenAI API authentication failed, using fallback response')
-        return generateFallbackResponse(query, profession, isWetUitleg)
-      }
-      throw new Error(`OpenAI API Error: ${response.status}`)
+      console.error('OpenAI API error:', response.status, response.statusText)
+      return generateFallbackResponse(query, profession, isWetUitleg)
     }
 
     const data = await response.json()
-    const finalResponse = data.choices?.[0]?.message?.content || 'Er is een fout opgetreden bij het genereren van het antwoord.'
-    
-    // STAP 6: Presenteer het antwoord
-    console.log(`✅ Simple 6-step workflow completed successfully`)
-    return finalResponse
+    let answer = data.choices?.[0]?.message?.content || ''
+
+    if (!answer) {
+      console.log('❌ Empty response from OpenAI, using fallback')
+      return generateFallbackResponse(query, profession, isWetUitleg)
+    }
+
+    // STAP 7: Post-processing
+    answer = detectAndCorrectLegalMistakes(answer)
+    answer = cleanupResponseFormatting(answer)
+    answer = validateLegalResponse(query, answer)
+
+    console.log(`✅ Generated verified response with ${searchResults.totalResults} sources`)
+    return answer
 
   } catch (error) {
-    console.error('Error in verified source response:', error)
-    
-    // Verbeterde fallback: gebruik gewone juridische kennis
-    console.log('🔄 Fallback naar standaard juridische response')
-    return await generateStandardLegalResponse(query, profession, isWetUitleg)
+    console.error('Error in generateVerifiedSourceResponse:', error)
+    return generateFallbackResponse(query, profession, isWetUitleg)
   }
 }
 
@@ -2081,6 +2084,7 @@ Beantwoord vragen uitgebreid en praktisch, alsof je een ervaren juridisch advise
 - **Pas je taalgebruik aan** aan de doelgroep en geef passende uitleg
 - **Zorg voor correcte spatiëring**: schrijf "artikel 5" niet "artikel5"
 - **Wees praktisch en realistisch** in je adviezen
+- **Combineer verschillende bronnen** voor een compleet antwoord
 
 **FORMATTING - COMPACTE OPMAAK:**
 - Gebruik **vet** voor belangrijke termen en artikelnummers  

@@ -16,7 +16,7 @@ export interface GoogleSearchResult {
   snippet: string
   displayLink: string
   formattedUrl: string
-  source: 'wetten.overheid.nl' | 'rechtspraak.nl' | 'tuchtrecht.overheid.nl' | 'boetebase.om.nl' | 'overheid.nl' | 'apv'
+  source: 'wetten.overheid.nl' | 'rechtspraak.nl' | 'tuchtrecht.overheid.nl' | 'boetebase.om.nl' | 'overheid.nl' | 'apv' | 'cao' | 'politiebond' | 'fnv' | 'barp' | 'officiele_documenten'
   validation?: SourceValidation
   isCurrentYear?: boolean
 }
@@ -34,20 +34,42 @@ export interface VerifiedSearchResults {
     boetes: GoogleSearchResult[]
     overheid: GoogleSearchResult[]
     apv: GoogleSearchResult[]
+    cao: GoogleSearchResult[]
+    politiebond: GoogleSearchResult[]
+    fnv: GoogleSearchResult[]
+    barp: GoogleSearchResult[]
+    officiele_documenten: GoogleSearchResult[]
   }
   combinedSnippets: string
   sourceUrls: string[]
   validationSummary: string
 }
 
-// Geverifieerde juridische bronnen - UITGEBREID MET APV's
+// UITGEBREIDE geverifieerde juridische bronnen - inclusief vakbonden, CAO's en officiële documenten
 const VERIFIED_SOURCES = [
+  // Primaire juridische bronnen
   'wetten.overheid.nl',
   'uitspraken.rechtspraak.nl', 
   'tuchtrecht.overheid.nl',
   'boetebase.om.nl',
   'overheid.nl',
-  // APV's en gemeentelijke verordeningen
+  
+  // Politie en handhaving
+  'politie.nl',
+  'om.nl',
+  'rijksoverheid.nl',
+  
+  // Vakbonden en arbeidsrecht
+  'politiebond.nl',
+  'fnv.nl',
+  'cnv.nl',
+  'vcp.nl',
+  
+  // CAO's en arbeidsvoorwaarden
+  'cao-politie.nl',
+  'arbeidsvoorwaarden.overheid.nl',
+  
+  // Gemeenten (APV's)
   'amsterdam.nl',
   'rotterdam.nl',
   'denhaag.nl',
@@ -62,7 +84,27 @@ const VERIFIED_SOURCES = [
   'haarlem.nl',
   'arnhem.nl',
   'zaanstad.nl',
-  'haarlemmermeer.nl'
+  'haarlemmermeer.nl',
+  
+  // Ministeries en officiële instanties
+  'minvenj.nl',
+  'minbzk.nl',
+  'belastingdienst.nl',
+  'cbr.nl',
+  'rdw.nl',
+  'igj.nl',
+  'acm.nl',
+  'afm.nl',
+  
+  // Juridische organisaties
+  'advocatenorde.nl',
+  'kbn.nl', // Koninklijke Beroepsorganisatie van Gerechtsdeurwaarders
+  'notaris.nl',
+  
+  // Veiligheid en beveiliging
+  'veiligheidsregio.nl',
+  'nctv.nl',
+  'wodc.nl'
 ] as const
 
 /**
@@ -85,7 +127,12 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
       tuchtrecht: [],
       boetes: [],
       overheid: [],
-      apv: []
+      apv: [],
+      cao: [],
+      politiebond: [],
+      fnv: [],
+      barp: [],
+      officiele_documenten: []
     },
     combinedSnippets: '',
     sourceUrls: [],
@@ -93,16 +140,32 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
   }
 
   try {
-    // Zoek parallel op alle geverifieerde bronnen + APV's
-    const [wettenResults, rechtspraakResults, tuchtrechtResults, boetesResults, overheidResults, apvResults] = 
-      await Promise.all([
-        searchSpecificSource(query, 'wetten.overheid.nl'),
-        searchSpecificSource(query, 'uitspraken.rechtspraak.nl'),
-        searchSpecificSource(query, 'tuchtrecht.overheid.nl'),
-        searchSpecificSource(query, 'boetebase.om.nl'),
-        searchSpecificSource(query, 'overheid.nl'),
-        searchAPVSources(query)
-      ])
+    // Zoek parallel op alle geverifieerde bronnen
+    const [
+      wettenResults, 
+      rechtspraakResults, 
+      tuchtrechtResults, 
+      boetesResults, 
+      overheidResults, 
+      apvResults,
+      caoResults,
+      politiebondResults,
+      fnvResults,
+      barpResults,
+      officieleDocumentenResults
+    ] = await Promise.all([
+      searchSpecificSource(query, 'wetten.overheid.nl'),
+      searchSpecificSource(query, 'uitspraken.rechtspraak.nl'),
+      searchSpecificSource(query, 'tuchtrecht.overheid.nl'),
+      searchSpecificSource(query, 'boetebase.om.nl'),
+      searchSpecificSource(query, 'overheid.nl'),
+      searchAPVSources(query),
+      searchCAOSources(query),
+      searchPolitiebondSources(query),
+      searchFNVSources(query),
+      searchBARPSources(query),
+      searchOfficieleDocumenten(query)
+    ])
 
     // STAP 3: Valideer alle resultaten op actualiteit
     const validateAndCategorize = (sourceResults: any[], sourceName: string) => {
@@ -123,6 +186,11 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
     results.sources.boetes = validateAndCategorize(boetesResults, 'boetebase.om.nl')
     results.sources.overheid = validateAndCategorize(overheidResults, 'overheid.nl')
     results.sources.apv = validateAndCategorize(apvResults, 'apv')
+    results.sources.cao = validateAndCategorize(caoResults, 'cao')
+    results.sources.politiebond = validateAndCategorize(politiebondResults, 'politiebond')
+    results.sources.fnv = validateAndCategorize(fnvResults, 'fnv')
+    results.sources.barp = validateAndCategorize(barpResults, 'barp')
+    results.sources.officiele_documenten = validateAndCategorize(officieleDocumentenResults, 'officiele_documenten')
 
     // STAP 4: Filter en combineer resultaten
     const allResults = [
@@ -131,7 +199,12 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
       ...results.sources.tuchtrecht,
       ...results.sources.boetes,
       ...results.sources.overheid,
-      ...results.sources.apv
+      ...results.sources.apv,
+      ...results.sources.cao,
+      ...results.sources.politiebond,
+      ...results.sources.fnv,
+      ...results.sources.barp,
+      ...results.sources.officiele_documenten
     ]
 
     // Bereken statistieken
@@ -364,7 +437,7 @@ export async function executeVerifiedSearchWorkflow(question: string): Promise<{
         currentYearResults: 0,
         outdatedResults: 0,
         isHistoricalQuery: false,
-        sources: { wetten: [], rechtspraak: [], tuchtrecht: [], boetes: [], overheid: [], apv: [] },
+        sources: { wetten: [], rechtspraak: [], tuchtrecht: [], boetes: [], overheid: [], apv: [], cao: [], politiebond: [], fnv: [], barp: [], officiele_documenten: [] },
         combinedSnippets: '',
         sourceUrls: [],
         validationSummary: 'Error occurred during search'
@@ -443,6 +516,128 @@ async function searchAPVSources(query: string): Promise<Omit<GoogleSearchResult,
     
   } catch (error) {
     console.warn('Error searching APV sources:', error)
+    return []
+  }
+}
+
+/**
+ * Zoekt specifiek op CAO bronnen en arbeidsvoorwaarden
+ */
+async function searchCAOSources(query: string): Promise<Omit<GoogleSearchResult, 'source'>[]> {
+  const caoSites = [
+    'cao-politie.nl',
+    'arbeidsvoorwaarden.overheid.nl',
+    'rijksoverheid.nl'
+  ]
+  
+  try {
+    const caoSearches = caoSites.map(site => 
+      searchSpecificSource(`${query} CAO arbeidsvoorwaarden`, site)
+    )
+    
+    const allCAOResults = await Promise.all(caoSearches)
+    return allCAOResults.flat().slice(0, 8) // Max 8 CAO resultaten
+    
+  } catch (error) {
+    console.warn('Error searching CAO sources:', error)
+    return []
+  }
+}
+
+/**
+ * Zoekt specifiek op Politiebond bronnen
+ */
+async function searchPolitiebondSources(query: string): Promise<Omit<GoogleSearchResult, 'source'>[]> {
+  try {
+    const results = await searchSpecificSource(`${query} politiebond arbeidsrecht`, 'politiebond.nl')
+    return results.slice(0, 5) // Max 5 politiebond resultaten
+    
+  } catch (error) {
+    console.warn('Error searching Politiebond sources:', error)
+    return []
+  }
+}
+
+/**
+ * Zoekt specifiek op FNV bronnen
+ */
+async function searchFNVSources(query: string): Promise<Omit<GoogleSearchResult, 'source'>[]> {
+  const fnvSites = [
+    'fnv.nl',
+    'cnv.nl',
+    'vcp.nl'
+  ]
+  
+  try {
+    const fnvSearches = fnvSites.map(site => 
+      searchSpecificSource(`${query} vakbond arbeidsrecht`, site)
+    )
+    
+    const allFNVResults = await Promise.all(fnvSearches)
+    return allFNVResults.flat().slice(0, 6) // Max 6 vakbond resultaten
+    
+  } catch (error) {
+    console.warn('Error searching FNV sources:', error)
+    return []
+  }
+}
+
+/**
+ * Zoekt specifiek op BARP (Basisboek Aanhouding, Rechtsmacht en Politiebevoegdheden) en politie-specifieke bronnen
+ */
+async function searchBARPSources(query: string): Promise<Omit<GoogleSearchResult, 'source'>[]> {
+  const barpSites = [
+    'politie.nl',
+    'om.nl',
+    'rijksoverheid.nl'
+  ]
+  
+  try {
+    const barpSearches = barpSites.map(site => 
+      searchSpecificSource(`${query} BARP politiebevoegdheden aanhouding`, site)
+    )
+    
+    const allBARPResults = await Promise.all(barpSearches)
+    return allBARPResults.flat().slice(0, 6) // Max 6 BARP resultaten
+    
+  } catch (error) {
+    console.warn('Error searching BARP sources:', error)
+    return []
+  }
+}
+
+/**
+ * Zoekt op officiële documenten van ministeries en instanties
+ */
+async function searchOfficieleDocumenten(query: string): Promise<Omit<GoogleSearchResult, 'source'>[]> {
+  const officieleInstanties = [
+    'minvenj.nl',
+    'minbzk.nl',
+    'belastingdienst.nl',
+    'cbr.nl',
+    'rdw.nl',
+    'igj.nl',
+    'acm.nl',
+    'afm.nl',
+    'advocatenorde.nl',
+    'kbn.nl',
+    'notaris.nl',
+    'veiligheidsregio.nl',
+    'nctv.nl',
+    'wodc.nl'
+  ]
+  
+  try {
+    // Zoek op de belangrijkste instanties parallel
+    const instantieSearches = officieleInstanties.slice(0, 8).map(site => 
+      searchSpecificSource(`${query} officieel document`, site)
+    )
+    
+    const allInstantieResults = await Promise.all(instantieSearches)
+    return allInstantieResults.flat().slice(0, 12) // Max 12 officiële documenten
+    
+  } catch (error) {
+    console.warn('Error searching officiële documenten:', error)
     return []
   }
 }

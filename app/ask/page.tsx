@@ -767,50 +767,54 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
             <div key={message.id} className="space-y-4">
               {/* User Question */}
               <div className="flex justify-end">
-                <div className="max-w-[85%] md:max-w-[80%] bg-blue-600 text-white rounded-2xl px-3 md:px-4 py-2 md:py-3">
-                  <div className="flex items-start gap-2">
-                    <User className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <p className="text-sm break-words">{message.question}</p>
+                <div className="max-w-[85%] md:max-w-[75%] bg-blue-600 text-white rounded-2xl rounded-br-md px-4 py-3 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <User className="h-4 w-4 mt-0.5 flex-shrink-0 opacity-90" />
+                    <p className="text-sm leading-relaxed break-words">{message.question}</p>
                   </div>
                 </div>
               </div>
 
               {/* Bot Response */}
               <div className="flex justify-start">
-                <div className="max-w-[95%] md:max-w-[90%]">
-                  <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
-                    <div className="p-3 md:p-4">
-                      <div className="flex items-start gap-2 md:gap-3">
-                        <div className="flex-shrink-0 w-6 h-6 md:w-8 md:h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                <div className="w-full max-w-[95%] md:max-w-[85%]">
+                  <div className="bg-white rounded-2xl rounded-bl-md border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="p-4 md:p-6">
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center shadow-sm">
                           {message.isLoading ? (
-                            <Loader2 className="h-3 w-3 md:h-4 md:w-4 text-blue-600 animate-spin" />
+                            <Loader2 className="h-4 w-4 text-blue-600 animate-spin" />
                           ) : (
-                            <Scale className="h-3 w-3 md:h-4 md:w-4 text-blue-600" />
+                            <Scale className="h-4 w-4 text-blue-600" />
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
                           {message.isLoading ? (
-                            <div className="space-y-2">
+                            <div className="space-y-3">
                               <div className="text-sm text-slate-600 flex items-center gap-2">
-                                <span>Bezig met het formuleren van een antwoord</span>
+                                <span className="font-medium">Bezig met het formuleren van een antwoord</span>
                                 <div className="flex space-x-1">
-                                  <div className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
-                                  <div className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
-                                  <div className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+                                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+                                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
+                                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
                                 </div>
                               </div>
-                              <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded">
-                                💡 Wachttijd kan variëren van 10-30 seconden afhankelijk van de complexiteit van uw vraag
+                              <div className="text-xs text-slate-500 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <Clock className="h-3 w-3" />
+                                  <span className="font-medium">Verwachte wachttijd: 10-30 seconden</span>
+                                </div>
+                                <p>Afhankelijk van de complexiteit van uw vraag en de hoeveelheid bronnen die worden geraadpleegd.</p>
                               </div>
                               {message.answer && (
-                                <div className="prose prose-sm max-w-none">
+                                <div className="prose prose-sm md:prose-base max-w-none">
                                   {formatText(message.answer)}
-                                  <div className="inline-block w-2 h-4 bg-blue-600 animate-pulse ml-1"></div>
+                                  <div className="inline-block w-2 h-5 bg-blue-600 animate-pulse ml-1 rounded-sm"></div>
                                 </div>
                               )}
                             </div>
                           ) : (
-                            <div className="prose prose-sm max-w-none">
+                            <div className="prose prose-sm md:prose-base max-w-none">
                               {formatText(message.answer)}
                             </div>
                           )}
@@ -820,15 +824,25 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
                     
                     {/* Action buttons */}
                     {!message.isLoading && message.queryId && (
-                      <div className="border-t border-slate-200 px-3 md:px-4 py-2 flex items-center justify-end gap-2">
-                        <FavoriteButton queryId={message.queryId} />
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          onClick={() => setSelectedCitationQuery({ queryId: message.queryId!, question: message.question })}
-                        >
-                          <Quote className="h-4 w-4" />
-                        </Button>
+                      <div className="border-t border-slate-100 px-4 md:px-6 py-3 bg-slate-50/50 rounded-b-2xl rounded-bl-md">
+                        <div className="flex items-center justify-between">
+                          <div className="text-xs text-slate-500 flex items-center gap-2">
+                            <CheckCircle className="h-3 w-3" />
+                            <span>Antwoord gebaseerd op officiële bronnen</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <FavoriteButton queryId={message.queryId} />
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => setSelectedCitationQuery({ queryId: message.queryId!, question: message.question })}
+                              className="h-8 px-3 text-xs"
+                            >
+                              <Quote className="h-3 w-3 mr-1" />
+                              Citeer
+                            </Button>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -963,4 +977,5 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
       )}
     </div>
   )
+} 
 } 
