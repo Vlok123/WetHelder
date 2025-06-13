@@ -1717,7 +1717,7 @@ Beschikbare informatie:
 ${fragmentsText}
 
 BELANGRIJKE INSTRUCTIES VOOR JE ANTWOORD:
-- Gebruik GEEN Markdown formatting (geen **, ##, _, `, etc.)
+- Gebruik GEEN Markdown formatting (geen **, ##, _, \`, etc.)
 - Schrijf in gewone, natuurlijke Nederlandse tekst
 - Gebruik citaten uit de bronnen door ze tussen aanhalingstekens te plaatsen: "exacte tekst uit bron"
 - Noem altijd de bron bij het antwoord
