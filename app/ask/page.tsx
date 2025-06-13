@@ -61,7 +61,7 @@ interface Message {
   queryId?: string
 }
 
-type Profession = 'aspirant' | 'student' | 'politieagent' | 'advocaat' | 'algemeen' | 'boa' | 'rechter' | 'notaris' | 'deurwaarder' | 'bedrijfsjurist' | 'gemeenteambtenaar' | 'belastingadviseur' | 'accountant' | 'makelaar' | 'verzekeringsagent' | 'hr-medewerker' | 'compliance-officer' | 'veiligheidsbeambte'
+type Profession = 'aspirant' | 'student' | 'politieagent' | 'advocaat' | 'algemeen' | 'boa' | 'rechter' | 'notaris' | 'deurwaarder' | 'bedrijfsjurist' | 'gemeenteambtenaar' | 'belastingadviseur' | 'accountant' | 'makelaar' | 'verzekeringsagent' | 'hr-medewerker' | 'compliance-officer' | 'veiligheidsbeambte' | 'beveiliger'
 
 const professionConfig = {
   algemeen: {
@@ -160,6 +160,12 @@ const professionConfig = {
     color: 'text-red-700 bg-red-50 border-red-200',
     description: 'Veiligheidsrecht en preventie'
   },
+  beveiliger: {
+    icon: Shield,
+    label: '(Bedrijfs)beveiliger',
+    color: 'text-orange-700 bg-orange-50 border-orange-200',
+    description: 'Beveiligingsrecht en private beveiliging'
+  },
   aspirant: {
     icon: UserCheck,
     label: 'Aspirant',
@@ -241,7 +247,7 @@ const formatText = (text: string) => {
           </li>
         ),
         strong: ({ children }) => (
-          <strong className="font-bold text-slate-900 bg-yellow-100 px-1.5 py-0.5 rounded-sm border-l-2 border-yellow-400">
+          <strong className="font-bold text-slate-900">
             {children}
           </strong>
         ),
@@ -859,6 +865,10 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
                 )}
               </Button>
             </div>
+            {/* Subtiele disclaimer */}
+            <p className="text-xs text-slate-500 mt-2 text-center">
+              Deze informatie dient alleen ter informatie. Voor persoonlijk juridisch advies raadpleegt u een advocaat.
+            </p>
           </form>
         </div>
       </div>

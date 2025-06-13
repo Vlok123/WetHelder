@@ -200,6 +200,12 @@ const USER_PROFILES = [
     icon: Shield
   },
   { 
+    value: "beveiliger", 
+    label: "(Bedrijfs)beveiliger",
+    description: "Voor beveiligers en bedrijfsbeveiliging",
+    icon: Shield
+  },
+  { 
     value: "aspirant", 
     label: "Aspirant",
     description: "Voor aspiranten in juridische functies",
@@ -431,13 +437,12 @@ export default function HomePage() {
                 </h2>
                 <form onSubmit={handleSearch} className="relative">
                   <div className="relative">
-                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5 md:h-6 md:w-6" />
                     <Input
                       type="text"
                       placeholder="Stel een juridische vraag of zoek in wetsartikelen..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="input-field pl-12 md:pl-14 pr-4 md:pr-32 h-14 md:h-16 text-base md:text-lg shadow-medium border-2 focus:border-primary/50"
+                      className="input-field pl-4 pr-4 md:pr-32 h-14 md:h-16 text-base md:text-lg shadow-medium border-2 focus:border-primary/50"
                     />
                     <Button 
                       type="submit" 

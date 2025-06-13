@@ -95,11 +95,8 @@ Eindig altijd met een korte bronverwijzing naar de relevante officiële bronnen.
 **VERDERE VRAGEN AANMOEDIGEN:**
 Eindig elk antwoord met: "❓ **Heeft u specifiekere vragen?** Dan help ik graag verder met meer details over dit onderwerp."
 
-**DISCLAIMER VOOR EERSTE BERICHTEN:**
-Begin het eerste antwoord altijd met: "⚖️ **Juridisch advies van WetHelder** - Deze informatie is gebaseerd op officiële Nederlandse bronnen en dient alleen ter informatie. Voor persoonlijk juridisch advies raadpleegt u een advocaat."
-
-**GEEN DISCLAIMER VOOR VERVOLGBERICHTEN:**
-Voor vervolgvragen in hetzelfde gesprek: gebruik GEEN disclaimer, ga direct door met beantwoorden.`
+**GEEN DISCLAIMER IN BERICHTEN:**
+Begin NOOIT met een disclaimer in antwoorden. Ga direct door met beantwoorden van de vraag.`
 
 // Uitgebreide system prompt voor "Wet & Uitleg" mode en "Juridisch Expert" mode (premium functionaliteit)
 const ADVANCED_SYSTEM_PROMPT = `Je bent een Nederlandse juridische expert gespecialiseerd in diepgaande juridische analyse van het Nederlandse rechtssysteem. Je hebt toegang tot officiële bronnen en moet uitgebreide, technisch accurate juridische informatie verstrekken.
@@ -175,11 +172,8 @@ Eindig altijd met uitgebreide bronverwijzing naar alle relevante officiële bron
 **VERDERE VRAGEN AANMOEDIGEN:**
 Eindig elk antwoord met: "❓ **Heeft u specifiekere vragen?** Dan help ik graag verder met meer technische details over dit onderwerp."
 
-**DISCLAIMER VOOR EERSTE BERICHTEN:**
-Begin het eerste antwoord altijd met: "⚖️ **Uitgebreid juridisch advies van WetHelder** - Deze diepgaande analyse is gebaseerd op officiële Nederlandse bronnen en jurisprudentie. Voor persoonlijk juridisch advies raadpleegt u een advocaat."
-
-**GEEN DISCLAIMER VOOR VERVOLGBERICHTEN:**
-Voor vervolgvragen in hetzelfde gesprek: gebruik GEEN disclaimer, ga direct door met beantwoorden.`
+**GEEN DISCLAIMER IN BERICHTEN:**
+Begin NOOIT met een disclaimer in antwoorden. Ga direct door met beantwoorden van de vraag.`
 
 // In-memory store for anonymous user rate limiting (development only)
 const anonymousUsageStore = new Map<string, { count: number; date: string }>()
@@ -1102,6 +1096,19 @@ Focus op **veiligheidsrecht** met beveiligingsjargon:
 - Gebruik beveiligingstermen: "surveillance", "toegangscontrole", "incidentmanagement"
 - Operationele begrippen: "observatie", "rapportage", "escalatie", "interventie"
 `
+    case "beveiliger":
+      return `
+**DOELGROEP: (Bedrijfs)beveiliger**
+Focus op **private beveiligingsrecht** met beveiligingsjargon:
+- Wet particuliere beveiligingsorganisaties (Wpbr, beveiligingsvergunning, diploma-eisen)
+- Bevoegdheden private beveiliging (burgerarrest art. 53 Sv, noodweer art. 41 Sr)
+- Toegangscontrole en eigendomsrecht (huisrecht, betreding, uitsluiting)
+- Incidentmanagement en rapportage (incidentrapport, politie-overdracht)
+- Samenwerking met politie (wanneer doorverwijzen, escalatieprocedures)
+- Gebruik beveiligingstermen: "toegangscontrole", "surveillance", "rondgang", "monitoring"
+- Operationele begrippen: "incidentregistratie", "rapportage", "escalatie", "handhaving"
+- Juridische grenzen: "proportionaliteit", "subsidiariteit", "rechtmatigheid"
+`
     case "aspirant":
       return `
 **DOELGROEP: Aspirant (Politie/Justitie)**
@@ -1771,9 +1778,22 @@ Voor de vraag "${query}" zijn geen relevante resultaten gevonden in de officiël
       fragmentsText += `URL: ${result.url}\n\n`
     })
     
+    // Build conversation context if available
+    let conversationContext = ''
+    if (conversationHistory.length > 0) {
+      conversationContext = '\n\nVOORGAANDE GESPREK:\n'
+      for (let i = 0; i < conversationHistory.length; i += 2) {
+        if (i + 1 < conversationHistory.length) {
+          conversationContext += `Vraag: ${conversationHistory[i]}\n`
+          conversationContext += `Antwoord: ${conversationHistory[i + 1]}\n\n`
+        }
+      }
+      conversationContext += 'HUIDIGE VRAAG (bouw voort op het voorgaande gesprek):\n'
+    }
+    
     const systemPrompt = `Je bent een juridisch AI-assistent. Beantwoord onderstaande vraag uitsluitend op basis van de fragmenten uit officiële bronnen.
 
-Vraag: ${query}
+${conversationContext}Vraag: ${query}
 
 Beschikbare informatie:
 ${fragmentsText}
@@ -1781,6 +1801,7 @@ ${fragmentsText}
 BELANGRIJKE INSTRUCTIES VOOR JE ANTWOORD:
 - Gebruik GEEN Markdown formatting (geen **, ##, _, \`, etc.)
 - Schrijf in gewone, natuurlijke Nederlandse tekst met duidelijke structuur
+- Als dit een vervolgvraag is, verwijs naar eerdere antwoorden en bouw daarop voort
 - Gebruik citaten uit de bronnen door ze tussen aanhalingstekens te plaatsen: "exacte tekst uit bron"
 - Noem altijd de bron bij het antwoord
 - Structureer je antwoord met duidelijke kopjes en secties:
@@ -1794,6 +1815,7 @@ BELANGRIJKE INSTRUCTIES VOOR JE ANTWOORD:
 - Als iets onduidelijk is uit de fragmenten, zeg dat expliciet
 - Geef geen informatie die niet in de fragmenten staat
 - Begin direct met het antwoord, geen headers of titels
+- Houd rekening met de context van het voorgaande gesprek
 
 Het is nu ${currentYear}. Als de informatie uit een ander jaar komt, vermeld dit expliciet.
 
