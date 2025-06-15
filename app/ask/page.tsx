@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, Suspense } from 'react'
 import { useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -414,7 +414,7 @@ const mapProfileToProfession = (profile: string): Profession => {
   return mapping[profile] || 'algemeen'
 }
 
-export default function AskPage() {
+function AskPageContent() {
   const { data: session, status } = useSession()
   const isDevelopment = process.env.NODE_ENV === 'development'
   const [messages, setMessages] = useState<Message[]>([])
@@ -1071,5 +1071,18 @@ export default function AskPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function AskPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="text-center">
+        <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+        <p className="text-gray-600">Laden...</p>
+      </div>
+    </div>}>
+      <AskPageContent />
+    </Suspense>
   )
 }
