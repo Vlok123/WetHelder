@@ -61,6 +61,7 @@ export const authOptions: NextAuthOptions = {
                 email: user.email,
                 name: user.name,
                 role: user.role,
+                isBlocked: user.isBlocked || false,
               }
             }
           }
@@ -76,8 +77,9 @@ export const authOptions: NextAuthOptions = {
               return {
                 id: mockUser.id,
                 email: mockUser.email,
-                name: mockUser.name,
+                name: mockUser.name || mockUser.email.split('@')[0],
                 role: mockUser.role === 'admin' ? 'ADMIN' : 'USER',
+                isBlocked: false,
               }
             }
           } catch (mockError) {
@@ -114,7 +116,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (token && token.sub) {
         session.user.id = token.sub
-        session.user.role = token.role
+        session.user.role = token.role || 'FREE'
         
         // Ensure admin role for sanderhelmink@gmail.com
         if (session.user.email === 'sanderhelmink@gmail.com') {

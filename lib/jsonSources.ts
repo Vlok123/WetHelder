@@ -119,7 +119,7 @@ export async function loadJsonSources(): Promise<JsonBron[]> {
           return null
         }
       })
-      .filter((source): source is JsonBron => source !== null)
+      .filter((source: JsonBron | null): source is JsonBron => source !== null)
     
     console.log(`✅ ${sources.length} bronnen geladen uit JSON bestand`)
     

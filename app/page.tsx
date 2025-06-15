@@ -391,7 +391,7 @@ export default function HomePage() {
             Klaar om te beginnen?
           </h2>
           <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-            Krijg direct antwoord op uw juridische vragen met WetHelder's intelligente assistent.
+            Krijg direct antwoord op uw juridische vragen met WetHelder&apos;s intelligente assistent.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
