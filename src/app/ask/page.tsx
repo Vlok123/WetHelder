@@ -33,7 +33,7 @@ export default function AskPage() {
     if (answerParam) {
       setAnswer(decodeURIComponent(answerParam));
     }
-  }, []); // Only run once on mount
+  }, [searchParams]); // Include searchParams dependency
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
