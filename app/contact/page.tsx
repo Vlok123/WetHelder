@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Mail, MapPin, Phone, Send, CheckCircle, Clock, Users, MessageCircle, ExternalLink } from 'lucide-react'
+import Link from 'next/link'
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -75,7 +76,7 @@ export default function ContactPage() {
               </p>
             </div>
             <Button asChild>
-              <a href="/">Terug naar Homepage</a>
+              <Link href="/">Terug naar Homepage</Link>
             </Button>
           </div>
         </div>

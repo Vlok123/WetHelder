@@ -277,7 +277,7 @@ export default function SearchPage() {
                         <h2 className="text-lg font-semibold">Zoekresultaten</h2>
                         {results.length > 0 && (
                           <p className="text-sm text-gray-600">
-                            {results.length} resultaten gevonden voor "{searchQuery}"
+                            {results.length} resultaten gevonden voor &quot;{searchQuery}&quot;
                           </p>
                         )}
                       </div>

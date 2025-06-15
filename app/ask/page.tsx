@@ -207,7 +207,7 @@ const formatText = (text: string): React.ReactElement => {
   if (!text) return <div></div>
   
   // Step 1: Clean all markdown syntax completely and apply UI/UX rules
-  let processedText = text
+  const processedText = text
     // Remove AI references
     .replace(/\b(AI|artificial intelligence|machine learning|ML|chatbot|bot|assistant|model)\b/gi, 'systeem')
     // Remove ALL markdown formatting completely
@@ -415,9 +415,8 @@ const mapProfileToProfession = (profile: string): Profession => {
 }
 
 export default function AskPage() {
-  const { data: session, status } = process.env.NODE_ENV === 'development' 
-    ? { data: null, status: 'unauthenticated' as const }
-    : useSession()
+  const { data: session, status } = useSession()
+  const isDevelopment = process.env.NODE_ENV === 'development'
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -601,7 +600,7 @@ export default function AskPage() {
     return () => window.removeEventListener('storage', handleStorageChange)
   }, [])
 
-  const handleSubmit = async (e: React.FormEvent, overrideProfession?: Profession) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent, overrideProfession?: Profession) => {
     e.preventDefault()
     if (!input.trim() || isLoading) return
 
@@ -704,7 +703,7 @@ export default function AskPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [input, isLoading, profession, messages, setMessages, setInput, setIsLoading, setRemainingQuestions])
 
   const clearConversation = () => {
     setMessages([])
