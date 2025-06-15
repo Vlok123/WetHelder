@@ -90,7 +90,7 @@ export function createTextBundle(searchBundle: SearchBundle): string {
 export function createChatGPTPrompt(originalQuery: string, textBundle: string): string {
   const currentYear = new Date().getFullYear()
   
-  return `Je bent een juridisch AI-assistent. Beantwoord onderstaande vraag uitsluitend op basis van de fragmenten uit officiële bronnen.
+  return `Je bent een juridisch assistent. Beantwoord onderstaande vraag uitsluitend op basis van de fragmenten uit officiële bronnen.
 
 ❓ Vraag:
 ${originalQuery}
@@ -131,7 +131,7 @@ export async function getAnswerFromChatGPT(prompt: string): Promise<string> {
         messages: [
           {
             role: 'system',
-            content: 'Je bent een juridisch AI-assistent die alleen antwoordt op basis van verstrekte bronnen.'
+            content: 'Je bent een juridisch assistent die alleen antwoordt op basis van verstrekte bronnen.'
           },
           {
             role: 'user',

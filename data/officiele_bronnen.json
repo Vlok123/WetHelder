@@ -1,0 +1,452 @@
+{
+  "Sheet1": [
+    {
+      "Categorie": "Wetgeving – nationaal",
+      "Topic": "Geconsolideerde wetten",
+      "Bron (naam)": "Wetten.nl",
+      "URL": "https://wetten.overheid.nl",
+      "Omschrijving": "Volledige, actuele wetteksten (BW, WVW, etc.)",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Wetgeving – nationaal",
+      "Topic": "Politiewet 2012",
+      "Bron (naam)": "Politiewet – Wetten.nl",
+      "URL": "https://wetten.overheid.nl/BWBR0031788",
+      "Omschrijving": "Wet op de politieorganisatie & bevoegdheden",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Wetgeving – nationaal",
+      "Topic": "Staatsblad",
+      "Bron (naam)": "Staatsblad (Officiële Bekendmakingen)",
+      "URL": "https://www.officielebekendmakingen.nl",
+      "Omschrijving": "Nieuwe wetten & wijzigingen",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Wetgeving – nationaal",
+      "Topic": "Staatscourant",
+      "Bron (naam)": "Staatscourant (Officiële Bekendmakingen)",
+      "URL": "https://www.officielebekendmakingen.nl",
+      "Omschrijving": "Regelingen & ministeriële besluiten",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Wetgeving – nationaal",
+      "Topic": "Tractatenblad",
+      "Bron (naam)": "Tractatenblad",
+      "URL": "https://www.officielebekendmakingen.nl",
+      "Omschrijving": "Internationale verdragen NL",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Wetgeving – nationaal",
+      "Topic": "APV & lokale regels",
+      "Bron (naam)": "LokaleRegelgeving.Overheid.nl",
+      "URL": "https://lokaleregelgeving.overheid.nl",
+      "Omschrijving": "Gemeentelijke & provinciale verordeningen",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Wetgeving – nationaal",
+      "Topic": "BARP",
+      "Bron (naam)": "BARP – Wetten.nl",
+      "URL": "https://wetten.overheid.nl/BWBR0015697",
+      "Omschrijving": "Arbeidsregeling politie",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Wetgeving – nationaal",
+      "Topic": "Arbeidstijdenwet (ATW)",
+      "Bron (naam)": "ATW – Wetten.nl",
+      "URL": "https://wetten.overheid.nl/BWBR0007671",
+      "Omschrijving": "Arbeidstijd & rust",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Wetgeving – nationaal",
+      "Topic": "Arbowet",
+      "Bron (naam)": "Arbowet – Wetten.nl",
+      "URL": "https://wetten.overheid.nl/BWBR0010346",
+      "Omschrijving": "Gezond & veilig werken",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Wetgeving – nationaal",
+      "Topic": "Burgerlijk Wetboek (BW)",
+      "Bron (naam)": "BW – Wetten.nl",
+      "URL": "https://wetten.overheid.nl/BWBR0002656",
+      "Omschrijving": "Civiel recht",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Wetgeving – nationaal",
+      "Topic": "Algemene wet bestuursrecht (Awb)",
+      "Bron (naam)": "Awb – Wetten.nl",
+      "URL": "https://wetten.overheid.nl/BWBR0005537",
+      "Omschrijving": "Bestuursrecht",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Wetgeving – nationaal",
+      "Topic": "Wet IB 2001",
+      "Bron (naam)": "Wet IB – Wetten.nl",
+      "URL": "https://wetten.overheid.nl/BWBR0011796",
+      "Omschrijving": "Inkomstenbelasting",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Wetgeving – nationaal",
+      "Topic": "Wet OB 1968",
+      "Bron (naam)": "Wet OB – Wetten.nl",
+      "URL": "https://wetten.overheid.nl/BWBR0002629",
+      "Omschrijving": "BTW-wetgeving",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Wetgeving – nationaal",
+      "Topic": "Belastingdienst tarieven",
+      "Bron (naam)": "Belastingdienst",
+      "URL": "https://www.belastingdienst.nl",
+      "Omschrijving": "Fiscale tabellen & regelingen",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Wetgeving – EU",
+      "Topic": "EUR-Lex",
+      "Bron (naam)": "EUR-Lex",
+      "URL": "https://eur-lex.europa.eu",
+      "Omschrijving": "EU-richtlijnen & verordeningen",
+      "Scope": "EU"
+    },
+    {
+      "Categorie": "Wetgeving – EU",
+      "Topic": "GDPR/AVG",
+      "Bron (naam)": "GDPR – EUR-Lex",
+      "URL": "https://eur-lex.europa.eu/eli/reg/2016/679",
+      "Omschrijving": "Privacy-verordening",
+      "Scope": "EU"
+    },
+    {
+      "Categorie": "Wetgeving – Internationaal",
+      "Topic": "ILO Normlex",
+      "Bron (naam)": "ILO Normlex",
+      "URL": "https://normlex.ilo.org",
+      "Omschrijving": "Arbeidsverdragen",
+      "Scope": "INT"
+    },
+    {
+      "Categorie": "Jurisprudentie",
+      "Topic": "Rechtspraak.nl",
+      "Bron (naam)": "Rechtspraak.nl",
+      "URL": "https://www.rechtspraak.nl",
+      "Omschrijving": "ECLI-gecodeerde uitspraken",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Jurisprudentie",
+      "Topic": "Hoge Raad",
+      "Bron (naam)": "Hoge Raad – Rechtspraak",
+      "URL": "https://www.rechtspraak.nl/Organisatie-en-contact/Organisatie/Hoge-Raad-der-Nederlanden",
+      "Omschrijving": "Cassatierecht",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Jurisprudentie",
+      "Topic": "EHRM (HUDOC)",
+      "Bron (naam)": "HUDOC",
+      "URL": "https://hudoc.echr.coe.int",
+      "Omschrijving": "EVRM jurisprudentie",
+      "Scope": "EU"
+    },
+    {
+      "Categorie": "Jurisprudentie",
+      "Topic": "CJEU (CURIA)",
+      "Bron (naam)": "CURIA",
+      "URL": "https://curia.europa.eu",
+      "Omschrijving": "EU Hof van Justitie uitspraken",
+      "Scope": "EU"
+    },
+    {
+      "Categorie": "CAO",
+      "Topic": "CAO-register",
+      "Bron (naam)": "CAO-register (MinSZW)",
+      "URL": "https://cao.minszw.nl",
+      "Omschrijving": "Alle cao's & AVV",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "CAO",
+      "Topic": "CAO-Rijk",
+      "Bron (naam)": "CAO Rijk",
+      "URL": "https://www.caorijk.nl",
+      "Omschrijving": "Rijksambtenaren",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "CAO",
+      "Topic": "CAO Politie",
+      "Bron (naam)": "CAO Politie",
+      "URL": "https://www.politiebond.nl/caopol",
+      "Omschrijving": "Arbeidsvoorwaarden politie",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Officiële bekendmakingen",
+      "Topic": "Gemeenteblad",
+      "Bron (naam)": "Gemeenteblad",
+      "URL": "https://www.officielebekendmakingen.nl",
+      "Omschrijving": "Lokale publicaties",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Officiële bekendmakingen",
+      "Topic": "Provinciaal blad",
+      "Bron (naam)": "Provinciaal Blad",
+      "URL": "https://www.officielebekendmakingen.nl",
+      "Omschrijving": "Provinciale publicaties",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Officiële bekendmakingen",
+      "Topic": "Waterschapsblad",
+      "Bron (naam)": "Waterschapsblad",
+      "URL": "https://www.officielebekendmakingen.nl",
+      "Omschrijving": "Waterschapregels",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Bedrijfsregels",
+      "Topic": "Kamer van Koophandel",
+      "Bron (naam)": "KVK",
+      "URL": "https://www.kvk.nl",
+      "Omschrijving": "Handelsregister & info",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Bedrijfsregels",
+      "Topic": "Corporate Governance Code",
+      "Bron (naam)": "MCCG",
+      "URL": "https://www.mccg.nl",
+      "Omschrijving": "Governance beursvennootschappen",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Bedrijfsregels",
+      "Topic": "AFM regelgeving",
+      "Bron (naam)": "AFM",
+      "URL": "https://www.afm.nl/nl-nl/professionals/onderwerpen",
+      "Omschrijving": "Financieel toezicht",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Bedrijfsregels",
+      "Topic": "DNB regelgeving",
+      "Bron (naam)": "DNB",
+      "URL": "https://www.dnb.nl/regelgeving",
+      "Omschrijving": "Prudentiële regels",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Bedrijfsregels",
+      "Topic": "ACM besluiten",
+      "Bron (naam)": "ACM",
+      "URL": "https://www.acm.nl/nl/publicaties",
+      "Omschrijving": "Mededinging & consumentenrecht",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Bedrijfsregels",
+      "Topic": "Justis screenings",
+      "Bron (naam)": "Justis",
+      "URL": "https://www.justis.nl",
+      "Omschrijving": "VOG & integriteit",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Inspecties",
+      "Topic": "Arbeidsinspectie",
+      "Bron (naam)": "Nederlandse Arbeidsinspectie",
+      "URL": "https://www.nlarbeidsinspectie.nl",
+      "Omschrijving": "Handhaving arbeid",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Inspecties",
+      "Topic": "IGJ",
+      "Bron (naam)": "IGJ",
+      "URL": "https://www.igj.nl",
+      "Omschrijving": "Zorginspectie",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Inspecties",
+      "Topic": "NVWA",
+      "Bron (naam)": "NVWA",
+      "URL": "https://www.nvwa.nl",
+      "Omschrijving": "Voedsel & waren",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Inspecties",
+      "Topic": "ILT",
+      "Bron (naam)": "Inspectie Leefomgeving en Transport",
+      "URL": "https://www.ilent.nl",
+      "Omschrijving": "Transport & milieu",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Handhaving",
+      "Topic": "Boetebase OM",
+      "Bron (naam)": "Boetebase",
+      "URL": "https://boetebase.om.nl",
+      "Omschrijving": "Feitcodes & boetes",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Handhaving",
+      "Topic": "CJIB",
+      "Bron (naam)": "CJIB",
+      "URL": "https://www.cjib.nl",
+      "Omschrijving": "Incasso verkeersboetes",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Handhaving",
+      "Topic": "Politiewet info",
+      "Bron (naam)": "Politie.nl",
+      "URL": "https://www.politie.nl",
+      "Omschrijving": "Politie-info & protocollen",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Sociale zekerheid",
+      "Topic": "UWV",
+      "Bron (naam)": "UWV",
+      "URL": "https://www.uwv.nl",
+      "Omschrijving": "WW, WIA",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Sociale zekerheid",
+      "Topic": "SVB",
+      "Bron (naam)": "SVB",
+      "URL": "https://www.svb.nl",
+      "Omschrijving": "AOW, kinderbijslag",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Sociale zekerheid",
+      "Topic": "CAK",
+      "Bron (naam)": "CAK",
+      "URL": "https://www.hetcak.nl",
+      "Omschrijving": "Wmo, WLZ eigen bijdragen",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Juridisch advies",
+      "Topic": "Juridisch Loket",
+      "Bron (naam)": "Juridisch Loket",
+      "URL": "https://www.juridischloket.nl",
+      "Omschrijving": "Gratis eerste lijns juridisch advies",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Juridisch advies",
+      "Topic": "Raad voor Rechtsbijstand",
+      "Bron (naam)": "RvR",
+      "URL": "https://www.rvr.org",
+      "Omschrijving": "Gesubsidieerde rechtsbijstand",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Slachtofferhulp",
+      "Topic": "Slachtofferhulp Nederland",
+      "Bron (naam)": "Slachtofferhulp",
+      "URL": "https://www.slachtofferhulp.nl",
+      "Omschrijving": "Hulp aan slachtoffers",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Slachtofferhulp",
+      "Topic": "Bureau HALT",
+      "Bron (naam)": "HALT",
+      "URL": "https://www.halt.nl",
+      "Omschrijving": "Strafalternatieven jeugd",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Registers",
+      "Topic": "BIG-register",
+      "Bron (naam)": "BIG-register",
+      "URL": "https://www.bigregister.nl",
+      "Omschrijving": "Beroepen in de zorg",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Registers",
+      "Topic": "Insolventieregister",
+      "Bron (naam)": "Insolventieregister – Rechtspraak",
+      "URL": "https://insolventies.rechtspraak.nl",
+      "Omschrijving": "Faillissementen & WSNP",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Registers",
+      "Topic": "Kadaster",
+      "Bron (naam)": "Kadaster",
+      "URL": "https://www.kadaster.nl",
+      "Omschrijving": "Vastgoed & percelen",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Registers",
+      "Topic": "UBO-register",
+      "Bron (naam)": "UBO-register (KVK)",
+      "URL": "https://www.kvk.nl/ubo-register",
+      "Omschrijving": "Ultimate Beneficial Owners",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Referentie",
+      "Topic": "CBS StatLine",
+      "Bron (naam)": "CBS",
+      "URL": "https://opendata.cbs.nl",
+      "Omschrijving": "Statistische data",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Referentie",
+      "Topic": "NIBUD",
+      "Bron (naam)": "NIBUD",
+      "URL": "https://www.nibud.nl",
+      "Omschrijving": "Budgetnormen",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Referentie",
+      "Topic": "data.overheid.nl",
+      "Bron (naam)": "Open Data Portaal",
+      "URL": "https://data.overheid.nl",
+      "Omschrijving": "Datasetcatalogus overheid",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Gezondheid",
+      "Topic": "RIVM richtlijnen",
+      "Bron (naam)": "RIVM",
+      "URL": "https://www.rivm.nl",
+      "Omschrijving": "Volksgezondheid & milieu",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Gezondheid",
+      "Topic": "GGD GHOR richtlijnen",
+      "Bron (naam)": "GGD GHOR",
+      "URL": "https://www.ggdghor.nl",
+      "Omschrijving": "Publieke gezondheid protocollen",
+      "Scope": "NL"
+    }
+  ]
+}

@@ -107,7 +107,7 @@ function generateCitations(query: any, sources: any[], style: string) {
 }
 
 function generateAPACitation(query: any, sources: any[], accessDate: string, year: number) {
-  const baseText = `WetHelder AI. (${year}). Juridisch advies betreffende: "${query.question}". Geraadpleegd op ${accessDate}, van https://wethelder.nl`
+        const baseText = `WetHelder. (${year}). Juridisch advies betreffende: "${query.question}". Geraadpleegd op ${accessDate}, van https://wethelder.nl`
   
   if (sources.length === 0) {
     return baseText
@@ -127,7 +127,7 @@ function generateAPACitation(query: any, sources: any[], accessDate: string, yea
 }
 
 function generateMLACitation(query: any, sources: any[], accessDate: string, year: number) {
-  const baseText = `WetHelder AI. "Juridisch advies betreffende: ${query.question}." WetHelder, ${year}, wethelder.nl. Geraadpleegd ${accessDate}.`
+        const baseText = `WetHelder. "Juridisch advies betreffende: ${query.question}." WetHelder, ${year}, wethelder.nl. Geraadpleegd ${accessDate}.`
   
   if (sources.length === 0) {
     return baseText
@@ -147,7 +147,7 @@ function generateMLACitation(query: any, sources: any[], accessDate: string, yea
 }
 
 function generateChicagoCitation(query: any, sources: any[], accessDate: string, year: number) {
-  const baseText = `WetHelder AI. "Juridisch advies betreffende: ${query.question}." WetHelder. Geraadpleegd ${accessDate}. https://wethelder.nl.`
+        const baseText = `WetHelder. "Juridisch advies betreffende: ${query.question}." WetHelder. Geraadpleegd ${accessDate}. https://wethelder.nl.`
   
   if (sources.length === 0) {
     return baseText
@@ -167,7 +167,7 @@ function generateChicagoCitation(query: any, sources: any[], accessDate: string,
 }
 
 function generateHarvardCitation(query: any, sources: any[], accessDate: string, year: number) {
-  const baseText = `WetHelder AI (${year}) 'Juridisch advies betreffende: ${query.question}', WetHelder, geraadpleegd ${accessDate}, <https://wethelder.nl>.`
+        const baseText = `WetHelder (${year}) 'Juridisch advies betreffende: ${query.question}', WetHelder, geraadpleegd ${accessDate}, <https://wethelder.nl>.`
   
   if (sources.length === 0) {
     return baseText
@@ -187,7 +187,7 @@ function generateHarvardCitation(query: any, sources: any[], accessDate: string,
 }
 
 function generateVancouverCitation(query: any, sources: any[], accessDate: string, year: number) {
-  const baseText = `1. WetHelder AI. Juridisch advies betreffende: ${query.question} [Internet]. WetHelder; ${year} [geraadpleegd ${accessDate}]. Beschikbaar op: https://wethelder.nl`
+        const baseText = `1. WetHelder. Juridisch advies betreffende: ${query.question} [Internet]. WetHelder; ${year} [geraadpleegd ${accessDate}]. Beschikbaar op: https://wethelder.nl`
   
   if (sources.length === 0) {
     return baseText

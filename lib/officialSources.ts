@@ -1465,4 +1465,85 @@ export function detectAndCorrectLegalMistakes(text: string): string {
   correctedText = correctedText.replace(/\bvervolging(\w+)/gi, 'vervolging $1')
   
   return correctedText
+}
+
+// === BIJZONDERE WETGEVING CONTROLE ===
+export interface BijzondereWet {
+  naam: string;
+  trefwoorden: string[];
+  url: string;
+  categorie: string;
+}
+
+const BIJZONDERE_WETGEVING: BijzondereWet[] = [
+  {
+    naam: "Wet op de economische delicten",
+    trefwoorden: ["economisch delict", "wed", "vuurwerk", "milieu", "economische overtreding"],
+    url: "https://wetten.overheid.nl/BWBR0002063",
+    categorie: "Economisch strafrecht"
+  },
+  {
+    naam: "Wet wapens en munitie",
+    trefwoorden: ["wapen", "vuurwapen", "munitie", "wwm", "mes", "verboden wapenbezit"],
+    url: "https://wetten.overheid.nl/BWBR0008804",
+    categorie: "Wapenwetgeving"
+  },
+  {
+    naam: "Wet dieren",
+    trefwoorden: ["dier", "dierenwelzijn", "huisdier", "veehouderij", "dierenmishandeling"],
+    url: "https://wetten.overheid.nl/BWBR0030250",
+    categorie: "Dierenwetgeving"
+  },
+  {
+    naam: "Drank- en Horecawet",
+    trefwoorden: ["alcohol", "horeca", "drank", "café", "restaurant", "slijterij"],
+    url: "https://wetten.overheid.nl/BWBR0002458",
+    categorie: "Horecawetgeving"
+  },
+  {
+    naam: "Geneesmiddelenwet",
+    trefwoorden: ["medicijn", "geneesmiddel", "apotheek", "medicatie", "drugs"],
+    url: "https://wetten.overheid.nl/BWBR0021505",
+    categorie: "Gezondheidswetgeving"
+  },
+  {
+    naam: "Arbeidsomstandighedenwet",
+    trefwoorden: ["arbo", "werkplek", "arbeidsomstandigheden", "veiligheid", "gezondheid"],
+    url: "https://wetten.overheid.nl/BWBR0010346",
+    categorie: "Arbeidswetgeving"
+  }
+];
+
+export async function checkBijzondereWetgeving(vraag: string): Promise<BijzondereWet[]> {
+  const vraagLowerCase = vraag.toLowerCase();
+  const relevanteWetten = BIJZONDERE_WETGEVING.filter(wet => 
+    wet.trefwoorden.some(trefwoord => vraagLowerCase.includes(trefwoord))
+  );
+  
+  return relevanteWetten;
+}
+
+// === ACTUELE WETGEVING CONTROLE ===
+export interface WetUpdate {
+  oudArtikel: string;
+  nieuwArtikel: string;
+  datumWijziging: Date;
+  toelichting?: string;
+}
+
+const WETSUPDATES: WetUpdate[] = [
+  {
+    oudArtikel: "artikel 36 Wet dieren",
+    nieuwArtikel: "artikel 2.1 Wet dieren",
+    datumWijziging: new Date("2022-01-01"),
+    toelichting: "Hernummering bij Wet dieren modernisering"
+  }
+];
+
+export async function checkActueleWetgeving(tekst: string): Promise<WetUpdate[]> {
+  const relevantUpdates = WETSUPDATES.filter(update => 
+    tekst.includes(update.oudArtikel)
+  );
+  
+  return relevantUpdates;
 } 

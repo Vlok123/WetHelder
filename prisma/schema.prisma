@@ -44,20 +44,28 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?   // Voor email/password login
-  role          String    @default("FREE") // FREE, PREMIUM, ADMIN
+  role          String    @default("user")
+  isBlocked     Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   
   // Relations
   accounts      Account[]
   sessions      Session[]
-  queries       Query[]
+  questions     Question[]
+  favorites     Favorite[]
   dailyUsage    DailyUsage[]
+  queries       Query[]
+  userFavorites UserFavorite[]
   
-  // Nieuwe relaties voor uitgebreid ledendeel
+  // Nieuwe relaties
+  notifications        Notification[]
+  notificationSettings NotificationSetting?
+  activityLogs        ActivityLog[]
+  
+  // Bestaande relaties
   notes         UserNote[]
   categories    UserCategory[]
-  favorites     UserFavorite[]
   searchHistory UserSearchHistory[]
   adminLogs     AdminLog[] @relation("AdminLogs")
 
@@ -384,4 +392,78 @@ model SystemSetting {
 
   @@index([category])
   @@index([isPublic])
+}
+
+model Question {
+  id          String    @id @default(cuid())
+  content     String
+  answer      String    @default("")
+  isHighlight Boolean   @default(false)
+  metadata    String?   @default("{}")  // JSON string for additional data like profile
+  profile     String    @default("algemeen")
+  anonymousIp String?   // For tracking anonymous users
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String?   // Made optional for anonymous users
+  user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  favorites   Favorite[]
+
+  @@index([anonymousIp, createdAt])
+}
+
+model Favorite {
+  id         String   @id @default(cuid())
+  userId     String
+  questionId String
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questionId])
+}
+
+// Notificatie model
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // QUESTION_ANSWERED, FAVORITE_ADDED, SYSTEM_UPDATE, etc.
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([type])
+  @@index([isRead])
+}
+
+// Notificatie instellingen per gebruiker
+model NotificationSetting {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  emailNotifications    Boolean  @default(true)
+  questionNotifications Boolean  @default(true)
+  systemUpdates        Boolean  @default(true)
+  favoriteNotifications Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Activiteitenlog voor gebruikers
+model ActivityLog {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // LOGIN, QUESTION_ASKED, FAVORITE_ADDED, SETTINGS_CHANGED, etc.
+  description String
+  metadata    String?  // JSON string met extra informatie
+  createdAt   DateTime @default(now())
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([type])
 } 

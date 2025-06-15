@@ -1,503 +1,223 @@
 'use client'
 
-import React, { useState } from 'react'
-import { useSession, signIn } from 'next-auth/react'
+import { useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { Navigation } from '@/components/navigation'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
+
 import { 
   Scale, 
-  Search,
+  MessageSquare, 
+  Search, 
   BookOpen, 
-  Shield,
-  Gavel,
-  FileText,
-  Users,
-  ChevronRight,
-  LogIn,
-  Star,
-  CheckCircle,
+  Users, 
+  Shield, 
+  GraduationCap, 
+  Briefcase,
   ArrowRight,
+  Star,
   Zap,
-  Clock,
+  Globe,
   Lock,
-  User,
-  Building,
-  MapPin,
-  Calculator,
-  Home,
-  HelpCircle,
-  X
+  Clock,
+  CheckCircle2,
+  Check
 } from 'lucide-react'
-import Link from 'next/link'
 
-// Professional feature cards - zonder boetes
-const MAIN_FEATURES = [
+const professionProfiles = [
   {
-    title: "Juridische Vragen",
-    description: "Stel vragen over Nederlandse wetgeving en krijg uitleg gebaseerd op officiële bronnen",
+    id: 'algemeen',
+    name: 'Burger/Algemeen',
+    description: 'Voor alle burgers met juridische vragen',
+    icon: Users,
+    color: 'bg-blue-50 text-blue-700 border-blue-200'
+  },
+  {
+    id: 'advocaat',
+    name: 'Advocaat/Jurist',
+    description: 'Juridische professionals',
+    icon: Scale,
+    color: 'bg-purple-50 text-purple-700 border-purple-200'
+  },
+  {
+    id: 'politieagent',
+    name: 'Politieagent',
+    description: 'Handhaving en strafrecht',
+    icon: Shield,
+    color: 'bg-green-50 text-green-700 border-green-200'
+  },
+  {
+    id: 'boa',
+    name: 'BOA/Handhaver',
+    description: 'Buitengewoon opsporingsambtenaar',
+    icon: Shield,
+    color: 'bg-orange-50 text-orange-700 border-orange-200'
+  },
+  {
+    id: 'student',
+    name: 'Student',
+    description: 'Rechtenstudenten en onderzoek',
+    icon: GraduationCap,
+    color: 'bg-pink-50 text-pink-700 border-pink-200'
+  },
+  {
+    id: 'gemeentejurist',
+    name: 'Gemeentejurist',
+    description: 'Bestuursrecht en lokale verordeningen',
+    icon: Briefcase,
+    color: 'bg-indigo-50 text-indigo-700 border-indigo-200'
+  },
+  {
+    id: 'beveiliger',
+    name: 'Beveiliger',
+    description: 'Private beveiliging en toezicht',
+    icon: Shield,
+    color: 'bg-red-50 text-red-700 border-red-200'
+  },
+  {
+    id: 'zorgprofessional',
+    name: 'Zorgprofessional',
+    description: 'Gezondheidszorg en psychiatrie',
+    icon: Users,
+    color: 'bg-teal-50 text-teal-700 border-teal-200'
+  }
+]
+
+const features = [
+  {
+    icon: MessageSquare,
+    title: 'Juridische Chat',
+    description: 'Stel juridische vragen en krijg direct professionele antwoorden gebaseerd op Nederlandse wetgeving.',
+    href: '/ask'
+  },
+  {
+    icon: Search,
+    title: 'Wetgeving Zoeken',
+    description: 'Doorzoek 15.000+ wetsartikelen, rechtspraak en jurisprudentie met geavanceerde zoekfuncties.',
+    href: '/search'
+  },
+  {
     icon: BookOpen,
-    href: "/ask",
-    badge: "Populair",
-    badgeVariant: "default" as const
+    title: 'Wet & Uitleg',
+    description: 'Krijg uitgebreide uitleg bij complexe wetsartikelen met praktische voorbeelden.',
+    href: '/uitleg'
   },
   {
-    title: "Rechtspraak & Jurisprudentie", 
-    description: "Zoek in Nederlandse rechtspraak en belangrijke uitspraken",
-    icon: Gavel,
-    href: "/ask",
-    badge: null,
-    badgeVariant: null
+    icon: Scale,
+    title: 'Rechtspraak Database',
+    description: 'Toegang tot uitspraken van Nederlandse rechtbanken en gerechtshoven.',
+    href: '/rechtspraak'
   }
 ]
 
-// Juridische voorbeeldvragen
-const JURIDISCHE_VRAGEN = [
-  "Wat zijn mijn rechten bij een politiecontrole?",
-  "Kan mijn werkgever mij zonder reden ontslaan?",
-  "Wanneer mag de politie mijn huis doorzoeken?",
-  "Wat moet ik weten over huurrechten en opzegging?",
-  "Hoe werkt de Nederlandse rechtspraak?",
-  "Welke regels gelden voor online privacy en AVG?"
-]
-
-// Platform stats - aangepast zonder feitcodes/boetes
-const PLATFORM_STATS = [
-  { label: "Wetsartikelen", value: "15.000+" },
-  { label: "Wetboeken", value: "25+" },
-  { label: "Rechtspraak", value: "100.000+" },
-  { label: "Actualiteit", value: "100%" }
-]
-
-// Target audience
-const TARGET_AUDIENCE = [
-  {
-    title: "Burgers & Particulieren",
-    description: "Begrijpelijke uitleg van wetten en rechten voor iedere Nederlandse burger",
-    icon: Users
-  },
-  {
-    title: "Politie & Handhaving", 
-    description: "Snel toegang tot relevante wetgeving tijdens handhaving",
-    icon: Shield
-  },
-  {
-    title: "Juristen & Advocaten",
-    description: "Uitgebreide jurisprudentie en wetsartikelen voor juridische ondersteuning",
-    icon: Scale
-  },
-  {
-    title: "Studenten & Onderwijs",
-    description: "Studiemateriaal en praktijkvoorbeelden voor juridische opleiding",
-    icon: BookOpen
-  }
-]
-
-// User profile options - uitgebreid met alle professies uit ask pagina
-const USER_PROFILES = [
-  { 
-    value: "algemeen", 
-    label: "Algemeen publiek",
-    description: "Voor burgers die juridische informatie zoeken",
-    icon: Users
-  },
-  { 
-    value: "juridisch-expert", 
-    label: "Juridisch Expert",
-    description: "Voor ervaren juristen en rechtsgeleerden",
-    icon: Scale
-  },
-  { 
-    value: "advocaat", 
-    label: "Advocaat",
-    description: "Voor praktiserende advocaten",
-    icon: Scale
-  },
-  { 
-    value: "politieagent", 
-    label: "Politieagent",
-    description: "Voor politieagenten en opsporingsambtenaren",
-    icon: Shield
-  },
-  { 
-    value: "boa", 
-    label: "BOA/Toezichthouder",
-    description: "Voor buitengewoon opsporingsambtenaren",
-    icon: Shield
-  },
-  { 
-    value: "rechter", 
-    label: "Rechter",
-    description: "Voor rechters en rechterlijke macht",
-    icon: Gavel
-  },
-  { 
-    value: "notaris", 
-    label: "Notaris",
-    description: "Voor notarissen en notariële praktijk",
-    icon: FileText
-  },
-  { 
-    value: "deurwaarder", 
-    label: "Deurwaarder",
-    description: "Voor deurwaarders en executierecht",
-    icon: FileText
-  },
-  { 
-    value: "bedrijfsjurist", 
-    label: "Bedrijfsjurist",
-    description: "Voor bedrijfsjuristen en compliance",
-    icon: Building
-  },
-  { 
-    value: "gemeenteambtenaar", 
-    label: "Gemeenteambtenaar",
-    description: "Voor gemeentelijke ambtenaren",
-    icon: MapPin
-  },
-  { 
-    value: "belastingadviseur", 
-    label: "Belastingadviseur",
-    description: "Voor belastingadviseurs en fiscalisten",
-    icon: Calculator
-  },
-  { 
-    value: "accountant", 
-    label: "Accountant",
-    description: "Voor accountants en financiële experts",
-    icon: Calculator
-  },
-  { 
-    value: "makelaar", 
-    label: "Makelaar",
-    description: "Voor makelaars en vastgoedrecht",
-    icon: Home
-  },
-  { 
-    value: "verzekeringsagent", 
-    label: "Verzekeringsagent",
-    description: "Voor verzekeringsagenten",
-    icon: Shield
-  },
-  { 
-    value: "hr-medewerker", 
-    label: "HR-medewerker",
-    description: "Voor HR-medewerkers en arbeidsrecht",
-    icon: Users
-  },
-  { 
-    value: "compliance-officer", 
-    label: "Compliance Officer",
-    description: "Voor compliance officers",
-    icon: CheckCircle
-  },
-  { 
-    value: "veiligheidsbeambte", 
-    label: "Veiligheidsbeambte",
-    description: "Voor veiligheidsbeambten",
-    icon: Shield
-  },
-  { 
-    value: "beveiliger", 
-    label: "(Bedrijfs)beveiliger",
-    description: "Voor beveiligers en bedrijfsbeveiliging",
-    icon: Shield
-  },
-  { 
-    value: "aspirant", 
-    label: "Aspirant",
-    description: "Voor aspiranten in juridische functies",
-    icon: User
-  },
-  { 
-    value: "student", 
-    label: "Student",
-    description: "Voor studenten rechten en gerelateerde studies",
-    icon: BookOpen
-  }
+const stats = [
+  { number: '56+', label: 'Officiële bronnen' },
+  { number: '22', label: 'Beroepsprofielen' },
+  { number: '8', label: 'Hoofddoelgroepen' },
+  { number: '24/7', label: 'Beschikbaar' }
 ]
 
 export default function HomePage() {
-  const { data: session, status } = useSession()
   const [searchQuery, setSearchQuery] = useState('')
-  const [userProfile, setUserProfile] = useState('algemeen')
-  const [wetUitlegEnabled, setWetUitlegEnabled] = useState(false)
-  const [wetgevingEnabled, setWetgevingEnabled] = useState(false)
-  const [showProfileExplanation, setShowProfileExplanation] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const router = useRouter()
 
-  const handleQuickSearch = (query: string) => {
-    // Build profile parameter - map all profession values correctly
-    let profileParam = ''
-    if (userProfile) {
-      // Direct mapping for most values, special cases for backwards compatibility
-      const mappedProfile = userProfile === 'juridisch-expert' ? 'juridisch-expert' : userProfile
-      profileParam = `&profile=${encodeURIComponent(mappedProfile)}`
-    }
+  const handleSearch = async () => {
+    if (!searchQuery.trim() || isSubmitting) return
     
-    const wetUitlegParam = wetUitlegEnabled ? '&wetuitleg=true' : ''
-    const wetgevingParam = wetgevingEnabled ? '&wetgeving=true' : ''
+    setIsSubmitting(true)
     
-    // Navigate directly without setting input field
-    window.location.href = `/ask?q=${encodeURIComponent(query)}${profileParam}${wetUitlegParam}${wetgevingParam}`
+    // Store query in sessionStorage
+    const query = searchQuery.trim()
+    sessionStorage.setItem('autoSubmitQuery', query)
+    
+    // Navigate to /ask with query parameters
+    const params = new URLSearchParams({
+      q: query
+    })
+    
+    // Use router.push for better navigation
+    router.push(`/ask?${params.toString()}`)
   }
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (searchQuery.trim()) {
-      // Check rate limit for anonymous users before redirecting
-      if (!session) {
-        try {
-          const response = await fetch('/api/ask', {
-            method: 'GET',
-          })
-          
-          if (response.status === 429) {
-            // Rate limit exceeded - show modal or redirect to signup
-            alert('U heeft uw gratis vragen gebruikt. Maak een gratis account aan voor onbeperkt zoeken.')
-            window.location.href = '/auth/signup'
-            return
-          }
-        } catch (error) {
-          console.error('Error checking rate limit:', error)
-        }
-      }
-      
-      // Build URL with all parameters
-      let profileParam = ''
-      if (userProfile) {
-        // Direct mapping for most values, special cases for backwards compatibility
-        const mappedProfile = userProfile === 'juridisch-expert' ? 'juridisch-expert' : userProfile
-        profileParam = `&profile=${encodeURIComponent(mappedProfile)}`
-      }
-      
-      // Add Wet & Uitleg and Wetgeving parameters if enabled
-      const wetUitlegParam = wetUitlegEnabled ? '&wetuitleg=true' : ''
-      const wetgevingParam = wetgevingEnabled ? '&wetgeving=true' : ''
-      
-      // Clear the search input immediately after submission
-      setSearchQuery('')
-      
-      // Use Next.js router for better navigation without auto-search
-      window.location.href = `/ask?q=${encodeURIComponent(searchQuery)}${profileParam}${wetUitlegParam}${wetgevingParam}`
+  const handleProfileSelect = (profileId: string) => {
+    // Navigate directly to /ask with the selected profile
+    router.push(`/ask?profile=${profileId}`)
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSearch()
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-surface-1 via-surface-2 to-surface-3">
-      {/* Professional Header */}
-      <header className="sticky top-0 z-50 glass border-b border-border/40">
-        <div className="container-fluid">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
-              <Scale className="h-6 w-6 md:h-8 md:w-8 text-primary" />
-              <span className="text-lg md:text-xl font-bold text-foreground">WetHelder</span>
-            </div>
-            
-            <nav className="hidden md:flex items-center space-x-6">
-              <Link href="/ask" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Juridische Vragen
-              </Link>
-              <Link href="/contact" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Contact
-              </Link>
-            </nav>
-
-            <div className="flex items-center space-x-2 md:space-x-3">
-              {status === 'loading' ? (
-                <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-muted animate-pulse" />
-              ) : session ? (
-                <div className="flex items-center space-x-2 md:space-x-3">
-                  <Button variant="outline" size="sm" asChild className="hidden sm:flex">
-                    <Link href="/chat-history">
-                      Geschiedenis
-                    </Link>
-                  </Button>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link href="/dashboard">
-                      <span className="hidden sm:inline">Dashboard</span>
-                      <span className="sm:hidden">Menu</span>
-                      <ChevronRight className="h-4 w-4 ml-1" />
-                    </Link>
-                  </Button>
-                </div>
-              ) : (
-                <Button onClick={() => signIn()} size="sm">
-                  <LogIn className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">Inloggen</span>
-                  <span className="sm:hidden">Login</span>
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
-
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      <Navigation />
+      
       {/* Hero Section */}
-      <section className="section-padding-lg">
-        <div className="container-narrow text-center">
-          <div className="animate-fade-in">
-            <div className="flex items-center justify-center gap-2 mb-6">
-              <Badge variant="secondary">
-                <Star className="h-3 w-3 mr-1" />
-                Officiële Nederlandse wetgeving
-              </Badge>
-              <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
-                IN ONTWIKKELING
+      <section className="py-12 md:py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center max-w-4xl mx-auto">
+            <div className="flex justify-center mb-6">
+              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 px-4 py-2">
+                <Zap className="h-4 w-4 mr-2" />
+                Intelligente Juridische Assistent • Nederlandse Wetgeving
               </Badge>
             </div>
             
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-balance leading-tight">
-              Nederlandse wetgeving
-              <span className="text-primary block">doorzoeken en begrijpen</span>
+            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              <span className="text-blue-600">WetHelder</span>
+              <br />
+              <span className="text-3xl md:text-5xl">Nederlandse Juridische Assistent</span>
             </h1>
             
-            <p className="text-base md:text-lg text-muted-foreground mb-8 text-pretty max-w-2xl mx-auto">
-              Betrouwbare juridische zoektool voor iedereen die officiële informatie zoekt over Nederlandse wetgeving.
-              Speciaal ontwikkeld voor mensen die enkel en alleen informatie willen met officiële bronnen.
+            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+              Krijg direct antwoord op juridische vragen, doorzoek Nederlandse wetgeving en 
+              ontvang professionele uitleg. Voor burgers, juristen, handhaving en studenten.
             </p>
 
-            {/* Beta Warning - zonder AI verwijzing */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 max-w-3xl mx-auto mb-8">
-              <div className="flex items-start gap-3">
-                <svg className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
-                </svg>
-                <div className="text-sm text-yellow-800">
-                  <p className="font-semibold mb-1">⚠️ BETA-versie in ontwikkeling</p>
-                  <p className="text-xs">Deze applicatie is nog in ontwikkeling. Informatie kan fouten bevatten. Controleer belangrijke informatie altijd via officiële bronnen of raadpleeg een juridisch expert wanneer noodzakelijk.</p>
-                </div>
-              </div>
-            </div>
-
-            {/* User Profile Selection */}
-            <div className="max-w-md mx-auto mb-6">
-              <div className="flex items-center gap-2 mb-2">
-                <User className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium text-muted-foreground">Ik ben:</span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowProfileExplanation(true)}
-                  className="h-6 w-6 p-0 rounded-full hover:bg-primary/10"
-                >
-                  <HelpCircle className="h-4 w-4 text-primary" />
-                </Button>
-              </div>
-              <Select value={userProfile} onValueChange={setUserProfile}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Selecteer uw functie/profiel" />
-                </SelectTrigger>
-                <SelectContent>
-                  {USER_PROFILES.map((profile) => (
-                    <SelectItem key={profile.value} value={profile.value}>
-                      {profile.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {userProfile && (
-                <p className="text-xs text-muted-foreground mt-2">
-                  Dit helpt ons de zoekresultaten beter af te stemmen op uw behoeften
-                </p>
-              )}
-              
-              {/* Wet & Uitleg en Wetgeving Extra Features */}
-              {userProfile && (
-                <div className="mt-3 space-y-3">
-                  {/* Wet & Uitleg optie */}
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-                    <label className="flex items-center gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={wetUitlegEnabled}
-                        onChange={(e) => setWetUitlegEnabled(e.target.checked)}
-                        className="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500"
-                      />
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-emerald-700" />
-                        <span className="text-sm font-medium text-emerald-800">Wet & Uitleg (Diepgaand)</span>
-                      </div>
-                    </label>
-                    <p className="text-xs text-emerald-700 mt-1 ml-7">
-                      Uitgebreide wetteksten, jurisprudentie en praktijkvoorbeelden voor diepere analyse
-                    </p>
-                  </div>
-
-                  {/* Wetgeving optie */}
-                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <label className="flex items-center gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={wetgevingEnabled}
-                        onChange={(e) => setWetgevingEnabled(e.target.checked)}
-                        className="rounded border-blue-300 text-blue-600 focus:ring-blue-500"
-                      />
-                      <div className="flex items-center gap-2">
-                        <Scale className="h-4 w-4 text-blue-700" />
-                        <span className="text-sm font-medium text-blue-800">Wetgeving (Artikelverwijzingen)</span>
-                      </div>
-                    </label>
-                    <p className="text-xs text-blue-700 mt-1 ml-7">
-                      Alle wettelijke handelingen worden ondersteund met exacte wetsartikelen en bronverwijzingen
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Main Search - Prominenter gemaakt */}
-            <div className="max-w-3xl mx-auto mb-10">
-              <div className="bg-white/80 backdrop-blur-sm border border-border/60 rounded-2xl p-4 md:p-6 shadow-medium">
-                <h2 className="text-lg font-semibold text-center mb-4 text-foreground">
-                  Stel uw juridische vraag
-                </h2>
-                <form onSubmit={handleSearch} className="relative">
-                  <div className="relative">
+            {/* Quick Search */}
+            <Card className="max-w-2xl mx-auto mb-8 shadow-lg">
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  <div className="flex gap-2">
                     <Input
-                      type="text"
-                      placeholder="Stel een juridische vraag of zoek in wetsartikelen..."
+                      placeholder="Stel uw juridische vraag..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="input-field pl-4 pr-4 md:pr-32 h-14 md:h-16 text-base md:text-lg shadow-medium border-2 focus:border-primary/50"
+                      onKeyPress={handleKeyPress}
+                      className="flex-1 text-base"
+                      disabled={isSubmitting}
                     />
                     <Button 
-                      type="submit" 
-                      size="lg"
-                      className="w-full mt-3 md:w-auto md:mt-0 md:absolute md:right-2 md:top-1/2 md:transform md:-translate-y-1/2 h-12 px-6"
-                      disabled={!searchQuery.trim()}
+                      size="lg" 
+                      onClick={handleSearch}
+                      disabled={!searchQuery.trim() || isSubmitting}
                     >
-                      Zoeken
-                      <ArrowRight className="h-5 w-5 ml-2" />
+                      <MessageSquare className="h-5 w-5 mr-2" />
+                      {isSubmitting ? 'Bezig...' : 'Vraag stellen'}
                     </Button>
                   </div>
-                </form>
-              </div>
-            </div>
+                  
+                  <p className="text-sm text-gray-600 text-center">
+                    💡 <strong>Tip:</strong> In het chatvenster kun je je functieprofiel instellen voor een beter antwoord op maat
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
 
-            {/* Juridische Voorbeeldvragen - Compacter */}
-            <div className="max-w-4xl mx-auto mb-8">
-              <h3 className="text-base font-medium mb-3 text-muted-foreground text-center">Juridische voorbeeldvragen:</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 px-4 md:px-0">
-                {JURIDISCHE_VRAGEN.map((vraag) => (
-                  <button
-                    key={vraag}
-                    onClick={() => handleQuickSearch(vraag)}
-                    className="text-left p-3 bg-white/60 hover:bg-white/80 border border-border/40 rounded-lg transition-all hover:shadow-sm text-sm text-muted-foreground hover:text-foreground"
-                  >
-                    {vraag}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Platform Stats - Compacter */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-              {PLATFORM_STATS.map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <div className="text-lg font-bold text-primary mb-1">{stat.value}</div>
-                  <div className="text-xs text-muted-foreground">{stat.label}</div>
+            {/* Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+              {stats.map((stat, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-2xl md:text-3xl font-bold text-blue-600">{stat.number}</div>
+                  <div className="text-sm text-gray-600">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -505,89 +225,43 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="section-padding bg-white/50">
-        <div className="container">
+      {/* Profession Profiles */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">Juridische Tools & Zoekfuncties</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Toegang tot officiële Nederlandse juridische bronnen en zoektools
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Kies Uw Profiel</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Selecteer uw beroep voor aangepaste juridische antwoorden. Klik op een profiel om direct te beginnen met chatten.
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {MAIN_FEATURES.map((feature) => {
-              const Icon = feature.icon
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {professionProfiles.map((profile) => {
+              const IconComponent = profile.icon
               return (
-                <Link key={feature.title} href={feature.href}>
-                  <Card className="card-hover h-full p-6">
-                    <CardContent className="p-0">
-                      <div className="flex items-start gap-4">
-                        <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                          <Icon className="h-6 w-6 text-primary" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-2">
-                            <h3 className="font-semibold text-lg">{feature.title}</h3>
-                            {feature.badge && (
-                              <Badge variant={feature.badgeVariant}>{feature.badge}</Badge>
-                            )}
-                          </div>
-                          <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
-                          <div className="flex items-center text-primary font-medium text-sm mt-3">
-                            Proberen
-                            <ChevronRight className="h-4 w-4 ml-1" />
-                          </div>
-                        </div>
+                <Card 
+                  key={profile.id} 
+                  className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:scale-105"
+                  onClick={() => handleProfileSelect(profile.id)}
+                >
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2 rounded-lg ${profile.color} group-hover:scale-110 transition-transform`}>
+                        <IconComponent className="h-5 w-5" />
                       </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Platform Stats */}
-      <section className="section-padding-sm bg-gradient-to-r from-primary/5 to-primary/10">
-        <div className="container">
-          <div className="text-center mb-8">
-            <h2 className="text-xl md:text-2xl font-bold mb-2">Uitgebreide Juridische Database</h2>
-            <p className="text-muted-foreground">Toegang tot de meest complete Nederlandse juridische informatie</p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-3xl mx-auto">
-            {PLATFORM_STATS.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-2xl md:text-3xl font-bold text-primary mb-1">{stat.value}</div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Target Audience */}
-      <section className="section-padding">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">Voor wie is WetHelder geschikt?</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Onze platform is ontworpen voor iedereen die betrouwbare juridische informatie nodig heeft
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {TARGET_AUDIENCE.map((audience) => {
-              const Icon = audience.icon
-              return (
-                <Card key={audience.title} className="text-center p-6 hover:shadow-lg transition-shadow">
-                  <CardContent className="p-0">
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                      <Icon className="h-6 w-6 text-primary" />
+                      <div>
+                        <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
+                          {profile.name}
+                        </CardTitle>
+                        <CardDescription>{profile.description}</CardDescription>
+                      </div>
                     </div>
-                    <h3 className="font-semibold mb-2">{audience.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{audience.description}</p>
+                  </CardHeader>
+                  <CardContent>
+                    <Button variant="ghost" size="sm" className="w-full justify-between group-hover:bg-blue-50 group-hover:text-blue-600">
+                      Start chat met dit profiel
+                      <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    </Button>
                   </CardContent>
                 </Card>
               )
@@ -596,288 +270,200 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Function Profiles Selection */}
-      <section className="section-padding">
-        <div className="container-fluid">
+      {/* Features */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-xl md:text-2xl font-bold mb-3">Kies uw functie voor gepersonaliseerde resultaten</h2>
-            <p className="text-base text-muted-foreground max-w-2xl mx-auto">
-              Selecteer uw profiel om zoekresultaten en uitleg af te stemmen op uw specifieke behoeften en expertise niveau
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Krachtige Functies</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Alles wat u nodig heeft voor juridische research en advies in één platform.
             </p>
           </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {USER_PROFILES.map((profile) => (
-              <Card 
-                key={profile.value} 
-                className={`card-interactive cursor-pointer transition-all duration-200 ${
-                  userProfile === profile.value 
-                    ? 'ring-2 ring-primary bg-primary/5 border-primary' 
-                    : 'hover:border-primary/50'
-                }`}
-                onClick={() => setUserProfile(profile.value)}
-              >
-                <CardHeader className="text-center pb-4">
-                  <div className={`mx-auto mb-3 p-3 rounded-xl w-fit transition-colors ${
-                    userProfile === profile.value 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-primary/10 text-primary'
-                  }`}>
-                    <profile.icon className="h-6 w-6" />
-                  </div>
-                  <CardTitle className="text-base mb-2">{profile.label}</CardTitle>
-                  <CardDescription className="text-xs leading-relaxed">
-                    {profile.description}
-                  </CardDescription>
-                  {userProfile === profile.value && (
-                    <div className="mt-3 flex items-center justify-center gap-2 text-primary">
-                      <CheckCircle className="h-4 w-4" />
-                      <span className="text-xs font-medium">Geselecteerd</span>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            {features.map((feature, index) => {
+              const IconComponent = feature.icon
+              return (
+                <Card key={index} className="text-center hover:shadow-lg transition-all duration-200 group">
+                  <CardHeader>
+                    <div className="w-12 h-12 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                      <IconComponent className="h-6 w-6" />
                     </div>
-                  )}
-                </CardHeader>
-              </Card>
-            ))}
+                    <CardTitle className="text-lg">{feature.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600 mb-4">{feature.description}</p>
+                    <Button variant="ghost" size="sm" asChild className="w-full">
+                      <Link href={feature.href}>
+                        Proberen
+                        <ArrowRight className="h-4 w-4 ml-2" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
-
-          {userProfile && (
-            <div className="mt-8 max-w-2xl mx-auto">
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <span className="font-medium text-green-800">
-                    Profiel geselecteerd: {USER_PROFILES.find(p => p.value === userProfile)?.label}
-                  </span>
-                </div>
-                <p className="text-sm text-green-700">
-                  Uw zoekresultaten worden nu afgestemd op uw functie en expertise niveau
-                </p>
-              </div>
-            </div>
-          )}
         </div>
       </section>
 
-      {/* Features Overview */}
-      <section className="section-padding">
-        <div className="container-fluid">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+      {/* Benefits */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
             <div>
-              <h2 className="text-3xl font-bold mb-6">Waarom WetHelder?</h2>
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="p-2 rounded-lg bg-primary/10 flex-shrink-0">
-                    <CheckCircle className="h-5 w-5 text-primary" />
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">
+                Waarom WetHelder?
+              </h2>
+              <div className="space-y-4">
+                {[
+                  'Actuele Nederlandse wetgeving en rechtspraak',
+                  'Intelligente juridische analyses',
+                  'Aangepaste antwoorden per doelgroep',
+                  'Citaten met bronvermelding',
+                  '24/7 beschikbaar',
+                  'Veilig en betrouwbaar'
+                ].map((benefit, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0" />
+                    <span className="text-gray-700">{benefit}</span>
                   </div>
-                  <div>
-                    <h3 className="font-semibold mb-2">Officiële bronnen</h3>
-                    <p className="text-muted-foreground">Alle informatie komt direct uit officiële Nederlandse wetgeving en jurisprudentie.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-4">
-                  <div className="p-2 rounded-lg bg-primary/10 flex-shrink-0">
-                    <Zap className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-2">Razendsnelle zoekresultaten</h3>
-                    <p className="text-muted-foreground">Vind binnen seconden wat u zoekt in duizenden wetsartikelen en uitspraken.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-4">
-                  <div className="p-2 rounded-lg bg-primary/10 flex-shrink-0">
-                    <Clock className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-2">Altijd actueel</h3>
-                    <p className="text-muted-foreground">Automatische updates zorgen ervoor dat u altijd de meest recente wetgeving raadpleegt.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-4">
-                  <div className="p-2 rounded-lg bg-primary/10 flex-shrink-0">
-                    <Lock className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-2">Veilig en betrouwbaar</h3>
-                    <p className="text-muted-foreground">Uw zoekopdrachten zijn privé en alle data wordt veilig verwerkt volgens Nederlandse standaarden.</p>
-                  </div>
+                ))}
+              </div>
+              
+              <div className="mt-8 space-y-3">
+                <Button size="lg" asChild>
+                  <Link href="/ask">
+                    <MessageSquare className="h-5 w-5 mr-2" />
+                    Start Chat
+                  </Link>
+                </Button>
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <Lock className="h-4 w-4" />
+                  <span>Gratis te gebruiken • Geen registratie vereist</span>
                 </div>
               </div>
             </div>
             
-            <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-2xl p-8 text-center">
-              <div className="space-y-6">
-                <div className="mx-auto w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center">
-                  <Scale className="h-8 w-8 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold mb-2">Nederlandse Wetgeving</h3>
-                  <p className="text-muted-foreground mb-6">
-                    Toegang tot alle Nederlandse wetten, rechtspraak en jurisprudentie op één centrale plek.
-                  </p>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center justify-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span>Wetboek van Strafrecht</span>
+            <div className="lg:text-right">
+              <Card className="p-8 bg-gradient-to-br from-blue-50 to-indigo-100">
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center">
+                      <Globe className="h-5 w-5" />
                     </div>
-                    <div className="flex items-center justify-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span>Burgerlijk Wetboek</span>
+                    <div>
+                      <div className="font-semibold">Nederlandse Focus</div>
+                      <div className="text-sm text-gray-600">Specifiek voor NL wetgeving</div>
                     </div>
-                    <div className="flex items-center justify-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span>Wegenverkeerswet</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center">
+                      <Zap className="h-5 w-5" />
                     </div>
-                    <div className="flex items-center justify-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span>RVV 1990</span>
+                    <div>
+                      <div className="font-semibold">Intelligent Systeem</div>
+                      <div className="text-sm text-gray-600">Geavanceerde taalmodellen</div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center">
+                      <Clock className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <div className="font-semibold">Altijd Actueel</div>
+                      <div className="text-sm text-gray-600">Real-time updates</div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </Card>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="section-padding bg-primary/5">
-        <div className="container-narrow text-center">
-          <h2 className="text-3xl font-bold mb-4">Begin met zoeken in Nederlandse wetgeving</h2>
-          <p className="text-subtitle mb-8">
-            Stel uw eerste juridische vraag en ontdek hoe eenvoudig het is om betrouwbare informatie te vinden
+      <section className="py-16 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-4">
+            Klaar om te beginnen?
+          </h2>
+          <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
+            Krijg direct antwoord op uw juridische vragen met WetHelder's intelligente assistent.
           </p>
-          <Button size="lg" asChild>
-            <Link href="/ask">
-              Start nu
-              <ArrowRight className="h-5 w-5 ml-2" />
-            </Link>
-          </Button>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button size="lg" variant="secondary" asChild>
+              <Link href="/ask">
+                <MessageSquare className="h-5 w-5 mr-2" />
+                Start Gratis Chat
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" className="bg-transparent" asChild>
+              <Link href="/auth/signin">
+                Account Aanmaken
+              </Link>
+            </Button>
+          </div>
+          
+          <div className="mt-6 text-sm opacity-75">
+            Geen creditcard vereist • Direct beginnen
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-muted/20 section-padding-sm">
-        <div className="container-fluid">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <Scale className="h-6 w-6 text-primary" />
-                <span className="font-bold text-lg">WetHelder</span>
+              <div className="flex items-center gap-2 mb-4">
+                <Scale className="h-6 w-6 text-blue-400" />
+                <span className="text-xl font-bold">WetHelder</span>
               </div>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Betrouwbare juridische zoektool voor Nederlandse wetgeving. 
-                Officiële bronnen, begrijpelijk voor iedereen.
+              <p className="text-gray-400 text-sm">
+                Nederlandse juridische assistent voor iedereen. Betrouwbare juridische informatie op basis van officiële bronnen.
               </p>
             </div>
             
             <div>
-              <h4 className="font-semibold mb-4">Platform</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/ask" className="text-muted-foreground hover:text-foreground transition-colors">Juridische Vragen</Link></li>
-                <li><Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">Contact</Link></li>
+              <h3 className="font-semibold mb-4">Platform</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link href="/ask" className="hover:text-white transition-colors">Juridische Chat</Link></li>
+                <li><Link href="/search" className="hover:text-white transition-colors">Wetgeving Zoeken</Link></li>
+                <li><Link href="/uitleg" className="hover:text-white transition-colors">Wet & Uitleg</Link></li>
+                <li><Link href="/rechtspraak" className="hover:text-white transition-colors">Rechtspraak</Link></li>
               </ul>
             </div>
             
             <div>
-              <h4 className="font-semibold mb-4">Juridisch</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">Privacy</Link></li>
-                <li><Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">Algemene Voorwaarden</Link></li>
-                <li><Link href="/disclaimer" className="text-muted-foreground hover:text-foreground transition-colors">Disclaimer</Link></li>
+              <h3 className="font-semibold mb-4">Doelgroepen</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link href="/ask?profile=algemeen" className="hover:text-white transition-colors">Burgers</Link></li>
+                <li><Link href="/ask?profile=advocaat" className="hover:text-white transition-colors">Juristen</Link></li>
+                <li><Link href="/ask?profile=politieagent" className="hover:text-white transition-colors">Handhaving</Link></li>
+                <li><Link href="/ask?profile=student" className="hover:text-white transition-colors">Studenten</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold mb-4">Ondersteuning</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link href="/help" className="hover:text-white transition-colors">Help Center</Link></li>
+                <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition-colors">Voorwaarden</Link></li>
               </ul>
             </div>
           </div>
           
-          <div className="border-t border-border pt-6 text-center">
-            <p className="text-sm text-muted-foreground">
-              © 2024 WetHelder. Alle rechten voorbehouden. Nederlandse wetgeving toegankelijk voor iedereen.
-            </p>
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
+            <p>&copy; 2025 WetHelder. Alle rechten voorbehouden.</p>
           </div>
         </div>
       </footer>
-
-      {/* Functieprofiel uitleg modal */}
-      {showProfileExplanation && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
-                  <User className="h-5 w-5 text-primary" />
-                  Functieprofiel Uitleg
-                </h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowProfileExplanation(false)}
-                  className="h-8 w-8 p-0"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="font-medium text-blue-900 mb-2">💡 Waarom een functieprofiel kiezen?</h4>
-                  <p className="text-sm text-blue-800">
-                    WetHelder past de antwoorden aan op uw specifieke rol en expertise niveau. 
-                    Dit zorgt voor relevantere informatie en de juiste diepgang.
-                  </p>
-                </div>
-
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                  <h4 className="font-medium text-amber-900 mb-2">🔄 Tip: Switch van profiel!</h4>
-                  <p className="text-sm text-amber-800">
-                    Voor het beste resultaat kunt u tijdens het gebruik switchen tussen profielen. 
-                    Bijvoorbeeld: start als &apos;Algemeen&apos; voor basisuitleg, schakel dan over naar &apos;Advocaat&apos; voor juridische diepgang.
-                  </p>
-                </div>
-
-                <div className="grid gap-3">
-                  <h4 className="font-medium text-gray-900">📋 Overzicht van profielen:</h4>
-                  
-                  <div className="space-y-3 max-h-60 overflow-y-auto">
-                    {USER_PROFILES.map((profile) => {
-                      const Icon = profile.icon
-                      return (
-                        <div key={profile.value} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                          <Icon className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                          <div>
-                            <h5 className="font-medium text-sm">{profile.label}</h5>
-                            <p className="text-xs text-gray-600">{profile.description}</p>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <h4 className="font-medium text-green-900 mb-2">🎯 Extra diepgang gewenst?</h4>
-                  <p className="text-sm text-green-800 mb-2">
-                    Gebruik functieprofiel voor verschillende invalshoeken:
-                  </p>
-                  <ul className="text-xs text-green-700 space-y-1">
-                    <li>• <strong>Agent:</strong> Praktische handhaving en procedures</li>
-                    <li>• <strong>Advocaat:</strong> Juridische strategie en jurisprudentie</li>
-                    <li>• <strong>Belastingadviseur:</strong> Fiscale aspecten en gevolgen</li>
-                    <li>• <strong>Student:</strong> Theoretische achtergrond en leerdoelen</li>
-                  </ul>
-                </div>
-
-                <div className="flex justify-end">
-                  <Button onClick={() => setShowProfileExplanation(false)}>
-                    Begrepen!
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 } 

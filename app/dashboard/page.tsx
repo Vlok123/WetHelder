@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { 
-  Users, 
+  User, 
   MessageSquare, 
   Clock,
   TrendingUp,
@@ -58,6 +58,7 @@ import {
   Crown,
   LogOut
 } from 'lucide-react'
+import { Navigation } from '@/components/navigation'
 
 interface DashboardStats {
   totalQueries: number
@@ -108,6 +109,94 @@ interface UserCategory {
   createdAt: string
 }
 
+interface ChatSession {
+  id: string
+  title: string
+  messages: number
+  lastActivity: string
+  profession: string
+  tags: string[]
+}
+
+interface Favorite {
+  id: string
+  title: string
+  type: 'chat' | 'search' | 'article'
+  content: string
+  date: string
+  url?: string
+}
+
+interface RecentSearch {
+  id: string
+  query: string
+  category: string
+  results: number
+  date: string
+}
+
+const mockChatSessions: ChatSession[] = [
+  {
+    id: '1',
+    title: 'Arbeidsrecht ontslagbescherming',
+    messages: 12,
+    lastActivity: '2 uur geleden',
+    profession: 'algemeen',
+    tags: ['arbeidsrecht', 'ontslag']
+  },
+  {
+    id: '2',
+    title: 'Huurrecht opzegging',
+    messages: 8,
+    lastActivity: '1 dag geleden',
+    profession: 'algemeen',
+    tags: ['huurrecht', 'opzegging']
+  },
+  {
+    id: '3',
+    title: 'Verkeersrecht boete betwisten',
+    messages: 15,
+    lastActivity: '3 dagen geleden',
+    profession: 'algemeen',
+    tags: ['verkeersrecht', 'boete']
+  }
+]
+
+const mockFavorites: Favorite[] = [
+  {
+    id: '1',
+    title: 'Burgerlijk Wetboek Artikel 7:611',
+    type: 'article',
+    content: 'Arbeidsovereenkomst ontslagbescherming...',
+    date: '2024-01-15',
+    url: 'https://wetten.overheid.nl'
+  },
+  {
+    id: '2',
+    title: 'Chat: Kan mijn werkgever mij ontslaan?',
+    type: 'chat',
+    content: 'Uitgebreide chat over ontslagrecht...',
+    date: '2024-01-10'
+  }
+]
+
+const mockRecentSearches: RecentSearch[] = [
+  {
+    id: '1',
+    query: 'arbeidsovereenkomst ontslag',
+    category: 'wetgeving',
+    results: 45,
+    date: '2024-01-15'
+  },
+  {
+    id: '2',
+    query: 'huurrecht opzegging',
+    category: 'jurisprudentie',
+    results: 23,
+    date: '2024-01-14'
+  }
+]
+
 export default function MemberDashboard() {
   const { data: session, status } = useSession()
   const [stats, setStats] = useState<DashboardStats | null>(null)
@@ -115,7 +204,7 @@ export default function MemberDashboard() {
   const [notes, setNotes] = useState<UserNote[]>([])
   const [categories, setCategories] = useState<UserCategory[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'overview' | 'queries' | 'notes' | 'categories'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'queries' | 'notes' | 'categories' | 'chats' | 'favorites' | 'searches' | 'stats'>('overview')
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [sortBy, setSortBy] = useState('recent')
@@ -314,10 +403,11 @@ export default function MemberDashboard() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-muted-foreground">Dashboard laden...</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+        <Navigation />
+        <div className="container mx-auto px-4 py-20 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Dashboard laden...</p>
         </div>
       </div>
     )
@@ -333,474 +423,406 @@ export default function MemberDashboard() {
     return null
   }
 
+  const getProfessionIcon = (profession: string) => {
+    switch (profession) {
+      case 'jurist': return '⚖️'
+      case 'politieagent': return '🚔'
+      case 'student': return '🎓'
+      case 'ondernemer': return '💼'
+      default: return '👤'
+    }
+  }
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'chat': return <MessageSquare className="h-4 w-4" />
+      case 'search': return <Search className="h-4 w-4" />
+      case 'article': return <BookOpen className="h-4 w-4" />
+      default: return <BookOpen className="h-4 w-4" />
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-white">
-        <div className="container mx-auto px-4 py-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      <Navigation />
+      
+      <div className="container mx-auto px-4 py-6 max-w-7xl">
+        {/* Header */}
+        <div className="mb-8">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/" className="flex items-center gap-2 text-primary hover:text-primary/80">
-                <Home className="h-5 w-5" />
-                WetHelder
-              </Link>
-              <div className="h-4 w-px bg-gray-300" />
-              <h1 className="text-xl font-semibold">Mijn Dashboard</h1>
-              {session.user?.role === 'PREMIUM' && (
-                <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300">
-                  <Crown className="h-3 w-3 mr-1" />
-                  Premium
-                </Badge>
-              )}
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Welkom terug, {session?.user?.name || 'Gebruiker'}!
+              </h1>
+              <p className="text-lg text-gray-600 mt-2">
+                Uw persoonlijke juridische dashboard
+              </p>
             </div>
-            
-            <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                onClick={loadDashboardData}
-                className="flex items-center gap-2"
-              >
-                <RefreshCw className="h-4 w-4" />
-                Vernieuwen
-              </Button>
-              <Link href="/ask">
-                <Button>Nieuwe Vraag</Button>
-              </Link>
-              <Button
-                variant="outline"
-                onClick={() => signOut()}
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-              >
-                <LogOut className="h-4 w-4" />
-                Uitloggen
+            <div className="flex items-center gap-3">
+              <Badge variant="secondary" className="text-sm">
+                <User className="h-4 w-4 mr-1" />
+                Premium Account
+              </Badge>
+              <Button variant="outline" size="sm">
+                <Settings className="h-4 w-4 mr-2" />
+                Instellingen
               </Button>
             </div>
           </div>
         </div>
-      </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Navigation Tabs */}
-          <div className="flex items-center gap-1 mb-8 bg-muted rounded-lg p-1">
-            {[
-              { id: 'overview', label: 'Overzicht', icon: PieChart },
-              { id: 'queries', label: 'Mijn Vragen', icon: MessageSquare },
-              { id: 'notes', label: 'Notities', icon: FileText },
-              { id: 'categories', label: 'Categorieën', icon: Folder }
-            ].map((tab) => {
-              const Icon = tab.icon
-              return (
-                <Button
-                  key={tab.id}
-                  variant={activeTab === tab.id ? 'default' : 'ghost'}
-                  onClick={() => setActiveTab(tab.id as any)}
-                  className="flex items-center gap-2"
-                >
-                  <Icon className="h-4 w-4" />
-                  {tab.label}
-                </Button>
-              )
-            })}
-          </div>
+        {/* Navigation Tabs */}
+        <div className="flex gap-2 mb-6 overflow-x-auto">
+          {[
+            { id: 'overview', name: 'Overzicht', icon: BarChart3 },
+            { id: 'chats', name: 'Chat Geschiedenis', icon: MessageSquare },
+            { id: 'favorites', name: 'Favorieten', icon: Star },
+            { id: 'searches', name: 'Zoekgeschiedenis', icon: Search },
+            { id: 'stats', name: 'Statistieken', icon: TrendingUp }
+          ].map((tab) => {
+            const IconComponent = tab.icon
+            return (
+              <Button
+                key={tab.id}
+                variant={activeTab === tab.id ? "default" : "outline"}
+                size="sm"
+                onClick={() => setActiveTab(tab.id as any)}
+                className="whitespace-nowrap"
+              >
+                <IconComponent className="h-4 w-4 mr-2" />
+                {tab.name}
+              </Button>
+            )
+          })}
+        </div>
 
-          {/* Overview Tab */}
-          {activeTab === 'overview' && (
-            <div className="space-y-8">
-              {/* Welcome Section */}
+        {/* Overview Tab */}
+        {activeTab === 'overview' && (
+          <div className="space-y-6">
+            {/* Quick Stats */}
+            <div className="grid md:grid-cols-4 gap-4">
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h2 className="text-2xl font-bold mb-2">
-                        Welkom terug, {session.user?.name || 'Gebruiker'}!
-                      </h2>
-                      <p className="text-muted-foreground">
-                        Hier is een overzicht van uw juridische activiteiten en verzamelde kennis.
-                      </p>
+                      <p className="text-sm font-medium text-gray-600">Chat Sessies</p>
+                      <p className="text-2xl font-bold text-gray-900">{mockChatSessions.length}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm text-muted-foreground">Lid sinds</p>
-                      <p className="font-medium">
-                        {formatDate(new Date().toISOString())}
-                      </p>
+                    <MessageSquare className="h-8 w-8 text-blue-600" />
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Favorieten</p>
+                      <p className="text-2xl font-bold text-gray-900">{mockFavorites.length}</p>
                     </div>
+                    <Star className="h-8 w-8 text-yellow-600" />
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Stats Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-3">
-                      <MessageSquare className="h-8 w-8 text-blue-600" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Totaal Vragen</p>
-                        <p className="text-2xl font-bold">{stats?.totalQueries || 0}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-3">
-                      <FileText className="h-8 w-8 text-green-600" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Notities</p>
-                        <p className="text-2xl font-bold">{stats?.totalNotes || 0}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-3">
-                      <Folder className="h-8 w-8 text-purple-600" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Categorieën</p>
-                        <p className="text-2xl font-bold">{stats?.totalCategories || 0}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-3">
-                      <Heart className="h-8 w-8 text-red-600" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Favorieten</p>
-                        <p className="text-2xl font-bold">{stats?.favoriteQueries || 0}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Recent Activity */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <History className="h-5 w-5" />
-                    Recente Activiteit
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {stats?.recentActivity?.slice(0, 5).map((activity) => (
-                      <div key={activity.id} className="flex items-center gap-3 p-3 rounded-lg border">
-                        <div className={`p-2 rounded-full ${
-                          activity.type === 'query' ? 'bg-blue-100 text-blue-600' :
-                          activity.type === 'note' ? 'bg-green-100 text-green-600' :
-                          'bg-purple-100 text-purple-600'
-                        }`}>
-                          {activity.type === 'query' ? <MessageSquare className="h-4 w-4" /> :
-                           activity.type === 'note' ? <FileText className="h-4 w-4" /> :
-                           <Folder className="h-4 w-4" />}
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-medium">{activity.title}</p>
-                          {activity.details && (
-                            <p className="text-sm text-muted-foreground">{activity.details}</p>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          {formatDate(activity.timestamp)}
-                        </p>
-                      </div>
-                    )) || (
-                      <p className="text-muted-foreground text-center py-4">
-                        Nog geen activiteit beschikbaar
-                      </p>
-                    )}
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Zoekopdrachten</p>
+                      <p className="text-2xl font-bold text-gray-900">{mockRecentSearches.length}</p>
+                    </div>
+                    <Search className="h-8 w-8 text-green-600" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Deze Maand</p>
+                      <p className="text-2xl font-bold text-gray-900">47</p>
+                    </div>
+                    <TrendingUp className="h-8 w-8 text-purple-600" />
                   </div>
                 </CardContent>
               </Card>
             </div>
-          )}
 
-          {/* Queries Tab */}
-          {activeTab === 'queries' && (
-            <div className="space-y-6">
-              {/* Filters */}
+            {/* Recent Activity */}
+            <div className="grid lg:grid-cols-2 gap-6">
               <Card>
-                <CardContent className="p-4">
-                  <div className="flex flex-col md:flex-row gap-4">
-                    <div className="flex-1">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Zoek in uw vragen..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          className="pl-10"
-                        />
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Clock className="h-5 w-5" />
+                    Recente Chat Sessies
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {mockChatSessions.slice(0, 3).map((chat) => (
+                      <div key={chat.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
+                        <div className="flex-1">
+                          <h4 className="font-medium text-gray-900">{chat.title}</h4>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant="secondary" className="text-xs">
+                              {getProfessionIcon(chat.profession)} {chat.profession}
+                            </Badge>
+                            <span className="text-xs text-gray-500">{chat.messages} berichten</span>
+                            <span className="text-xs text-gray-500">• {chat.lastActivity}</span>
+                          </div>
+                        </div>
+                        <Button variant="ghost" size="sm">
+                          <MessageSquare className="h-4 w-4" />
+                        </Button>
                       </div>
-                    </div>
-                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                      <SelectTrigger className="w-48">
-                        <SelectValue placeholder="Filter op categorie" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Alle categorieën</SelectItem>
-                        {categories.map((category) => (
-                          <SelectItem key={category.id} value={category.name}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      variant={showOnlyFavorites ? 'default' : 'outline'}
-                      onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
-                      className="flex items-center gap-2"
-                    >
-                      <Heart className="h-4 w-4" />
-                      Alleen favorieten
-                    </Button>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Queries List */}
-              <div className="space-y-4">
-                {filteredQueries.map((query) => (
-                  <Card key={query.id} className="hover:shadow-md transition-shadow">
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="font-medium line-clamp-2">{query.question}</h3>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => toggleFavorite(query.id)}
-                              className={query.isFavorite ? 'text-red-600' : 'text-gray-400'}
-                            >
-                              <Heart className="h-4 w-4" fill={query.isFavorite ? 'currentColor' : 'none'} />
-                            </Button>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Star className="h-5 w-5" />
+                    Favorieten
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {mockFavorites.map((favorite) => (
+                      <div key={favorite.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
+                        <div className="flex items-center gap-3 flex-1">
+                          {getTypeIcon(favorite.type)}
+                          <div>
+                            <h4 className="font-medium text-gray-900 text-sm">{favorite.title}</h4>
+                            <p className="text-xs text-gray-500">{favorite.date}</p>
                           </div>
-                          <div className="flex items-center gap-2 mb-3">
-                            <Badge variant="outline">{query.profession}</Badge>
-                            <span className="text-sm text-muted-foreground">
-                              {formatDate(query.createdAt)}
-                            </span>
-                            {query.categories.map((category) => (
-                              <Badge key={category} variant="secondary" className="text-xs">
-                                {category}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Button variant="ghost" size="sm">
+                            <Share2 className="h-3 w-3" />
+                          </Button>
+                          <Button variant="ghost" size="sm">
+                            <Download className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
+
+        {/* Chat History Tab */}
+        {activeTab === 'chats' && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Chat Geschiedenis</h2>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm">
+                  <Filter className="h-4 w-4 mr-2" />
+                  Filter
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Download className="h-4 w-4 mr-2" />
+                  Exporteren
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {mockChatSessions.map((chat) => (
+                <Card key={chat.id} className="hover:shadow-lg transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="font-semibold text-gray-900">{chat.title}</h3>
+                          <Badge variant="secondary" className="text-xs">
+                            {getProfessionIcon(chat.profession)} {chat.profession}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-gray-600">
+                          <span>{chat.messages} berichten</span>
+                          <span>•</span>
+                          <span>{chat.lastActivity}</span>
+                          <span>•</span>
+                          <div className="flex gap-1">
+                            {chat.tags.map((tag) => (
+                              <Badge key={tag} variant="outline" className="text-xs">
+                                {tag}
                               </Badge>
                             ))}
                           </div>
                         </div>
                       </div>
-                      <div className="text-sm text-muted-foreground line-clamp-3 mb-4">
-                        {query.answer.substring(0, 200)}...
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm">
+                          <Share2 className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <Download className="h-4 w-4" />
+                        </Button>
+                        <Button size="sm">
+                          Hervatten
+                        </Button>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-muted-foreground">
-                            {query.sources.length} bronnen
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button variant="ghost" size="sm">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            <Share2 className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-                
-                {filteredQueries.length === 0 && (
-                  <Card>
-                    <CardContent className="p-12 text-center">
-                      <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="font-medium mb-2">Geen vragen gevonden</h3>
-                      <p className="text-muted-foreground mb-4">
-                        {searchTerm || selectedCategory !== 'all' || showOnlyFavorites
-                          ? 'Probeer uw filters aan te passen'
-                          : 'Begin met het stellen van uw eerste juridische vraag'}
-                      </p>
-                      <Link href="/ask">
-                        <Button>Stel een vraag</Button>
-                      </Link>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Notes Tab - Simplified for now */}
-          {activeTab === 'notes' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold">Mijn Notities</h2>
-                  <p className="text-muted-foreground">
-                    Organiseer uw juridische kennis met persoonlijke notities
-                  </p>
-                </div>
-                <Button onClick={() => setShowNewNote(true)} className="flex items-center gap-2">
-                  <Plus className="h-4 w-4" />
-                  Nieuwe Notitie
-                </Button>
-              </div>
+        {/* Favorites Tab */}
+        {activeTab === 'favorites' && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Favorieten</h2>
+              <Button variant="outline" size="sm">
+                <Filter className="h-4 w-4 mr-2" />
+                Filter op type
+              </Button>
+            </div>
 
-              {/* Notes Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredNotes.map((note) => (
-                  <Card key={note.id} className={`hover:shadow-md transition-shadow ${getColorClass(note.color)}`}>
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between mb-3">
-                        <h3 className="font-medium line-clamp-2">{note.title}</h3>
-                        <div className="flex items-center gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              setEditingNote(note)
-                              setNoteForm({
-                                title: note.title,
-                                content: note.content,
-                                color: note.color,
-                                tags: note.tags.join(', '),
-                                queryId: note.queryId || ''
-                              })
-                              setShowNewNote(true)
-                            }}
-                          >
-                            <Edit className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => deleteNote(note.id)}
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </div>
+            <div className="grid md:grid-cols-2 gap-4">
+              {mockFavorites.map((favorite) => (
+                <Card key={favorite.id} className="hover:shadow-lg transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        {getTypeIcon(favorite.type)}
+                        <Badge variant="secondary" className="text-xs capitalize">
+                          {favorite.type}
+                        </Badge>
                       </div>
-                      <div className="text-sm mb-3 line-clamp-4">
-                        {note.content}
+                      <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="sm">
+                          <Share2 className="h-3 w-3" />
+                        </Button>
+                        <Button variant="ghost" size="sm">
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
                       </div>
-                      {note.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mb-3">
-                          {note.tags.map((tag, index) => (
-                            <span key={index} className="inline-flex items-center gap-1 px-2 py-1 bg-white/50 rounded-full text-xs">
-                              <Tag className="h-3 w-3" />
-                              {tag}
+                    </div>
+                    
+                    <h3 className="font-semibold text-gray-900 mb-2">{favorite.title}</h3>
+                    <p className="text-sm text-gray-600 mb-3">{favorite.content}</p>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-500">
+                        Opgeslagen op {new Date(favorite.date).toLocaleDateString('nl-NL')}
+                      </span>
+                      <Button size="sm" variant="outline">
+                        Bekijken
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Search History Tab */}
+        {activeTab === 'searches' && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Zoekgeschiedenis</h2>
+              <Button variant="outline" size="sm">
+                <Trash2 className="h-4 w-4 mr-2" />
+                Wis geschiedenis
+              </Button>
+            </div>
+
+            <div className="space-y-3">
+              {mockRecentSearches.map((search) => (
+                <Card key={search.id} className="hover:shadow-lg transition-shadow">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Search className="h-5 w-5 text-gray-400" />
+                        <div>
+                          <h3 className="font-medium text-gray-900">"{search.query}"</h3>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant="secondary" className="text-xs">
+                              {search.category}
+                            </Badge>
+                            <span className="text-xs text-gray-500">
+                              {search.results} resultaten
                             </span>
-                          ))}
-                        </div>
-                      )}
-                      <div className="text-xs text-muted-foreground">
-                        {formatDate(note.updatedAt)}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              {filteredNotes.length === 0 && (
-                <Card>
-                  <CardContent className="p-12 text-center">
-                    <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="font-medium mb-2">Geen notities gevonden</h3>
-                    <p className="text-muted-foreground mb-4">
-                      Begin met het maken van uw eerste notitie
-                    </p>
-                    <Button onClick={() => setShowNewNote(true)}>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Eerste Notitie Maken
-                    </Button>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          )}
-
-          {/* Categories Tab - Simplified for now */}
-          {activeTab === 'categories' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold">Mijn Categorieën</h2>
-                  <p className="text-muted-foreground">
-                    Organiseer uw vragen en kennis in aangepaste categorieën
-                  </p>
-                </div>
-                <Button onClick={() => setShowNewCategory(true)} className="flex items-center gap-2">
-                  <FolderPlus className="h-4 w-4" />
-                  Nieuwe Categorie
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {categories.map((category) => (
-                  <Card key={category.id} className={`hover:shadow-md transition-shadow ${getColorClass(category.color)}`}>
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-lg bg-white/50">
-                            {getIcon(category.icon)}
-                          </div>
-                          <div>
-                            <h3 className="font-medium">{category.name}</h3>
-                            <p className="text-sm opacity-75">{category.queryCount} vragen</p>
+                            <span className="text-xs text-gray-500">•</span>
+                            <span className="text-xs text-gray-500">
+                              {new Date(search.date).toLocaleDateString('nl-NL')}
+                            </span>
                           </div>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => deleteCategory(category.id)}
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </div>
                       </div>
-                      {category.description && (
-                        <p className="text-sm mb-4 opacity-75">{category.description}</p>
-                      )}
-                      <div className="flex items-center justify-between text-xs opacity-75">
-                        <span>Aangemaakt</span>
-                        <span>{formatDate(category.createdAt)}</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              {categories.length === 0 && (
-                <Card>
-                  <CardContent className="p-12 text-center">
-                    <Folder className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="font-medium mb-2">Geen categorieën gevonden</h3>
-                    <p className="text-muted-foreground mb-4">
-                      Begin met het maken van uw eerste categorie om uw vragen te organiseren
-                    </p>
-                    <Button onClick={() => setShowNewCategory(true)}>
-                      <FolderPlus className="h-4 w-4 mr-2" />
-                      Eerste Categorie Maken
-                    </Button>
+                      <Button variant="outline" size="sm">
+                        Opnieuw zoeken
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
-              )}
+              ))}
             </div>
-          )}
-        </div>
-      </main>
+          </div>
+        )}
+
+        {/* Statistics Tab */}
+        {activeTab === 'stats' && (
+          <div className="space-y-6">
+            <h2 className="text-xl font-semibold">Gebruiksstatistieken</h2>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Activiteit per Maand</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-40 flex items-center justify-center bg-gray-50 rounded">
+                    <p className="text-gray-500">Grafiek wordt geladen...</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Meest Gebruikte Categorieën</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {[
+                      { name: 'Arbeidsrecht', percentage: 45, color: 'bg-blue-500' },
+                      { name: 'Huurrecht', percentage: 25, color: 'bg-green-500' },
+                      { name: 'Verkeersrecht', percentage: 20, color: 'bg-yellow-500' },
+                      { name: 'Strafrecht', percentage: 10, color: 'bg-red-500' }
+                    ].map((category) => (
+                      <div key={category.name} className="flex items-center justify-between">
+                        <span className="text-sm font-medium">{category.name}</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div 
+                              className={`h-full ${category.color}`}
+                              style={{ width: `${category.percentage}%` }}
+                            />
+                          </div>
+                          <span className="text-sm text-gray-600">{category.percentage}%</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 } 

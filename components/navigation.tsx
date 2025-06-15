@@ -16,33 +16,62 @@ import {
   Star,
   Gift,
   Shield,
-  History
+  History,
+  Search,
+  BookOpen,
+  Users,
+  GraduationCap,
+  Briefcase,
+  Menu,
+  ChevronDown
 } from 'lucide-react'
+
+const professionProfiles = [
+  { id: 'algemeen', name: 'Burger/Algemeen', icon: Users },
+  { id: 'jurist', name: 'Jurist/Advocaat', icon: Scale },
+  { id: 'politieagent', name: 'Politieagent', icon: Shield },
+  { id: 'boa', name: 'BOA', icon: Shield },
+  { id: 'student', name: 'Student', icon: GraduationCap },
+  { id: 'ondernemer', name: 'Ondernemer', icon: Briefcase }
+]
 
 export function Navigation() {
   const { data: session, status } = useSession()
 
   return (
-    <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="container mx-auto px-3 sm:px-4">
         <div className="flex h-14 sm:h-16 items-center justify-between">
-          <div className="flex items-center space-x-2 sm:space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-6">
             <Link href="/" className="flex items-center space-x-2">
               <Scale className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
               <span className="text-lg sm:text-xl font-bold">WetHelder</span>
             </Link>
             
-            <div className="hidden md:flex items-center space-x-1">
-              <Link href="/ask" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Stel vraag
-              </Link>
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center space-x-1">
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/ask" className="text-sm">
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Chat
+                </Link>
+              </Button>
+            </div>
+
+            {/* Mobile Navigation */}
+            <div className="lg:hidden">
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/ask">
+                  <MessageSquare className="h-4 w-4" />
+                </Link>
+              </Button>
             </div>
           </div>
 
           <div className="flex items-center space-x-2 sm:space-x-3">
             {/* Status indicator */}
-            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs hidden sm:inline-flex">
-              BETA
+            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-xs hidden sm:inline-flex">
+              LIVE
             </Badge>
 
             {/* Authentication */}
@@ -50,29 +79,16 @@ export function Navigation() {
               <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-muted animate-pulse" />
             ) : session ? (
               <div className="flex items-center space-x-2">
-                {/* Dashboard - prominenter getoond */}
-                <Button variant="default" size="sm" asChild>
+                <Button variant="ghost" size="sm" asChild className="hidden sm:flex">
                   <Link href="/dashboard" className="flex items-center">
                     <User className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                    <span>Dashboard</span>
+                    <span className="hidden md:inline">Dashboard</span>
                   </Link>
                 </Button>
                 
-                <Button variant="ghost" size="sm" asChild className="hidden sm:flex">
-                  <Link href="/chat-history" className="flex items-center">
-                    <History className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                    <span className="hidden md:inline">Geschiedenis</span>
-                  </Link>
-                </Button>
-                
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => signOut()}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="hidden sm:inline ml-1">Uitloggen</span>
+                <Button variant="outline" size="sm" onClick={() => signOut()}>
+                  <LogOut className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                  <span className="hidden sm:inline">Uitloggen</span>
                 </Button>
               </div>
             ) : (

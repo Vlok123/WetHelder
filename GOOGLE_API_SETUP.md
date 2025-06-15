@@ -1,36 +1,95 @@
-# 🔍 Google Custom Search API Setup voor WetHelder
+# Google Custom Search API Setup voor WetHelder.nl
 
-## 🚀 Nieuwe Geverifieerde Bronnen Workflow
+## Overzicht
+WetHelder.nl gebruikt een intelligente routing-strategie die eerst zoekt in lokale JSON bronnen en vervolgens Google Custom Search API raadpleegt voor aanvullende officiële bronnen.
 
-WetHelder gebruikt nu een verbeterde workflow voor betrouwbare juridische antwoorden:
+## Benodigde Environment Variables
 
-### **Workflow Stappen:**
+```bash
+# Google Custom Search API
+GOOGLE_API_KEY=your_google_api_key_here
+GOOGLE_CSE_ID=your_custom_search_engine_id_here
+```
 
-1️⃣ **Gebruiker stelt vraag**
-   - Vraag wordt ontvangen via de `/ask` interface
+## Setup Instructies
 
-2️⃣ **Zoeken op geverifieerde bronnen**
-   - Google Custom Search API zoekt parallel op:
-     - `wetten.overheid.nl` (Nederlandse wetgeving)
-     - `uitspraken.rechtspraak.nl` (Jurisprudentie)
-     - `tuchtrecht.overheid.nl` (Tuchtrecht)
-     - `boetebase.om.nl` (Boetes en sancties)
-     - `overheid.nl` (Algemene overheidsinformatie)
+### Stap 1: Google API Key aanmaken
+1. Ga naar [Google Cloud Console](https://console.developers.google.com/)
+2. Maak een nieuw project of selecteer bestaand project
+3. Ga naar "APIs & Services" > "Library"
+4. Zoek naar "Custom Search API" en activeer deze
+5. Ga naar "APIs & Services" > "Credentials"
+6. Klik "Create Credentials" > "API Key"
+7. Kopieer de API Key naar `GOOGLE_API_KEY`
 
-3️⃣ **Filteren van resultaten**
-   - Alleen resultaten van geverifieerde bronnen
-   - Snippets en samenvattingen worden geëxtraheerd
-   - Duplicaten worden verwijderd
+### Stap 2: Custom Search Engine aanmaken
+1. Ga naar [Google Custom Search Engine](https://cse.google.com/)
+2. Klik "Add" om een nieuwe search engine te maken
+3. Voeg de volgende officiële Nederlandse bronnen toe:
 
-4️⃣ **ChatGPT met strikte instructies**
-   - Prompt: "Beantwoord uitsluitend op basis van onderstaande fragmenten"
-   - Verplichte bronverwijzingen bij elke bewering
-   - Geen toevoeging van eigen kennis
+#### Verplichte Bronnen:
+- `wetten.overheid.nl` - Nederlandse wetgeving
+- `rechtspraak.nl` - Nederlandse jurisprudentie  
+- `overheid.nl` - Algemene overheidsinformatie
+- `belastingdienst.nl` - Belastingwetgeving
+- `uwv.nl` - Sociale zekerheid
+- `politie.nl` - Politie informatie
+- `rijksoverheid.nl` - Rijksoverheid
+- `cbr.nl` - Verkeerswetgeving
+- `cbs.nl` - Statistieken
 
-5️⃣ **Betrouwbaar, snel, up-to-date antwoord**
-   - Antwoord gebaseerd op officiële bronnen
-   - Expliciete bronverwijzingen
-   - Disclaimer over professioneel juridisch advies
+#### Optionele Aanvullende Bronnen:
+- `acm.nl` - Autoriteit Consument & Markt
+- `afm.nl` - Autoriteit Financiële Markten
+- `dnb.nl` - De Nederlandsche Bank
+- `kvk.nl` - Kamer van Koophandel
+- `autoriteitpersoonsgegevens.nl` - Privacy wetgeving
+
+4. Stel de search engine in op "Search the entire web but emphasize included sites"
+5. Kopieer de Search Engine ID naar `GOOGLE_CSE_ID`
+
+## Routing Logica
+
+### STAP 1: JSON Bronnen Check
+Het systeem controleert eerst `data/officiele_bronnen.json` voor directe matches.
+
+### STAP 2: Google API Beslissing
+Google API wordt geraadpleegd als:
+- Geen JSON matches gevonden
+- Minder dan 3 relevante JSON bronnen
+- Query bevat keywords: `apv`, `gemeentelijk`, `lokaal`, `nieuw beleid`, `recent`, `actueel`, `jurisprudentie`, `uitspraak`, `vonnis`, `arrest`
+
+### STAP 3: Google Custom Search
+Zoekt uitsluitend binnen de geconfigureerde officiële bronnen.
+
+### STAP 4: ChatGPT Input
+Combineert JSON bronnen + Google resultaten voor accurate, brongestuurde antwoorden.
+
+## Voordelen van deze Aanpak
+
+1. **Snelheid**: Lokale JSON bronnen worden eerst gecontroleerd
+2. **Nauwkeurigheid**: Alleen officiële bronnen worden geraadpleegd
+3. **Volledigheid**: Google API vult gaten op in lokale bronnen
+4. **Kostenefficiëntie**: Google API alleen wanneer nodig
+5. **Bronverificatie**: Alle antwoorden zijn gebaseerd op officiële bronnen
+
+## Testing
+
+Test de configuratie met:
+```bash
+# In de browser console of via API test
+POST /api/ask
+{
+  "question": "Wat zijn de bevoegdheden van de politie?",
+  "profession": "politieagent"
+}
+```
+
+De logs tonen welke stappen worden doorlopen:
+- `📋 STAP 1: Controle officiele_bronnen.json`
+- `🔍 STAP 2: Evaluatie Google API noodzaak`
+- `🌐 STAP 3: Google Custom Search API wordt geraadpleegd` (indien nodig)
+- `🤖 STAP 4: Input samenstelling voor ChatGPT`
 
 ## 🔧 Google Cloud Console Setup
 

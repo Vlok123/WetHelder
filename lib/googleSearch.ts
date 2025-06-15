@@ -1,21 +1,20 @@
 // Verbeterde Google Search service voor betrouwbare juridische antwoorden
-// Workflow: Excel bronnen (primair) → Google Search (verificatie) → Strikte datumvalidatie → Filteren → ChatGPT met strikte instructies
+// Workflow: JSON bronnen (primair) → Google Search (verificatie) → Strikte datumvalidatie → Filteren → ChatGPT met strikte instructies
 
 import { 
   validateSourceActuality, 
   isHistoricalQuery, 
   generateOutdatedMessage,
   filterCurrentYearResults,
-  getCurrentYear,
   type SourceValidation
 } from './dateValidation'
 
-// Import Excel bronnen
+// Import JSON bronnen
 import { 
-  searchExcelSources, 
-  formatExcelSourcesForContext, 
-  type ExcelBron 
-} from './excelSources'
+  searchJsonSources, 
+  formatJsonSourcesForContext, 
+  type JsonBron 
+} from './jsonSources'
 
 export interface GoogleSearchResult {
   title: string
@@ -23,7 +22,7 @@ export interface GoogleSearchResult {
   snippet: string
   displayLink: string
   formattedUrl: string
-  source: 'excel' | 'wetten.overheid.nl' | 'rechtspraak.nl' | 'tuchtrecht.overheid.nl' | 'boetebase.om.nl' | 'overheid.nl' | 'apv' | 'cao' | 'politiebond' | 'fnv' | 'barp' | 'officiele_documenten'
+  source: 'json' | 'wetten.overheid.nl' | 'rechtspraak.nl' | 'tuchtrecht.overheid.nl' | 'boetebase.om.nl' | 'overheid.nl' | 'apv' | 'cao' | 'politiebond' | 'fnv' | 'barp' | 'officiele_documenten' | 'internet'
   validation?: SourceValidation
   isCurrentYear?: boolean
 }
@@ -35,6 +34,7 @@ export interface VerifiedSearchResults {
   currentYearResults: number
   outdatedResults: number
   excelResults: number
+  jsonResults: number
   internetResults: number
   isHistoricalQuery: boolean
   searchTerms: string[]
@@ -111,6 +111,11 @@ const VERIFIED_SOURCES = [
   'wodc.nl'
 ] as const
 
+// Utility functions
+function getCurrentYear(): number {
+  return new Date().getFullYear()
+}
+
 /**
  * Valideert en categoriseert zoekresultaten
  */
@@ -119,11 +124,38 @@ function validateAndCategorize(sourceResults: any[], sourceName: string): Google
     const validation = validateSourceActuality(r.snippet || '', r.title || '', r.link || '')
     return { 
       ...r, 
-      source: sourceName,
+      source: sourceName as any,
       validation,
       isCurrentYear: validation.isCurrentYear
     }
   })
+}
+
+function formatCombinedSnippetsForChatGPT(results: GoogleSearchResult[], jsonSources: JsonBron[]): string {
+  let snippets = ''
+  
+  // Voeg JSON bronnen toe
+  if (jsonSources.length > 0) {
+    snippets += '=== OFFICIËLE JSON BRONNEN ===\n\n'
+    jsonSources.forEach((source, index) => {
+      snippets += `${index + 1}. ${source.naam}\n`
+      snippets += `   URL: ${source.url}\n`
+      snippets += `   Beschrijving: ${source.beschrijving}\n`
+      snippets += `   Categorie: ${source.categorie}\n\n`
+    })
+  }
+  
+  // Voeg internet resultaten toe
+  if (results.length > 0) {
+    snippets += '=== INTERNET BRONNEN ===\n\n'
+    results.forEach((result, index) => {
+      snippets += `${index + 1}. ${result.title}\n`
+      snippets += `   URL: ${result.link}\n`
+      snippets += `   Snippet: ${result.snippet}\n\n`
+    })
+  }
+  
+  return snippets
 }
 
 /**
@@ -141,6 +173,7 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
     currentYearResults: 0,
     outdatedResults: 0,
     excelResults: 0,
+    jsonResults: 0,
     internetResults: 0,
     isHistoricalQuery: isHistorical,
     searchTerms: [],
@@ -444,6 +477,7 @@ export async function executeVerifiedSearchWorkflow(question: string): Promise<{
         currentYearResults: 0,
         outdatedResults: 0,
         excelResults: 0,
+        jsonResults: 0,
         internetResults: 0,
         isHistoricalQuery: false,
         searchTerms: [],
@@ -468,231 +502,133 @@ export function extractSearchTermsFromResponse(response: string): string[] {
 }
 
 /**
- * HOOFDFUNCTIE: Uitgebreide juridische zoekopdracht met Excel bronnen als primaire bron
+ * HOOFDFUNCTIE: Uitgebreide juridische zoekopdracht met JSON bronnen als primaire bron
  * 
  * Workflow:
- * 1. Zoek eerst in Excel bronnen (primaire bron)
+ * 1. Zoek eerst in JSON bronnen (primair)
  * 2. Zoek op internet voor verificatie en aanvulling
  * 3. Combineer en valideer resultaten
- * 4. Prioriteer Excel bronnen in de output
+ * 4. Prioriteer JSON bronnen in de output
  */
 export async function comprehensiveJuridicalSearch(query: string): Promise<VerifiedSearchResults> {
   console.log(`🔍 Starting comprehensive search for: "${query}"`)
   
+  const results: VerifiedSearchResults = {
+    results: [],
+    combinedSnippets: '',
+    totalResults: 0,
+    currentYearResults: 0,
+    outdatedResults: 0,
+    excelResults: 0,
+    jsonResults: 0,
+    internetResults: 0,
+    isHistoricalQuery: false,
+    searchTerms: [],
+    timestamp: new Date()
+  }
+
+  // STAP 1: Zoek in JSON bronnen (primair)
+  console.log('📊 Searching JSON sources (primary)...')
+  console.log('📊 Loading JSON sources...')
+  
+  let jsonSources: JsonBron[] = []
   try {
-    const isHistorical = isHistoricalQuery(query)
-    
-    const results: VerifiedSearchResults = {
-      results: [],
-      combinedSnippets: '',
-      totalResults: 0,
-      currentYearResults: 0,
-      outdatedResults: 0,
-      excelResults: 0,
-      internetResults: 0,
-      isHistoricalQuery: isHistorical,
-      searchTerms: extractSearchTerms(query),
-      timestamp: new Date()
-    }
-
-    // STAP 1: Zoek in Excel bronnen (PRIMAIRE BRON)
-    console.log('📊 Searching Excel sources (primary)...')
-    const excelSources = await searchExcelSources(query, 15)
-    
-    if (excelSources.length > 0) {
-      console.log(`✅ Found ${excelSources.length} Excel sources`)
-      
-      // Converteer Excel bronnen naar GoogleSearchResult format
-      const excelResults: GoogleSearchResult[] = excelSources.map(source => ({
-        title: source.naam,
-        link: source.url,
-        snippet: source.beschrijving,
-        displayLink: new URL(source.url).hostname,
-        formattedUrl: source.url,
-        source: 'excel' as const,
-        validation: {
-          isCurrentYear: true,
-          yearFound: getCurrentYear(),
-          isReliable: source.betrouwbaarheid === 'hoog',
-          hasValidDate: true,
-          extractedDates: [getCurrentYear()],
-          reason: 'Excel database bron',
-          severity: 'info' as const
-        },
-        isCurrentYear: true
-      }))
-      
-      results.results.push(...excelResults)
-      results.excelResults = excelResults.length
-      results.currentYearResults += excelResults.length
-    }
-
-    // STAP 2: Zoek op internet voor verificatie en aanvulling
-    console.log('🌐 Searching internet sources (verification)...')
-    
-    // Parallel zoeken op alle internet bronnen
-    const [
-      wettenResults,
-      rechtspraakResults,
-      tuchtrechtResults,
-      boetesResults,
-      overheidResults,
-      apvResults,
-      caoResults,
-      politiebondResults,
-      fnvResults,
-      barpResults,
-      officieleDocumentenResults
-    ] = await Promise.all([
-      searchSpecificSource(query, 'wetten.overheid.nl'),
-      searchSpecificSource(query, 'rechtspraak.nl'),
-      searchSpecificSource(query, 'tuchtrecht.overheid.nl'),
-      searchSpecificSource(query, 'boetebase.om.nl'),
-      searchSpecificSource(query, 'overheid.nl'),
-      searchAPVSources(query),
-      searchCAOSources(query),
-      searchPolitiebondSources(query),
-      searchFNVSources(query),
-      searchBARPSources(query),
-      searchOfficieleDocumenten(query)
-    ])
-
-    // Valideer en categoriseer internet resultaten
-    const categorizedWetten = validateAndCategorize(wettenResults, 'wetten.overheid.nl')
-    const categorizedRechtspraak = validateAndCategorize(rechtspraakResults, 'rechtspraak.nl')
-    const categorizedTuchtrecht = validateAndCategorize(tuchtrechtResults, 'tuchtrecht.overheid.nl')
-    const categorizedBoetes = validateAndCategorize(boetesResults, 'boetebase.om.nl')
-    const categorizedOverheid = validateAndCategorize(overheidResults, 'overheid.nl')
-    const categorizedAPV = validateAndCategorize(apvResults, 'apv')
-    
-    const internetResults = [
-      ...categorizedWetten,
-      ...categorizedRechtspraak,
-      ...categorizedTuchtrecht,
-      ...categorizedBoetes,
-      ...categorizedOverheid,
-      ...categorizedAPV,
-      ...validateAndCategorize(caoResults, 'cao'),
-      ...validateAndCategorize(politiebondResults, 'politiebond'),
-      ...validateAndCategorize(fnvResults, 'fnv'),
-      ...validateAndCategorize(barpResults, 'barp'),
-      ...validateAndCategorize(officieleDocumentenResults, 'officiele_documenten')
-    ]
-
-    // Vul de sources property
-    results.sources = {
-      wetten: categorizedWetten,
-      rechtspraak: categorizedRechtspraak,
-      tuchtrecht: categorizedTuchtrecht,
-      boetes: categorizedBoetes,
-      overheid: categorizedOverheid,
-      apv: categorizedAPV
-    }
-
-    results.results.push(...internetResults)
-    results.internetResults = internetResults.length
-
-    // STAP 3: Filter en prioriteer resultaten
-    const allResults = results.results
-
-    // Bereken statistieken
-    results.totalResults = allResults.length
-    
-    // Tel actuele vs verouderde resultaten
-    allResults.forEach(result => {
-      if (result.validation?.isCurrentYear) {
-        // Al geteld voor Excel bronnen
-        if (result.source !== 'excel') {
-          results.currentYearResults++
-        }
-      } else {
-        results.outdatedResults++
-      }
-    })
-
-    // STAP 4: Prioriteer Excel bronnen en filter op actualiteit
-    let finalResults = allResults
-    
-    if (!isHistorical) {
-      // Voor niet-historische vragen: prioriteer actuele bronnen
-      finalResults = allResults.filter(r => r.validation?.isCurrentYear || r.source === 'excel')
-    }
-
-    // Sorteer: Excel bronnen eerst, dan op betrouwbaarheid
-    finalResults.sort((a, b) => {
-      if (a.source === 'excel' && b.source !== 'excel') return -1
-      if (a.source !== 'excel' && b.source === 'excel') return 1
-      
-      // Binnen zelfde bron type: sorteer op betrouwbaarheid
-      const aReliable = a.validation?.isReliable ? 1 : 0
-      const bReliable = b.validation?.isReliable ? 1 : 0
-      return bReliable - aReliable
-    })
-
-    // Beperk tot top resultaten maar behoud alle Excel bronnen
-    const excelResultsInFinal = finalResults.filter(r => r.source === 'excel')
-    const otherResultsInFinal = finalResults.filter(r => r.source !== 'excel').slice(0, 20)
-    finalResults = [...excelResultsInFinal, ...otherResultsInFinal]
-
-    // STAP 5: Genereer gecombineerde context
-    results.combinedSnippets = formatCombinedSnippetsForChatGPT(finalResults, excelSources)
-
-    console.log(`✅ Search completed: ${results.totalResults} total (${results.excelResults} Excel, ${results.internetResults} internet), ${results.currentYearResults} current, ${results.outdatedResults} outdated`)
-    
-    return results
-
+    jsonSources = await searchJsonSources(query, 20)
+    console.log(`✅ Found ${jsonSources.length} JSON sources`)
   } catch (error) {
-    console.error('❌ Error in comprehensive search:', error)
-    return {
-      results: [],
-      combinedSnippets: 'Er is een fout opgetreden bij het zoeken in de bronnen.',
-      totalResults: 0,
-      currentYearResults: 0,
-      outdatedResults: 0,
-      excelResults: 0,
-      internetResults: 0,
-      isHistoricalQuery: false,
-      searchTerms: [],
-      timestamp: new Date()
-    }
+    console.log(`⚠️  JSON bronnen konden niet geladen worden: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
-}
-
-/**
- * Formatteert gecombineerde snippets met prioriteit voor Excel bronnen
- */
-function formatCombinedSnippetsForChatGPT(results: GoogleSearchResult[], excelSources: ExcelBron[]): string {
-  if (results.length === 0) {
-    return 'Geen relevante bronnen gevonden.'
-  }
-
-  let formattedText = ''
-
-  // Eerst Excel bronnen (primaire bronnen)
-  if (excelSources.length > 0) {
-    formattedText += '=== PRIMAIRE OFFICIËLE BRONNEN (Excel Database) ===\n\n'
-    formattedText += formatExcelSourcesForContext(excelSources)
-    formattedText += '\n\n'
+  
+  if (jsonSources.length > 0) {
+    console.log(`✅ Found ${jsonSources.length} JSON sources`)
+    
+    // Converteer JSON bronnen naar GoogleSearchResult format
+    const jsonResults: GoogleSearchResult[] = jsonSources.map(source => ({
+      title: source.naam,
+      link: source.url,
+      snippet: source.beschrijving,
+      displayLink: new URL(source.url).hostname,
+      formattedUrl: source.url,
+      source: 'json' as const,
+      validation: {
+        isCurrentYear: true,
+        yearFound: getCurrentYear(),
+        isReliable: source.betrouwbaarheid === 'hoog',
+        hasValidDate: true,
+        extractedDates: [getCurrentYear()],
+        reason: 'JSON database bron',
+        severity: 'info' as const
+      },
+      isCurrentYear: true
+    }))
+    
+    results.results.push(...jsonResults)
+    results.jsonResults = jsonResults.length
+    results.currentYearResults += jsonResults.length
   }
 
-  // Dan internet bronnen voor verificatie
-  const internetResults = results.filter(r => r.source !== 'excel')
-  if (internetResults.length > 0) {
-    formattedText += '=== VERIFICATIE BRONNEN (Internet) ===\n\n'
-    formattedText += formatSnippetsForChatGPT(internetResults)
-  }
+  // STAP 2: Zoek op internet voor verificatie en aanvulling
+  console.log('🌐 Searching internet sources (verification)...')
+  
+  // Parallel zoeken op alle internet bronnen
+  const [
+    wettenResults,
+    rechtspraakResults,
+    tuchtrechtResults,
+    boetesResults,
+    overheidResults,
+    apvResults,
+    caoResults,
+    politiebondResults,
+    fnvResults,
+    barpResults,
+    officieleDocumentenResults
+  ] = await Promise.all([
+    searchSpecificSource(query, 'wetten.overheid.nl'),
+    searchSpecificSource(query, 'rechtspraak.nl'),
+    searchSpecificSource(query, 'tuchtrecht.overheid.nl'),
+    searchSpecificSource(query, 'boetebase.om.nl'),
+    searchSpecificSource(query, 'overheid.nl'),
+    searchAPVSources(query),
+    searchCAOSources(query),
+    searchPolitiebondSources(query),
+    searchFNVSources(query),
+    searchBARPSources(query),
+    searchOfficieleDocumenten(query)
+  ])
 
-  return formattedText
-}
+  // Combineer alle resultaten
+  const allInternetResults = [
+    ...wettenResults,
+    ...rechtspraakResults,
+    ...tuchtrechtResults,
+    ...boetesResults,
+    ...overheidResults,
+    ...apvResults,
+    ...caoResults,
+    ...politiebondResults,
+    ...fnvResults,
+    ...barpResults,
+    ...officieleDocumentenResults
+  ]
 
-/**
- * Extraheert zoektermen uit query
- */
-function extractSearchTerms(query: string): string[] {
-  return query.toLowerCase()
-    .split(/\s+/)
-    .filter(term => term.length > 2)
-    .slice(0, 10) // Max 10 termen
+  // Valideer en filter resultaten
+  const validatedInternetResults = validateAndCategorize(allInternetResults, 'internet')
+  
+  results.results.push(...validatedInternetResults)
+  results.internetResults = validatedInternetResults.length
+  
+  // Update totalen
+  results.totalResults = results.jsonResults + results.internetResults
+  results.currentYearResults += validatedInternetResults.filter(r => r.isCurrentYear).length
+  results.outdatedResults = results.totalResults - results.currentYearResults
+  
+  // Genereer combined snippets
+  results.combinedSnippets = formatCombinedSnippetsForChatGPT(results.results, jsonSources)
+  
+  console.log(`✅ Search completed: ${results.totalResults} total (${results.jsonResults} JSON, ${results.internetResults} internet), ${results.currentYearResults} current, ${results.outdatedResults} outdated`)
+  
+  return results
 }
 
 /**
@@ -875,4 +811,40 @@ export function formatSearchResultsForContext(results: any): string {
   }
 
   return 'Geen resultaten gevonden.'
+}
+
+interface GoogleResult {
+  title: string;
+  snippet: string;
+  link: string;
+}
+
+export async function searchGoogleCustom(query: string): Promise<GoogleResult[]> {
+  const apiKey = process.env.GOOGLE_API_KEY
+  const cx = process.env.GOOGLE_CSE_ID
+
+  if (!apiKey || !cx) {
+    console.warn('Google API key of CSE ID ontbreekt')
+    return []
+  }
+
+  try {
+    const response = await fetch(
+      `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query)}&num=10`
+    )
+
+    if (!response.ok) {
+      throw new Error('Google API response was not ok')
+    }
+
+    const data = await response.json()
+    return data.items?.map((item: any) => ({
+      title: item.title,
+      snippet: item.snippet,
+      link: item.link
+    })) || []
+  } catch (error) {
+    console.error('Error searching Google:', error)
+    return []
+  }
 }

@@ -38,18 +38,15 @@ import {
   RotateCcw,
   PanelRight,
   Copy,
-  Share2
+  Share2,
+  ExternalLink
 } from 'lucide-react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { format } from 'date-fns'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { FavoriteButton } from '@/components/favorite-button'
-import { CitationGenerator } from '@/components/citation-generator'
-import { SearchHistory } from '@/components/search-history'
-import { Favorites } from '@/components/favorites'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 interface Message {
   id: string
@@ -60,40 +57,41 @@ interface Message {
   profession?: string
   timestamp: Date
   queryId?: string
+  type: 'user' | 'assistant'
 }
 
-type Profession = 'aspirant' | 'student' | 'politieagent' | 'advocaat' | 'algemeen' | 'boa' | 'rechter' | 'notaris' | 'deurwaarder' | 'bedrijfsjurist' | 'gemeenteambtenaar' | 'belastingadviseur' | 'accountant' | 'makelaar' | 'verzekeringsagent' | 'hr-medewerker' | 'compliance-officer' | 'veiligheidsbeambte' | 'beveiliger'
+type Profession = 'aspirant' | 'student' | 'politieagent' | 'advocaat' | 'algemeen' | 'boa' | 'rechter' | 'notaris' | 'deurwaarder' | 'bedrijfsjurist' | 'gemeenteambtenaar' | 'belastingadviseur' | 'accountant' | 'makelaar' | 'verzekeringsagent' | 'hr-medewerker' | 'compliance-officer' | 'veiligheidsbeambte' | 'beveiliger' | 'gemeentejurist' | 'trainer' | 'vervoersmedewerker' | 'zorgprofessional'
 
 const professionConfig = {
   algemeen: {
     icon: Info,
     label: 'Algemeen',
     color: 'text-gray-700 bg-gray-50 border-gray-200',
-    description: 'Begrijpelijke uitleg in toegankelijke taal'
+    description: 'Volledig juridisch antwoord zonder specialisatie'
   },
   advocaat: {
     icon: Scale,
     label: 'Advocaat',
     color: 'text-purple-700 bg-purple-50 border-purple-200',
-    description: 'Juridische feiten en jurisprudentie'
+    description: 'Procesrecht, verdedigingsstrategieën, jurisprudentie en ECLI-nummers'
   },
   politieagent: {
     icon: Shield,
     label: 'Politieagent',
     color: 'text-indigo-700 bg-indigo-50 border-indigo-200',
-    description: 'Praktische kernpunten voor handhaving'
+    description: 'Praktische bevoegdheden, dwangmiddelen, aanhoudingsrecht en doorzoekingsprocedures'
   },
   boa: {
     icon: Shield,
-    label: 'BOA',
+    label: 'BOA / Handhaver',
     color: 'text-cyan-700 bg-cyan-50 border-cyan-200',
-    description: 'Handhaving binnen bevoegdheden'
+    description: 'Domeinspecifieke bevoegdheden, APV-handhaving en verschil met politiebevoegdheden'
   },
   rechter: {
     icon: Gavel,
     label: 'Rechter',
     color: 'text-red-700 bg-red-50 border-red-200',
-    description: 'Procesrecht en jurisprudentie'
+    description: 'Procesrecht, bewijsrecht, motiveringsplicht en uitspraakvorming'
   },
   notaris: {
     icon: FileText,
@@ -118,6 +116,12 @@ const professionConfig = {
     label: 'Gemeenteambtenaar',
     color: 'text-green-700 bg-green-50 border-green-200',
     description: 'Bestuursrecht en lokale verordeningen'
+  },
+  gemeentejurist: {
+    icon: Building,
+    label: 'Gemeentejurist',
+    color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+    description: 'APVs, Gemeentewet, Omgevingswet, bestuurlijke sancties'
   },
   belastingadviseur: {
     icon: Calculator,
@@ -163,9 +167,27 @@ const professionConfig = {
   },
   beveiliger: {
     icon: Shield,
-    label: '(Bedrijfs)beveiliger',
+    label: 'Beveiliger',
     color: 'text-orange-700 bg-orange-50 border-orange-200',
-    description: 'Beveiligingsrecht en private beveiliging'
+    description: 'WPBR, APVs, onderscheid publieke/private bevoegdheden'
+  },
+  trainer: {
+    icon: GraduationCap,
+    label: 'Trainer / Opleider',
+    color: 'text-blue-700 bg-blue-50 border-blue-200',
+    description: 'Volledig gestructureerde antwoorden voor educatief gebruik'
+  },
+  vervoersmedewerker: {
+    icon: Users,
+    label: 'Vervoersmedewerker',
+    color: 'text-green-700 bg-green-50 border-green-200',
+    description: 'Wet personenvervoer, Spoorwegwet, OV-bevoegdheden'
+  },
+  zorgprofessional: {
+    icon: Heart,
+    label: 'Zorgprofessional',
+    color: 'text-pink-700 bg-pink-50 border-pink-200',
+    description: 'Wvggz, Wzd, AVG/WGBO bij gegevensuitwisseling'
   },
   aspirant: {
     icon: UserCheck,
@@ -177,189 +199,182 @@ const professionConfig = {
     icon: GraduationCap,
     label: 'Student',
     color: 'text-green-700 bg-green-50 border-green-200',
-    description: 'Educatieve uitleg met leerdoelen'
+    description: 'Stapsgewijze uitleg, structuur voor verslagen en uitgebreide bronvermelding'
   }
 }
 
-const formatText = (text: string) => {
-  if (!text) return ''
+const formatText = (text: string): React.ReactElement => {
+  if (!text) return <div></div>
   
-  // Remove **** patterns and clean up text
-  const processedText = text
-    // Remove **** patterns completely
-    .replace(/\*{4,}/g, '')
-    // Clean up any remaining multiple asterisks
-    .replace(/\*{3}/g, '**')
-    // Clean up extra spaces that might be left
-    .replace(/\s+/g, ' ')
+  // Step 1: Clean all markdown syntax completely and apply UI/UX rules
+  let processedText = text
+    // Remove AI references
+    .replace(/\b(AI|artificial intelligence|machine learning|ML|chatbot|bot|assistant|model)\b/gi, 'systeem')
+    // Remove ALL markdown formatting completely
+    .replace(/\*\*(.*?)\*\*/g, '$1')  // Bold - remove asterisks
+    .replace(/\*(.*?)\*/g, '$1')      // Italic - remove asterisks  
+    .replace(/`([^`]*)`/g, '$1')      // Inline code - remove backticks
+    .replace(/```[\s\S]*?```/g, '')   // Code blocks - remove completely
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')  // Links - keep text only
+    .replace(/^>\s*/gm, '')           // Blockquotes - remove > symbols
+    .replace(/^#{1,6}\s*/gm, '')      // Headers - remove # symbols completely
+    .replace(/^[\*\-\+]\s+/gm, '• ')  // Convert bullet points to simple bullets
+    .replace(/^\d+\.\s+/gm, '')       // Remove numbered list markers
+    .replace(/---+/g, '')             // Remove horizontal rules
+    .replace(/\n{3,}/g, '\n\n')       // Clean excessive whitespace
     .trim()
-    // Format bullet points
-    .replace(/^[-•]\s+/gm, '- ')
-    // Improve section breaks
-    .replace(/\n\n\n+/g, '\n\n')
-    // Fix spacing around headers
-    .replace(/\n(#{1,6})\s*/g, '\n\n$1 ')
-    // Ensure proper spacing after headers
-    .replace(/(#{1,6}[^\n]*)\n([^\n#])/g, '$1\n\n$2')
-  
-  return (
-    <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      components={{
-        h1: ({ children }) => (
-          <div className="mb-8 first:mt-0 mt-10">
-            <h1 className="text-2xl font-bold text-slate-900 mb-4 flex items-center">
-              <div className="w-1.5 h-10 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full mr-4 shadow-sm"></div>
-              <span className="bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-                {children}
-              </span>
-            </h1>
-            <div className="h-px bg-gradient-to-r from-blue-200 via-blue-300 to-transparent ml-6"></div>
+
+  const elements: React.ReactElement[] = []
+  let key = 0
+
+  // Step 2: Split into logical sections by double newlines for natural reading
+  const sections = processedText.split(/\n\n+/).filter(s => s.trim())
+
+  sections.forEach((section) => {
+    const trimmedSection = section.trim()
+    if (!trimmedSection) return
+
+    // Detect wettelijke grondslag formatting: "De verdachte (art. 47 Sr)"
+    const hasLegalReference = /\b(art\.?\s*\d+|artikel\s*\d+|wetboek|BW|Sr|Sv|AWR|Grondwet|ECLI)\b/i.test(trimmedSection)
+    
+    // Apply natural formatting with wettelijke grondslag integration
+    if (hasLegalReference) {
+      // Enhanced legal text with integrated references
+      const formattedText = trimmedSection.replace(
+        /\b(De\s+(?:verdachte|politie|rechter|officier|deurwaarder|notaris|gemeente|werkgever|werknemer|huurder|verhuurder|eigenaar|bestuur|minister|burgemeester))\s*\(([^)]+)\)/gi,
+        '<span class="font-semibold text-blue-800">$1 ($2)</span>'
+      )
+      
+      elements.push(
+        <div key={key++} className="my-6 p-6 bg-gradient-to-r from-amber-50 to-yellow-50 border-l-4 border-amber-500 rounded-r-lg shadow-sm">
+          <div className="flex items-start gap-4">
+            <span className="text-amber-600 text-2xl flex-shrink-0 mt-1">⚖️</span>
+            <div className="text-gray-800 leading-relaxed">
+              <div dangerouslySetInnerHTML={{ __html: formattedText }} />
+            </div>
           </div>
-        ),
-        h2: ({ children }) => (
-          <div className="mb-6 first:mt-0 mt-8">
-            <h2 className="text-xl font-bold text-slate-800 mb-4 bg-gradient-to-r from-blue-50 via-blue-25 to-transparent border-l-4 border-blue-400 pl-6 py-4 rounded-r-lg shadow-sm hover:shadow-md transition-all duration-200">
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-blue-500 rounded-full mr-3 animate-pulse"></div>
-                {children}
-              </div>
-            </h2>
-          </div>
-        ),
-        h3: ({ children }) => (
-          <h3 className="text-lg font-semibold mb-4 text-slate-800 mt-7 first:mt-0 flex items-center bg-slate-50 px-4 py-3 rounded-lg border border-slate-200 hover:border-slate-300 transition-colors">
-            <div className="w-3 h-3 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full mr-3 shadow-sm"></div>
-            <span className="text-slate-800">{children}</span>
+        </div>
+      )
+      return
+    }
+
+    // Detect section headers (natural titles ending with colon)
+    if (trimmedSection.endsWith(':') && trimmedSection.length < 100 && !trimmedSection.includes('.')) {
+      elements.push(
+        <div key={key++} className="mt-8 mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 border-b border-blue-300 pb-2 mb-4">
+            {trimmedSection.replace(/:$/, '')}
           </h3>
-        ),
-        h4: ({ children }) => (
-          <h4 className="text-base font-semibold mb-3 text-slate-700 mt-6 first:mt-0 border-b border-slate-200 pb-2 flex items-center">
-            <div className="w-2 h-2 bg-slate-400 rounded-full mr-2"></div>
-            {children}
-          </h4>
-        ),
-        p: ({ children }) => (
-          <p className="mb-5 text-slate-700 leading-relaxed text-base tracking-wide">
-            {children}
+        </div>
+      )
+      return
+    }
+
+    // Detect bullet points - create natural list without excessive styling
+    const lines = trimmedSection.split('\n').filter(l => l.trim())
+    const bulletLines = lines.filter(line => line.trim().startsWith('•'))
+    
+    if (bulletLines.length > 0 && bulletLines.length === lines.length) {
+      elements.push(
+        <div key={key++} className="my-4">
+          <ul className="space-y-2 ml-4">
+            {lines.map((line, idx) => {
+              const cleanLine = line.replace(/^•\s*/, '').trim()
+              return (
+                <li key={idx} className="flex items-start gap-2">
+                  <span className="text-blue-600 text-sm flex-shrink-0 mt-2">•</span>
+                  <span className="text-gray-800 leading-relaxed">{cleanLine}</span>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      )
+      return
+    }
+
+    // Detect important notes - subtle highlighting without excessive decoration
+    if (/^(let op|belangrijk|n\.?b\.?|opmerking|waarschuwing|attentie|nota bene)/i.test(trimmedSection)) {
+      elements.push(
+        <div key={key++} className="my-5 p-4 bg-blue-50 border-l-3 border-blue-400 rounded-r">
+          <div className="flex items-start gap-3">
+            <span className="text-blue-600 text-lg flex-shrink-0 mt-1">ℹ️</span>
+            <div className="text-blue-900 leading-relaxed">
+              {trimmedSection}
+            </div>
+          </div>
+        </div>
+      )
+      return
+    }
+
+    // Detect conclusions - minimal styling for natural flow
+    if (/^(conclusie|samenvatting|kortom|samenvattend|tot slot|in conclusie)/i.test(trimmedSection)) {
+      elements.push(
+        <div key={key++} className="my-5 p-4 bg-green-50 border-l-3 border-green-400 rounded-r">
+          <div className="flex items-start gap-3">
+            <span className="text-green-600 text-lg flex-shrink-0 mt-1">✅</span>
+            <div className="text-green-900 leading-relaxed">
+              {trimmedSection}
+            </div>
+          </div>
+        </div>
+      )
+      return
+    }
+
+    // Regular paragraphs - natural reading flow with proper spacing
+    // Split long sections into readable paragraphs
+    const sentences = trimmedSection.split(/(?<=[.!?])\s+(?=[A-Z])/)
+    
+    if (sentences.length > 3) {
+      // Group sentences into natural paragraphs
+      const paragraphs: string[] = []
+      let currentPara = ''
+      
+      sentences.forEach((sentence, idx) => {
+        currentPara += sentence + ' '
+        // Create new paragraph every 2-3 sentences for readability
+        if ((idx + 1) % 3 === 0 || idx === sentences.length - 1) {
+          if (currentPara.trim()) {
+            paragraphs.push(currentPara.trim())
+            currentPara = ''
+          }
+        }
+      })
+      
+      paragraphs.forEach(para => {
+        elements.push(
+          <p key={key++} className="text-gray-800 leading-relaxed text-base mb-4">
+            {para}
           </p>
-        ),
-        ul: ({ children }) => (
-          <div className="mb-6 bg-slate-50 rounded-lg p-4 border border-slate-200">
-            <ul className="space-y-3 text-slate-700">
-              {children}
-            </ul>
-          </div>
-        ),
-        ol: ({ children }) => (
-          <div className="mb-6 bg-gradient-to-r from-blue-50 to-slate-50 rounded-lg p-4 border border-blue-200">
-            <ol className="space-y-3 text-slate-700 counter-reset-list">
-              {children}
-            </ol>
-          </div>
-        ),
-        li: ({ children }) => (
-          <li className="text-slate-700 leading-relaxed flex items-start group hover:bg-white hover:shadow-sm rounded-md p-2 transition-all duration-200">
-            <span className="w-2 h-2 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full mr-3 mt-2.5 flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm"></span>
-            <span className="flex-1">{children}</span>
-          </li>
-        ),
-        strong: ({ children }) => (
-          <strong className="font-bold text-slate-900 bg-yellow-50 px-2 py-1 rounded border border-yellow-200 shadow-sm">
-            {children}
-          </strong>
-        ),
-        em: ({ children }) => (
-          <em className="italic text-slate-800 font-medium bg-blue-50 px-2 py-1 rounded border border-blue-100 shadow-sm">
-            {children}
-          </em>
-        ),
-        blockquote: ({ children }) => (
-          <div className="my-8 border-l-4 border-blue-400 bg-gradient-to-r from-blue-50 via-blue-25 to-transparent rounded-r-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.01]">
-            <div className="pl-6 pr-6 py-6">
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 mt-1">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center shadow-md">
-                    <Quote className="w-5 h-5 text-blue-600" />
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <div className="text-xs font-bold text-blue-800 mb-3 uppercase tracking-wider flex items-center">
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    Officiële juridische bron
-                  </div>
-                  <div className="text-slate-700 leading-relaxed font-medium text-base">
-                    {children}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ),
-        code: ({ children }) => (
-          <code className="bg-slate-100 text-slate-800 px-3 py-1.5 rounded-md text-sm font-mono border border-slate-200 shadow-sm hover:bg-slate-200 transition-colors">
-            {children}
-          </code>
-        ),
-        pre: ({ children }) => (
-          <div className="my-6 bg-slate-50 border border-slate-200 rounded-lg shadow-md overflow-hidden">
-            <div className="bg-gradient-to-r from-slate-100 to-slate-200 px-4 py-3 border-b border-slate-200">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-red-400 rounded-full shadow-sm"></div>
-                <div className="w-3 h-3 bg-yellow-400 rounded-full shadow-sm"></div>
-                <div className="w-3 h-3 bg-green-400 rounded-full shadow-sm"></div>
-                <span className="text-xs text-slate-600 ml-3 font-medium">Wettekst</span>
-              </div>
-            </div>
-            <pre className="p-5 overflow-x-auto">
-              <code className="text-sm font-mono text-slate-800 leading-relaxed">{children}</code>
-            </pre>
-          </div>
-        ),
-        a: ({ href, children }) => (
-          <a 
-            href={href} 
-            className="text-blue-600 hover:text-blue-800 underline decoration-2 underline-offset-2 transition-all duration-200 font-medium hover:bg-blue-50 px-2 py-1 rounded-md shadow-sm"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {children}
-          </a>
-        ),
-        table: ({ children }) => (
-          <div className="my-8 overflow-hidden shadow-xl rounded-lg border border-slate-200 bg-white">
-            <div className="overflow-x-auto">
-              <table className="min-w-full">
-                {children}
-              </table>
-            </div>
-          </div>
-        ),
-        thead: ({ children }) => (
-          <thead className="bg-gradient-to-r from-slate-100 via-slate-50 to-slate-100 border-b-2 border-slate-300">
-            {children}
-          </thead>
-        ),
-        tbody: ({ children }) => <tbody className="bg-white divide-y divide-slate-100">{children}</tbody>,
-        tr: ({ children }) => (
-          <tr className="hover:bg-slate-50 transition-colors duration-200">
-            {children}
-          </tr>
-        ),
-        th: ({ children }) => (
-          <th className="px-6 py-4 text-left font-bold text-slate-900 border-r border-slate-200 last:border-r-0 bg-slate-50">
-            {children}
-          </th>
-        ),
-        td: ({ children }) => (
-          <td className="px-6 py-4 text-slate-700 border-r border-slate-100 last:border-r-0 leading-relaxed">
-            {children}
-          </td>
         )
-      }}
-    >
-      {processedText}
-    </ReactMarkdown>
+      })
+    } else {
+      // Short section - single paragraph with natural spacing
+      elements.push(
+        <p key={key++} className="text-gray-800 leading-relaxed text-base mb-4">
+          {trimmedSection}
+        </p>
+      )
+    }
+  })
+
+  // Fallback for edge cases
+  if (elements.length === 0) {
+    return (
+      <div className="space-y-4">
+        <p className="text-gray-800 leading-relaxed text-base">
+          {processedText}
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-3">
+      {elements}
+    </div>
   )
 }
 
@@ -382,6 +397,7 @@ const mapProfileToProfession = (profile: string): Profession => {
     'deurwaarder': 'deurwaarder',
     'bedrijfsjurist': 'bedrijfsjurist',
     'gemeenteambtenaar': 'gemeenteambtenaar',
+    'gemeentejurist': 'gemeentejurist',
     'belastingadviseur': 'belastingadviseur',
     'accountant': 'accountant',
     'makelaar': 'makelaar',
@@ -389,6 +405,9 @@ const mapProfileToProfession = (profile: string): Profession => {
     'hr-medewerker': 'hr-medewerker',
     'compliance-officer': 'compliance-officer',
     'veiligheidsbeambte': 'veiligheidsbeambte',
+    'trainer': 'trainer',
+    'vervoersmedewerker': 'vervoersmedewerker',
+    'zorgprofessional': 'zorgprofessional',
     'aspirant': 'aspirant',
     'beveiliger': 'beveiliger'
   }
@@ -396,13 +415,13 @@ const mapProfileToProfession = (profile: string): Profession => {
 }
 
 export default function AskPage() {
-  const { data: session } = useSession()
+  const { data: session, status } = process.env.NODE_ENV === 'development' 
+    ? { data: null, status: 'unauthenticated' as const }
+    : useSession()
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [profession, setProfession] = useState<Profession>('algemeen')
-  const [wetUitlegEnabled, setWetUitlegEnabled] = useState(false)
-  const [wetgevingEnabled, setWetgevingEnabled] = useState(false)
   const [remainingQuestions, setRemainingQuestions] = useState<number | null>(null)
   const [userRole, setUserRole] = useState<string>('ANONYMOUS')
   const [selectedCitationQuery, setSelectedCitationQuery] = useState<{queryId: string, question: string} | null>(null)
@@ -411,6 +430,7 @@ export default function AskPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const hasAutoSubmitted = useRef(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -419,6 +439,45 @@ export default function AskPage() {
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
+  // Load conversation from localStorage on mount
+  useEffect(() => {
+    const savedConversation = localStorage.getItem('wetHelder_conversation')
+    const savedProfession = localStorage.getItem('wetHelder_profession')
+    
+    if (savedConversation) {
+      try {
+        const parsedMessages = JSON.parse(savedConversation)
+        // Validate and restore messages
+        const validMessages = parsedMessages.filter((msg: any) => 
+          msg.id && msg.question && msg.answer && msg.timestamp
+        ).map((msg: any) => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp)
+        }))
+        setMessages(validMessages)
+      } catch (error) {
+        console.error('Error loading conversation:', error)
+        localStorage.removeItem('wetHelder_conversation')
+      }
+    }
+    
+    if (savedProfession) {
+      setProfession(savedProfession as Profession)
+    }
+  }, [])
+
+  // Save conversation to localStorage whenever messages change
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('wetHelder_conversation', JSON.stringify(messages))
+    }
+  }, [messages])
+
+  // Save profession to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('wetHelder_profession', profession)
+  }, [profession])
 
   // Check rate limit status on page load
   useEffect(() => {
@@ -431,50 +490,145 @@ export default function AskPage() {
           
           if (response.ok) {
             const data = await response.json()
-            setRemainingQuestions(data.remaining || 2)
-            setUserRole(data.role || 'ANONYMOUS')
+            setRemainingQuestions(data.remainingQuestions)
+            setUserRole(data.userRole)
           }
         } catch (error) {
           console.error('Error checking rate limit:', error)
-          setRemainingQuestions(2) // Default to 2 for anonymous users
         }
-      } else {
-        setUserRole('AUTHENTICATED')
-        setRemainingQuestions(null) // Unlimited for authenticated users
       }
     }
-    
+
     checkRateLimit()
   }, [session])
 
-  // Separate function to handle submission with specific profession
-  const handleSubmitDirectlyWithProfession = useCallback(async (question: string, submissionProfession: Profession = profession) => {
-    if (!question.trim() || isLoading) return
+  // Auto-submit from URL parameters or sessionStorage
+  useEffect(() => {
+    if (hasAutoSubmitted.current) return
+    
+    // Check sessionStorage first
+    const storedQuery = sessionStorage.getItem('autoSubmitQuery')
+    const storedProfile = sessionStorage.getItem('autoSubmitProfile')
+    
+    if (storedQuery) {
+      hasAutoSubmitted.current = true
+      setInput(storedQuery)
+      
+      if (storedProfile) {
+        const mappedProfession = mapProfileToProfession(storedProfile)
+        setProfession(mappedProfession)
+      }
+      
+      // Wacht even tot states zijn bijgewerkt
+      setTimeout(() => {
+        const fakeEvent = { preventDefault: () => {} } as React.FormEvent
+        handleSubmit(fakeEvent, storedProfile ? mapProfileToProfession(storedProfile) : undefined)
+        
+        // Clear sessionStorage
+        sessionStorage.removeItem('autoSubmitQuery')
+        sessionStorage.removeItem('autoSubmitProfile')
+      }, 100)
+      return
+    }
+    
+    // Fall back to URL parameters if no sessionStorage
+    const q = searchParams.get('q')
+    const profile = searchParams.get('profile')
+    
+    if (q && q.trim()) {
+      hasAutoSubmitted.current = true
+      setInput(q)
+      
+      if (profile) {
+        const mappedProfession = mapProfileToProfession(profile)
+        setProfession(mappedProfession)
+      }
+      
+      // Wacht even tot states zijn bijgewerkt
+      setTimeout(() => {
+        const fakeEvent = { preventDefault: () => {} } as React.FormEvent
+        handleSubmit(fakeEvent, profile ? mapProfileToProfession(profile) : undefined)
+      }, 100)
+    }
+  }, [searchParams])
 
-    const questionId = crypto.randomUUID()
-    const newMessage: Message = {
-      id: questionId,
-      question: question.trim(),
-      answer: '',
-      sources: [],
-      isLoading: true,
-      profession: submissionProfession,
-      timestamp: new Date()
+  // Auto-submit from main screen
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'wetHelder_mainscreen_question') {
+        const data = e.newValue ? JSON.parse(e.newValue) : null
+        if (data && data.question && !hasAutoSubmitted.current) {
+          hasAutoSubmitted.current = true
+          setInput(data.question)
+          
+          if (data.profile) {
+            setProfession(mapProfileToProfession(data.profile))
+          }
+          
+          // Auto-submit the question
+          setTimeout(() => {
+            handleSubmit(new Event('submit') as any)
+          }, 100)
+          
+          // Clear the storage
+          localStorage.removeItem('wetHelder_mainscreen_question')
+        }
+      }
     }
 
-    setMessages(prev => [...prev, newMessage])
+    // Check if there's already a question waiting
+    const savedQuestion = localStorage.getItem('wetHelder_mainscreen_question')
+    if (savedQuestion && !hasAutoSubmitted.current) {
+      const data = JSON.parse(savedQuestion)
+      hasAutoSubmitted.current = true
+      setInput(data.question)
+      
+      if (data.profile) {
+        setProfession(mapProfileToProfession(data.profile))
+      }
+      
+      // Auto-submit the question
+      setTimeout(() => {
+        handleSubmit(new Event('submit') as any)
+      }, 100)
+      
+      // Clear the storage
+      localStorage.removeItem('wetHelder_mainscreen_question')
+    }
+
+    // Listen for storage changes
+    window.addEventListener('storage', handleStorageChange)
+    return () => window.removeEventListener('storage', handleStorageChange)
+  }, [])
+
+  const handleSubmit = async (e: React.FormEvent, overrideProfession?: Profession) => {
+    e.preventDefault()
+    if (!input.trim() || isLoading) return
+
+    const question = input.trim()
+    const currentProfession = overrideProfession || profession
     setInput('')
     setIsLoading(true)
 
+    const newMessage: Message = {
+      id: Date.now().toString(),
+      question,
+      answer: '',
+      sources: [],
+      isLoading: true,
+      profession: currentProfession,
+      timestamp: new Date(),
+      type: 'user'
+    }
+
+    setMessages(prev => [...prev, newMessage])
+
     try {
-      // Build comprehensive conversation history
-      const conversationHistory: string[] = []
-      messages.forEach(msg => {
-        if (msg.question && msg.answer && !msg.isLoading) {
-          conversationHistory.push(`Gebruiker: ${msg.question}`)
-          conversationHistory.push(`WetHelder: ${msg.answer}`)
-        }
-      })
+      // Build conversation history for API
+      const conversationHistory = messages.slice(-10).map(m => ({
+        role: m.type === 'user' ? 'user' as const : 'assistant' as const,
+        content: m.type === 'user' ? m.question : m.answer
+      }))
 
       const response = await fetch('/api/ask', {
         method: 'POST',
@@ -482,113 +636,67 @@ export default function AskPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          question: question.trim(),
-          profession: submissionProfession, // Use the specific profession
-          wetUitleg: wetUitlegEnabled,
-          wetgeving: wetgevingEnabled,
-          useGoogleSearch: true,
-          conversationHistory
+          question,
+          profession: currentProfession,
+          history: conversationHistory
         }),
       })
 
-      if (response.status === 429) {
-        const errorData = await response.json()
-        setMessages(prev => prev.map(msg => 
-          msg.id === questionId 
-            ? { 
-                ...msg, 
-                answer: `**⚠️ Gratis vragen gebruikt**
-
-${errorData.message}
-
-**Waarom een account aanmaken?**
-- **Onbeperkt zoeken** in Nederlandse wetgeving
-- **Zoekgeschiedenis** bewaren en terugvinden
-- **Favorieten** opslaan voor later
-- **Persoonlijke dashboard** met overzicht
-
-[**Maak hier gratis een account aan →**](/auth/signup)
-
-Of [**log in**](/auth/signin) als u al een account heeft.`,
-                isLoading: false 
-              }
-            : msg
-        ))
-        setRemainingQuestions(0)
-        setIsLoading(false)
-        return
-      }
-
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        if (response.status === 429) {
+          throw new Error('Te veel vragen gesteld. Probeer het later opnieuw.')
+        }
+        throw new Error('Er is een fout opgetreden bij het verwerken van je vraag.')
       }
 
       const reader = response.body?.getReader()
-      if (!reader) {
-        throw new Error('No response body')
-      }
+      const decoder = new TextDecoder()
+      let answer = ''
 
-      // Stream the response
-      let accumulatedAnswer = ''
-      let queryId = ''
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
 
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
+          const chunk = decoder.decode(value)
+          const lines = chunk.split('\n')
 
-        const chunk = new TextDecoder().decode(value)
-        const lines = chunk.split('\n')
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            try {
-              const data = JSON.parse(line.slice(6))
-              
-              if (data.type === 'content') {
-                accumulatedAnswer += data.content
-                setMessages(prev => prev.map(msg => 
-                  msg.id === questionId 
-                    ? { ...msg, answer: accumulatedAnswer }
-                    : msg
-                ))
-              } else if (data.type === 'queryId') {
-                queryId = data.queryId
-                setMessages(prev => prev.map(msg => 
-                  msg.id === questionId 
-                    ? { ...msg, queryId: data.queryId }
-                    : msg
-                ))
-              } else if (data.type === 'sources') {
-                setMessages(prev => prev.map(msg => 
-                  msg.id === questionId 
-                    ? { ...msg, sources: data.sources }
-                    : msg
-                ))
-              } else if (data.type === 'done') {
-                setMessages(prev => prev.map(msg => 
-                  msg.id === questionId 
-                    ? { ...msg, isLoading: false }
-                    : msg
-                ))
-                
-                // Update remaining questions for anonymous users
-                if (!session && remainingQuestions !== null && remainingQuestions > 0) {
-                  setRemainingQuestions(remainingQuestions - 1)
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6))
+                if (data.content) {
+                  answer += data.content
+                  setMessages(prev => prev.map(msg => 
+                    msg.id === newMessage.id 
+                      ? { ...msg, answer, isLoading: false }
+                      : msg
+                  ))
                 }
+                if (data.remainingQuestions !== undefined) {
+                  setRemainingQuestions(data.remainingQuestions)
+                }
+              } catch (e) {
+                // Ignore parsing errors for incomplete JSON
               }
-            } catch (e) {
-              console.error('Error parsing SSE data:', e)
             }
           }
         }
       }
+
+      setMessages(prev => prev.map(msg => 
+        msg.id === newMessage.id 
+          ? { ...msg, answer, isLoading: false }
+          : msg
+      ))
+
     } catch (error) {
       console.error('Error:', error)
       setMessages(prev => prev.map(msg => 
-        msg.id === questionId 
+        msg.id === newMessage.id 
           ? { 
               ...msg, 
-              answer: 'Er is een fout opgetreden bij het verwerken van uw vraag. Probeer het opnieuw.',
+              answer: error instanceof Error ? error.message : 'Er is een onbekende fout opgetreden.',
               isLoading: false 
             }
           : msg
@@ -596,583 +704,282 @@ Of [**log in**](/auth/signin) als u al een account heeft.`,
     } finally {
       setIsLoading(false)
     }
-  }, [wetUitlegEnabled, wetgevingEnabled, messages, isLoading])
-
-  const handleSubmitDirectly = useCallback(async (question: string) => {
-    return handleSubmitDirectlyWithProfession(question, profession)
-  }, [handleSubmitDirectlyWithProfession, profession])
-
-  // Handle URL parameters
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const questionParam = urlParams.get('q')
-    const profileParam = urlParams.get('profile')
-    const wetUitlegParam = urlParams.get('wetuitleg')
-    const wetgevingParam = urlParams.get('wetgeving')
-    
-    let currentProfession = profession // Default to current profession
-    
-    // Set profession first, before other parameters
-    if (profileParam) {
-      const mappedProfession = mapProfileToProfession(profileParam)
-      currentProfession = mappedProfession
-      setProfession(mappedProfession)
-      
-      // Auto-enable Wet & Uitleg for juridisch-expert
-      if (profileParam === 'juridisch-expert') {
-        setWetUitlegEnabled(true)
-      }
-    }
-    
-    // Set additional options
-    if (wetUitlegParam === 'true') {
-      setWetUitlegEnabled(true)
-    }
-    
-    if (wetgevingParam === 'true') {
-      setWetgevingEnabled(true)
-    }
-    
-    // Handle auto-submit for questions
-    if (questionParam && !hasAutoSubmitted.current) {
-      hasAutoSubmitted.current = true
-      setInput(questionParam)
-      
-      // Auto-submit after a short delay with the correct profession
-      setTimeout(() => {
-        handleSubmitDirectlyWithProfession(questionParam, currentProfession)
-      }, 500)
-    }
-  }, []) // Remove handleSubmitDirectly dependency to avoid re-running
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!input.trim() || isLoading) return
-    
-    await handleSubmitDirectly(input)
   }
 
   const clearConversation = () => {
     setMessages([])
-    setInput('')
+    localStorage.removeItem('wetHelder_conversation')
   }
 
   const handleSearchSelect = (searchTerm: string, profession: string) => {
     setInput(searchTerm)
-    setProfession(profession as Profession)
+    setProfession(mapProfileToProfession(profession))
+    setShowSidebar(false)
   }
-
-  const ProfessionIcon = professionConfig[profession].icon
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
   }
 
   const shareResponse = (question: string, answer: string) => {
-    // Implement sharing logic
+    const shareText = `Vraag: ${question}\n\nAntwoord: ${answer}\n\nVia WetHelder.nl`
+    navigator.clipboard.writeText(shareText)
   }
 
   return (
-    <div className="flex h-screen bg-slate-50">
-      {/* Chat Area */}
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <div className="border-b border-slate-200 p-3 md:p-4 bg-white">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-            {/* Logo en profiel info */}
-            <div className="flex items-center gap-3">
-              {/* WetHelder Logo */}
-              <Link href="/" className="flex items-center gap-2 text-primary hover:text-primary/80 mr-4">
-                <Scale className="h-6 w-6 text-blue-600" />
-                <span className="text-lg font-bold text-slate-900">WetHelder</span>
-              </Link>
-              
-              <div className="flex items-center gap-2">
-                <ProfessionIcon className="h-5 w-5 text-slate-600" />
-                <span className="text-sm font-medium text-slate-700">
-                  {professionConfig[profession].label}
-                </span>
-                <Badge 
-                  variant="outline" 
-                  className={`text-xs ${professionConfig[profession].color}`}
-                >
-                  {professionConfig[profession].description}
-                </Badge>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {/* Rate limiting indicator voor anonieme gebruikers */}
-              {!session && remainingQuestions !== null && (
-                <div className="flex items-center gap-2 px-3 py-1 bg-orange-50 border border-orange-200 rounded-lg">
-                  <Clock className="h-4 w-4 text-orange-600" />
-                  <span className="text-sm font-medium text-orange-800">
-                    {remainingQuestions > 0 
-                      ? `${remainingQuestions} gratis ${remainingQuestions === 1 ? 'vraag' : 'vragen'} over`
-                      : 'Gratis vragen gebruikt'
-                    }
-                  </span>
-                  {remainingQuestions === 0 && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      asChild
-                      className="ml-2 h-6 text-xs"
-                    >
-                      <Link href="/auth/signup">Account maken</Link>
-                    </Button>
-                  )}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <Navigation />
+      
+      <div className="container mx-auto px-4 py-6 max-w-6xl">
+        <div className="flex gap-6">
+          {/* Main Content */}
+          <div className="flex-1 min-w-0">
+            {/* Header */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                    Juridische Assistent
+                  </h1>
+                  <p className="text-gray-600">
+                    Stel je juridische vraag en krijg direct een betrouwbaar antwoord
+                  </p>
                 </div>
-              )}
-              
-              {/* Dashboard link voor ingelogde gebruikers */}
-              {session && (
                 <Button
                   variant="outline"
                   size="sm"
-                  asChild
-                  className="shrink-0"
+                  onClick={() => setShowSidebar(!showSidebar)}
+                  className="lg:hidden"
                 >
-                  <Link href="/dashboard" className="flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    <span className="hidden sm:inline">Dashboard</span>
-                  </Link>
+                  <PanelRight className="h-4 w-4" />
                 </Button>
-              )}
-              
-              {/* Mobile: Hide some buttons */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={clearConversation}
-                className="shrink-0"
-              >
-                <RotateCcw className="h-4 w-4" />
-                <span className="hidden sm:ml-2 sm:inline">Nieuw</span>
-              </Button>
-              
-              {/* Desktop only sidebar toggle */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowSidebar(!showSidebar)}
-                className="hidden lg:flex shrink-0"
-              >
-                <PanelRight className="h-4 w-4" />
-                <span className="ml-2">
-                  {showSidebar ? 'Verberg' : 'Toon'} Zijbalk
-                </span>
-              </Button>
-
-              {/* Mobile: Show history as overlay */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setActiveTab(activeTab === 'history' ? 'favorites' : 'history')}
-                className="lg:hidden shrink-0"
-              >
-                <History className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-
-          {/* Functieprofiel en opties sectie - verbeterde uitlijning */}
-          <div className="mt-4 space-y-4">
-            {/* Functieprofiel selector en knoppen in één rij */}
-            <div className="flex flex-col lg:flex-row gap-3 lg:items-end">
-              <div className="flex-1 min-w-0">
-                <label className="block text-xs font-medium text-slate-600 mb-1">
-                  Functieprofiel
-                </label>
-                <Select value={profession} onValueChange={(value) => setProfession(value as Profession)}>
-                  <SelectTrigger className="w-full h-9">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(professionConfig).map(([key, config]) => {
-                      const Icon = config.icon
-                      return (
-                        <SelectItem key={key} value={key}>
-                          <div className="flex items-center gap-2">
-                            <Icon className="h-4 w-4" />
-                            <span>{config.label}</span>
-                          </div>
-                        </SelectItem>
-                      )
-                    })}
-                  </SelectContent>
-                </Select>
               </div>
 
-              {/* Wet & Uitleg en Wetgeving knoppen - uitgelijnde hoogte */}
-              <div className="flex gap-2">
-                <div className="flex flex-col">
-                  <label className="block text-xs font-medium text-slate-600 mb-1 lg:invisible">
-                    Opties
-                  </label>
-                  <div className="flex gap-2">
-                    <Button
-                      variant={wetUitlegEnabled ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setWetUitlegEnabled(!wetUitlegEnabled)}
-                      className="flex items-center gap-2 h-9"
-                    >
-                      <FileText className="h-4 w-4" />
-                      <span className="hidden sm:inline">Wet & Uitleg</span>
-                      <span className="sm:hidden">W&U</span>
-                    </Button>
-                    
-                    <Button
-                      variant={wetgevingEnabled ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setWetgevingEnabled(!wetgevingEnabled)}
-                      className="flex items-center gap-2 h-9"
-                    >
-                      <Scale className="h-4 w-4" />
-                      <span className="hidden sm:inline">Wetgeving</span>
-                      <span className="sm:hidden">Wet</span>
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Uitleg van actieve opties */}
-            {(wetUitlegEnabled || wetgevingEnabled) && (
-              <div className="flex flex-wrap gap-2">
-                {wetUitlegEnabled && (
-                  <div className="text-xs bg-emerald-50 text-emerald-700 px-3 py-2 rounded-lg border border-emerald-200">
-                    <div className="flex items-center gap-2 mb-1">
-                      <BookOpen className="h-3 w-3" />
-                      <span className="font-semibold">Wet & Uitleg - Diepgaande Analyse</span>
-                    </div>
-                    <p className="text-emerald-600">Uitgebreide juridische analyse met jurisprudentie, casusistieken en praktijkvoorbeelden</p>
-                  </div>
-                )}
-                {wetgevingEnabled && (
-                  <div className="text-xs bg-blue-50 text-blue-700 px-3 py-2 rounded-lg border border-blue-200">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Scale className="h-3 w-3" />
-                      <span className="font-semibold">Wetgeving - Exacte Artikelen</span>
-                    </div>
-                    <p className="text-blue-600">Precieze wetsartikelen, bronverwijzingen en overzicht van relevante wetgeving</p>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Main Chat Area */}
-        <div className="flex-1 overflow-y-auto p-3 md:p-6 space-y-4 md:space-y-6">
-          {messages.length === 0 && (
-            <div className="text-center py-8 md:py-12">
-              <div className="inline-flex p-3 md:p-4 bg-blue-100 rounded-full mb-4 md:mb-6">
-                <Bot className="h-6 w-6 md:h-8 md:w-8 text-blue-700" />
-              </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3 text-slate-900">WetHelder Consultatie</h3>
-              <p className="text-slate-600 mb-4 md:mb-6 max-w-md mx-auto px-4">
-                Stel uw juridische vraag over Nederlandse wetgeving. 
-                Antwoorden worden aangepast aan uw professie.
-              </p>
-              <div className="text-sm text-slate-500 px-4">
-                <p>Voorbeelden: &quot;Artikel 8 WVW uitleg&quot; • &quot;Procedure bij rijden onder invloed&quot;</p>
-              </div>
-              
-              {/* Wachttijd informatie */}
-              <div className="mt-4 md:mt-6 p-3 md:p-4 bg-amber-50 border border-amber-200 rounded-lg max-w-md mx-auto">
-                <div className="flex items-center gap-2 text-amber-800 mb-2">
-                  <Clock className="h-4 w-4" />
-                  <span className="text-sm font-medium">Verwachte wachttijd</span>
-                </div>
-                <p className="text-xs text-amber-700">
-                  Antwoorden kunnen 10-30 seconden duren, afhankelijk van de complexiteit van uw vraag en de hoeveelheid bronnen die worden geraadpleegd.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {messages.map((message) => (
-            <div key={message.id} className="space-y-6">
-              {/* User Question */}
-              <div className="flex justify-end">
-                <div className="max-w-[85%] md:max-w-[70%]">
-                  <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl rounded-br-lg px-5 py-4 shadow-lg">
-                    <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
-                        <User className="h-4 w-4 text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm leading-relaxed break-words font-medium">{message.question}</p>
-                        <div className="flex items-center gap-2 mt-2 text-xs text-blue-100">
-                          <Clock className="h-3 w-3" />
-                          <span>{format(message.timestamp, 'HH:mm')}</span>
-                          {message.profession && (
-                            <>
-                              <span>•</span>
-                              <span className="capitalize">{professionConfig[message.profession as Profession]?.label || message.profession}</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bot Response */}
-              <div className="flex justify-start">
-                <div className="max-w-[95%] md:max-w-[85%]">
-                  <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-lg shadow-lg hover:shadow-xl transition-all duration-300">
-                    {/* Header */}
-                    <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 rounded-t-2xl border-b border-slate-200">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-md">
-                            <Scale className="h-5 w-5 text-white" />
-                          </div>
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-lg">WetHelder</h3>
-                            <div className="flex items-center gap-2">
-                              <div className="flex items-center gap-1 bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full text-xs font-medium">
-                                <CheckCircle className="h-3 w-3" />
-                                <span>Geverifieerd</span>
-                              </div>
-                              <span className="text-xs text-slate-500">
-                                {new Date(message.timestamp).toLocaleTimeString('nl-NL', { 
-                                  hour: '2-digit', 
-                                  minute: '2-digit' 
-                                })}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {message.isLoading && (
-                            <div className="flex items-center gap-2 text-blue-600">
-                              <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-600 border-t-transparent"></div>
-                              <span className="text-xs font-medium">Analyseren...</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="px-6 py-6">
-                      {message.isLoading ? (
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-3 text-slate-600">
-                            <div className="animate-spin rounded-full h-5 w-5 border-2 border-blue-500 border-t-transparent"></div>
-                            <span className="text-sm font-medium">WetHelder analyseert uw vraag...</span>
-                          </div>
-                          <div className="space-y-3">
-                            <div className="h-4 bg-slate-200 rounded animate-pulse"></div>
-                            <div className="h-4 bg-slate-200 rounded animate-pulse w-3/4"></div>
-                            <div className="h-4 bg-slate-200 rounded animate-pulse w-1/2"></div>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="prose prose-slate max-w-none">
-                          {formatText(message.answer)}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Footer */}
-                    {!message.isLoading && message.answer && (
-                      <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 rounded-b-2xl border-t border-slate-200">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2 text-slate-600">
-                              <BookOpen className="h-4 w-4" />
-                              <span className="text-sm font-medium">
-                                {message.sources?.length || 0} bronnen geraadpleegd
-                              </span>
-                            </div>
-                            {message.profession && (
-                              <div className="flex items-center gap-2 text-slate-600">
-                                <User className="h-4 w-4" />
-                                <span className="text-sm capitalize">{message.profession}</span>
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <button 
-                              onClick={() => copyToClipboard(message.answer)}
-                              className="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-200 rounded-lg transition-colors"
-                              title="Kopieer antwoord"
-                            >
-                              <Copy className="h-4 w-4" />
-                            </button>
-                            <button 
-                              onClick={() => shareResponse(message.question, message.answer)}
-                              className="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-200 rounded-lg transition-colors"
-                              title="Deel antwoord"
-                            >
-                              <Share2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </div>
-                        <div className="mt-3 pt-3 border-t border-slate-200">
-                          <p className="text-xs text-slate-500 leading-relaxed">
-                            WetHelder raadpleegt meerdere officiële bronnen en formuleert een juridisch correct antwoord aangepast aan uw professie.
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Input Area */}
-        <div className="border-t border-slate-200 p-3 md:p-4 bg-white">
-          <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
-            <div className="flex flex-col md:flex-row gap-3">
-              <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Stel uw juridische vraag..."
-                disabled={!session && remainingQuestions === 0}
-                className="flex-1 h-12 md:h-12 text-base"
-              />
-              <Button 
-                type="submit" 
-                disabled={!input.trim() || (!session && remainingQuestions === 0)}
-                className="px-6 h-12 w-full md:w-auto"
-              >
-                {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <>
-                    <Send className="h-4 w-4" />
-                    <span className="ml-2 md:hidden">Versturen</span>
-                  </>
-                )}
-              </Button>
-            </div>
-
-            {/* Rate limiting info */}
-            {!session && remainingQuestions !== null && (
-              <div className="mt-3 text-center">
-                {remainingQuestions > 0 ? (
-                  <p className="text-sm text-slate-600">
-                    <span className="font-medium text-orange-600">{remainingQuestions}</span> gratis {remainingQuestions === 1 ? 'vraag' : 'vragen'} over. 
-                    <Link href="/auth/signup" className="text-blue-600 hover:text-blue-800 ml-1 underline">
-                      Maak een gratis account voor onbeperkt zoeken
+              {/* Rate limit info */}
+              {!session && remainingQuestions !== null && (
+                <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                  <p className="text-sm text-amber-800">
+                    <Info className="h-4 w-4 inline mr-1" />
+                    Je hebt nog {remainingQuestions} gratis vragen over. 
+                    <Link href="/auth/signin" className="ml-1 text-amber-900 underline hover:no-underline">
+                      Log in voor onbeperkte vragen
                     </Link>
                   </p>
-                ) : (
-                  <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
-                    <p className="text-sm text-orange-800 font-medium mb-2">
-                      U heeft uw gratis vragen gebruikt
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                      <Button size="sm" asChild>
-                        <Link href="/auth/signup">Gratis account maken</Link>
-                      </Button>
-                      <Button size="sm" variant="outline" asChild>
-                        <Link href="/auth/signin">Inloggen</Link>
-                      </Button>
+                </div>
+              )}
+            </div>
+
+            {/* Chat Messages */}
+            <div className="space-y-6 mb-6">
+              {messages.map((message) => (
+                <div key={message.id} className="space-y-4">
+                  {/* User Question */}
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                      <User className="h-4 w-4 text-white" />
+                    </div>
+                    <div className="flex-1 bg-white rounded-lg p-4 shadow-sm border">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="font-medium text-gray-900">Je vraag</span>
+                        {message.profession && (
+                          <Badge variant="secondary" className="text-xs">
+                            {professionConfig[message.profession as keyof typeof professionConfig]?.label}
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-gray-800">{message.question}</p>
                     </div>
                   </div>
-                )}
-              </div>
-            )}
 
-          </form>
+                  {/* WetHelder Response */}
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
+                      <Bot className="h-4 w-4 text-white" />
+                    </div>
+                    <div className="flex-1 bg-white rounded-lg p-4 shadow-sm border">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="font-medium text-gray-900">WetHelder</span>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copyToClipboard(message.answer)}
+                            className="h-8 w-8 p-0"
+                          >
+                            <Copy className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => shareResponse(message.question, message.answer)}
+                            className="h-8 w-8 p-0"
+                          >
+                            <Share2 className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                            title="Favoriet toevoegen"
+                          >
+                            <Heart className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      {message.isLoading ? (
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span>Aan het denken...</span>
+                        </div>
+                      ) : (
+                                              <div className="prose prose-sm max-w-none">
+                        {formatText(message.answer)}
+                      </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Input Form */}
+            <Card className="sticky bottom-6 shadow-lg border-2">
+              <CardContent className="p-4">
+                <form onSubmit={(e) => handleSubmit(e, profession)} className="space-y-4">
+                  {/* Question Input */}
+                  <div className="flex gap-2">
+                    <Input
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      placeholder="Stel je juridische vraag..."
+                      className="flex-1"
+                      disabled={isLoading}
+                    />
+                    <Button type="submit" disabled={isLoading || !input.trim()}>
+                      {isLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Send className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+
+                                    {/* Options */}
+                  <div className="flex flex-col lg:flex-row gap-3 lg:items-end">
+                    {/* Profession Selector */}
+                    <div className="flex-1 min-w-0">
+                      <label className="block text-xs font-medium text-slate-600 mb-1">
+                        Functieprofiel
+                      </label>
+                      <Select value={profession} onValueChange={(value) => setProfession(value as Profession)}>
+                        <SelectTrigger className="w-full h-9">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.entries(professionConfig).map(([key, config]) => {
+                            const IconComponent = config.icon
+                            return (
+                              <SelectItem key={key} value={key}>
+                                <div className="flex items-center gap-2">
+                                  <IconComponent className="h-4 w-4" />
+                                  <span>{config.label}</span>
+                                </div>
+                              </SelectItem>
+                            )
+                          })}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Clear Button */}
+                    {messages.length > 0 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={clearConversation}
+                        className="h-9"
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Wissen
+                      </Button>
+                    )}
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Sidebar */}
+          <div className={`${showSidebar ? 'block' : 'hidden'} lg:block w-80 flex-shrink-0`}>
+            <Card className="sticky top-6">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">Geschiedenis & Favorieten</CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowSidebar(false)}
+                    className="lg:hidden h-8 w-8 p-0"
+                  >
+                    ×
+                  </Button>
+                </div>
+                <div className="flex bg-gray-100 rounded-lg p-1">
+                  <button
+                    onClick={() => setActiveTab('history')}
+                    className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      activeTab === 'history'
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <History className="h-4 w-4" />
+                    Geschiedenis
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('favorites')}
+                    className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      activeTab === 'favorites'
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <Heart className="h-4 w-4" />
+                    Favorieten
+                  </button>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                {activeTab === 'history' ? (
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-500">Zoekgeschiedenis wordt hier weergegeven</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-500">Favorieten worden hier weergegeven</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
 
-      {/* Sidebar */}
-      {showSidebar && (
-        <>
-          {/* Mobile overlay */}
-          <div 
-            className="lg:hidden fixed inset-0 bg-black/50 z-40"
-            onClick={() => setShowSidebar(false)}
-          />
-          
-          {/* Sidebar content */}
-          <div className="fixed lg:relative right-0 top-0 lg:top-auto h-full lg:h-auto w-80 lg:w-96 bg-white border-l border-slate-200 flex flex-col z-50 lg:z-auto">
-            <div className="border-b p-4">
-              <div className="flex items-center justify-between mb-2 lg:mb-0">
-                <h3 className="font-semibold lg:hidden">Menu</h3>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setShowSidebar(false)}
-                  className="lg:hidden"
-                >
-                  ✕
-                </Button>
-              </div>
-              <div className="flex gap-2">
-                <Button 
-                  variant={activeTab === 'history' ? 'default' : 'outline'} 
-                  className="flex-1"
-                  onClick={() => setActiveTab('history')}
-                >
-                  <History className="h-4 w-4 mr-2" />
-                  Geschiedenis
-                </Button>
-                <Button 
-                  variant={activeTab === 'favorites' ? 'default' : 'outline'} 
-                  className="flex-1"
-                  onClick={() => setActiveTab('favorites')}
-                >
-                  <Heart className="h-4 w-4 mr-2" />
-                  Favorieten
-                </Button>
-              </div>
-            </div>
-            <div className="flex-1 overflow-y-auto p-4">
-              {activeTab === 'history' && <SearchHistory onSearchSelect={handleSearchSelect} />}
-              {activeTab === 'favorites' && <Favorites onQuerySelect={(q) => {
-                const selectedMessage: Message = {
-                  id: q.id,
-                  question: q.question,
-                  answer: q.answer,
-                  sources: JSON.parse(q.sources),
-                  profession: q.profession as Profession,
-                  timestamp: new Date(q.createdAt),
-                  queryId: q.id
-                };
-                setMessages(prev => [...prev, selectedMessage]);
-                // Close sidebar on mobile after selection
-                if (window.innerWidth < 1024) {
-                  setShowSidebar(false);
-                }
-              }} />}
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Citation Modal */}
+      {/* Citation Generator Modal - Placeholder for future implementation */}
       {selectedCitationQuery && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-4 border-b flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Citatie Generator</h2>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => setSelectedCitationQuery(null)}
-              >
-                ✕
-              </Button>
-            </div>
-            <div className="p-4">
-              <CitationGenerator
-                queryId={selectedCitationQuery.queryId}
-                question={selectedCitationQuery.question}
-              />
-            </div>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">Citatie Generator</h3>
+            <p className="text-gray-600 mb-4">
+              Citatie functionaliteit voor: {selectedCitationQuery.question}
+            </p>
+            <Button onClick={() => setSelectedCitationQuery(null)}>
+              Sluiten
+            </Button>
           </div>
         </div>
       )}
