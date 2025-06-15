@@ -748,7 +748,7 @@ export default function MemberDashboard() {
                       <div className="flex items-center gap-3">
                         <Search className="h-5 w-5 text-gray-400" />
                         <div>
-                          <h3 className="font-medium text-gray-900">"{search.query}"</h3>
+                          <h3 className="font-medium text-gray-900">&quot;{search.query}&quot;</h3>
                           <div className="flex items-center gap-2 mt-1">
                             <Badge variant="secondary" className="text-xs">
                               {search.category}
