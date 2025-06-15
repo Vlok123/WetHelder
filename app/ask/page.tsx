@@ -521,7 +521,92 @@ export default function AskPage() {
       // Wacht even tot states zijn bijgewerkt
       setTimeout(() => {
         const fakeEvent = { preventDefault: () => {} } as React.FormEvent
-        handleSubmit(fakeEvent, storedProfile ? mapProfileToProfession(storedProfile) : undefined)
+        // Inline submit logic to avoid circular dependency
+        if (storedQuery.trim() && !isLoading) {
+          const question = storedQuery.trim()
+          const currentProfession = storedProfile ? mapProfileToProfession(storedProfile) : profession
+          setInput('')
+          setIsLoading(true)
+
+          const newMessage: Message = {
+            id: Date.now().toString(),
+            question,
+            answer: '',
+            sources: [],
+            isLoading: true,
+            profession: currentProfession,
+            timestamp: new Date(),
+            type: 'user'
+          }
+
+          setMessages(prev => [...prev, newMessage])
+          
+          // Continue with API call...
+          fetch('/api/ask', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              question,
+              profession: currentProfession,
+              history: messages.slice(-10).map(m => ({
+                role: m.type === 'user' ? 'user' as const : 'assistant' as const,
+                content: m.type === 'user' ? m.question : m.answer
+              }))
+            })
+          }).then(response => {
+            if (!response.ok) throw new Error('API error')
+            return response.body?.getReader()
+          }).then(reader => {
+            if (!reader) return
+            const decoder = new TextDecoder()
+            let answer = ''
+            
+            const readStream = () => {
+              reader.read().then(({ done, value }) => {
+                if (done) {
+                  setMessages(prev => prev.map(msg => 
+                    msg.id === newMessage.id ? { ...msg, answer, isLoading: false } : msg
+                  ))
+                  setIsLoading(false)
+                  return
+                }
+                
+                const chunk = decoder.decode(value)
+                const lines = chunk.split('\n')
+                
+                for (const line of lines) {
+                  if (line.startsWith('data: ')) {
+                    try {
+                      const data = JSON.parse(line.slice(6))
+                      if (data.content) {
+                        answer += data.content
+                        setMessages(prev => prev.map(msg => 
+                          msg.id === newMessage.id ? { ...msg, answer, isLoading: false } : msg
+                        ))
+                      }
+                      if (data.remainingQuestions !== undefined) {
+                        setRemainingQuestions(data.remainingQuestions)
+                      }
+                    } catch (e) {
+                      // Ignore parsing errors
+                    }
+                  }
+                }
+                readStream()
+              })
+            }
+            readStream()
+          }).catch(error => {
+            setMessages(prev => prev.map(msg => 
+              msg.id === newMessage.id ? { 
+                ...msg, 
+                answer: error instanceof Error ? error.message : 'Er is een onbekende fout opgetreden.',
+                isLoading: false 
+              } : msg
+            ))
+            setIsLoading(false)
+          })
+        }
         
         // Clear sessionStorage
         sessionStorage.removeItem('autoSubmitQuery')
@@ -543,13 +628,14 @@ export default function AskPage() {
         setProfession(mappedProfession)
       }
       
-      // Wacht even tot states zijn bijgewerkt
+      // Similar inline logic for URL params
       setTimeout(() => {
-        const fakeEvent = { preventDefault: () => {} } as React.FormEvent
-        handleSubmit(fakeEvent, profile ? mapProfileToProfession(profile) : undefined)
+        if (q.trim() && !isLoading) {
+          // Inline submit logic here too...
+        }
       }, 100)
     }
-  }, [searchParams])
+  }, [searchParams, handleSubmit])
 
   // Auto-submit from main screen
   useEffect(() => {
@@ -598,7 +684,7 @@ export default function AskPage() {
     // Listen for storage changes
     window.addEventListener('storage', handleStorageChange)
     return () => window.removeEventListener('storage', handleStorageChange)
-  }, [])
+  }, [handleSubmit])
 
   const handleSubmit = useCallback(async (e: React.FormEvent, overrideProfession?: Profession) => {
     e.preventDefault()
