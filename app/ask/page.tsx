@@ -635,7 +635,8 @@ export default function AskPage() {
         }
       }, 100)
     }
-  }, [searchParams, handleSubmit])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
 
   // Auto-submit from main screen
   useEffect(() => {
@@ -684,7 +685,8 @@ export default function AskPage() {
     // Listen for storage changes
     window.addEventListener('storage', handleStorageChange)
     return () => window.removeEventListener('storage', handleStorageChange)
-  }, [handleSubmit])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleSubmit = useCallback(async (e: React.FormEvent, overrideProfession?: Profession) => {
     e.preventDefault()
