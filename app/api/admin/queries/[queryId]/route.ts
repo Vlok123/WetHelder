@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma'
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { queryId: string } }
+  { params }: { params: Promise<{ queryId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -28,7 +28,7 @@ export async function DELETE(
       }
     }
 
-    const { queryId } = params
+    const { queryId } = await params
 
     if (!queryId) {
       return NextResponse.json({ error: 'Query ID is required' }, { status: 400 })
@@ -64,7 +64,7 @@ export async function DELETE(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { queryId: string } }
+  { params }: { params: Promise<{ queryId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -87,7 +87,7 @@ export async function GET(
       }
     }
 
-    const { queryId } = params
+    const { queryId } = await params
 
     if (!queryId) {
       return NextResponse.json({ error: 'Query ID is required' }, { status: 400 })

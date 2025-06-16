@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -115,59 +115,7 @@ export default function AdminDashboard() {
   const [queryPage, setQueryPage] = useState(1)
   const [queryLimit] = useState(20)
 
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin')
-    } else if (session?.user) {
-      // Check if user is admin
-      if (session.user.role !== 'ADMIN') {
-        router.push('/dashboard')
-        return
-      }
-      fetchAdminData()
-    }
-  }, [session, status, router])
-
-  // Auto-refresh functionality
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null
-    
-    if (autoRefresh && !isLoading) {
-      interval = setInterval(() => {
-        fetchAdminData(false) // Silent refresh
-      }, 30000) // Refresh every 30 seconds
-    }
-    
-    return () => {
-      if (interval) {
-        clearInterval(interval)
-      }
-    }
-  }, [autoRefresh, isLoading])
-
-  // Keyboard shortcut for refresh (Ctrl+R or Cmd+R)
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
-        event.preventDefault()
-        if (!isRefreshing) {
-          fetchAdminData(true)
-        }
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isRefreshing])
-
-  // Fetch queries when filters change
-  useEffect(() => {
-    if (activeTab === 'queries') {
-      fetchQueries()
-    }
-  }, [querySearchTerm, queryUserTypeFilter, queryProfessionFilter, queryPage, activeTab])
-
-  const fetchAdminData = async (showRefreshIndicator = false) => {
+  const fetchAdminData = useCallback(async (showRefreshIndicator = false) => {
     if (showRefreshIndicator) {
       setIsRefreshing(true)
       setRefreshError(null)
@@ -218,9 +166,9 @@ export default function AdminDashboard() {
       setIsLoading(false)
       setIsRefreshing(false)
     }
-  }
+  }, [queryLimit, queryPage, querySearchTerm, queryUserTypeFilter, queryProfessionFilter])
 
-  const fetchQueries = async () => {
+  const fetchQueries = useCallback(async () => {
     try {
       const response = await fetch(`/api/admin/queries?limit=${queryLimit}&page=${queryPage}&search=${encodeURIComponent(querySearchTerm)}&userType=${queryUserTypeFilter}&profession=${queryProfessionFilter}`, { cache: 'no-store' })
       
@@ -231,7 +179,59 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error('Error fetching queries:', error)
     }
-  }
+  }, [queryLimit, queryPage, querySearchTerm, queryUserTypeFilter, queryProfessionFilter])
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin')
+    } else if (session?.user) {
+      // Check if user is admin
+      if (session.user.role !== 'ADMIN') {
+        router.push('/dashboard')
+        return
+      }
+      fetchAdminData()
+    }
+  }, [session, status, router, fetchAdminData])
+
+  // Auto-refresh functionality
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null
+    
+    if (autoRefresh && !isLoading) {
+      interval = setInterval(() => {
+        fetchAdminData(false) // Silent refresh
+      }, 30000) // Refresh every 30 seconds
+    }
+    
+    return () => {
+      if (interval) {
+        clearInterval(interval)
+      }
+    }
+  }, [autoRefresh, isLoading, fetchAdminData])
+
+  // Keyboard shortcut for refresh (Ctrl+R or Cmd+R)
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
+        event.preventDefault()
+        if (!isRefreshing) {
+          fetchAdminData(true)
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isRefreshing, fetchAdminData])
+
+  // Fetch queries when filters change
+  useEffect(() => {
+    if (activeTab === 'queries') {
+      fetchQueries()
+    }
+  }, [querySearchTerm, queryUserTypeFilter, queryProfessionFilter, queryPage, activeTab, fetchQueries])
 
   const handleUserAction = async (userId: string, action: string) => {
     try {
