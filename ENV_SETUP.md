@@ -23,6 +23,12 @@ DATABASE_URL=postgresql://username:password@localhost:5432/wethelder
 NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=your-nextauth-secret-here
 
+# OAuth Providers
+GOOGLE_CLIENT_ID=your-google-oauth-client-id
+GOOGLE_CLIENT_SECRET=your-google-oauth-client-secret
+FACEBOOK_CLIENT_ID=your-facebook-app-id
+FACEBOOK_CLIENT_SECRET=your-facebook-app-secret
+
 # Email Configuration (voor password reset)
 EMAIL_SERVER_HOST=smtp.gmail.com
 EMAIL_SERVER_PORT=587
@@ -66,6 +72,39 @@ openssl rand -base64 32
 ```
 Voeg toe aan `.env`: `NEXTAUTH_SECRET=generated-secret`
 
-### 4. Database (PostgreSQL)
+### 4. OAuth Providers Setup
+
+#### Google OAuth
+1. Ga naar [Google Cloud Console](https://console.cloud.google.com/)
+2. Selecteer je project of maak een nieuw project aan
+3. Ga naar "APIs & Services" → "Credentials"
+4. Klik "Create credentials" → "OAuth 2.0 Client IDs"
+5. Selecteer "Web application"
+6. Voeg toe bij "Authorized redirect URIs":
+   - Voor development: `http://localhost:3000/api/auth/callback/google`
+   - Voor productie: `https://yourdomain.com/api/auth/callback/google`
+7. Kopieer de Client ID en Client Secret
+8. Voeg toe aan `.env`:
+   ```bash
+   GOOGLE_CLIENT_ID=your-google-oauth-client-id
+   GOOGLE_CLIENT_SECRET=your-google-oauth-client-secret
+   ```
+
+#### Facebook OAuth
+1. Ga naar [Facebook Developers](https://developers.facebook.com/)
+2. Maak een nieuwe app aan of selecteer bestaande app
+3. Ga naar "Settings" → "Basic"
+4. Kopieer App ID en App Secret
+5. Ga naar "Facebook Login" → "Settings"
+6. Voeg toe bij "Valid OAuth Redirect URIs":
+   - Voor development: `http://localhost:3000/api/auth/callback/facebook`
+   - Voor productie: `https://yourdomain.com/api/auth/callback/facebook`
+7. Voeg toe aan `.env`:
+   ```bash
+   FACEBOOK_CLIENT_ID=your-facebook-app-id
+   FACEBOOK_CLIENT_SECRET=your-facebook-app-secret
+   ```
+
+### 5. Database (PostgreSQL)
 Voor lokale development:
 ```

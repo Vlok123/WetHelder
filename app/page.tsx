@@ -96,26 +96,7 @@ const professionProfiles = [
   }
 ]
 
-const features = [
-  {
-    icon: MessageSquare,
-    title: 'Juridische Chat',
-    description: 'Stel juridische vragen en krijg direct professionele antwoorden gebaseerd op Nederlandse wetgeving.',
-    href: '/ask'
-  },
-  {
-    icon: BookOpen,
-    title: 'Wet & Uitleg',
-    description: 'Krijg uitgebreide uitleg bij complexe wetsartikelen met praktische voorbeelden.',
-    href: '/uitleg'
-  },
-  {
-    icon: Scale,
-    title: 'Rechtspraak Database',
-    description: 'Toegang tot uitspraken van Nederlandse rechtbanken en gerechtshoven.',
-    href: '/rechtspraak'
-  }
-]
+
 
 const stats = [
   { number: '56+', label: 'Officiële bronnen' },
@@ -557,42 +538,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Krachtige Functies</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Alles wat u nodig heeft voor juridische research en advies in één platform.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {features.map((feature, index) => {
-              const IconComponent = feature.icon
-              return (
-                <Card key={index} className="text-center hover:shadow-lg transition-all duration-200 group">
-                  <CardHeader>
-                    <div className="w-12 h-12 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                      <IconComponent className="h-6 w-6" />
-                    </div>
-                    <CardTitle className="text-lg">{feature.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600 mb-4">{feature.description}</p>
-                    <Button variant="ghost" size="sm" asChild className="w-full">
-                      <Link href={feature.href}>
-                        Proberen
-                        <ArrowRight className="h-4 w-4 ml-2" />
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </div>
-        </div>
-      </section>
+
 
       {/* Benefits */}
       <section className="py-16 bg-white">
