@@ -169,6 +169,8 @@ function ChatPageContent() {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [remainingQuestions, setRemainingQuestions] = useState<number | null>(null)
+  const [userRole, setUserRole] = useState<string>('ANONYMOUS')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Initialize settings from URL parameters
@@ -182,6 +184,21 @@ function ChatPageContent() {
   useEffect(() => {
     const history = loadChatHistory()
     setMessages(history)
+  }, [])
+
+  // Check rate limit status
+  useEffect(() => {
+    const checkRateLimit = async () => {
+      try {
+        const response = await fetch('/api/ask', { method: 'GET' })
+        const data = await response.json()
+        setRemainingQuestions(data.remainingQuestions)
+        setUserRole(data.userRole)
+      } catch (error) {
+        console.error('Failed to check rate limit:', error)
+      }
+    }
+    checkRateLimit()
   }, [])
 
   // Save chat history whenever messages change
@@ -279,6 +296,10 @@ function ChatPageContent() {
                     : msg
                 ))
               }
+              // Update remaining questions if provided
+              if (data.remainingQuestions !== undefined) {
+                setRemainingQuestions(data.remainingQuestions)
+              }
             } catch (e) {
               console.error('Error parsing streaming data:', e)
             }
@@ -295,6 +316,16 @@ function ChatPageContent() {
       }])
     } finally {
       setIsLoading(false)
+      // Refresh rate limit status after question
+      if (userRole === 'ANONYMOUS') {
+        try {
+          const response = await fetch('/api/ask', { method: 'GET' })
+          const data = await response.json()
+          setRemainingQuestions(data.remainingQuestions)
+        } catch (error) {
+          console.error('Failed to refresh rate limit:', error)
+        }
+      }
     }
   }
 
@@ -395,6 +426,47 @@ function ChatPageContent() {
                     </div>
                   </label>
                 </div>
+
+                {/* Rate Limit Status */}
+                {userRole === 'ANONYMOUS' && remainingQuestions !== null && (
+                  <div className="p-3 rounded-lg border bg-gradient-to-r from-blue-50 to-indigo-50">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-lg">👤</span>
+                      <span className="font-semibold text-sm text-blue-800">Gastgebruiker</span>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-blue-700">Vragen over:</span>
+                        <span className="font-bold text-sm text-blue-800">
+                          {remainingQuestions} van 4
+                        </span>
+                      </div>
+                      <div className="w-full bg-blue-200 rounded-full h-2">
+                        <div 
+                          className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-300"
+                          style={{ width: `${(remainingQuestions / 4) * 100}%` }}
+                        ></div>
+                      </div>
+                      {remainingQuestions <= 1 && (
+                        <div className="text-xs text-blue-700 mt-2">
+                          💡 <strong>Maak een gratis account</strong> aan voor onbeperkt vragen!
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {userRole !== 'ANONYMOUS' && (
+                  <div className="p-3 rounded-lg border bg-gradient-to-r from-green-50 to-emerald-50">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">✅</span>
+                      <span className="font-semibold text-sm text-green-800">Account gebruiker</span>
+                    </div>
+                    <div className="text-xs text-green-700 mt-1">
+                      Onbeperkt vragen stellen!
+                    </div>
+                  </div>
+                )}
 
                 {/* Chat actions */}
                 <div className="pt-4 border-t">

@@ -205,22 +205,30 @@ export async function POST(request: NextRequest) {
         console.log('❌ Rate limit exceeded for anonymous user')
         
         // Instead of returning an error, return a friendly rate limit message as a stream
-        const rateLimitMessage = `🔒 **Limiet bereikt**
+        const rateLimitMessage = `🚨 **Dagelijkse limiet bereikt!**
 
-Je hebt het maximum aantal gratis vragen (4 per dag) bereikt. 
+Je hebt vandaag al **4 gratis vragen** gesteld zonder account.
 
-**Maak een gratis account aan om:**
-• Onbeperkt vragen te stellen
-• Je vraaggeschiedenis te bewaren
-• Snellere antwoorden te krijgen
+## 🎯 Maak een gratis account aan voor:
 
-**Registreren is gratis en duurt slechts 30 seconden!**
+✅ **Onbeperkt vragen stellen** - Geen limiet meer!  
+✅ **Vraaggeschiedenis bewaren** - Bekijk eerdere gesprekken  
+✅ **Snellere antwoorden** - Prioriteit in de wachtrij  
+✅ **Uitgebreide analyses** - Meer gedetailleerde juridische adviezen  
+✅ **Persoonlijke instellingen** - Stel je profiel in (advocaat, BOA, etc.)
 
-[→ Account aanmaken](/auth/signup)
-[→ Inloggen](/auth/signin)
+## 🚀 Snel registreren:
+
+**[→ Account aanmaken - 100% Gratis](/auth/signup)**
+
+**[→ Al een account? Inloggen](/auth/signin)**
 
 ---
-*WetHelder blijft volledig gratis te gebruiken met een account.*`
+
+### 💡 Waarom een account?
+WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account aan om misbruik te voorkomen en om je de best mogelijke juridische ondersteuning te bieden.
+
+**Registreren duurt slechts 30 seconden en je kunt direct weer vragen stellen!**`
 
         // Create a ReadableStream to simulate the normal response format
         const stream = new ReadableStream({
