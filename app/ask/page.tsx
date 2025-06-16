@@ -716,12 +716,20 @@ function AskPageContent() {
       finalProfession: currentProfession 
     })
     
-    // Clear input immediately - both state and DOM
+    // Clear input state immediately
     setInput('')
+    
+    // Force DOM clear and trigger synthetic change event
     if (inputRef.current) {
       inputRef.current.value = ''
-      inputRef.current.blur() // Remove focus to ensure clear
+      
+      // Trigger change event to sync controlled component
+      const event = new Event('change', { bubbles: true })
+      inputRef.current.dispatchEvent(event)
+      
+      inputRef.current.blur()
     }
+    
     setIsLoading(true)
 
     const newMessage: Message = {
