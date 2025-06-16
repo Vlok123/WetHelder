@@ -186,22 +186,42 @@ export default function HomePage() {
             <Card className="max-w-2xl mx-auto mb-8 shadow-lg">
               <CardContent className="p-6">
                 <div className="space-y-4">
-                  <div className="flex gap-2">
+                  {/* Desktop: side by side, Mobile: stacked */}
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <Input
                       placeholder="Stel uw juridische vraag..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onKeyPress={handleKeyPress}
-                      className="flex-1 text-base"
+                      className="flex-1 text-base h-12"
                       disabled={isSubmitting}
                     />
                     <Button 
                       size="lg" 
                       onClick={handleSearch}
                       disabled={!searchQuery.trim() || isSubmitting}
+                      className="w-full sm:w-auto h-12 px-6"
                     >
                       <MessageSquare className="h-5 w-5 mr-2" />
                       {isSubmitting ? 'Bezig...' : 'Vraag stellen'}
+                    </Button>
+                  </div>
+                  
+                  {/* Wet & Uitleg Toggle */}
+                  <div className="flex justify-center">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-2 text-sm"
+                      onClick={() => {
+                        // Store preference and redirect to ask page
+                        localStorage.setItem('wetUitlegEnabled', 'true')
+                        window.location.href = '/ask'
+                      }}
+                    >
+                      <BookOpen className="h-4 w-4" />
+                      <span>Wet & Uitleg modus</span>
+                      <Badge variant="secondary" className="text-xs">Nieuw</Badge>
                     </Button>
                   </div>
                   

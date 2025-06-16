@@ -481,6 +481,16 @@ function AskPageContent() {
     localStorage.setItem('wetHelder_profession', profession)
   }, [profession])
 
+  // Check for Wet & Uitleg preference from localStorage
+  useEffect(() => {
+    const wetUitlegPref = localStorage.getItem('wetUitlegEnabled')
+    if (wetUitlegPref === 'true') {
+      setWetUitlegEnabled(true)
+      // Clear the preference after using it
+      localStorage.removeItem('wetUitlegEnabled')
+    }
+  }, [])
+
   // Check rate limit status on page load
   useEffect(() => {
     const checkRateLimit = async () => {
