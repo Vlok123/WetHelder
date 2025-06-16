@@ -97,7 +97,7 @@ export default function AskPage() {
           Stel uw juridische vraag
         </h1>
 
-        {!session && questionCount >= 2 ? (
+        {!session && questionCount >= 4 ? (
           <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg text-center">
             <p className="text-gray-600 mb-4">
               U heeft het maximaal aantal gratis vragen bereikt.
@@ -189,7 +189,7 @@ export default function AskPage() {
         {!session && questionCount === 1 && (
           <div className="mt-6 text-center text-sm sm:text-base text-gray-600">
             <p>
-              Nog {2 - questionCount} gratis {2 - questionCount === 1 ? 'vraag' : 'vragen'} over.{' '}
+              Nog {4 - questionCount} gratis {4 - questionCount === 1 ? 'vraag' : 'vragen'} over.{' '}
               <Link href="/register" className="text-blue-600 hover:underline">
                 Registreer
               </Link>{' '}

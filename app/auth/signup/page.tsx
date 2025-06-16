@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -67,6 +68,8 @@ export default function SignUpPage() {
     }
   }
 
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -109,6 +112,19 @@ export default function SignUpPage() {
                 {success}
               </div>
             )}
+
+            {/* Gratis account notice */}
+            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-center gap-2 text-green-700">
+                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span className="font-medium">Accounts zijn tijdelijk helemaal gratis!</span>
+              </div>
+              <p className="text-sm text-green-600 mt-1">
+                Krijg nu volledige toegang tot alle functies van WetHelder zonder kosten.
+              </p>
+            </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>

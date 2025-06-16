@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import NextAuth, { AuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+
 import { prisma } from "@/lib/prisma";
 
 export const authOptions: AuthOptions = {
@@ -74,7 +75,7 @@ export const authOptions: AuthOptions = {
     }
   },
   pages: {
-    signIn: "/login",
+    signIn: "/auth/signin",
     error: "/auth/error",
     signOut: "/"
   },

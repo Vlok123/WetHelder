@@ -873,9 +873,6 @@ function AskPageContent() {
       })
 
       if (!response.ok) {
-        if (response.status === 429) {
-          throw new Error('Te veel vragen gesteld. Probeer het later opnieuw.')
-        }
         throw new Error('Er is een fout opgetreden bij het verwerken van je vraag.')
       }
 
@@ -987,13 +984,32 @@ function AskPageContent() {
 
               {/* Rate limit info */}
               {!session && remainingQuestions !== null && (
-                <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                  <p className="text-sm text-amber-800">
+                <div className={`mb-4 p-3 border rounded-lg ${
+                  remainingQuestions === 0 
+                    ? 'bg-red-50 border-red-200' 
+                    : 'bg-amber-50 border-amber-200'
+                }`}>
+                  <p className={`text-sm ${
+                    remainingQuestions === 0 ? 'text-red-800' : 'text-amber-800'
+                  }`}>
                     <Info className="h-4 w-4 inline mr-1" />
-                    Je hebt nog {remainingQuestions} gratis vragen over. 
-                    <Link href="/auth/signin" className="ml-1 text-amber-900 underline hover:no-underline">
-                      Log in voor onbeperkte vragen
-                    </Link>
+                    {remainingQuestions === 0 ? (
+                      <>
+                        Je hebt het maximum aantal gratis vragen bereikt.{' '}
+                        <Link href="/auth/signin" className={`ml-1 underline hover:no-underline ${
+                          remainingQuestions === 0 ? 'text-red-900' : 'text-amber-900'
+                        }`}>
+                          Maak een gratis account aan voor onbeperkte vragen
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        Je hebt nog {remainingQuestions} gratis vragen over.{' '}
+                        <Link href="/auth/signin" className="ml-1 text-amber-900 underline hover:no-underline">
+                          Log in voor onbeperkte vragen
+                        </Link>
+                      </>
+                    )}
                   </p>
                 </div>
               )}
@@ -1086,7 +1102,7 @@ function AskPageContent() {
                       className="flex-1"
                       disabled={isLoading}
                     />
-                    <Button type="submit" disabled={isLoading || !input.trim()}>
+                    <Button type="submit" disabled={isLoading || !input.trim() || (!session && remainingQuestions === 0)}>
                       {isLoading ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (

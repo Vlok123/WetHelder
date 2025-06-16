@@ -34,92 +34,193 @@ import {
   Heart,
   Briefcase,
   Search,
-  Mail
+  Mail,
+  Info,
+  CheckCircle,
+  Bot,
+  Menu,
+  X,
+  History,
+  Bookmark,
+  Settings,
+  Sun,
+  Moon,
+  Mic,
+  Plus,
+  ChevronRight,
+  LogIn,
+  LogOut,
+  Trash2,
+  Loader2
 } from 'lucide-react'
 
 const professionProfiles = [
   {
     id: 'algemeen',
-    name: 'Burger/Algemeen',
-    description: 'Voor alle burgers met juridische vragen',
-    icon: Users,
-    color: 'bg-blue-50 text-blue-700 border-blue-200'
+    name: 'Algemeen',
+    description: 'Volledig juridisch antwoord zonder specialisatie',
+    icon: Info,
+    color: 'bg-gray-50 text-gray-700 border-gray-200'
   },
   {
     id: 'advocaat',
-    name: 'Advocaat/Jurist',
-    description: 'Juridische professionals',
+    name: 'Advocaat',
+    description: 'Procesrecht, verdedigingsstrategieën, jurisprudentie en ECLI-nummers',
     icon: Scale,
     color: 'bg-purple-50 text-purple-700 border-purple-200'
   },
   {
     id: 'politieagent',
     name: 'Politieagent',
-    description: 'Handhaving en strafrecht',
+    description: 'Praktische bevoegdheden, dwangmiddelen, aanhoudingsrecht en doorzoekingsprocedures',
     icon: Shield,
-    color: 'bg-green-50 text-green-700 border-green-200'
+    color: 'bg-indigo-50 text-indigo-700 border-indigo-200'
   },
   {
     id: 'boa',
-    name: 'BOA/Handhaver',
-    description: 'Buitengewoon opsporingsambtenaar',
+    name: 'BOA / Handhaver',
+    description: 'Domeinspecifieke bevoegdheden, APV-handhaving en verschil met politiebevoegdheden',
     icon: Shield,
+    color: 'bg-cyan-50 text-cyan-700 border-cyan-200'
+  },
+  {
+    id: 'rechter',
+    name: 'Rechter',
+    description: 'Procesrecht, bewijsrecht, motiveringsplicht en uitspraakvorming',
+    icon: Gavel,
+    color: 'bg-red-50 text-red-700 border-red-200'
+  },
+  {
+    id: 'notaris',
+    name: 'Notaris',
+    description: 'Burgerlijk recht en notariële praktijk',
+    icon: FileText,
+    color: 'bg-emerald-50 text-emerald-700 border-emerald-200'
+  },
+  {
+    id: 'deurwaarder',
+    name: 'Deurwaarder',
+    description: 'Executierecht en beslagprocedures',
+    icon: FileText,
     color: 'bg-orange-50 text-orange-700 border-orange-200'
   },
   {
-    id: 'student',
-    name: 'Student',
-    description: 'Rechtenstudenten en onderzoek',
-    icon: GraduationCap,
-    color: 'bg-pink-50 text-pink-700 border-pink-200'
+    id: 'bedrijfsjurist',
+    name: 'Bedrijfsjurist',
+    description: 'Ondernemingsrecht en compliance',
+    icon: Building,
+    color: 'bg-slate-50 text-slate-700 border-slate-200'
+  },
+  {
+    id: 'gemeenteambtenaar',
+    name: 'Gemeenteambtenaar',
+    description: 'Bestuursrecht en lokale verordeningen',
+    icon: MapPin,
+    color: 'bg-green-50 text-green-700 border-green-200'
   },
   {
     id: 'gemeentejurist',
     name: 'Gemeentejurist',
-    description: 'Bestuursrecht en lokale verordeningen',
-    icon: Briefcase,
+    description: 'APVs, Gemeentewet, Omgevingswet, bestuurlijke sancties',
+    icon: Building,
+    color: 'bg-emerald-50 text-emerald-700 border-emerald-200'
+  },
+  {
+    id: 'belastingadviseur',
+    name: 'Belastingadviseur',
+    description: 'Fiscaal recht en belastingwetgeving',
+    icon: Calculator,
+    color: 'bg-yellow-50 text-yellow-700 border-yellow-200'
+  },
+  {
+    id: 'accountant',
+    name: 'Accountant',
+    description: 'Financieel recht en verslaggeving',
+    icon: Calculator,
+    color: 'bg-blue-50 text-blue-700 border-blue-200'
+  },
+  {
+    id: 'makelaar',
+    name: 'Makelaar',
+    description: 'Vastgoedrecht en makelaarsrecht',
+    icon: Home,
+    color: 'bg-teal-50 text-teal-700 border-teal-200'
+  },
+  {
+    id: 'verzekeringsagent',
+    name: 'Verzekeringsagent',
+    description: 'Verzekeringsrecht en aansprakelijkheid',
+    icon: Shield,
+    color: 'bg-purple-50 text-purple-700 border-purple-200'
+  },
+  {
+    id: 'hr-medewerker',
+    name: 'HR-medewerker',
+    description: 'Arbeidsrecht en personeelsbeleid',
+    icon: Users,
+    color: 'bg-pink-50 text-pink-700 border-pink-200'
+  },
+  {
+    id: 'compliance-officer',
+    name: 'Compliance Officer',
+    description: 'Toezichtrecht en compliance',
+    icon: CheckCircle,
     color: 'bg-indigo-50 text-indigo-700 border-indigo-200'
   },
   {
-    id: 'beveiliger',
-    name: 'Beveiliger',
-    description: 'Private beveiliging en toezicht',
+    id: 'veiligheidsbeambte',
+    name: 'Veiligheidsbeambte',
+    description: 'Veiligheidsrecht en preventie',
     icon: Shield,
     color: 'bg-red-50 text-red-700 border-red-200'
   },
   {
+    id: 'beveiliger',
+    name: 'Beveiliger',
+    description: 'WPBR, APVs, onderscheid publieke/private bevoegdheden',
+    icon: Shield,
+    color: 'bg-orange-50 text-orange-700 border-orange-200'
+  },
+  {
+    id: 'trainer',
+    name: 'Trainer / Opleider',
+    description: 'Volledig gestructureerde antwoorden voor educatief gebruik',
+    icon: GraduationCap,
+    color: 'bg-blue-50 text-blue-700 border-blue-200'
+  },
+  {
+    id: 'vervoersmedewerker',
+    name: 'Vervoersmedewerker',
+    description: 'Wet personenvervoer, Spoorwegwet, OV-bevoegdheden',
+    icon: Users,
+    color: 'bg-green-50 text-green-700 border-green-200'
+  },
+  {
     id: 'zorgprofessional',
     name: 'Zorgprofessional',
-    description: 'Gezondheidszorg en psychiatrie',
-    icon: Users,
-    color: 'bg-teal-50 text-teal-700 border-teal-200'
-  }
-]
-
-const features = [
-  {
-    icon: MessageSquare,
-    title: 'Juridische Chat',
-    description: 'Stel juridische vragen en krijg direct professionele antwoorden gebaseerd op Nederlandse wetgeving.',
-    href: '/ask'
+    description: 'Wvggz, Wzd, AVG/WGBO bij gegevensuitwisseling',
+    icon: Heart,
+    color: 'bg-pink-50 text-pink-700 border-pink-200'
   },
   {
-    icon: BookOpen,
-    title: 'Wet & Uitleg',
-    description: 'Krijg uitgebreide uitleg bij complexe wetsartikelen met praktische voorbeelden.',
-    href: '/uitleg'
+    id: 'aspirant',
+    name: 'Aspirant',
+    description: 'Uitgebreide uitleg met praktijkvoorbeelden',
+    icon: UserCheck,
+    color: 'bg-blue-50 text-blue-700 border-blue-200'
   },
   {
-    icon: Scale,
-    title: 'Rechtspraak Database',
-    description: 'Toegang tot uitspraken van Nederlandse rechtbanken en gerechtshoven.',
-    href: '/rechtspraak'
+    id: 'student',
+    name: 'Student',
+    description: 'Stapsgewijze uitleg, structuur voor verslagen en uitgebreide bronvermelding',
+    icon: GraduationCap,
+    color: 'bg-green-50 text-green-700 border-green-200'
   }
 ]
 
 const stats = [
   { number: '56+', label: 'Officiële bronnen' },
-  { number: '22', label: 'Beroepsprofielen' },
+  { number: '23', label: 'Beroepsprofielen' },
   { number: '8', label: 'Hoofddoelgroepen' },
   { number: '24/7', label: 'Beschikbaar' }
 ]
@@ -306,6 +407,124 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Example Questions Section */}
+      <section className="py-12 bg-gradient-to-br from-gray-50 to-slate-100">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              Inspiratie voor Uw Vraag
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+              Populaire juridische vragen uit verschillende rechtsgebieden. Klik op een vraag om direct een antwoord te krijgen.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
+            {[
+              {
+                question: "Wat zijn mijn rechten als huurder bij geluidsoverlast?",
+                category: "Huurrecht",
+                icon: Home,
+                color: "bg-blue-50 text-blue-700 border-blue-200",
+                profile: "algemeen"
+              },
+              {
+                question: "Wanneer mag ik iemand aanhouden als BOA?",
+                category: "Handhaving",
+                icon: Shield,
+                color: "bg-orange-50 text-orange-700 border-orange-200",
+                profile: "boa"
+              },
+              {
+                question: "Hoe stel ik een arbeidscontract juist op?",
+                category: "Arbeidsrecht",
+                icon: Briefcase,
+                color: "bg-purple-50 text-purple-700 border-purple-200",
+                profile: "advocaat"
+              },
+              {
+                question: "Welke stappen bij echtscheiding met kinderen?",
+                category: "Familierecht",
+                icon: Heart,
+                color: "bg-pink-50 text-pink-700 border-pink-200",
+                profile: "algemeen"
+              },
+              {
+                question: "Wat is het verschil tussen eigendom en erfpacht?",
+                category: "Vastgoedrecht",
+                icon: Building,
+                color: "bg-green-50 text-green-700 border-green-200",
+                profile: "algemeen"
+              },
+              {
+                question: "Hoe bereken ik schadevergoeding bij verkeersongeluk?",
+                category: "Verkeersrecht",
+                icon: Calculator,
+                color: "bg-indigo-50 text-indigo-700 border-indigo-200",
+                profile: "advocaat"
+              }
+            ].map((example, index) => {
+              const IconComponent = example.icon
+              return (
+                <Card 
+                  key={index}
+                  className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:scale-105"
+                  onClick={() => {
+                    const questionData = {
+                      question: example.question,
+                      profile: example.profile
+                    }
+                    localStorage.setItem('wetHelder_mainscreen_question', JSON.stringify(questionData))
+                    sessionStorage.setItem('autoSubmitQuery', example.question)
+                    sessionStorage.setItem('autoSubmitProfile', example.profile)
+                    
+                    const params = new URLSearchParams({
+                      q: example.question,
+                      profile: example.profile
+                    })
+                    router.push(`/ask?${params.toString()}`)
+                  }}
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start gap-3">
+                      <div className={`p-2 rounded-lg ${example.color} group-hover:scale-110 transition-transform flex-shrink-0`}>
+                        <IconComponent className="h-4 w-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <Badge variant="secondary" className="text-xs mb-2">
+                          {example.category}
+                        </Badge>
+                        <CardTitle className="text-sm leading-tight group-hover:text-blue-600 transition-colors">
+                          {example.question}
+                        </CardTitle>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="flex items-center justify-between text-xs text-gray-500">
+                      <span>Klik voor antwoord</span>
+                      <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+          
+          <div className="text-center mt-8">
+            <p className="text-sm text-gray-600 mb-4">
+              Niet uw vraag erbij? Stel gewoon uw eigen juridische vraag hierboven.
+            </p>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/ask">
+                <Search className="h-4 w-4 mr-2" />
+                Alle vragen stellen
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* How It Works Section */}
       <section className="py-16 bg-white border-t border-gray-100">
         <div className="container mx-auto px-4">
@@ -404,7 +623,7 @@ export default function HomePage() {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-7xl mx-auto">
             {professionProfiles.map((profile) => {
               const IconComponent = profile.icon
               return (
@@ -413,60 +632,29 @@ export default function HomePage() {
                   className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:scale-105"
                   onClick={() => handleProfileSelect(profile.id)}
                 >
-                  <CardHeader>
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${profile.color} group-hover:scale-110 transition-transform`}>
-                        <IconComponent className="h-5 w-5" />
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start gap-3">
+                      <div className={`p-2 rounded-lg ${profile.color} group-hover:scale-110 transition-transform flex-shrink-0`}>
+                        <IconComponent className="h-4 w-4" />
                       </div>
-                      <div>
-                        <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
+                      <div className="min-w-0">
+                        <CardTitle className="text-sm font-semibold group-hover:text-blue-600 transition-colors leading-tight">
                           {profile.name}
                         </CardTitle>
-                        <CardDescription>{profile.description}</CardDescription>
+                        <CardDescription className="text-xs mt-1 overflow-hidden" style={{
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical'
+                        }}>
+                          {profile.description}
+                        </CardDescription>
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <Button variant="ghost" size="sm" className="w-full justify-between group-hover:bg-blue-50 group-hover:text-blue-600">
-                      Start chat met dit profiel
-                      <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Krachtige Functies</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Alles wat u nodig heeft voor juridische research en advies in één platform.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {features.map((feature, index) => {
-              const IconComponent = feature.icon
-              return (
-                <Card key={index} className="text-center hover:shadow-lg transition-all duration-200 group">
-                  <CardHeader>
-                    <div className="w-12 h-12 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                      <IconComponent className="h-6 w-6" />
-                    </div>
-                    <CardTitle className="text-lg">{feature.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600 mb-4">{feature.description}</p>
-                    <Button variant="ghost" size="sm" asChild className="w-full">
-                      <Link href={feature.href}>
-                        Proberen
-                        <ArrowRight className="h-4 w-4 ml-2" />
-                      </Link>
+                  <CardContent className="pt-0">
+                    <Button variant="ghost" size="sm" className="w-full justify-between group-hover:bg-blue-50 group-hover:text-blue-600 text-xs h-8">
+                      Start chat
+                      <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </CardContent>
                 </Card>
@@ -507,9 +695,9 @@ export default function HomePage() {
                     Start Chat
                   </Link>
                 </Button>
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <Lock className="h-4 w-4" />
-                  <span>Gratis te gebruiken • Geen registratie vereist</span>
+                <div className="flex items-center gap-2 text-sm text-green-600">
+                  <CheckCircle2 className="h-4 w-4" />
+                  <span className="font-medium">Accounts zijn tijdelijk helemaal gratis!</span>
                 </div>
               </div>
             </div>
@@ -578,61 +766,18 @@ export default function HomePage() {
             </Button>
           </div>
           
-          <div className="mt-6 text-sm opacity-75">
-            Geen creditcard vereist • Direct beginnen
+          <div className="mt-6 text-sm opacity-90">
+            <div className="flex items-center justify-center gap-2">
+              <CheckCircle2 className="h-4 w-4" />
+              <span className="font-medium">Accounts zijn tijdelijk helemaal gratis!</span>
+            </div>
+            <div className="mt-1 opacity-75">
+              Geen creditcard vereist • Direct beginnen
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Scale className="h-6 w-6 text-blue-400" />
-                <span className="text-xl font-bold">WetHelder</span>
-              </div>
-              <p className="text-gray-400 text-sm">
-                Nederlandse juridische assistent voor iedereen. Betrouwbare juridische informatie op basis van officiële bronnen.
-              </p>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold mb-4">Platform</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="/ask" className="hover:text-white transition-colors">Juridische Chat</Link></li>
-                <li><Link href="/uitleg" className="hover:text-white transition-colors">Wet & Uitleg</Link></li>
-                <li><Link href="/rechtspraak" className="hover:text-white transition-colors">Rechtspraak</Link></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold mb-4">Doelgroepen</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="/ask?profile=algemeen" className="hover:text-white transition-colors">Burgers</Link></li>
-                <li><Link href="/ask?profile=advocaat" className="hover:text-white transition-colors">Juristen</Link></li>
-                <li><Link href="/ask?profile=politieagent" className="hover:text-white transition-colors">Handhaving</Link></li>
-                <li><Link href="/ask?profile=student" className="hover:text-white transition-colors">Studenten</Link></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold mb-4">Ondersteuning</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
-                <li><Link href="/help" className="hover:text-white transition-colors">Help Center</Link></li>
-                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link></li>
-                <li><Link href="/terms" className="hover:text-white transition-colors">Voorwaarden</Link></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-            <p>&copy; 2025 WetHelder. Alle rechten voorbehouden.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 } 

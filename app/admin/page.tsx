@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -35,7 +35,9 @@ import {
   UserCheck,
   UserX,
   Lock,
-  Unlock
+  Unlock,
+  X,
+  User
 } from 'lucide-react'
 
 interface AdminStats {
@@ -97,12 +99,87 @@ export default function AdminDashboard() {
   const [queries, setQueries] = useState<QueryData[]>([])
   const [metrics, setMetrics] = useState<SystemMetric[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
+  const [autoRefresh, setAutoRefresh] = useState(false)
+  const [refreshError, setRefreshError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [activeTab, setActiveTab] = useState('overview') // overview, users, queries
   const [queryUserTypeFilter, setQueryUserTypeFilter] = useState('all')
   const [queryProfessionFilter, setQueryProfessionFilter] = useState('all')
+  const [selectedQuery, setSelectedQuery] = useState<QueryData | null>(null)
+  const [showQueryModal, setShowQueryModal] = useState(false)
+  const [querySearchTerm, setQuerySearchTerm] = useState('')
+  const [queryPage, setQueryPage] = useState(1)
+  const [queryLimit] = useState(20)
+
+  const fetchAdminData = useCallback(async (showRefreshIndicator = false) => {
+    if (showRefreshIndicator) {
+      setIsRefreshing(true)
+      setRefreshError(null)
+    }
+    
+    try {
+      const [statsRes, usersRes, metricsRes, queriesRes] = await Promise.all([
+        fetch('/api/admin/stats', { cache: 'no-store' }),
+        fetch('/api/admin/users', { cache: 'no-store' }),
+        fetch('/api/admin/metrics', { cache: 'no-store' }),
+        fetch(`/api/admin/queries?limit=${queryLimit}&page=${queryPage}&search=${encodeURIComponent(querySearchTerm)}&userType=${queryUserTypeFilter}&profession=${queryProfessionFilter}`, { cache: 'no-store' })
+      ])
+
+      if (statsRes.ok) {
+        const statsData = await statsRes.json()
+        setStats(statsData)
+      } else {
+        throw new Error('Failed to fetch stats')
+      }
+
+      if (usersRes.ok) {
+        const usersData = await usersRes.json()
+        setUsers(usersData.users || [])
+      } else {
+        console.warn('Failed to fetch users data')
+      }
+
+      if (metricsRes.ok) {
+        const metricsData = await metricsRes.json()
+        setMetrics(metricsData.metrics || [])
+      } else {
+        console.warn('Failed to fetch metrics data')
+      }
+
+      if (queriesRes.ok) {
+        const queriesData = await queriesRes.json()
+        setQueries(queriesData.queries || [])
+      } else {
+        console.warn('Failed to fetch queries data')
+      }
+
+      setLastRefresh(new Date())
+      setRefreshError(null)
+    } catch (error) {
+      console.error('Error fetching admin data:', error)
+      setRefreshError('Fout bij het ophalen van gegevens. Probeer het opnieuw.')
+    } finally {
+      setIsLoading(false)
+      setIsRefreshing(false)
+    }
+  }, [queryLimit, queryPage, querySearchTerm, queryUserTypeFilter, queryProfessionFilter])
+
+  const fetchQueries = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/admin/queries?limit=${queryLimit}&page=${queryPage}&search=${encodeURIComponent(querySearchTerm)}&userType=${queryUserTypeFilter}&profession=${queryProfessionFilter}`, { cache: 'no-store' })
+      
+      if (response.ok) {
+        const data = await response.json()
+        setQueries(data.queries || [])
+      }
+    } catch (error) {
+      console.error('Error fetching queries:', error)
+    }
+  }, [queryLimit, queryPage, querySearchTerm, queryUserTypeFilter, queryProfessionFilter])
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -115,42 +192,46 @@ export default function AdminDashboard() {
       }
       fetchAdminData()
     }
-  }, [session, status, router])
+  }, [session, status, router, fetchAdminData])
 
-  const fetchAdminData = async () => {
-    try {
-      const [statsRes, usersRes, metricsRes, queriesRes] = await Promise.all([
-        fetch('/api/admin/stats'),
-        fetch('/api/admin/users'),
-        fetch('/api/admin/metrics'),
-        fetch('/api/admin/queries?limit=50')
-      ])
-
-      if (statsRes.ok) {
-        const statsData = await statsRes.json()
-        setStats(statsData)
-      }
-
-      if (usersRes.ok) {
-        const usersData = await usersRes.json()
-        setUsers(usersData.users || [])
-      }
-
-      if (metricsRes.ok) {
-        const metricsData = await metricsRes.json()
-        setMetrics(metricsData.metrics || [])
-      }
-
-      if (queriesRes.ok) {
-        const queriesData = await queriesRes.json()
-        setQueries(queriesData.queries || [])
-      }
-    } catch (error) {
-      console.error('Error fetching admin data:', error)
-    } finally {
-      setIsLoading(false)
+  // Auto-refresh functionality
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null
+    
+    if (autoRefresh && !isLoading) {
+      interval = setInterval(() => {
+        fetchAdminData(false) // Silent refresh
+      }, 30000) // Refresh every 30 seconds
     }
-  }
+    
+    return () => {
+      if (interval) {
+        clearInterval(interval)
+      }
+    }
+  }, [autoRefresh, isLoading, fetchAdminData])
+
+  // Keyboard shortcut for refresh (Ctrl+R or Cmd+R)
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
+        event.preventDefault()
+        if (!isRefreshing) {
+          fetchAdminData(true)
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isRefreshing, fetchAdminData])
+
+  // Fetch queries when filters change
+  useEffect(() => {
+    if (activeTab === 'queries') {
+      fetchQueries()
+    }
+  }, [querySearchTerm, queryUserTypeFilter, queryProfessionFilter, queryPage, activeTab, fetchQueries])
 
   const handleUserAction = async (userId: string, action: string) => {
     try {
@@ -165,6 +246,29 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error('Error performing user action:', error)
+    }
+  }
+
+  const handleQueryAction = async (queryId: string, action: string) => {
+    if (action === 'view') {
+      const query = queries.find(q => q.id === queryId)
+      if (query) {
+        setSelectedQuery(query)
+        setShowQueryModal(true)
+      }
+    } else if (action === 'delete') {
+      if (confirm('Weet je zeker dat je deze vraag wilt verwijderen?')) {
+        try {
+          const response = await fetch(`/api/admin/queries/${queryId}`, {
+            method: 'DELETE'
+          })
+          if (response.ok) {
+            await fetchQueries()
+          }
+        } catch (error) {
+          console.error('Error deleting query:', error)
+        }
+      }
     }
   }
 
@@ -286,14 +390,43 @@ export default function AdminDashboard() {
             </div>
             
             <div className="flex items-center gap-4">
+              {/* Refresh Status */}
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                {lastRefresh && (
+                  <span>
+                    Laatste update: {lastRefresh.toLocaleTimeString('nl-NL')}
+                  </span>
+                )}
+                {autoRefresh && (
+                  <Badge variant="secondary" className="text-xs">
+                    Auto-refresh aan
+                  </Badge>
+                )}
+              </div>
+              
+              {/* Auto Refresh Toggle */}
               <Button
-                variant="outline"
-                onClick={fetchAdminData}
+                variant={autoRefresh ? "default" : "outline"}
+                size="sm"
+                onClick={() => setAutoRefresh(!autoRefresh)}
                 className="flex items-center gap-2"
               >
-                <RefreshCw className="h-4 w-4" />
-                Vernieuwen
+                <Activity className="h-4 w-4" />
+                {autoRefresh ? 'Auto aan' : 'Auto uit'}
               </Button>
+              
+              {/* Manual Refresh */}
+              <Button
+                variant="outline"
+                onClick={() => fetchAdminData(true)}
+                disabled={isRefreshing}
+                className="flex items-center gap-2"
+                title="Vernieuwen (Ctrl+R / Cmd+R)"
+              >
+                <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                {isRefreshing ? 'Bezig...' : 'Vernieuwen'}
+              </Button>
+              
               <Button
                 variant="outline"
                 onClick={exportData}
@@ -312,13 +445,48 @@ export default function AdminDashboard() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto space-y-8">
+          {/* Refresh Error Alert */}
+          {refreshError && (
+            <Card className="border-red-200 bg-red-50">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <AlertTriangle className="h-5 w-5 text-red-600" />
+                  <div className="flex-1">
+                    <p className="text-red-800 font-medium">Refresh Error</p>
+                    <p className="text-red-700 text-sm">{refreshError}</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setRefreshError(null)}
+                    className="text-red-600 border-red-300 hover:bg-red-100"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* System Health */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5" />
-                Systeemstatus
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5" />
+                  Systeemstatus
+                </CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => fetchAdminData(true)}
+                  disabled={isRefreshing}
+                  className="flex items-center gap-1"
+                >
+                  <RefreshCw className={`h-3 w-3 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  <span className="text-xs">Refresh</span>
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -625,85 +793,131 @@ export default function AdminDashboard() {
 
               {activeTab === 'queries' && (
                 <div>
-                  <h3 className="text-lg font-semibold mb-4">Alle Vragen</h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold">Alle Vragen & Antwoorden</h3>
+                    <Button
+                      variant="outline"
+                      onClick={() => fetchQueries()}
+                      disabled={isRefreshing}
+                      className="flex items-center gap-2"
+                    >
+                      <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                      Vernieuwen
+                    </Button>
+                  </div>
+                  
                   {/* Query Filters */}
-                  <div className="flex flex-col md:flex-row gap-4 mb-6">
-                    <div className="flex-1">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div className="md:col-span-2">
                       <div className="relative">
                         <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input
-                          placeholder="Zoek vragen..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
+                          placeholder="Zoek in vragen en antwoorden..."
+                          value={querySearchTerm}
+                          onChange={(e) => setQuerySearchTerm(e.target.value)}
                           className="pl-10"
                         />
                       </div>
                     </div>
                     <Select value={queryUserTypeFilter} onValueChange={setQueryUserTypeFilter}>
-                      <SelectTrigger className="w-48">
-                        <SelectValue placeholder="Filter op gebruikerstype" />
+                      <SelectTrigger>
+                        <SelectValue placeholder="Gebruikerstype" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">Alle gebruikerstypes</SelectItem>
-                        <SelectItem value="logged">Ingelogde</SelectItem>
-                        <SelectItem value="anonymous">Anonieme</SelectItem>
+                        <SelectItem value="all">Alle types</SelectItem>
+                        <SelectItem value="logged">Ingelogde gebruikers</SelectItem>
+                        <SelectItem value="anonymous">Anonieme gebruikers</SelectItem>
                       </SelectContent>
                     </Select>
                     <Select value={queryProfessionFilter} onValueChange={setQueryProfessionFilter}>
-                      <SelectTrigger className="w-48">
-                        <SelectValue placeholder="Filter op beroep" />
+                      <SelectTrigger>
+                        <SelectValue placeholder="Beroep" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">Alle beroepen</SelectItem>
-                        <SelectItem value="PROFESSION_1">Beroep 1</SelectItem>
-                        <SelectItem value="PROFESSION_2">Beroep 2</SelectItem>
-                        <SelectItem value="PROFESSION_3">Beroep 3</SelectItem>
+                        <SelectItem value="politieagent">Politieagent</SelectItem>
+                        <SelectItem value="boa">BOA</SelectItem>
+                        <SelectItem value="advocaat">Advocaat</SelectItem>
+                        <SelectItem value="beveiliger">Beveiliger</SelectItem>
+                        <SelectItem value="rechter">Rechter</SelectItem>
+                        <SelectItem value="student">Student</SelectItem>
+                        <SelectItem value="burger">Burger</SelectItem>
+                        <SelectItem value="algemeen">Algemeen</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
-                  {/* Queries Table */}
-                  <div className="overflow-x-auto">
-                    <div className="space-y-4">
-                      {queries.map((query) => (
-                        <Card key={query.id} className="border-l-4 border-l-primary">
-                          <CardContent className="p-4">
-                            <div className="flex items-center justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-3 mb-2">
-                                  <h4 className="font-medium">{query.question}</h4>
+                  {/* Queries List */}
+                  <div className="space-y-4">
+                    {queries.length === 0 ? (
+                      <Card>
+                        <CardContent className="p-8 text-center">
+                          <MessageSquare className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                          <h3 className="text-lg font-medium text-gray-900 mb-2">Geen vragen gevonden</h3>
+                          <p className="text-gray-600">
+                            Er zijn geen vragen die voldoen aan de huidige filters.
+                          </p>
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      queries.map((query) => (
+                        <Card key={query.id} className="hover:shadow-md transition-shadow">
+                          <CardContent className="p-6">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-3 mb-3">
+                                  <h4 className="font-semibold text-gray-900 truncate">{query.question}</h4>
                                   <Badge variant="outline" className={getRoleColor(query.userRole)}>
                                     {query.userRole}
                                   </Badge>
+                                  <Badge variant="secondary" className="text-xs">
+                                    {query.userType === 'logged' ? 'Ingelogd' : 'Anoniem'}
+                                  </Badge>
                                 </div>
-                                <div className="text-sm text-muted-foreground space-y-1">
-                                  <p>{query.fullQuestion}</p>
-                                  <div className="flex items-center gap-4">
-                                    <span>Gebruiker: {query.userName}</span>
-                                    <span>Gebruikerstype: {query.userType === 'logged' ? 'Ingelogd' : 'Anoniem'}</span>
-                                    <span>Beroep: {query.profession}</span>
+                                
+                                <div className="space-y-2 mb-4">
+                                  <div className="text-sm text-gray-600">
+                                    <strong>Volledige vraag:</strong>
+                                    <p className="mt-1 line-clamp-3">{query.fullQuestion}</p>
+                                  </div>
+                                  
+                                  <div className="text-sm text-gray-600">
+                                    <strong>Antwoord:</strong>
+                                    <p className="mt-1 line-clamp-4">{query.fullAnswer}</p>
                                   </div>
                                 </div>
+                                
+                                <div className="flex items-center gap-4 text-sm text-gray-500">
+                                  <span className="flex items-center gap-1">
+                                    <User className="h-3 w-3" />
+                                    {query.userName} ({query.userEmail})
+                                  </span>
+                                  <span className="flex items-center gap-1">
+                                    <Calendar className="h-3 w-3" />
+                                    {formatDate(query.createdAt)}
+                                  </span>
+                                  <span className="flex items-center gap-1 capitalize">
+                                    <Settings className="h-3 w-3" />
+                                    {query.profession}
+                                  </span>
+                                </div>
                               </div>
-                              <div className="flex items-center gap-2">
+                              
+                              <div className="flex items-center gap-2 ml-4">
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() => handleUserAction(query.id, 'view')}
+                                  onClick={() => handleQueryAction(query.id, 'view')}
+                                  title="Bekijk volledige vraag en antwoord"
                                 >
                                   <Eye className="h-4 w-4" />
                                 </Button>
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() => handleUserAction(query.id, 'edit')}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleUserAction(query.id, 'delete')}
+                                  onClick={() => handleQueryAction(query.id, 'delete')}
+                                  title="Verwijder vraag"
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
@@ -711,8 +925,8 @@ export default function AdminDashboard() {
                             </div>
                           </CardContent>
                         </Card>
-                      ))}
-                    </div>
+                      ))
+                    )}
                   </div>
                 </div>
               )}
@@ -720,6 +934,91 @@ export default function AdminDashboard() {
           </Card>
         </div>
       </main>
+
+      {/* Query Detail Modal */}
+      {showQueryModal && selectedQuery && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-xl font-semibold">Vraag Details</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowQueryModal(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+              <div className="space-y-6">
+                {/* Query Info */}
+                <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+                  <div>
+                    <span className="text-sm font-medium text-gray-600">Gebruiker:</span>
+                    <p className="text-sm">{selectedQuery.userName} ({selectedQuery.userEmail})</p>
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium text-gray-600">Type:</span>
+                    <p className="text-sm">{selectedQuery.userType === 'logged' ? 'Ingelogde gebruiker' : 'Anonieme gebruiker'}</p>
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium text-gray-600">Beroep:</span>
+                    <p className="text-sm capitalize">{selectedQuery.profession}</p>
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium text-gray-600">Datum:</span>
+                    <p className="text-sm">{formatDate(selectedQuery.createdAt)}</p>
+                  </div>
+                </div>
+
+                {/* Question */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 text-blue-600">Vraag</h3>
+                  <div className="p-4 bg-blue-50 rounded-lg">
+                    <p className="text-gray-800 whitespace-pre-wrap">{selectedQuery.fullQuestion}</p>
+                  </div>
+                </div>
+
+                {/* Answer */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 text-green-600">Antwoord</h3>
+                  <div className="p-4 bg-green-50 rounded-lg">
+                    <div className="prose max-w-none">
+                      <p className="text-gray-800 whitespace-pre-wrap">{selectedQuery.fullAnswer}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center gap-3 pt-4 border-t">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`Vraag: ${selectedQuery.fullQuestion}\n\nAntwoord: ${selectedQuery.fullAnswer}`)
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <Download className="h-4 w-4" />
+                    Kopieer naar klembord
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      setShowQueryModal(false)
+                      handleQueryAction(selectedQuery.id, 'delete')
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Verwijder vraag
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 } 

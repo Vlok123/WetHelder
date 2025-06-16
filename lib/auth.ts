@@ -124,35 +124,6 @@ export const authOptions: NextAuthOptions = {
         }
       }
       return session
-    },
-    async signIn({ user, account, profile }) {
-      // Auto-create or update admin user for sanderhelmink@gmail.com
-      if (user.email === 'sanderhelmink@gmail.com') {
-        try {
-          const existingUser = await prisma.user.findUnique({
-            where: { email: user.email }
-          })
-          
-          if (!existingUser) {
-            await prisma.user.create({
-              data: {
-                email: user.email,
-                name: user.name || 'Sander Helmink',
-                role: 'ADMIN'
-              }
-            })
-          } else if (existingUser.role !== 'ADMIN') {
-            // Update to admin if not already
-            await prisma.user.update({
-              where: { email: user.email },
-              data: { role: 'ADMIN' }
-            })
-          }
-        } catch (error) {
-          console.error('Error creating/updating admin user:', error)
-        }
-      }
-      return true
     }
   },
   pages: {

@@ -177,6 +177,80 @@ export async function POST(request: NextRequest) {
     const session = await getServerSession(authOptions)
     const userId = session?.user?.id || null
 
+    // Rate limit check for anonymous users
+    if (!session?.user) {
+      const clientIp = request.headers.get('x-forwarded-for') || 
+                      request.headers.get('x-real-ip') || 
+                      'unknown'
+
+      // Check how many questions this IP has asked in the last 24 hours
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
+      
+      const recentQuestions = await prisma.query.count({
+        where: {
+          userId: null,
+          createdAt: {
+            gte: twentyFourHoursAgo
+          },
+          // Use IP-based tracking (storing in sources field for now)
+          sources: {
+            contains: clientIp
+          }
+        }
+      })
+
+      console.log(`🔍 Anonymous user (IP: ${clientIp}) has asked ${recentQuestions} questions in last 24h`)
+
+      if (recentQuestions >= 4) {
+        console.log('❌ Rate limit exceeded for anonymous user')
+        
+        // Instead of returning an error, return a friendly rate limit message as a stream
+        const rateLimitMessage = `🔒 **Limiet bereikt**
+
+Je hebt het maximum aantal gratis vragen (4 per dag) bereikt. 
+
+**Maak een gratis account aan om:**
+• Onbeperkt vragen te stellen
+• Je vraaggeschiedenis te bewaren
+• Snellere antwoorden te krijgen
+
+**Registreren is gratis en duurt slechts 30 seconden!**
+
+[→ Account aanmaken](/auth/signup)
+[→ Inloggen](/auth/signin)
+
+---
+*WetHelder blijft volledig gratis te gebruiken met een account.*`
+
+        // Create a ReadableStream to simulate the normal response format
+        const stream = new ReadableStream({
+          start(controller) {
+            // Send the rate limit message in the expected streaming format
+            const encoder = new TextEncoder()
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content: rateLimitMessage })}\n\n`))
+            // Send a signal to update remaining questions to 0
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ remainingQuestions: 0 })}\n\n`))
+            controller.enqueue(encoder.encode(`data: [DONE]\n\n`))
+            controller.close()
+          }
+        })
+
+        // Save the rate limit "query" to database for tracking
+        const clientIp = request.headers.get('x-forwarded-for') || 
+                         request.headers.get('x-real-ip') || 'unknown'
+        saveQueryToDatabase(question, rateLimitMessage, profession, null, [], '', clientIp)
+          .catch(error => console.error('❌ Error saving rate limit query:', error))
+
+        return new NextResponse(stream, {
+          headers: {
+            'Content-Type': 'text/plain; charset=utf-8',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+          }
+        })
+      }
+    }
+
     // STAP 1: Eerste controle via officiele_bronnen.json
     console.log('📋 STAP 1: Controle officiele_bronnen.json')
     let jsonSources: JsonBron[] = []
@@ -251,7 +325,9 @@ export async function POST(request: NextRequest) {
     console.log('✅ OpenAI response voltooid')
 
     // Save query to database (async, don't wait for it)
-    saveQueryToDatabase(question, '', profession, userId, jsonSources, googleResults)
+    const clientIp = !session?.user ? (request.headers.get('x-forwarded-for') || 
+                     request.headers.get('x-real-ip') || 'unknown') : null
+    saveQueryToDatabase(question, '', profession, userId, jsonSources, googleResults, clientIp)
       .catch(error => console.error('❌ Error saving query to database:', error))
 
     return new NextResponse(stream)
@@ -273,12 +349,14 @@ async function saveQueryToDatabase(
   profession: string, 
   userId: string | null,
   jsonSources: JsonBron[],
-  googleResults: string
+  googleResults: string,
+  clientIp: string | null = null
 ) {
   try {
     const sources = JSON.stringify({
       jsonSources: jsonSources.map(s => ({ naam: s.naam, url: s.url })),
-      googleResults: googleResults ? 'Used Google API' : 'No Google API used'
+      googleResults: googleResults ? 'Used Google API' : 'No Google API used',
+      clientIp: clientIp || 'N/A'
     })
 
     await prisma.query.create({
@@ -300,10 +378,40 @@ async function saveQueryToDatabase(
 // Handle GET request for rate limit info
 export async function GET(request: NextRequest) {
   try {
-    // For anonymous users, return rate limit info
+    const session = await getServerSession(authOptions)
+    
+    if (session?.user) {
+      return NextResponse.json({
+        remainingQuestions: -1, // Unlimited for logged in users
+        userRole: session.user.role || 'USER'
+      })
+    }
+
+    // For anonymous users, check actual usage
+    const clientIp = request.headers.get('x-forwarded-for') || 
+                    request.headers.get('x-real-ip') || 
+                    'unknown'
+
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
+    
+    const recentQuestions = await prisma.query.count({
+      where: {
+        userId: null,
+        createdAt: {
+          gte: twentyFourHoursAgo
+        },
+        sources: {
+          contains: clientIp
+        }
+      }
+    })
+
+    const remaining = Math.max(0, 4 - recentQuestions)
+
     return NextResponse.json({
-      remainingQuestions: 2, // Default for anonymous users
-      userRole: 'ANONYMOUS'
+      remainingQuestions: remaining,
+      userRole: 'ANONYMOUS',
+      questionsUsed: recentQuestions
     })
   } catch (error) {
     console.error('❌ GET Error:', error)
