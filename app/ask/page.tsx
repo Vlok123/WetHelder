@@ -588,7 +588,10 @@ function AskPageContent() {
       }
     }
     
-    if (savedProfession) {
+    // Only set profession from localStorage if no URL profile parameter exists
+    const urlProfile = searchParams.get('profile')
+    if (!urlProfile && savedProfession) {
+      console.log('📂 Loading profession from localStorage:', savedProfession)
       setProfession(savedProfession as Profession)
     }
   }, [])
@@ -649,39 +652,44 @@ function AskPageContent() {
 
 
 
-  // Auto-submit from URL parameters (simplified and more reliable)
+  // Handle URL parameters for auto-submit and profile setting
   useEffect(() => {
-    if (hasAutoSubmitted.current) return
-    
-    // Check URL parameters
     const urlQuery = searchParams.get('q')
     const urlProfile = searchParams.get('profile')
     const shouldAutoSubmit = searchParams.get('autoSubmit') === 'true'
     
-    // Set profession from URL if provided
+    console.log('🔍 URL Params:', { urlQuery, urlProfile, shouldAutoSubmit, hasAutoSubmitted: hasAutoSubmitted.current })
+    
+    // ALWAYS set profession if URL has profile (regardless of auto-submit)
     if (urlProfile) {
       const mappedProfession = mapProfileToProfession(urlProfile)
+      console.log('🎯 Setting profession:', urlProfile, '→', mappedProfession)
       setProfession(mappedProfession)
     }
     
-    // Auto-submit if both query and autoSubmit flag are present
-    if (urlQuery && shouldAutoSubmit) {
+    // Set input if URL has query (regardless of auto-submit)
+    if (urlQuery && input !== urlQuery) {
+      console.log('📝 Setting input:', urlQuery)
+      setInput(urlQuery)
+    }
+    
+    // Auto-submit ONLY if autoSubmit flag is true and we haven't done it yet
+    if (urlQuery && shouldAutoSubmit && !hasAutoSubmitted.current) {
       hasAutoSubmitted.current = true
-      setInput(urlQuery)
+      console.log('⚡ Auto-submitting question...')
       
-      // Auto-submit after setting input with longer timeout for reliability
+      // Wait a bit for state updates, then submit with the correct profession
       setTimeout(() => {
+        const professionToUse = urlProfile ? mapProfileToProfession(urlProfile) : profession
+        console.log('🚀 Submitting with profession:', professionToUse)
+        
         const fakeEvent = { preventDefault: () => {} } as React.FormEvent
-        const currentProfession = urlProfile ? mapProfileToProfession(urlProfile) : profession
-        handleSubmit(fakeEvent, currentProfession)
-      }, 300)
-    } else if (urlQuery) {
-      // Just set the input without auto-submitting if no autoSubmit flag
-      setInput(urlQuery)
+        handleSubmit(fakeEvent, professionToUse)
+      }, 100)
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams])
+  }, [searchParams, input])
 
   const handleSubmit = useCallback(async (e: React.FormEvent, overrideProfession?: Profession) => {
     e.preventDefault()
@@ -689,6 +697,12 @@ function AskPageContent() {
 
     const question = input.trim()
     const currentProfession = overrideProfession || profession
+    console.log('💬 HandleSubmit called with:', { 
+      question, 
+      overrideProfession, 
+      currentStateProfession: profession, 
+      finalProfession: currentProfession 
+    })
     setInput('')
     setIsLoading(true)
 
