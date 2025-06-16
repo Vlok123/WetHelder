@@ -52,7 +52,17 @@ async function searchGoogleCustomAPI(query: string): Promise<GoogleSearchResult[
   try {
     console.log('🌐 Searching Google Custom Search API for:', query)
     
-    const searchUrl = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CSE_ID}&q=${encodeURIComponent(query)}&num=10`
+    // Verbeter zoekterm voor APV vragen
+    let searchQuery = query
+    const queryLower = query.toLowerCase()
+    
+    if (queryLower.includes('apv') || queryLower.includes('gemeentelijk') || queryLower.includes('lokaal')) {
+      // Voor APV vragen: voeg specifieke zoektermen toe
+      searchQuery = `${query} site:lokaleregelgeving.overheid.nl OR site:overheid.nl APV verordening`
+      console.log('🏛️ APV-specifieke zoekopdracht:', searchQuery)
+    }
+    
+    const searchUrl = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CSE_ID}&q=${encodeURIComponent(searchQuery)}&num=10`
     
     const response = await fetch(searchUrl)
     const data = await response.json()
@@ -86,14 +96,17 @@ function extractSourceFromUrl(url: string): string {
     const domain = new URL(url).hostname
     
     if (domain.includes('wetten.overheid.nl')) return 'Wetten.overheid.nl'
+    if (domain.includes('lokaleregelgeving.overheid.nl')) return 'LokaleRegelgeving.Overheid.nl'
     if (domain.includes('rechtspraak.nl')) return 'Rechtspraak.nl'
     if (domain.includes('overheid.nl')) return 'Overheid.nl'
+    if (domain.includes('officielebekendmakingen.nl')) return 'OfficiëleBekendemakingen.nl'
     if (domain.includes('belastingdienst.nl')) return 'Belastingdienst'
     if (domain.includes('uwv.nl')) return 'UWV'
     if (domain.includes('politie.nl')) return 'Politie.nl'
     if (domain.includes('rijksoverheid.nl')) return 'Rijksoverheid'
     if (domain.includes('cbr.nl')) return 'CBR'
     if (domain.includes('cbs.nl')) return 'CBS'
+    if (domain.includes('juridischloket.nl')) return 'Juridisch Loket'
     
     return domain
   } catch {
@@ -185,8 +198,22 @@ export async function POST(request: NextRequest) {
     console.log('🔍 STAP 2: Evaluatie Google API noodzaak')
     let googleResults: string = ''
     
-    if (jsonSources.length < 3) {
-      console.log('🔍 Beperkte JSON dekking - Google API wordt geraadpleegd')
+    // Check if query needs Google API
+    const queryLower = question.toLowerCase()
+    const needsGoogleKeywords = [
+      'apv', 'gemeentelijk', 'lokaal', 'gemeente', 'plaatselijk', 'verordening',
+      'nieuw beleid', 'recent', 'actueel', 'jurisprudentie', 'uitspraak', 'vonnis', 'arrest'
+    ]
+    
+    const needsGoogle = needsGoogleKeywords.some(keyword => queryLower.includes(keyword)) || jsonSources.length < 3
+    
+    if (needsGoogle) {
+      if (needsGoogleKeywords.some(keyword => queryLower.includes(keyword))) {
+        console.log('🔍 Query bevat keywords die Google API vereisen (APV/lokaal/actueel)')
+      } else {
+        console.log('🔍 Beperkte JSON dekking - Google API wordt geraadpleegd')
+      }
+      
       console.log('🌐 STAP 3: Google Custom Search API wordt geraadpleegd')
       console.log('🌐 Searching Google Custom Search API for:', question)
       
