@@ -377,7 +377,7 @@ function ChatPageContent() {
                       }
                     />
                     <div>
-                      <div className="text-sm font-medium">Wetteksten</div>
+                      <div className="text-sm font-medium">Wet & Uitleg</div>
                       <div className="text-xs text-gray-500">Uitgebreide uitleg bij wetsartikelen</div>
                     </div>
                   </label>

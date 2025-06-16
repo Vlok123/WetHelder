@@ -374,10 +374,10 @@ export default function HomePage() {
                     >
                       <BookOpen className="h-4 w-4" />
                       <span className="hidden sm:inline">
-                        {wetUitlegEnabled ? 'Wetteksten: AAN' : 'Wetteksten modus'}
+                        {wetUitlegEnabled ? 'Wet & Uitleg: AAN' : 'Wet & Uitleg modus'}
                       </span>
                       <span className="sm:hidden">
-                        {wetUitlegEnabled ? 'WT: AAN' : 'Wetteksten'}
+                        {wetUitlegEnabled ? 'W&U: AAN' : 'Wet & Uitleg'}
                       </span>
                       {wetUitlegEnabled ? (
                         <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">Actief</Badge>
@@ -388,7 +388,7 @@ export default function HomePage() {
                   </div>
                   
                   <p className="text-sm text-gray-600 text-center">
-                    💡 <strong>Tip:</strong> Selecteer eerst uw functie, schakel eventueel Wetteksten in voor diepgaande analyses, stel dan uw vraag
+                    💡 <strong>Tip:</strong> Selecteer eerst uw functie, schakel eventueel Wet & Uitleg in voor diepgaande analyses, stel dan uw vraag
                   </p>
                 </div>
               </CardContent>
@@ -658,9 +658,9 @@ export default function HomePage() {
               <div className="w-16 h-16 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-6">
                 <BookOpen className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">3. Wetteksten Voor Diepgang</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">3. Wet & Uitleg Voor Diepgang</h3>
               <p className="text-gray-600 mb-4">
-                <strong>Wetteksten gaat de diepte in</strong> - gebruik dit enkel wanneer je diepgang wilt. 
+                <strong>Wet & Uitleg gaat de diepte in</strong> - gebruik dit enkel wanneer je diepgang wilt. 
                 Niet voor overige vragen. Krijg uitgebreide juridische analyses met artikelverwijzingen.
               </p>
               <div className="text-sm text-green-600 font-medium">
@@ -679,11 +679,11 @@ export default function HomePage() {
                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                   <div className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span><strong>Voor snelle vragen:</strong> Gebruik het standaard chatvenster zonder Wetteksten</span>
+                    <span><strong>Voor snelle vragen:</strong> Gebruik het standaard chatvenster zonder Wet & Uitleg</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span><strong>Voor complexe analyses:</strong> Schakel Wetteksten in voor uitgebreide uitleg</span>
+                    <span><strong>Voor complexe analyses:</strong> Schakel Wet & Uitleg in voor uitgebreide uitleg</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
