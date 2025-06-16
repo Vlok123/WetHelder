@@ -702,55 +702,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Scale className="h-6 w-6 text-blue-400" />
-                <span className="text-xl font-bold">WetHelder</span>
-              </div>
-              <p className="text-gray-400 text-sm">
-                Nederlandse juridische assistent voor iedereen. Betrouwbare juridische informatie op basis van officiële bronnen.
-              </p>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold mb-4">Platform</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="/ask" className="hover:text-white transition-colors">Juridische Chat</Link></li>
-                <li><Link href="/uitleg" className="hover:text-white transition-colors">Wet & Uitleg</Link></li>
-                <li><Link href="/rechtspraak" className="hover:text-white transition-colors">Rechtspraak</Link></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold mb-4">Doelgroepen</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="/ask?profile=algemeen" className="hover:text-white transition-colors">Burgers</Link></li>
-                <li><Link href="/ask?profile=advocaat" className="hover:text-white transition-colors">Juristen</Link></li>
-                <li><Link href="/ask?profile=politieagent" className="hover:text-white transition-colors">Handhaving</Link></li>
-                <li><Link href="/ask?profile=student" className="hover:text-white transition-colors">Studenten</Link></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold mb-4">Ondersteuning</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
-                <li><Link href="/help" className="hover:text-white transition-colors">Help Center</Link></li>
-                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link></li>
-                <li><Link href="/terms" className="hover:text-white transition-colors">Voorwaarden</Link></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-            <p>&copy; 2025 WetHelder. Alle rechten voorbehouden.</p>
-          </div>
-        </div>
-      </footer>
+
     </div>
   )
 } 
