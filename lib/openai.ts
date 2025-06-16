@@ -1,5 +1,6 @@
 import OpenAI from 'openai'
 import { ChatMessage } from '@/types/chat'
+import { performContextAnalysis } from './contextAnalysis'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -140,6 +141,18 @@ export async function streamingCompletion({
     console.error('❌ OpenAI API key not configured')
     throw new Error('OpenAI API key is niet geconfigureerd. Neem contact op met de beheerder.')
   }
+  // Phase 1: Perform advanced context analysis
+  console.log('🧠 Starting multi-step reasoning for question:', question)
+  const contextAnalysis = performContextAnalysis(question)
+  
+  if (contextAnalysis.contexts.length > 0) {
+    console.log('🎯 Detected specialized contexts:', contextAnalysis.contexts)
+    console.log('📋 Special rules identified:', contextAnalysis.analysis.specialRules.length)
+    console.log('⚖️ Legal principles:', contextAnalysis.analysis.legalPrinciples.length)
+  } else {
+    console.log('ℹ️ No specialized contexts detected, using standard processing')
+  }
+
   // Build profession-specific system prompt
   const professionPrompt = getProfessionSpecificPrompt(profession)
   
@@ -178,7 +191,8 @@ Structureer je antwoord als volgt:
 
 Gebruik deze structuur ALTIJD wanneer Wet & Uitleg is ingeschakeld.` : ""
 
-  const systemPrompt = [
+  // Phase 2: Build base system prompt
+  const baseSystemPrompt = [
     professionPrompt,
     wetUitlegInstructions,
     "",
@@ -202,6 +216,15 @@ Gebruik deze structuur ALTIJD wanneer Wet & Uitleg is ingeschakeld.` : ""
     googleResults ? "ACTUELE ZOEKRESULTATEN (gebruik deze voor specifieke en lokale informatie):" : "",
     googleResults || "",
   ].filter(line => line !== "").join('\n')
+
+  // Phase 3: Apply context analysis and build enhanced prompt
+  const systemPrompt = contextAnalysis.contexts.length > 0 
+    ? contextAnalysis.enhancedPrompt(baseSystemPrompt)
+    : baseSystemPrompt
+
+  if (contextAnalysis.contexts.length > 0) {
+    console.log('🚀 Enhanced prompt activated with specialized context analysis')
+  }
 
   // Build conversation messages
   const messages: ChatMessage[] = [
