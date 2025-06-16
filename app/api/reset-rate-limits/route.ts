@@ -31,14 +31,8 @@ export async function POST(request: NextRequest) {
 
     console.log(`✅ Deleted ${deletedQueries.count} anonymous queries to reset rate limits`)
 
-    // Also clear in-memory rate limit maps
-    try {
-      // Import and call reset functions from API routes
-      const { resetRateLimits: resetWetuitlegLimits } = await import('../wetuitleg/route')
-      resetWetuitlegLimits()
-    } catch (error) {
-      console.log('Note: In-memory rate limits will reset on server restart')
-    }
+    // Note: In-memory rate limit maps will automatically reset on server restart
+    console.log('Note: In-memory rate limits will reset on next server restart')
     
     return NextResponse.json({
       success: true,

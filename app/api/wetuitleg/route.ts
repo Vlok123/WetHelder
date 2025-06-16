@@ -18,8 +18,8 @@ interface RateLimitEntry {
 
 const rateLimitMap = new Map<string, RateLimitEntry>()
 
-// Export function to reset rate limits (for admin use)
-export function resetRateLimits(): void {
+// Internal function to reset rate limits (for admin use)
+function resetRateLimits(): void {
   rateLimitMap.clear()
   console.log('🔄 Wetuitleg rate limits cleared')
 }
