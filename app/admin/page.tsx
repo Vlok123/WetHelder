@@ -36,7 +36,8 @@ import {
   UserX,
   Lock,
   Unlock,
-  X
+  X,
+  User
 } from 'lucide-react'
 
 interface AdminStats {
@@ -108,6 +109,11 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview') // overview, users, queries
   const [queryUserTypeFilter, setQueryUserTypeFilter] = useState('all')
   const [queryProfessionFilter, setQueryProfessionFilter] = useState('all')
+  const [selectedQuery, setSelectedQuery] = useState<QueryData | null>(null)
+  const [showQueryModal, setShowQueryModal] = useState(false)
+  const [querySearchTerm, setQuerySearchTerm] = useState('')
+  const [queryPage, setQueryPage] = useState(1)
+  const [queryLimit] = useState(20)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -154,6 +160,13 @@ export default function AdminDashboard() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isRefreshing])
 
+  // Fetch queries when filters change
+  useEffect(() => {
+    if (activeTab === 'queries') {
+      fetchQueries()
+    }
+  }, [querySearchTerm, queryUserTypeFilter, queryProfessionFilter, queryPage, activeTab])
+
   const fetchAdminData = async (showRefreshIndicator = false) => {
     if (showRefreshIndicator) {
       setIsRefreshing(true)
@@ -165,7 +178,7 @@ export default function AdminDashboard() {
         fetch('/api/admin/stats', { cache: 'no-store' }),
         fetch('/api/admin/users', { cache: 'no-store' }),
         fetch('/api/admin/metrics', { cache: 'no-store' }),
-        fetch('/api/admin/queries?limit=50', { cache: 'no-store' })
+        fetch(`/api/admin/queries?limit=${queryLimit}&page=${queryPage}&search=${encodeURIComponent(querySearchTerm)}&userType=${queryUserTypeFilter}&profession=${queryProfessionFilter}`, { cache: 'no-store' })
       ])
 
       if (statsRes.ok) {
@@ -207,6 +220,19 @@ export default function AdminDashboard() {
     }
   }
 
+  const fetchQueries = async () => {
+    try {
+      const response = await fetch(`/api/admin/queries?limit=${queryLimit}&page=${queryPage}&search=${encodeURIComponent(querySearchTerm)}&userType=${queryUserTypeFilter}&profession=${queryProfessionFilter}`, { cache: 'no-store' })
+      
+      if (response.ok) {
+        const data = await response.json()
+        setQueries(data.queries || [])
+      }
+    } catch (error) {
+      console.error('Error fetching queries:', error)
+    }
+  }
+
   const handleUserAction = async (userId: string, action: string) => {
     try {
       const response = await fetch('/api/admin/users/action', {
@@ -220,6 +246,29 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error('Error performing user action:', error)
+    }
+  }
+
+  const handleQueryAction = async (queryId: string, action: string) => {
+    if (action === 'view') {
+      const query = queries.find(q => q.id === queryId)
+      if (query) {
+        setSelectedQuery(query)
+        setShowQueryModal(true)
+      }
+    } else if (action === 'delete') {
+      if (confirm('Weet je zeker dat je deze vraag wilt verwijderen?')) {
+        try {
+          const response = await fetch(`/api/admin/queries/${queryId}`, {
+            method: 'DELETE'
+          })
+          if (response.ok) {
+            await fetchQueries()
+          }
+        } catch (error) {
+          console.error('Error deleting query:', error)
+        }
+      }
     }
   }
 
@@ -744,85 +793,131 @@ export default function AdminDashboard() {
 
               {activeTab === 'queries' && (
                 <div>
-                  <h3 className="text-lg font-semibold mb-4">Alle Vragen</h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold">Alle Vragen & Antwoorden</h3>
+                    <Button
+                      variant="outline"
+                      onClick={() => fetchQueries()}
+                      disabled={isRefreshing}
+                      className="flex items-center gap-2"
+                    >
+                      <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                      Vernieuwen
+                    </Button>
+                  </div>
+                  
                   {/* Query Filters */}
-                  <div className="flex flex-col md:flex-row gap-4 mb-6">
-                    <div className="flex-1">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div className="md:col-span-2">
                       <div className="relative">
                         <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input
-                          placeholder="Zoek vragen..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
+                          placeholder="Zoek in vragen en antwoorden..."
+                          value={querySearchTerm}
+                          onChange={(e) => setQuerySearchTerm(e.target.value)}
                           className="pl-10"
                         />
                       </div>
                     </div>
                     <Select value={queryUserTypeFilter} onValueChange={setQueryUserTypeFilter}>
-                      <SelectTrigger className="w-48">
-                        <SelectValue placeholder="Filter op gebruikerstype" />
+                      <SelectTrigger>
+                        <SelectValue placeholder="Gebruikerstype" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">Alle gebruikerstypes</SelectItem>
-                        <SelectItem value="logged">Ingelogde</SelectItem>
-                        <SelectItem value="anonymous">Anonieme</SelectItem>
+                        <SelectItem value="all">Alle types</SelectItem>
+                        <SelectItem value="logged">Ingelogde gebruikers</SelectItem>
+                        <SelectItem value="anonymous">Anonieme gebruikers</SelectItem>
                       </SelectContent>
                     </Select>
                     <Select value={queryProfessionFilter} onValueChange={setQueryProfessionFilter}>
-                      <SelectTrigger className="w-48">
-                        <SelectValue placeholder="Filter op beroep" />
+                      <SelectTrigger>
+                        <SelectValue placeholder="Beroep" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">Alle beroepen</SelectItem>
-                        <SelectItem value="PROFESSION_1">Beroep 1</SelectItem>
-                        <SelectItem value="PROFESSION_2">Beroep 2</SelectItem>
-                        <SelectItem value="PROFESSION_3">Beroep 3</SelectItem>
+                        <SelectItem value="politieagent">Politieagent</SelectItem>
+                        <SelectItem value="boa">BOA</SelectItem>
+                        <SelectItem value="advocaat">Advocaat</SelectItem>
+                        <SelectItem value="beveiliger">Beveiliger</SelectItem>
+                        <SelectItem value="rechter">Rechter</SelectItem>
+                        <SelectItem value="student">Student</SelectItem>
+                        <SelectItem value="burger">Burger</SelectItem>
+                        <SelectItem value="algemeen">Algemeen</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
-                  {/* Queries Table */}
-                  <div className="overflow-x-auto">
-                    <div className="space-y-4">
-                      {queries.map((query) => (
-                        <Card key={query.id} className="border-l-4 border-l-primary">
-                          <CardContent className="p-4">
-                            <div className="flex items-center justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-3 mb-2">
-                                  <h4 className="font-medium">{query.question}</h4>
+                  {/* Queries List */}
+                  <div className="space-y-4">
+                    {queries.length === 0 ? (
+                      <Card>
+                        <CardContent className="p-8 text-center">
+                          <MessageSquare className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                          <h3 className="text-lg font-medium text-gray-900 mb-2">Geen vragen gevonden</h3>
+                          <p className="text-gray-600">
+                            Er zijn geen vragen die voldoen aan de huidige filters.
+                          </p>
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      queries.map((query) => (
+                        <Card key={query.id} className="hover:shadow-md transition-shadow">
+                          <CardContent className="p-6">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-3 mb-3">
+                                  <h4 className="font-semibold text-gray-900 truncate">{query.question}</h4>
                                   <Badge variant="outline" className={getRoleColor(query.userRole)}>
                                     {query.userRole}
                                   </Badge>
+                                  <Badge variant="secondary" className="text-xs">
+                                    {query.userType === 'logged' ? 'Ingelogd' : 'Anoniem'}
+                                  </Badge>
                                 </div>
-                                <div className="text-sm text-muted-foreground space-y-1">
-                                  <p>{query.fullQuestion}</p>
-                                  <div className="flex items-center gap-4">
-                                    <span>Gebruiker: {query.userName}</span>
-                                    <span>Gebruikerstype: {query.userType === 'logged' ? 'Ingelogd' : 'Anoniem'}</span>
-                                    <span>Beroep: {query.profession}</span>
+                                
+                                <div className="space-y-2 mb-4">
+                                  <div className="text-sm text-gray-600">
+                                    <strong>Volledige vraag:</strong>
+                                    <p className="mt-1 line-clamp-3">{query.fullQuestion}</p>
+                                  </div>
+                                  
+                                  <div className="text-sm text-gray-600">
+                                    <strong>Antwoord:</strong>
+                                    <p className="mt-1 line-clamp-4">{query.fullAnswer}</p>
                                   </div>
                                 </div>
+                                
+                                <div className="flex items-center gap-4 text-sm text-gray-500">
+                                  <span className="flex items-center gap-1">
+                                    <User className="h-3 w-3" />
+                                    {query.userName} ({query.userEmail})
+                                  </span>
+                                  <span className="flex items-center gap-1">
+                                    <Calendar className="h-3 w-3" />
+                                    {formatDate(query.createdAt)}
+                                  </span>
+                                  <span className="flex items-center gap-1 capitalize">
+                                    <Settings className="h-3 w-3" />
+                                    {query.profession}
+                                  </span>
+                                </div>
                               </div>
-                              <div className="flex items-center gap-2">
+                              
+                              <div className="flex items-center gap-2 ml-4">
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() => handleUserAction(query.id, 'view')}
+                                  onClick={() => handleQueryAction(query.id, 'view')}
+                                  title="Bekijk volledige vraag en antwoord"
                                 >
                                   <Eye className="h-4 w-4" />
                                 </Button>
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() => handleUserAction(query.id, 'edit')}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleUserAction(query.id, 'delete')}
+                                  onClick={() => handleQueryAction(query.id, 'delete')}
+                                  title="Verwijder vraag"
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
@@ -830,8 +925,8 @@ export default function AdminDashboard() {
                             </div>
                           </CardContent>
                         </Card>
-                      ))}
-                    </div>
+                      ))
+                    )}
                   </div>
                 </div>
               )}
@@ -839,6 +934,91 @@ export default function AdminDashboard() {
           </Card>
         </div>
       </main>
+
+      {/* Query Detail Modal */}
+      {showQueryModal && selectedQuery && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-xl font-semibold">Vraag Details</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowQueryModal(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+              <div className="space-y-6">
+                {/* Query Info */}
+                <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+                  <div>
+                    <span className="text-sm font-medium text-gray-600">Gebruiker:</span>
+                    <p className="text-sm">{selectedQuery.userName} ({selectedQuery.userEmail})</p>
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium text-gray-600">Type:</span>
+                    <p className="text-sm">{selectedQuery.userType === 'logged' ? 'Ingelogde gebruiker' : 'Anonieme gebruiker'}</p>
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium text-gray-600">Beroep:</span>
+                    <p className="text-sm capitalize">{selectedQuery.profession}</p>
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium text-gray-600">Datum:</span>
+                    <p className="text-sm">{formatDate(selectedQuery.createdAt)}</p>
+                  </div>
+                </div>
+
+                {/* Question */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 text-blue-600">Vraag</h3>
+                  <div className="p-4 bg-blue-50 rounded-lg">
+                    <p className="text-gray-800 whitespace-pre-wrap">{selectedQuery.fullQuestion}</p>
+                  </div>
+                </div>
+
+                {/* Answer */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 text-green-600">Antwoord</h3>
+                  <div className="p-4 bg-green-50 rounded-lg">
+                    <div className="prose max-w-none">
+                      <p className="text-gray-800 whitespace-pre-wrap">{selectedQuery.fullAnswer}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center gap-3 pt-4 border-t">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`Vraag: ${selectedQuery.fullQuestion}\n\nAntwoord: ${selectedQuery.fullAnswer}`)
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <Download className="h-4 w-4" />
+                    Kopieer naar klembord
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      setShowQueryModal(false)
+                      handleQueryAction(selectedQuery.id, 'delete')
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Verwijder vraag
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 } 
