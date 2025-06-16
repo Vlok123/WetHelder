@@ -104,12 +104,6 @@ const features = [
     href: '/ask'
   },
   {
-    icon: Search,
-    title: 'Wetgeving Zoeken',
-    description: 'Doorzoek 15.000+ wetsartikelen, rechtspraak en jurisprudentie met geavanceerde zoekfuncties.',
-    href: '/search'
-  },
-  {
     icon: BookOpen,
     title: 'Wet & Uitleg',
     description: 'Krijg uitgebreide uitleg bij complexe wetsartikelen met praktische voorbeelden.',
@@ -187,7 +181,7 @@ export default function HomePage() {
             <div className="flex justify-center mb-6">
               <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 px-4 py-2">
                 <Zap className="h-4 w-4 mr-2" />
-                Intelligente Juridische Assistent • Nederlandse Wetgeving
+                Intelligente Juridische Assistent • Nederlandse Wetgeving • Beta
               </Badge>
             </div>
             
@@ -197,10 +191,28 @@ export default function HomePage() {
               <span className="text-3xl md:text-5xl">Nederlandse Juridische Assistent</span>
             </h1>
             
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+            <p className="text-xl text-gray-600 mb-6 leading-relaxed">
               Krijg direct antwoord op juridische vragen, doorzoek Nederlandse wetgeving en 
               ontvang professionele uitleg. Voor burgers, juristen, handhaving en studenten.
             </p>
+            
+            {/* Beta Notice */}
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-8 max-w-2xl mx-auto">
+              <div className="flex items-center justify-center gap-3">
+                <div className="flex items-center gap-2 text-amber-700">
+                  <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-medium">WetHelder is momenteel in bèta</span>
+                </div>
+                <span className="text-amber-600 text-sm">•</span>
+                <span className="text-amber-700 text-sm">Vragen of opmerkingen?</span>
+                <Button variant="outline" size="sm" asChild className="border-amber-300 text-amber-700 hover:bg-amber-100">
+                  <Link href="/contact">
+                    <Mail className="h-3 w-3 mr-1" />
+                    Contact
+                  </Link>
+                </Button>
+              </div>
+            </div>
 
             {/* Quick Search */}
             <Card className="max-w-2xl mx-auto mb-8 shadow-lg">
@@ -426,7 +438,7 @@ export default function HomePage() {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {features.map((feature, index) => {
               const IconComponent = feature.icon
               return (
@@ -579,7 +591,6 @@ export default function HomePage() {
               <h3 className="font-semibold mb-4">Platform</h3>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li><Link href="/ask" className="hover:text-white transition-colors">Juridische Chat</Link></li>
-                <li><Link href="/search" className="hover:text-white transition-colors">Wetgeving Zoeken</Link></li>
                 <li><Link href="/uitleg" className="hover:text-white transition-colors">Wet & Uitleg</Link></li>
                 <li><Link href="/rechtspraak" className="hover:text-white transition-colors">Rechtspraak</Link></li>
               </ul>
