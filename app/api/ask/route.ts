@@ -203,14 +203,51 @@ export async function POST(request: NextRequest) {
 
       if (recentQuestions >= 2) {
         console.log('❌ Rate limit exceeded for anonymous user')
-        return NextResponse.json(
-          { 
-            error: 'Je hebt het maximum aantal vragen bereikt. Maak een gratis account aan om onbeperkt vragen te stellen.',
-            rateLimitExceeded: true,
-            remainingQuestions: 0
-          },
-          { status: 429 }
-        )
+        
+        // Instead of returning an error, return a friendly rate limit message as a stream
+        const rateLimitMessage = `🔒 **Limiet bereikt**
+
+Je hebt het maximum aantal gratis vragen (2 per dag) bereikt. 
+
+**Maak een gratis account aan om:**
+• Onbeperkt vragen te stellen
+• Je vraaggeschiedenis te bewaren
+• Snellere antwoorden te krijgen
+
+**Registreren is gratis en duurt slechts 30 seconden!**
+
+[→ Account aanmaken](/auth/signup)
+[→ Inloggen](/auth/signin)
+
+---
+*WetHelder blijft volledig gratis te gebruiken met een account.*`
+
+        // Create a ReadableStream to simulate the normal response format
+        const stream = new ReadableStream({
+          start(controller) {
+            // Send the rate limit message in the expected streaming format
+            const encoder = new TextEncoder()
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content: rateLimitMessage })}\n\n`))
+            // Send a signal to update remaining questions to 0
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ remainingQuestions: 0 })}\n\n`))
+            controller.enqueue(encoder.encode(`data: [DONE]\n\n`))
+            controller.close()
+          }
+        })
+
+        // Save the rate limit "query" to database for tracking
+        const clientIp = request.headers.get('x-forwarded-for') || 
+                         request.headers.get('x-real-ip') || 'unknown'
+        saveQueryToDatabase(question, rateLimitMessage, profession, null, [], '', clientIp)
+          .catch(error => console.error('❌ Error saving rate limit query:', error))
+
+        return new NextResponse(stream, {
+          headers: {
+            'Content-Type': 'text/plain; charset=utf-8',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+          }
+        })
       }
     }
 

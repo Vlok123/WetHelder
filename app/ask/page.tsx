@@ -873,14 +873,6 @@ function AskPageContent() {
       })
 
       if (!response.ok) {
-        if (response.status === 429) {
-          const errorData = await response.json()
-          if (errorData.rateLimitExceeded) {
-            setRemainingQuestions(0)
-            throw new Error(errorData.error || 'Je hebt het maximum aantal vragen bereikt. Maak een gratis account aan om onbeperkt vragen te stellen.')
-          }
-          throw new Error('Te veel vragen gesteld. Probeer het later opnieuw.')
-        }
         throw new Error('Er is een fout opgetreden bij het verwerken van je vraag.')
       }
 
