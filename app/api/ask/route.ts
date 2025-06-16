@@ -343,7 +343,16 @@ Je hebt het maximum aantal gratis vragen (4 per dag) bereikt.
             }
             
             // Decode and collect the response content
-            const chunk = new TextDecoder().decode(value)
+            let chunk = ''
+            if (value instanceof Uint8Array) {
+              chunk = new TextDecoder().decode(value)
+            } else if (typeof value === 'string') {
+              chunk = value
+            } else {
+              // Skip processing if value is not in expected format
+              controller.enqueue(value)
+              continue
+            }
             
             // Extract content from data: {content: "..."} format
             const matches = chunk.match(/data: ({.*?})/g)
