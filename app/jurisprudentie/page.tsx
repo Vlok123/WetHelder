@@ -229,6 +229,32 @@ export default function JurisprudentiePage() {
               </p>
             </div>
           </div>
+
+          {/* Beta Banner */}
+          <Card className="bg-amber-50 border-amber-200 mb-6">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-amber-200 rounded-full flex items-center justify-center">
+                    <FileText className="h-4 w-4 text-amber-800" />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-sm font-semibold text-amber-800">
+                      Proeffase - Functioneel beschikbaar
+                    </h3>
+                    <Badge variant="outline" className="text-xs bg-amber-100 text-amber-700 border-amber-300">
+                      BETA
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-amber-700">
+                    Deze functie is in proeffase maar volledig functioneel. We zoeken live in Google, rechtspraak.nl en andere bronnen voor de meest actuele jurisprudentie.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
           
           {/* Info Card */}
           <Card className="bg-blue-50 border-blue-200 mb-6">
