@@ -3,6 +3,11 @@ import nodemailer from 'nodemailer'
 
 // E-mail configuratie (gebruik environment variables voor beveiliging)
 const createTransporter = () => {
+  // Check if SMTP credentials are available
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    return null
+  }
+  
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
     port: parseInt(process.env.SMTP_PORT || '587'),
@@ -47,38 +52,53 @@ export async function POST(request: NextRequest) {
       anders: 'Anders'
     }
 
-    const mailOptions = {
-      from: process.env.SMTP_USER,
-      to: process.env.CONTACT_EMAIL || 'info@calmpoint.nl',
-      subject: `WetHelder Contact: ${typeLabels[type] || 'Bericht'} - ${subject}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #2563eb; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;">
-            Nieuw contactbericht van WetHelder
-          </h2>
-          
-          <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3 style="margin-top: 0; color: #374151;">Contactgegevens</h3>
-            <p><strong>Naam:</strong> ${name}</p>
-            <p><strong>E-mail:</strong> ${email}</p>
-            <p><strong>Type bericht:</strong> ${typeLabels[type] || type}</p>
-            <p><strong>Onderwerp:</strong> ${subject}</p>
-          </div>
-          
-          <div style="margin: 20px 0;">
-            <h3 style="color: #374151;">Bericht</h3>
-            <div style="background-color: #ffffff; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
-              ${message.replace(/\n/g, '<br>')}
+    // Log het bericht voor nu (later vervangen door echte e-mail)
+    const contactMessage = {
+      timestamp: new Date().toISOString(),
+      name,
+      email,
+      type: typeLabels[type] || type,
+      subject,
+      message,
+      ip: request.headers.get('x-forwarded-for') || 'unknown'
+    }
+
+    console.log('📧 Nieuw contactbericht ontvangen:', contactMessage)
+
+    // Als SMTP is geconfigureerd, verstuur e-mail
+    if (transporter) {
+      const mailOptions = {
+        from: process.env.SMTP_USER,
+        to: process.env.CONTACT_EMAIL || 'info@calmpoint.nl',
+        subject: `WetHelder Contact: ${typeLabels[type] || 'Bericht'} - ${subject}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #2563eb; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;">
+              Nieuw contactbericht van WetHelder
+            </h2>
+            
+            <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+              <h3 style="margin-top: 0; color: #374151;">Contactgegevens</h3>
+              <p><strong>Naam:</strong> ${name}</p>
+              <p><strong>E-mail:</strong> ${email}</p>
+              <p><strong>Type bericht:</strong> ${typeLabels[type] || type}</p>
+              <p><strong>Onderwerp:</strong> ${subject}</p>
+            </div>
+            
+            <div style="margin: 20px 0;">
+              <h3 style="color: #374151;">Bericht</h3>
+              <div style="background-color: #ffffff; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                ${message.replace(/\n/g, '<br>')}
+              </div>
+            </div>
+            
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280;">
+              <p>Dit bericht is verzonden via het contactformulier op WetHelder.nl</p>
+              <p>Verzonden op: ${new Date().toLocaleString('nl-NL')}</p>
             </div>
           </div>
-          
-          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280;">
-            <p>Dit bericht is verzonden via het contactformulier op WetHelder.nl</p>
-            <p>Verzonden op: ${new Date().toLocaleString('nl-NL')}</p>
-          </div>
-        </div>
-      `,
-      text: `
+        `,
+        text: `
 Nieuw contactbericht van WetHelder
 
 Contactgegevens:
@@ -93,11 +113,19 @@ ${message}
 ---
 Dit bericht is verzonden via het contactformulier op WetHelder.nl
 Verzonden op: ${new Date().toLocaleString('nl-NL')}
-      `
-    }
+        `
+      }
 
-    // E-mail versturen
-    await transporter.sendMail(mailOptions)
+      try {
+        await transporter.sendMail(mailOptions)
+        console.log('✅ E-mail succesvol verzonden naar:', process.env.CONTACT_EMAIL || 'info@calmpoint.nl')
+      } catch (emailError) {
+        console.error('❌ Fout bij verzenden e-mail:', emailError)
+        // Continue anyway - message is logged
+      }
+    } else {
+      console.log('⚠️ SMTP niet geconfigureerd - bericht alleen gelogd')
+    }
 
     return NextResponse.json(
       { message: 'Bericht succesvol verzonden!' },

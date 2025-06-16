@@ -92,74 +92,82 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <Navigation />
       
       <main className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-16">
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shadow-lg">
+                <Mail className="h-10 w-10" />
+              </div>
+            </div>
+            <h1 className="text-5xl font-bold text-gray-900 mb-6">
               Contact
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Heb je vragen over WetHelder of suggesties voor verbetering? 
-              We horen graag van je!
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Heeft u vragen over WetHelder, suggesties voor verbetering, of wilt u feedback geven? 
+              Wij staan klaar om u te helpen en waarderen uw input enorm!
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            <Card className="shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageSquare className="w-5 h-5 text-blue-600" />
-                  Vragen stellen
-                </CardTitle>
-                <CardDescription>
-                  Heb je vragen over het gebruik van WetHelder, juridische bronnen, 
+          {/* Info Cards */}
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="text-center pb-4">
+                <div className="w-16 h-16 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-4">
+                  <MessageSquare className="w-8 h-8" />
+                </div>
+                <CardTitle className="text-xl">Vragen Stellen</CardTitle>
+                <CardDescription className="text-base">
+                  Heeft u vragen over het gebruik van WetHelder, juridische bronnen, 
                   of hoe de AI-assistent werkt? Stel ze gerust!
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card className="shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Mail className="w-5 h-5 text-green-600" />
-                  Suggesties delen
-                </CardTitle>
-                <CardDescription>
-                  Heb je ideeën om WetHelder te verbeteren? Mis je bepaalde functionaliteiten 
-                  of bronnen? Deel je suggesties met ons!
+            <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="text-center pb-4">
+                <div className="w-16 h-16 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="w-8 h-8" />
+                </div>
+                <CardTitle className="text-xl">Suggesties Delen</CardTitle>
+                <CardDescription className="text-base">
+                  Heeft u ideeën om WetHelder te verbeteren? Mist u bepaalde functionaliteiten 
+                  of bronnen? Deel uw suggesties met ons!
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card className="shadow-lg">
-              <CardHeader>
-                <CardTitle>Over WetHelder</CardTitle>
-                <CardDescription>
-                  WetHelder is een AI-gestuurde juridische assistent die professionals 
-                  helpt bij het vinden van relevante wetgeving, jurisprudentie en 
-                  officiële bronnen. We streven ernaar om de tool continu te verbeteren 
-                  op basis van gebruikersfeedback.
+            <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="text-center pb-4">
+                <div className="w-16 h-16 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mx-auto mb-4">
+                  <Mail className="w-8 h-8" />
+                </div>
+                <CardTitle className="text-xl">Feedback Geven</CardTitle>
+                <CardDescription className="text-base">
+                  Uw feedback helpt ons WetHelder continu te verbeteren. 
+                  Deel uw ervaring en help ons de beste juridische assistent te bouwen.
                 </CardDescription>
               </CardHeader>
             </Card>
           </div>
 
           {/* Contact Form */}
-          <Card className="shadow-lg">
-            <CardHeader>
-              <CardTitle>Stuur ons een bericht</CardTitle>
-              <CardDescription>
-                Vul het formulier in en we nemen zo spoedig mogelijk contact met je op.
+          <Card className="shadow-2xl border-0 bg-white/90 backdrop-blur-sm">
+            <CardHeader className="text-center pb-8">
+              <CardTitle className="text-2xl font-bold text-gray-900">Stuur ons een bericht</CardTitle>
+              <CardDescription className="text-lg">
+                Vul het formulier in en wij nemen zo spoedig mogelijk contact met u op.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="name">Naam *</Label>
+                    <Label htmlFor="name" className="text-sm font-semibold text-gray-700">Naam *</Label>
                     <Input
                       id="name"
                       name="name"
@@ -167,11 +175,12 @@ export default function ContactPage() {
                       required
                       value={formData.name}
                       onChange={handleInputChange}
-                      placeholder="Je volledige naam"
+                      placeholder="Uw volledige naam"
+                      className="mt-2 h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="email">E-mail *</Label>
+                    <Label htmlFor="email" className="text-sm font-semibold text-gray-700">E-mail *</Label>
                     <Input
                       id="email"
                       name="email"
@@ -179,19 +188,20 @@ export default function ContactPage() {
                       required
                       value={formData.email}
                       onChange={handleInputChange}
-                      placeholder="je@email.nl"
+                      placeholder="uw@email.nl"
+                      className="mt-2 h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="type">Type bericht</Label>
+                  <Label htmlFor="type" className="text-sm font-semibold text-gray-700">Type bericht</Label>
                   <select
                     id="type"
                     name="type"
                     value={formData.type}
                     onChange={handleInputChange}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="mt-2 w-full h-12 px-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                   >
                     <option value="vraag">Vraag</option>
                     <option value="suggestie">Suggestie</option>
@@ -202,7 +212,7 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="subject">Onderwerp *</Label>
+                  <Label htmlFor="subject" className="text-sm font-semibold text-gray-700">Onderwerp *</Label>
                   <Input
                     id="subject"
                     name="subject"
@@ -210,20 +220,22 @@ export default function ContactPage() {
                     required
                     value={formData.subject}
                     onChange={handleInputChange}
-                    placeholder="Korte beschrijving van je bericht"
+                    placeholder="Korte beschrijving van uw bericht"
+                    className="mt-2 h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="message">Bericht *</Label>
+                  <Label htmlFor="message" className="text-sm font-semibold text-gray-700">Bericht *</Label>
                   <Textarea
                     id="message"
                     name="message"
                     required
                     value={formData.message}
                     onChange={handleInputChange}
-                    placeholder="Beschrijf je vraag of suggestie in detail..."
+                    placeholder="Beschrijf uw vraag of suggestie in detail..."
                     rows={6}
+                    className="mt-2 border-gray-300 focus:border-blue-500 focus:ring-blue-500 resize-none"
                   />
                 </div>
 
@@ -236,17 +248,17 @@ export default function ContactPage() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
                 >
                   {isSubmitting ? (
                     <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
                       Verzenden...
                     </>
                   ) : (
                     <>
-                      <Send className="w-4 h-4 mr-2" />
-                      Bericht verzenden
+                      <Send className="w-5 h-5 mr-3" />
+                      Bericht Verzenden
                     </>
                   )}
                 </Button>

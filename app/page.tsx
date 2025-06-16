@@ -33,7 +33,8 @@ import {
   Home,
   Heart,
   Briefcase,
-  Search
+  Search,
+  Mail
 } from 'lucide-react'
 
 const professionProfiles = [
@@ -547,8 +548,9 @@ export default function HomePage() {
               </Link>
             </Button>
             <Button size="lg" variant="outline" className="bg-transparent" asChild>
-              <Link href="/auth/signin">
-                Account Aanmaken
+              <Link href="/contact">
+                <Mail className="h-5 w-5 mr-2" />
+                Contact & Vragen
               </Link>
             </Button>
           </div>
@@ -596,8 +598,8 @@ export default function HomePage() {
             <div>
               <h3 className="font-semibold mb-4">Ondersteuning</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="/help" className="hover:text-white transition-colors">Help Center</Link></li>
                 <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
+                <li><Link href="/help" className="hover:text-white transition-colors">Help Center</Link></li>
                 <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link></li>
                 <li><Link href="/terms" className="hover:text-white transition-colors">Voorwaarden</Link></li>
               </ul>
