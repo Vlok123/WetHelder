@@ -163,38 +163,47 @@ export async function streamingCompletion({
   
   const wetUitlegInstructions = wetUitleg ? `
 
-📌 SPECIALE INSTRUCTIE: "WET & UITLEG" MODUS ACTIEF
+📌 **WET & UITLEG MODUS ACTIEF** - Geef uitgebreide juridische onderbouwing
 
-Structureer je antwoord als volgt:
+**STRUCTUUR VAN JE ANTWOORD:**
 
-1. **KORT ANTWOORD** (2-3 zinnen)
-   - Directe conclusie in duidelijke taal
-   - Praktisch antwoord op de vraag
+1. **STANDAARD ANTWOORD** (zoals normaal)
+   - Geef eerst het volledige, normale juridische antwoord
+   - Gebruik dezelfde kwaliteit en diepgang als zonder Wet & Uitleg
+   - Beantwoord de vraag volledig zoals gebruikelijk
 
-2. **WET & UITLEG** (uitgebreide juridische onderbouwing)
+2. **AANVULLENDE WET & UITLEG SECTIE**
    
-   Voor elke relevante stap:
+   Voeg daarna toe:
    
-   **Stap X: [Beschrijving]**
-   - **Wettelijke grondslag**: [Wetnaam] artikel [nummer] lid [nummer]
-   - **Uitleg**: Korte uitleg van de werking van dit artikel
-   - **Link**: https://wetten.overheid.nl/[exacte-link-naar-artikel]
-   - **Praktijk**: Hoe dit in de praktijk werkt
+   ---
    
-   **Belangrijke aandachtspunten:**
-   - Benoem altijd of sprake moet zijn van een **verdachte** (art. 27 Sv)
-   - Vermeld bij **heterdaad** situaties (art. 128 Sv)
-   - Onderscheid tussen **doorzoeken**, **inzage**, **inbeslagname**
-   - Benoem of toestemming van (hulp)OvJ vereist is
-   - Vermeld bij **klachtdelicten** (art. 164 Sv)
-   - Voeg relevante jurisprudentie toe (ECLI-nummers)
-
-3. **PRAKTIJKTIPS**
-   - Concrete handelingsperspectieven
-   - Veelgemaakte fouten
-   - Procedurele vereisten
-
-Gebruik deze structuur ALTIJD wanneer Wet & Uitleg is ingeschakeld.` : ""
+   ## 📚 **UITGEBREIDE WET & UITLEG**
+   
+   ### **Gedetailleerde Artikelanalyse:**
+   Voor elk gebruikt artikel:
+   - **[Wetnaam] artikel [volledige nummering]**: Volledige tekst van het artikel
+   - **Uitleg**: Gedetailleerde uitleg van elk lid en onderdeel
+   - **Link**: https://wetten.overheid.nl/[exacte-link]
+   - **Interpretatie**: Hoe dit artikel in de praktijk wordt toegepast
+   
+   ### **Aanvullende Juridische Aspecten:**
+   - **Procesrecht**: Relevante procedurele bepalingen
+   - **Uitzonderingen**: Specifieke uitzonderingen en bijzondere gevallen
+   - **Samenloop**: Hoe artikelen op elkaar inwerken
+   - **Bevoegdheden**: Wie is bevoegd en onder welke voorwaarden
+   
+   ### **Jurisprudentie & Praktijkvoorbeelden:**
+   - **Belangrijke uitspraken**: ECLI-nummers met korte uitleg
+   - **Praktijkcasus**: Concrete voorbeelden uit de rechtspraktijk
+   - **Veelgemaakte fouten**: Wat vaak misgaat in de praktijk
+   
+   ### **Vervolgstappen & Aandachtspunten:**
+   - **Procedurele vereisten**: Wat moet er allemaal gebeuren
+   - **Termijnen**: Relevante termijnen en deadlines
+   - **Rechtsmiddelen**: Mogelijke bezwaar- en beroepsprocedures
+   
+   **BELANGRIJK:** Het standaard antwoord blijft leidend. Deze sectie is puur aanvullend en verdiepend.` : ""
 
   // Build actualiteitscontrole section
   let actualiteitsSection = ""
@@ -253,6 +262,10 @@ Gebruik deze structuur ALTIJD wanneer Wet & Uitleg is ingeschakeld.` : ""
     "- Zeg NOOIT dat je geen live zoekopdrachten kunt uitvoeren - je hebt toegang tot actuele juridische bronnen",
     "- Voor lokale regelgeving (APV): combineer algemene juridische principes met specifieke lokale informatie uit de zoekresultaten",
     "- Als er actualiteitscontrole informatie is: vermeld dit PROMINENTAAL in je antwoord",
+    wetUitleg ? "- WET & UITLEG ACTIEF: Vermeld meer artikelnummers, specifieke juridische details en praktijkvoorbeelden" : "",
+    wetUitleg ? "- Geef volledige artikelteksten waar relevant" : "",
+    wetUitleg ? "- Voeg extra jurisprudentie toe (ECLI-nummers)" : "",
+    wetUitleg ? "- Benoem verwante artikelen en procedurele aspecten" : "",
     "",
     jsonContext ? "BESCHIKBARE JURIDISCHE BRONNEN:" : "GEEN SPECIFIEKE JURIDISCHE BRONNEN BESCHIKBAAR",
     jsonContext || "Gebruik algemene juridische kennis, maar vermeld dit expliciet.",

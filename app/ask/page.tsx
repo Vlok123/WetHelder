@@ -564,7 +564,12 @@ function AskPageContent() {
   // Load conversation from localStorage on mount
   useEffect(() => {
     const savedConversation = localStorage.getItem('wetHelder_conversation')
-    const savedProfession = localStorage.getItem('wetHelder_profession')
+    let savedProfession = localStorage.getItem('wetHelder_profession')
+    
+    // Also check for the main screen selected profile for consistency
+    if (!savedProfession) {
+      savedProfession = localStorage.getItem('wetHelder_selected_profile')
+    }
     
     if (savedConversation) {
       try {
@@ -595,9 +600,10 @@ function AskPageContent() {
     }
   }, [messages])
 
-  // Save profession to localStorage whenever it changes
+  // Save profession to localStorage whenever it changes (both keys for consistency)
   useEffect(() => {
     localStorage.setItem('wetHelder_profession', profession)
+    localStorage.setItem('wetHelder_selected_profile', profession)
   }, [profession])
 
   // Check for Wet & Uitleg preference from localStorage and URL parameters
@@ -650,11 +656,11 @@ function AskPageContent() {
     }
   }, [searchParams])
 
-  // Auto-submit from URL parameters or sessionStorage
+  // Auto-submit from URL parameters
   useEffect(() => {
     if (hasAutoSubmitted.current) return
     
-    // Check URL parameters first
+    // Check URL parameters
     const urlQuery = searchParams.get('q')
     const urlProfile = searchParams.get('profile')
     
@@ -667,49 +673,14 @@ function AskPageContent() {
         setProfession(mappedProfession)
       }
       
-      // Clear URL parameters after processing
-      sessionStorage.setItem('autoSubmitQuery', urlQuery)
-      if (urlProfile) {
-        sessionStorage.setItem('autoSubmitProfile', urlProfile)
-      }
-      
-      // Auto-submit after state updates
+      // Auto-submit after state updates with proper timing
       setTimeout(() => {
         const fakeEvent = { preventDefault: () => {} } as React.FormEvent
         handleSubmit(fakeEvent, urlProfile ? mapProfileToProfession(urlProfile) : profession)
-      }, 100)
+      }, 200)
       
-      // Clear sessionStorage after use
-      sessionStorage.removeItem('autoSubmitQuery')
-      sessionStorage.removeItem('autoSubmitProfile')
       return
     }
-    
-    // Check sessionStorage as fallback
-    const storedQuery = sessionStorage.getItem('autoSubmitQuery')
-    const storedProfile = sessionStorage.getItem('autoSubmitProfile')
-    
-    if (storedQuery) {
-      hasAutoSubmitted.current = true
-      setInput(storedQuery)
-      
-      if (storedProfile) {
-        const mappedProfession = mapProfileToProfession(storedProfile)
-        setProfession(mappedProfession)
-      }
-      
-      // Auto-submit after state updates
-      setTimeout(() => {
-        const fakeEvent = { preventDefault: () => {} } as React.FormEvent
-        handleSubmit(fakeEvent, storedProfile ? mapProfileToProfession(storedProfile) : profession)
-        
-        // Clear sessionStorage
-        sessionStorage.removeItem('autoSubmitQuery')
-        sessionStorage.removeItem('autoSubmitProfile')
-      }, 100)
-      return
-    }
-    
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
@@ -1070,6 +1041,7 @@ function AskPageContent() {
                       size="sm"
                       onClick={() => setWetUitlegEnabled(!wetUitlegEnabled)}
                       className="h-9 flex items-center gap-2"
+                      title={wetUitlegEnabled ? "Uitgebreide artikelanalyse ingeschakeld" : "Schakel uitgebreide artikelanalyse in"}
                     >
                       {wetUitlegEnabled ? (
                         <ToggleRight className="h-4 w-4" />
@@ -1077,6 +1049,11 @@ function AskPageContent() {
                         <ToggleLeft className="h-4 w-4" />
                       )}
                       <span className="text-xs">Wet & Uitleg</span>
+                      {wetUitlegEnabled && (
+                        <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
+                          +Artikelen
+                        </Badge>
+                      )}
                     </Button>
                   </div>
 

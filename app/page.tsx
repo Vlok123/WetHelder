@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Navigation } from '@/components/navigation'
@@ -232,6 +232,14 @@ export default function HomePage() {
   const [wetUitlegEnabled, setWetUitlegEnabled] = useState(false)
   const router = useRouter()
 
+  // Load selected profile from localStorage on mount for persistence
+  useEffect(() => {
+    const savedProfile = localStorage.getItem('wetHelder_selected_profile')
+    if (savedProfile) {
+      setSelectedRole(savedProfile)
+    }
+  }, [])
+
   const handleSearch = async () => {
     if (!searchQuery.trim() || isSubmitting) return
     
@@ -246,11 +254,7 @@ export default function HomePage() {
     
     localStorage.setItem('wetHelder_mainscreen_question', JSON.stringify(questionData))
     
-    // Also store in sessionStorage as backup
-    sessionStorage.setItem('autoSubmitQuery', query)
-    sessionStorage.setItem('autoSubmitProfile', selectedRole)
-    
-    // Navigate to /ask with query and profile parameters as additional backup
+    // Build URL parameters for direct navigation and sharing
     const params = new URLSearchParams({
       q: query,
       profile: selectedRole
@@ -259,16 +263,18 @@ export default function HomePage() {
     // Add Wet & Uitleg parameter if enabled
     if (wetUitlegEnabled) {
       params.set('wetuitleg', 'true')
-      localStorage.setItem('wetUitlegEnabled', 'true')
     }
     
-    // Use router.push for better navigation
+    // Navigate to /ask with parameters - this allows for sharing and bookmarking
     router.push(`/ask?${params.toString()}`)
   }
 
   const handleProfileSelect = (profileId: string) => {
-    // Navigate directly to /ask with the selected profile
-    router.push(`/ask?profile=${profileId}`)
+    // Just update the selected role, don't navigate yet
+    setSelectedRole(profileId)
+    
+    // Store the selected profile for persistence
+    localStorage.setItem('wetHelder_selected_profile', profileId)
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -380,15 +386,15 @@ export default function HomePage() {
                         {wetUitlegEnabled ? 'W&U: AAN' : 'Wet & Uitleg'}
                       </span>
                       {wetUitlegEnabled ? (
-                        <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">Actief</Badge>
+                        <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">Extra uitleg</Badge>
                       ) : (
-                        <Badge variant="secondary" className="text-xs">Nieuw</Badge>
+                        <Badge variant="secondary" className="text-xs">+Artikelen</Badge>
                       )}
                     </Button>
                   </div>
                   
                   <p className="text-sm text-gray-600 text-center">
-                    💡 <strong>Tip:</strong> Selecteer eerst uw functie, schakel eventueel Wet & Uitleg in voor diepgaande analyses, stel dan uw vraag
+                    💡 <strong>Tip:</strong> Selecteer eerst uw functie, schakel eventueel Wet & Uitleg in voor <strong>uitgebreide artikelanalyses</strong> en extra jurisprudentie
                   </p>
                 </div>
               </CardContent>
