@@ -23,7 +23,8 @@ import {
   GraduationCap,
   Briefcase,
   Menu,
-  ChevronDown
+  ChevronDown,
+  Gavel
 } from 'lucide-react'
 
 const professionProfiles = [
@@ -62,6 +63,12 @@ export function Navigation() {
                   Wetteksten
                 </Link>
               </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/jurisprudentie" className="text-sm">
+                  <Gavel className="h-4 w-4 mr-2" />
+                  Jurisprudentie
+                </Link>
+              </Button>
             </div>
 
             {/* Mobile Navigation */}
@@ -74,6 +81,11 @@ export function Navigation() {
               <Button variant="ghost" size="sm" asChild>
                 <Link href="/wetuitleg">
                   <Scale className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/jurisprudentie">
+                  <Gavel className="h-4 w-4" />
                 </Link>
               </Button>
             </div>
