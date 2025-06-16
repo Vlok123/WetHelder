@@ -62,18 +62,32 @@ import { Navigation } from '@/components/navigation'
 
 interface DashboardStats {
   totalQueries: number
-  thisWeekQueries: number
-  totalNotes: number
-  totalCategories: number
-  favoriteQueries: number
+  todayQueries: number
+  weekQueries: number
+  monthQueries: number
+  favoritesCount: number
+  notesCount: number
+  categoriesCount: number
   averageResponseTime: string
   mostUsedProfession: string
+  memberSince: string
+  role: string
+  dailyStats: Array<{
+    date: string
+    count: number
+  }>
   recentActivity: Array<{
     id: string
     type: 'query' | 'note' | 'category'
     title: string
     timestamp: string
     details?: string
+    profession?: string
+    sources?: string[]
+  }>
+  professionBreakdown: Array<{
+    profession: string
+    count: number
   }>
 }
 
@@ -135,67 +149,7 @@ interface RecentSearch {
   date: string
 }
 
-const mockChatSessions: ChatSession[] = [
-  {
-    id: '1',
-    title: 'Arbeidsrecht ontslagbescherming',
-    messages: 12,
-    lastActivity: '2 uur geleden',
-    profession: 'algemeen',
-    tags: ['arbeidsrecht', 'ontslag']
-  },
-  {
-    id: '2',
-    title: 'Huurrecht opzegging',
-    messages: 8,
-    lastActivity: '1 dag geleden',
-    profession: 'algemeen',
-    tags: ['huurrecht', 'opzegging']
-  },
-  {
-    id: '3',
-    title: 'Verkeersrecht boete betwisten',
-    messages: 15,
-    lastActivity: '3 dagen geleden',
-    profession: 'algemeen',
-    tags: ['verkeersrecht', 'boete']
-  }
-]
 
-const mockFavorites: Favorite[] = [
-  {
-    id: '1',
-    title: 'Burgerlijk Wetboek Artikel 7:611',
-    type: 'article',
-    content: 'Arbeidsovereenkomst ontslagbescherming...',
-    date: '2024-01-15',
-    url: 'https://wetten.overheid.nl'
-  },
-  {
-    id: '2',
-    title: 'Chat: Kan mijn werkgever mij ontslaan?',
-    type: 'chat',
-    content: 'Uitgebreide chat over ontslagrecht...',
-    date: '2024-01-10'
-  }
-]
-
-const mockRecentSearches: RecentSearch[] = [
-  {
-    id: '1',
-    query: 'arbeidsovereenkomst ontslag',
-    category: 'wetgeving',
-    results: 45,
-    date: '2024-01-15'
-  },
-  {
-    id: '2',
-    query: 'huurrecht opzegging',
-    category: 'jurisprudentie',
-    results: 23,
-    date: '2024-01-14'
-  }
-]
 
 export default function MemberDashboard() {
   const { data: session, status } = useSession()
@@ -255,6 +209,19 @@ export default function MemberDashboard() {
 
       // Load chat history (queries)
       const historyResponse = await fetch('/api/chat-history')
+      let userFavorites: string[] = []
+      
+      // Load user favorites
+      try {
+        const favoritesResponse = await fetch('/api/user/favorites')
+        if (favoritesResponse.ok) {
+          const favoritesData = await favoritesResponse.json()
+          userFavorites = favoritesData.favorites.map((fav: any) => fav.queryId)
+        }
+      } catch (favError) {
+        console.log('Could not load favorites:', favError)
+      }
+
       if (historyResponse.ok) {
         const historyData = await historyResponse.json()
         const formattedQueries = (historyData.queries || []).map((query: any) => ({
@@ -263,7 +230,7 @@ export default function MemberDashboard() {
           answer: query.answer || 'Antwoord wordt geladen...',
           profession: query.profession,
           createdAt: query.createdAt,
-          isFavorite: false, // Would need to implement favorites in database
+          isFavorite: userFavorites.includes(query.id),
           categories: [], // Would need to implement categories in database
           sources: query.sources ? JSON.parse(query.sources) : []
         }))
@@ -279,13 +246,19 @@ export default function MemberDashboard() {
       // Fallback to empty data
       setStats({
         totalQueries: 0,
-        thisWeekQueries: 0,
-        totalNotes: 0,
-        totalCategories: 0,
-        favoriteQueries: 0,
+        todayQueries: 0,
+        weekQueries: 0,
+        monthQueries: 0,
+        favoritesCount: 0,
+        notesCount: 0,
+        categoriesCount: 0,
         averageResponseTime: '0s',
         mostUsedProfession: 'Algemeen',
-        recentActivity: []
+        memberSince: new Date().toISOString(),
+        role: 'FREE',
+        dailyStats: [],
+        recentActivity: [],
+        professionBreakdown: []
       })
       setQueries([])
       setNotes([])
@@ -312,9 +285,34 @@ export default function MemberDashboard() {
   }
 
   const toggleFavorite = async (queryId: string) => {
-    setQueries(queries.map(q => 
-      q.id === queryId ? { ...q, isFavorite: !q.isFavorite } : q
-    ))
+    try {
+      const response = await fetch('/api/user/favorites', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ queryId }),
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        // Update local state
+        setQueries(queries.map(q => 
+          q.id === queryId ? { ...q, isFavorite: result.isFavorite } : q
+        ))
+        
+        // Reload stats to update favorites count
+        const statsResponse = await fetch('/api/dashboard/stats')
+        if (statsResponse.ok) {
+          const statsData = await statsResponse.json()
+          setStats(statsData)
+        }
+      } else {
+        console.error('Failed to toggle favorite')
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error)
+    }
   }
 
   const deleteNote = async (noteId: string) => {
@@ -460,12 +458,12 @@ export default function MemberDashboard() {
             </div>
             <div className="flex items-center gap-3">
               <Badge variant="secondary" className="text-sm">
-                <User className="h-4 w-4 mr-1" />
-                Premium Account
+                <Crown className="h-4 w-4 mr-1" />
+                {stats?.role === 'ADMIN' ? 'Admin Account' : 'Gratis Account'}
               </Badge>
-              <Button variant="outline" size="sm">
-                <Settings className="h-4 w-4 mr-2" />
-                Instellingen
+              <Button variant="outline" size="sm" onClick={() => signOut()}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Uitloggen
               </Button>
             </div>
           </div>
@@ -505,8 +503,11 @@ export default function MemberDashboard() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Chat Sessies</p>
-                      <p className="text-2xl font-bold text-gray-900">{mockChatSessions.length}</p>
+                      <p className="text-sm font-medium text-gray-600">Totaal Vragen</p>
+                      <p className="text-2xl font-bold text-gray-900">{stats?.totalQueries || 0}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {stats?.todayQueries || 0} vandaag
+                      </p>
                     </div>
                     <MessageSquare className="h-8 w-8 text-blue-600" />
                   </div>
@@ -518,7 +519,10 @@ export default function MemberDashboard() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-gray-600">Favorieten</p>
-                      <p className="text-2xl font-bold text-gray-900">{mockFavorites.length}</p>
+                      <p className="text-2xl font-bold text-gray-900">{stats?.favoritesCount || 0}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Opgeslagen items
+                      </p>
                     </div>
                     <Star className="h-8 w-8 text-yellow-600" />
                   </div>
@@ -529,10 +533,13 @@ export default function MemberDashboard() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Zoekopdrachten</p>
-                      <p className="text-2xl font-bold text-gray-900">{mockRecentSearches.length}</p>
+                      <p className="text-sm font-medium text-gray-600">Deze Week</p>
+                      <p className="text-2xl font-bold text-gray-900">{stats?.weekQueries || 0}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Vragen gesteld
+                      </p>
                     </div>
-                    <Search className="h-8 w-8 text-green-600" />
+                    <Calendar className="h-8 w-8 text-green-600" />
                   </div>
                 </CardContent>
               </Card>
@@ -542,7 +549,10 @@ export default function MemberDashboard() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-gray-600">Deze Maand</p>
-                      <p className="text-2xl font-bold text-gray-900">47</p>
+                      <p className="text-2xl font-bold text-gray-900">{stats?.monthQueries || 0}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Totaal activiteit
+                      </p>
                     </div>
                     <TrendingUp className="h-8 w-8 text-purple-600" />
                   </div>
@@ -556,28 +566,40 @@ export default function MemberDashboard() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Clock className="h-5 w-5" />
-                    Recente Chat Sessies
+                    Recente Activiteit
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {mockChatSessions.slice(0, 3).map((chat) => (
-                      <div key={chat.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
-                        <div className="flex-1">
-                          <h4 className="font-medium text-gray-900">{chat.title}</h4>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge variant="secondary" className="text-xs">
-                              {getProfessionIcon(chat.profession)} {chat.profession}
-                            </Badge>
-                            <span className="text-xs text-gray-500">{chat.messages} berichten</span>
-                            <span className="text-xs text-gray-500">• {chat.lastActivity}</span>
+                    {stats?.recentActivity?.slice(0, 5).map((activity) => (
+                      <div key={activity.id} className="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50">
+                        <div className="flex-shrink-0 mt-1">
+                          <MessageSquare className="h-4 w-4 text-blue-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-gray-900 text-sm truncate">{activity.title}</h4>
+                          {activity.details && (
+                            <p className="text-xs text-gray-600 mt-1 line-clamp-2">{activity.details}</p>
+                          )}
+                          <div className="flex items-center gap-2 mt-2">
+                            {activity.profession && (
+                              <Badge variant="secondary" className="text-xs">
+                                {getProfessionIcon(activity.profession)} {activity.profession}
+                              </Badge>
+                            )}
+                            <span className="text-xs text-gray-500">
+                              {formatDate(activity.timestamp)}
+                            </span>
                           </div>
                         </div>
-                        <Button variant="ghost" size="sm">
-                          <MessageSquare className="h-4 w-4" />
-                        </Button>
                       </div>
-                    ))}
+                    )) || (
+                      <div className="text-center py-8 text-gray-500">
+                        <MessageSquare className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                        <p>Nog geen activiteit</p>
+                        <p className="text-sm">Begin met het stellen van een vraag!</p>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -585,31 +607,57 @@ export default function MemberDashboard() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Star className="h-5 w-5" />
-                    Favorieten
+                    <BarChart3 className="h-5 w-5" />
+                    Gebruiksstatistieken
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    {mockFavorites.map((favorite) => (
-                      <div key={favorite.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
-                        <div className="flex items-center gap-3 flex-1">
-                          {getTypeIcon(favorite.type)}
-                          <div>
-                            <h4 className="font-medium text-gray-900 text-sm">{favorite.title}</h4>
-                            <p className="text-xs text-gray-500">{favorite.date}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Button variant="ghost" size="sm">
-                            <Share2 className="h-3 w-3" />
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            <Download className="h-3 w-3" />
-                          </Button>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Meest gebruikt profiel</span>
+                      <Badge variant="secondary" className="text-xs">
+                        {getProfessionIcon(stats?.mostUsedProfession || 'algemeen')} {stats?.mostUsedProfession || 'Algemeen'}
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Gemiddelde responstijd</span>
+                      <span className="text-sm text-gray-600">{stats?.averageResponseTime || '0s'}</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Lid sinds</span>
+                      <span className="text-sm text-gray-600">
+                        {stats?.memberSince ? new Date(stats.memberSince).toLocaleDateString('nl-NL', {
+                          month: 'long',
+                          year: 'numeric'
+                        }) : 'Onbekend'}
+                      </span>
+                    </div>
+
+                    {stats?.professionBreakdown && stats.professionBreakdown.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-medium mb-2">Profiel verdeling</h4>
+                        <div className="space-y-2">
+                          {stats.professionBreakdown.slice(0, 3).map((prof) => (
+                            <div key={prof.profession} className="flex items-center justify-between">
+                              <span className="text-xs text-gray-600 capitalize">{prof.profession}</span>
+                              <div className="flex items-center gap-2">
+                                <div className="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                                  <div 
+                                    className="h-full bg-blue-500"
+                                    style={{ 
+                                      width: `${Math.min(100, (prof.count / (stats?.totalQueries || 1)) * 100)}%` 
+                                    }}
+                                  />
+                                </div>
+                                <span className="text-xs text-gray-500">{prof.count}</span>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -623,58 +671,85 @@ export default function MemberDashboard() {
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold">Chat Geschiedenis</h2>
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm">
-                  <Filter className="h-4 w-4 mr-2" />
-                  Filter
+                <Button variant="outline" size="sm" onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}>
+                  <Star className={`h-4 w-4 mr-2 ${showOnlyFavorites ? 'fill-current text-yellow-500' : ''}`} />
+                  {showOnlyFavorites ? 'Alle' : 'Favorieten'}
                 </Button>
                 <Button variant="outline" size="sm">
-                  <Download className="h-4 w-4 mr-2" />
-                  Exporteren
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Vernieuwen
                 </Button>
               </div>
             </div>
 
             <div className="space-y-3">
-              {mockChatSessions.map((chat) => (
-                <Card key={chat.id} className="hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-semibold text-gray-900">{chat.title}</h3>
-                          <Badge variant="secondary" className="text-xs">
-                            {getProfessionIcon(chat.profession)} {chat.profession}
-                          </Badge>
-                        </div>
-                        <div className="flex items-center gap-4 text-sm text-gray-600">
-                          <span>{chat.messages} berichten</span>
-                          <span>•</span>
-                          <span>{chat.lastActivity}</span>
-                          <span>•</span>
-                          <div className="flex gap-1">
-                            {chat.tags.map((tag) => (
-                              <Badge key={tag} variant="outline" className="text-xs">
-                                {tag}
-                              </Badge>
-                            ))}
+              {filteredQueries.length > 0 ? (
+                filteredQueries.map((query) => (
+                  <Card key={query.id} className="hover:shadow-lg transition-shadow">
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="font-semibold text-gray-900 truncate">{query.question}</h3>
+                            <Badge variant="secondary" className="text-xs flex-shrink-0">
+                              {getProfessionIcon(query.profession)} {query.profession}
+                            </Badge>
+                            {query.isFavorite && (
+                              <Star className="h-4 w-4 text-yellow-500 fill-current flex-shrink-0" />
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                            {query.answer}
+                          </p>
+                          <div className="flex items-center gap-4 text-sm text-gray-500">
+                            <span>{formatDate(query.createdAt)}</span>
+                            {query.sources.length > 0 && (
+                              <>
+                                <span>•</span>
+                                <span>{query.sources.length} bronnen</span>
+                              </>
+                            )}
                           </div>
                         </div>
+                        <div className="flex items-center gap-2 ml-4">
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => toggleFavorite(query.id)}
+                          >
+                            <Star className={`h-4 w-4 ${query.isFavorite ? 'fill-current text-yellow-500' : ''}`} />
+                          </Button>
+                          <Button variant="outline" size="sm" asChild>
+                            <Link href={`/ask?resume=${query.id}`}>
+                              <MessageSquare className="h-4 w-4 mr-1" />
+                              Hervatten
+                            </Link>
+                          </Button>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm">
-                          <Share2 className="h-4 w-4" />
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          <Download className="h-4 w-4" />
-                        </Button>
-                        <Button size="sm">
-                          Hervatten
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <div className="text-center py-12">
+                  <MessageSquare className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    {showOnlyFavorites ? 'Geen favoriete vragen' : 'Nog geen chat geschiedenis'}
+                  </h3>
+                  <p className="text-gray-600 mb-4">
+                    {showOnlyFavorites 
+                      ? 'Markeer vragen als favoriet om ze hier te zien.'
+                      : 'Begin met het stellen van een juridische vraag om uw geschiedenis op te bouwen.'
+                    }
+                  </p>
+                  <Button asChild>
+                    <Link href="/ask">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Nieuwe vraag stellen
+                    </Link>
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -684,47 +759,78 @@ export default function MemberDashboard() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold">Favorieten</h2>
-              <Button variant="outline" size="sm">
-                <Filter className="h-4 w-4 mr-2" />
-                Filter op type
+              <Button variant="outline" size="sm" onClick={loadDashboardData}>
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Vernieuwen
               </Button>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
-              {mockFavorites.map((favorite) => (
-                <Card key={favorite.id} className="hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        {getTypeIcon(favorite.type)}
-                        <Badge variant="secondary" className="text-xs capitalize">
-                          {favorite.type}
-                        </Badge>
+              {queries.filter(q => q.isFavorite).length > 0 ? (
+                queries.filter(q => q.isFavorite).map((favorite) => (
+                  <Card key={favorite.id} className="hover:shadow-lg transition-shadow">
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <MessageSquare className="h-4 w-4 text-blue-600" />
+                          <Badge variant="secondary" className="text-xs">
+                            {getProfessionIcon(favorite.profession)} {favorite.profession}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => toggleFavorite(favorite.id)}
+                          >
+                            <Star className="h-3 w-3 fill-current text-yellow-500" />
+                          </Button>
+                          <Button variant="ghost" size="sm" asChild>
+                            <Link href={`/ask?resume=${favorite.id}`}>
+                              <MessageSquare className="h-3 w-3" />
+                            </Link>
+                          </Button>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="sm">
-                          <Share2 className="h-3 w-3" />
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
+                      
+                      <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{favorite.question}</h3>
+                      <p className="text-sm text-gray-600 mb-3 line-clamp-3">{favorite.answer}</p>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-500">
+                          {formatDate(favorite.createdAt)}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          {favorite.sources.length > 0 && (
+                            <Badge variant="outline" className="text-xs">
+                              {favorite.sources.length} bronnen
+                            </Badge>
+                          )}
+                          <Button size="sm" variant="outline" asChild>
+                            <Link href={`/ask?resume=${favorite.id}`}>
+                              Bekijken
+                            </Link>
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                    
-                    <h3 className="font-semibold text-gray-900 mb-2">{favorite.title}</h3>
-                    <p className="text-sm text-gray-600 mb-3">{favorite.content}</p>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500">
-                        Opgeslagen op {new Date(favorite.date).toLocaleDateString('nl-NL')}
-                      </span>
-                      <Button size="sm" variant="outline">
-                        Bekijken
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12">
+                  <Star className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Nog geen favorieten</h3>
+                  <p className="text-gray-600 mb-4">
+                    Markeer vragen als favoriet door op de ster te klikken in uw chat geschiedenis.
+                  </p>
+                  <Button asChild>
+                    <Link href="/ask">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Nieuwe vraag stellen
+                    </Link>
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -735,41 +841,23 @@ export default function MemberDashboard() {
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold">Zoekgeschiedenis</h2>
               <Button variant="outline" size="sm">
-                <Trash2 className="h-4 w-4 mr-2" />
-                Wis geschiedenis
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Vernieuwen
               </Button>
             </div>
 
-            <div className="space-y-3">
-              {mockRecentSearches.map((search) => (
-                <Card key={search.id} className="hover:shadow-lg transition-shadow">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Search className="h-5 w-5 text-gray-400" />
-                        <div>
-                          <h3 className="font-medium text-gray-900">&quot;{search.query}&quot;</h3>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge variant="secondary" className="text-xs">
-                              {search.category}
-                            </Badge>
-                            <span className="text-xs text-gray-500">
-                              {search.results} resultaten
-                            </span>
-                            <span className="text-xs text-gray-500">•</span>
-                            <span className="text-xs text-gray-500">
-                              {new Date(search.date).toLocaleDateString('nl-NL')}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <Button variant="outline" size="sm">
-                        Opnieuw zoeken
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+            <div className="text-center py-12">
+              <Search className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Zoekgeschiedenis komt binnenkort</h3>
+              <p className="text-gray-600 mb-4">
+                Deze functie wordt binnenkort toegevoegd om uw zoekgeschiedenis bij te houden.
+              </p>
+              <Button asChild>
+                <Link href="/ask">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nieuwe vraag stellen
+                </Link>
+              </Button>
             </div>
           </div>
         )}
@@ -779,43 +867,166 @@ export default function MemberDashboard() {
           <div className="space-y-6">
             <h2 className="text-xl font-semibold">Gebruiksstatistieken</h2>
             
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Activiteit per Maand</CardTitle>
+                  <CardTitle className="text-base">Activiteit Overzicht</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-40 flex items-center justify-center bg-gray-50 rounded">
-                    <p className="text-gray-500">Grafiek wordt geladen...</p>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Totaal vragen</span>
+                      <span className="font-semibold">{stats?.totalQueries || 0}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Deze week</span>
+                      <span className="font-semibold">{stats?.weekQueries || 0}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Deze maand</span>
+                      <span className="font-semibold">{stats?.monthQueries || 0}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Favorieten</span>
+                      <span className="font-semibold">{stats?.favoritesCount || 0}</span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Meest Gebruikte Categorieën</CardTitle>
+                  <CardTitle className="text-base">Profiel Gebruik</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {[
-                      { name: 'Arbeidsrecht', percentage: 45, color: 'bg-blue-500' },
-                      { name: 'Huurrecht', percentage: 25, color: 'bg-green-500' },
-                      { name: 'Verkeersrecht', percentage: 20, color: 'bg-yellow-500' },
-                      { name: 'Strafrecht', percentage: 10, color: 'bg-red-500' }
-                    ].map((category) => (
-                      <div key={category.name} className="flex items-center justify-between">
-                        <span className="text-sm font-medium">{category.name}</span>
-                        <div className="flex items-center gap-2">
-                          <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
-                            <div 
-                              className={`h-full ${category.color}`}
-                              style={{ width: `${category.percentage}%` }}
-                            />
+                    {stats?.professionBreakdown && stats.professionBreakdown.length > 0 ? (
+                      stats.professionBreakdown.map((prof) => {
+                        const percentage = Math.round((prof.count / (stats?.totalQueries || 1)) * 100)
+                        return (
+                          <div key={prof.profession} className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm">{getProfessionIcon(prof.profession)}</span>
+                              <span className="text-sm font-medium capitalize">{prof.profession}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-blue-500"
+                                  style={{ width: `${percentage}%` }}
+                                />
+                              </div>
+                              <span className="text-sm text-gray-600 w-8 text-right">{prof.count}</span>
+                            </div>
                           </div>
-                          <span className="text-sm text-gray-600">{category.percentage}%</span>
-                        </div>
+                        )
+                      })
+                    ) : (
+                      <div className="text-center py-4 text-gray-500">
+                        <p className="text-sm">Nog geen data beschikbaar</p>
                       </div>
-                    ))}
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Laatste 7 Dagen</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {stats?.dailyStats && stats.dailyStats.length > 0 ? (
+                      stats.dailyStats.map((day) => {
+                        const date = new Date(day.date)
+                        const dayName = date.toLocaleDateString('nl-NL', { weekday: 'short' })
+                        const maxCount = Math.max(...stats.dailyStats.map(d => d.count), 1)
+                        const percentage = (day.count / maxCount) * 100
+                        
+                        return (
+                          <div key={day.date} className="flex items-center justify-between">
+                            <span className="text-sm text-gray-600 w-8">{dayName}</span>
+                            <div className="flex-1 mx-3">
+                              <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-green-500"
+                                  style={{ width: `${percentage}%` }}
+                                />
+                              </div>
+                            </div>
+                            <span className="text-sm font-medium w-6 text-right">{day.count}</span>
+                          </div>
+                        )
+                      })
+                    ) : (
+                      <div className="text-center py-4 text-gray-500">
+                        <p className="text-sm">Nog geen activiteit</p>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Additional Stats */}
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Account Informatie</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Account type</span>
+                      <Badge variant="secondary">{stats?.role || 'FREE'}</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Lid sinds</span>
+                      <span className="text-sm">
+                        {stats?.memberSince ? new Date(stats.memberSince).toLocaleDateString('nl-NL', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric'
+                        }) : 'Onbekend'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Meest gebruikt profiel</span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-sm">{getProfessionIcon(stats?.mostUsedProfession || 'algemeen')}</span>
+                        <span className="text-sm capitalize">{stats?.mostUsedProfession || 'Algemeen'}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Gem. responstijd</span>
+                      <span className="text-sm">{stats?.averageResponseTime || '0s'}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Snelle Acties</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <Button className="w-full justify-start" asChild>
+                      <Link href="/ask">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Nieuwe vraag stellen
+                      </Link>
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start" asChild>
+                      <Link href="/chat-history">
+                        <History className="h-4 w-4 mr-2" />
+                        Volledige geschiedenis
+                      </Link>
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start" onClick={loadDashboardData}>
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Data vernieuwen
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
