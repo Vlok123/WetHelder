@@ -374,10 +374,10 @@ export default function HomePage() {
                     >
                       <BookOpen className="h-4 w-4" />
                       <span className="hidden sm:inline">
-                        {wetUitlegEnabled ? 'Wet & Uitleg: AAN' : 'Wet & Uitleg modus'}
+                        {wetUitlegEnabled ? 'Wetteksten: AAN' : 'Wetteksten modus'}
                       </span>
                       <span className="sm:hidden">
-                        {wetUitlegEnabled ? 'W&U: AAN' : 'Wet & Uitleg'}
+                        {wetUitlegEnabled ? 'WT: AAN' : 'Wetteksten'}
                       </span>
                       {wetUitlegEnabled ? (
                         <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">Actief</Badge>
@@ -388,7 +388,7 @@ export default function HomePage() {
                   </div>
                   
                   <p className="text-sm text-gray-600 text-center">
-                    💡 <strong>Tip:</strong> Selecteer eerst uw functie, schakel eventueel Wet & Uitleg in voor diepgaande analyses, stel dan uw vraag
+                    💡 <strong>Tip:</strong> Selecteer eerst uw functie, schakel eventueel Wetteksten in voor diepgaande analyses, stel dan uw vraag
                   </p>
                 </div>
               </CardContent>
@@ -525,6 +525,93 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Wetteksten Section */}
+      <section className="py-16 bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Wetteksten</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Ontdek onze geavanceerde Wetteksten functie voor uitgebreide juridische analyses van Nederlandse wetsartikelen
+            </p>
+          </div>
+          
+          <div className="max-w-4xl mx-auto">
+            <Card className="p-8 bg-white shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                  <BookOpen className="h-8 w-8" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">Wetteksten Analyse</h3>
+                  <p className="text-gray-600">Diepgaande uitleg van Nederlandse wetsartikelen</p>
+                </div>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-6 mb-8">
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Volledige Wetsartikel Teksten</h4>
+                      <p className="text-sm text-gray-600">Exacte tekst van wetsartikelen uit officiële bronnen</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Praktische Toepassingen</h4>
+                      <p className="text-sm text-gray-600">Concrete voorbeelden van hoe artikelen worden toegepast</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Relevante Jurisprudentie</h4>
+                      <p className="text-sm text-gray-600">Belangrijke uitspraken met ECLI-nummers</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Verwante Artikelen</h4>
+                      <p className="text-sm text-gray-600">Gerelateerde wetsartikelen die vaak samen voorkomen</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Officiële Bronverwijzingen</h4>
+                      <p className="text-sm text-gray-600">Directe links naar wetten.overheid.nl</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Uitgebreide Analyses</h4>
+                      <p className="text-sm text-gray-600">Gedetailleerde uitleg en interpretatie van complexe artikelen</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="text-center">
+                <Button size="lg" asChild className="bg-blue-600 hover:bg-blue-700">
+                  <Link href="/wetuitleg">
+                    <BookOpen className="h-5 w-5 mr-2" />
+                    Probeer Wetteksten
+                  </Link>
+                </Button>
+                <p className="text-sm text-gray-600 mt-3">
+                  Perfect voor juristen, advocaten, studenten en iedereen die diepgaande wetsuitleg nodig heeft
+                </p>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* How It Works Section */}
       <section className="py-16 bg-white border-t border-gray-100">
         <div className="container mx-auto px-4">
@@ -566,14 +653,14 @@ export default function HomePage() {
               </div>
             </Card>
 
-            {/* Step 3: Wet & Uitleg */}
+            {/* Step 3: Wetteksten */}
             <Card className="text-center p-6 hover:shadow-lg transition-all duration-200">
               <div className="w-16 h-16 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-6">
                 <BookOpen className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">3. Wet & Uitleg Voor Diepgang</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">3. Wetteksten Voor Diepgang</h3>
               <p className="text-gray-600 mb-4">
-                <strong>Wet & Uitleg gaat de diepte in</strong> - gebruik dit enkel wanneer je diepgang wilt. 
+                <strong>Wetteksten gaat de diepte in</strong> - gebruik dit enkel wanneer je diepgang wilt. 
                 Niet voor overige vragen. Krijg uitgebreide juridische analyses met artikelverwijzingen.
               </p>
               <div className="text-sm text-green-600 font-medium">
@@ -592,11 +679,11 @@ export default function HomePage() {
                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                   <div className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span><strong>Voor snelle vragen:</strong> Gebruik het standaard chatvenster zonder Wet & Uitleg</span>
+                    <span><strong>Voor snelle vragen:</strong> Gebruik het standaard chatvenster zonder Wetteksten</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span><strong>Voor complexe analyses:</strong> Schakel Wet & Uitleg in voor uitgebreide uitleg</span>
+                    <span><strong>Voor complexe analyses:</strong> Schakel Wetteksten in voor uitgebreide uitleg</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
@@ -660,6 +747,94 @@ export default function HomePage() {
                 </Card>
               )
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Twee Manieren om Juridische Hulp te Krijgen</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Kies de methode die het beste bij uw vraag past
+            </p>
+          </div>
+          
+          <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {/* Chat Feature */}
+            <Card className="p-6 hover:shadow-lg transition-shadow">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                  <MessageSquare className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">Juridische Chat</h3>
+                  <p className="text-sm text-gray-600">Voor snelle vragen en directe antwoorden</p>
+                </div>
+              </div>
+              <ul className="space-y-2 mb-6">
+                <li className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span>Snelle antwoorden op juridische vragen</span>
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span>Aangepast per beroepsprofiel</span>
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span>Bronvermelding en citaten</span>
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span>4 gratis vragen per dag</span>
+                </li>
+              </ul>
+              <Button className="w-full" asChild>
+                <Link href="/ask">
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Start Chat
+                </Link>
+              </Button>
+            </Card>
+
+            {/* Wetteksten Feature */}
+            <Card className="p-6 hover:shadow-lg transition-shadow border-2 border-blue-200">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
+                  <Scale className="h-6 w-6 text-purple-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">Wetteksten</h3>
+                  <p className="text-sm text-gray-600">Voor uitgebreide wetsartikel analyses</p>
+                </div>
+              </div>
+              <ul className="space-y-2 mb-6">
+                <li className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span>Volledige wetsartikel teksten</span>
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span>Praktische toepassingen</span>
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span>Relevante jurisprudentie</span>
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span>Verwante artikelen</span>
+                </li>
+              </ul>
+              <Button className="w-full" variant="outline" asChild>
+                <Link href="/wetuitleg">
+                  <Scale className="h-4 w-4 mr-2" />
+                  Probeer Wetteksten
+                </Link>
+              </Button>
+            </Card>
           </div>
         </div>
       </section>
@@ -758,10 +933,10 @@ export default function HomePage() {
                 Start Gratis Chat
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="bg-transparent" asChild>
-              <Link href="/contact">
-                <Mail className="h-5 w-5 mr-2" />
-                Contact & Vragen
+            <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-blue-600" asChild>
+              <Link href="/wetuitleg">
+                <Scale className="h-5 w-5 mr-2" />
+                Wetteksten
               </Link>
             </Button>
           </div>

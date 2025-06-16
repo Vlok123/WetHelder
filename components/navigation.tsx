@@ -56,13 +56,24 @@ export function Navigation() {
                   Chat
                 </Link>
               </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/wetuitleg" className="text-sm">
+                  <Scale className="h-4 w-4 mr-2" />
+                  Wetteksten
+                </Link>
+              </Button>
             </div>
 
             {/* Mobile Navigation */}
-            <div className="lg:hidden">
+            <div className="lg:hidden flex items-center space-x-1">
               <Button variant="ghost" size="sm" asChild>
                 <Link href="/ask">
                   <MessageSquare className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/wetuitleg">
+                  <Scale className="h-4 w-4" />
                 </Link>
               </Button>
             </div>

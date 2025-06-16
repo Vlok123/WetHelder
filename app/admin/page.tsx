@@ -286,6 +286,34 @@ export default function AdminDashboard() {
     }
   }
 
+  const resetRateLimits = async () => {
+    if (!confirm('Weet je zeker dat je alle rate limits wilt resetten? Alle anonieme gebruikers krijgen weer 4 gratis vragen.')) {
+      return
+    }
+
+    try {
+      setIsRefreshing(true)
+      const response = await fetch('/api/reset-rate-limits', {
+        method: 'POST',
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        alert(`Rate limits succesvol gereset! ${data.message}`)
+        // Refresh the admin data to show updated stats
+        await fetchAdminData(true)
+      } else {
+        const error = await response.json()
+        alert(`Fout bij resetten: ${error.error}`)
+      }
+    } catch (error) {
+      console.error('Rate limit reset error:', error)
+      alert('Er is een fout opgetreden bij het resetten van rate limits.')
+    } finally {
+      setIsRefreshing(false)
+    }
+  }
+
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -435,6 +463,17 @@ export default function AdminDashboard() {
                 <Download className="h-4 w-4" />
                 Export Data
               </Button>
+              
+              <Button
+                variant="outline"
+                onClick={resetRateLimits}
+                disabled={isRefreshing}
+                className="flex items-center gap-2 text-orange-600 border-orange-300 hover:bg-orange-50"
+              >
+                <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                Reset Rate Limits
+              </Button>
+              
               <Link href="/dashboard">
                 <Button variant="secondary">User Dashboard</Button>
               </Link>

@@ -140,7 +140,7 @@ export async function streamingCompletion({
   
   const wetUitlegInstructions = wetUitleg ? `
 
-📌 SPECIALE INSTRUCTIE: "WET & UITLEG" MODUS ACTIEF
+📌 SPECIALE INSTRUCTIE: "WETTEKSTEN" MODUS ACTIEF
 
 Structureer je antwoord als volgt:
 
@@ -171,7 +171,7 @@ Structureer je antwoord als volgt:
    - Veelgemaakte fouten
    - Procedurele vereisten
 
-Gebruik deze structuur ALTIJD wanneer Wet & Uitleg is ingeschakeld.` : ""
+Gebruik deze structuur ALTIJD wanneer Wetteksten is ingeschakeld.` : ""
 
   const systemPrompt = [
     professionPrompt,
