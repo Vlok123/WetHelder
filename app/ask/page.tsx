@@ -986,7 +986,6 @@ function AskPageContent() {
                     }}
                     placeholder="Stel je juridische vraag..."
                     className="flex-1"
-                    disabled={isLoading}
                   />
                   <Button type="submit" disabled={isLoading || !input.trim() || (!session && remainingQuestions === 0)}>
                     {isLoading ? (
