@@ -35,7 +35,8 @@ import {
   UserCheck,
   UserX,
   Lock,
-  Unlock
+  Unlock,
+  X
 } from 'lucide-react'
 
 interface AdminStats {
@@ -97,6 +98,10 @@ export default function AdminDashboard() {
   const [queries, setQueries] = useState<QueryData[]>([])
   const [metrics, setMetrics] = useState<SystemMetric[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
+  const [autoRefresh, setAutoRefresh] = useState(false)
+  const [refreshError, setRefreshError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -117,38 +122,88 @@ export default function AdminDashboard() {
     }
   }, [session, status, router])
 
-  const fetchAdminData = async () => {
+  // Auto-refresh functionality
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null
+    
+    if (autoRefresh && !isLoading) {
+      interval = setInterval(() => {
+        fetchAdminData(false) // Silent refresh
+      }, 30000) // Refresh every 30 seconds
+    }
+    
+    return () => {
+      if (interval) {
+        clearInterval(interval)
+      }
+    }
+  }, [autoRefresh, isLoading])
+
+  // Keyboard shortcut for refresh (Ctrl+R or Cmd+R)
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
+        event.preventDefault()
+        if (!isRefreshing) {
+          fetchAdminData(true)
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isRefreshing])
+
+  const fetchAdminData = async (showRefreshIndicator = false) => {
+    if (showRefreshIndicator) {
+      setIsRefreshing(true)
+      setRefreshError(null)
+    }
+    
     try {
       const [statsRes, usersRes, metricsRes, queriesRes] = await Promise.all([
-        fetch('/api/admin/stats'),
-        fetch('/api/admin/users'),
-        fetch('/api/admin/metrics'),
-        fetch('/api/admin/queries?limit=50')
+        fetch('/api/admin/stats', { cache: 'no-store' }),
+        fetch('/api/admin/users', { cache: 'no-store' }),
+        fetch('/api/admin/metrics', { cache: 'no-store' }),
+        fetch('/api/admin/queries?limit=50', { cache: 'no-store' })
       ])
 
       if (statsRes.ok) {
         const statsData = await statsRes.json()
         setStats(statsData)
+      } else {
+        throw new Error('Failed to fetch stats')
       }
 
       if (usersRes.ok) {
         const usersData = await usersRes.json()
         setUsers(usersData.users || [])
+      } else {
+        console.warn('Failed to fetch users data')
       }
 
       if (metricsRes.ok) {
         const metricsData = await metricsRes.json()
         setMetrics(metricsData.metrics || [])
+      } else {
+        console.warn('Failed to fetch metrics data')
       }
 
       if (queriesRes.ok) {
         const queriesData = await queriesRes.json()
         setQueries(queriesData.queries || [])
+      } else {
+        console.warn('Failed to fetch queries data')
       }
+
+      setLastRefresh(new Date())
+      setRefreshError(null)
     } catch (error) {
       console.error('Error fetching admin data:', error)
+      setRefreshError('Fout bij het ophalen van gegevens. Probeer het opnieuw.')
     } finally {
       setIsLoading(false)
+      setIsRefreshing(false)
     }
   }
 
@@ -286,14 +341,43 @@ export default function AdminDashboard() {
             </div>
             
             <div className="flex items-center gap-4">
+              {/* Refresh Status */}
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                {lastRefresh && (
+                  <span>
+                    Laatste update: {lastRefresh.toLocaleTimeString('nl-NL')}
+                  </span>
+                )}
+                {autoRefresh && (
+                  <Badge variant="secondary" className="text-xs">
+                    Auto-refresh aan
+                  </Badge>
+                )}
+              </div>
+              
+              {/* Auto Refresh Toggle */}
               <Button
-                variant="outline"
-                onClick={fetchAdminData}
+                variant={autoRefresh ? "default" : "outline"}
+                size="sm"
+                onClick={() => setAutoRefresh(!autoRefresh)}
                 className="flex items-center gap-2"
               >
-                <RefreshCw className="h-4 w-4" />
-                Vernieuwen
+                <Activity className="h-4 w-4" />
+                {autoRefresh ? 'Auto aan' : 'Auto uit'}
               </Button>
+              
+              {/* Manual Refresh */}
+              <Button
+                variant="outline"
+                onClick={() => fetchAdminData(true)}
+                disabled={isRefreshing}
+                className="flex items-center gap-2"
+                title="Vernieuwen (Ctrl+R / Cmd+R)"
+              >
+                <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                {isRefreshing ? 'Bezig...' : 'Vernieuwen'}
+              </Button>
+              
               <Button
                 variant="outline"
                 onClick={exportData}
@@ -312,13 +396,48 @@ export default function AdminDashboard() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto space-y-8">
+          {/* Refresh Error Alert */}
+          {refreshError && (
+            <Card className="border-red-200 bg-red-50">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <AlertTriangle className="h-5 w-5 text-red-600" />
+                  <div className="flex-1">
+                    <p className="text-red-800 font-medium">Refresh Error</p>
+                    <p className="text-red-700 text-sm">{refreshError}</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setRefreshError(null)}
+                    className="text-red-600 border-red-300 hover:bg-red-100"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* System Health */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5" />
-                Systeemstatus
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5" />
+                  Systeemstatus
+                </CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => fetchAdminData(true)}
+                  disabled={isRefreshing}
+                  className="flex items-center gap-1"
+                >
+                  <RefreshCw className={`h-3 w-3 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  <span className="text-xs">Refresh</span>
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
