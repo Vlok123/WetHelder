@@ -651,6 +651,13 @@ function AskPageContent() {
     checkRateLimit()
   }, [session])
 
+  // Extra safety: clear input when not loading and input state is different from DOM
+  useEffect(() => {
+    if (!isLoading && inputRef.current && input !== inputRef.current.value) {
+      inputRef.current.value = input
+    }
+  }, [input, isLoading])
+
 
 
   // Handle URL parameters for auto-submit and profile setting
@@ -694,10 +701,14 @@ function AskPageContent() {
 
   const handleSubmit = useCallback(async (e: React.FormEvent, overrideProfession?: Profession) => {
     e.preventDefault()
-    if (!input.trim() || isLoading) return
+    
+    // Capture current input value and immediately clear both state and DOM
+    const currentInput = inputRef.current?.value || input
+    if (!currentInput.trim() || isLoading) return
 
-    const question = input.trim()
+    const question = currentInput.trim()
     const currentProfession = overrideProfession || profession
+    
     console.log('💬 HandleSubmit called with:', { 
       question, 
       overrideProfession, 
@@ -705,10 +716,11 @@ function AskPageContent() {
       finalProfession: currentProfession 
     })
     
-    // Ensure input is cleared immediately
+    // Clear input immediately - both state and DOM
     setInput('')
     if (inputRef.current) {
       inputRef.current.value = ''
+      inputRef.current.blur() // Remove focus to ensure clear
     }
     setIsLoading(true)
 
@@ -804,7 +816,7 @@ function AskPageContent() {
     } finally {
       setIsLoading(false)
     }
-  }, [input, isLoading, profession, messages, setMessages, setInput, setIsLoading, setRemainingQuestions, wetUitlegEnabled])
+  }, [isLoading, profession, messages, setMessages, setInput, setIsLoading, setRemainingQuestions, wetUitlegEnabled])
 
   const clearConversation = () => {
     setMessages([])
@@ -962,6 +974,16 @@ function AskPageContent() {
                     ref={inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault()
+                        const form = e.currentTarget.closest('form')
+                        if (form) {
+                          const submitEvent = new Event('submit', { bubbles: true, cancelable: true })
+                          form.dispatchEvent(submitEvent)
+                        }
+                      }
+                    }}
                     placeholder="Stel je juridische vraag..."
                     className="flex-1"
                     disabled={isLoading}
