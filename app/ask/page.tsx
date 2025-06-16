@@ -647,93 +647,41 @@ function AskPageContent() {
     checkRateLimit()
   }, [session])
 
-  // Set profession from URL parameter on page load (without auto-submit)
-  useEffect(() => {
-    const profile = searchParams.get('profile')
-    if (profile && !hasAutoSubmitted.current) {
-      const mappedProfession = mapProfileToProfession(profile)
-      setProfession(mappedProfession)
-    }
-  }, [searchParams])
 
-  // Auto-submit from URL parameters
+
+  // Auto-submit from URL parameters (simplified and more reliable)
   useEffect(() => {
     if (hasAutoSubmitted.current) return
     
     // Check URL parameters
     const urlQuery = searchParams.get('q')
     const urlProfile = searchParams.get('profile')
+    const shouldAutoSubmit = searchParams.get('autoSubmit') === 'true'
     
-    if (urlQuery) {
+    // Set profession from URL if provided
+    if (urlProfile) {
+      const mappedProfession = mapProfileToProfession(urlProfile)
+      setProfession(mappedProfession)
+    }
+    
+    // Auto-submit if both query and autoSubmit flag are present
+    if (urlQuery && shouldAutoSubmit) {
       hasAutoSubmitted.current = true
       setInput(urlQuery)
       
-      if (urlProfile) {
-        const mappedProfession = mapProfileToProfession(urlProfile)
-        setProfession(mappedProfession)
-      }
-      
-      // Auto-submit after state updates with proper timing
+      // Auto-submit after setting input with longer timeout for reliability
       setTimeout(() => {
         const fakeEvent = { preventDefault: () => {} } as React.FormEvent
-        handleSubmit(fakeEvent, urlProfile ? mapProfileToProfession(urlProfile) : profession)
-      }, 200)
-      
-      return
+        const currentProfession = urlProfile ? mapProfileToProfession(urlProfile) : profession
+        handleSubmit(fakeEvent, currentProfession)
+      }, 300)
+    } else if (urlQuery) {
+      // Just set the input without auto-submitting if no autoSubmit flag
+      setInput(urlQuery)
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
-
-  // Auto-submit from main screen
-  useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'wetHelder_mainscreen_question') {
-        const data = e.newValue ? JSON.parse(e.newValue) : null
-        if (data && data.question && !hasAutoSubmitted.current) {
-          hasAutoSubmitted.current = true
-          setInput(data.question)
-          
-          if (data.profile) {
-            setProfession(mapProfileToProfession(data.profile))
-          }
-          
-          // Auto-submit the question
-          setTimeout(() => {
-            handleSubmit(new Event('submit') as any)
-          }, 100)
-          
-          // Clear the storage
-          localStorage.removeItem('wetHelder_mainscreen_question')
-        }
-      }
-    }
-
-    // Check if there's already a question waiting
-    const savedQuestion = localStorage.getItem('wetHelder_mainscreen_question')
-    if (savedQuestion && !hasAutoSubmitted.current) {
-      const data = JSON.parse(savedQuestion)
-      hasAutoSubmitted.current = true
-      setInput(data.question)
-      
-      if (data.profile) {
-        setProfession(mapProfileToProfession(data.profile))
-      }
-      
-      // Auto-submit the question
-      setTimeout(() => {
-        handleSubmit(new Event('submit') as any)
-      }, 100)
-      
-      // Clear the storage
-      localStorage.removeItem('wetHelder_mainscreen_question')
-    }
-
-    // Listen for storage changes
-    window.addEventListener('storage', handleStorageChange)
-    return () => window.removeEventListener('storage', handleStorageChange)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const handleSubmit = useCallback(async (e: React.FormEvent, overrideProfession?: Profession) => {
     e.preventDefault()

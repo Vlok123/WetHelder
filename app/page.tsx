@@ -245,19 +245,16 @@ export default function HomePage() {
     
     setIsSubmitting(true)
     
-    // Store query in localStorage with the key that ask page listens for
     const query = searchQuery.trim()
-    const questionData = {
-      question: query,
-      profile: selectedRole
-    }
     
-    localStorage.setItem('wetHelder_mainscreen_question', JSON.stringify(questionData))
+    // Clear any existing auto-submit data to prevent conflicts
+    localStorage.removeItem('wetHelder_mainscreen_question')
     
-    // Build URL parameters for direct navigation and sharing
+    // Build URL parameters for navigation
     const params = new URLSearchParams({
       q: query,
-      profile: selectedRole
+      profile: selectedRole,
+      autoSubmit: 'true' // Add flag to indicate this should auto-submit
     })
     
     // Add Wet & Uitleg parameter if enabled
@@ -265,16 +262,19 @@ export default function HomePage() {
       params.set('wetuitleg', 'true')
     }
     
-    // Navigate to /ask with parameters - this allows for sharing and bookmarking
+    // Navigate directly with URL parameters - this is more reliable than localStorage
     router.push(`/ask?${params.toString()}`)
   }
 
   const handleProfileSelect = (profileId: string) => {
-    // Just update the selected role, don't navigate yet
+    // Update the selected role
     setSelectedRole(profileId)
     
     // Store the selected profile for persistence
     localStorage.setItem('wetHelder_selected_profile', profileId)
+    
+    // Navigate to chat with the selected profile
+    router.push(`/ask?profile=${profileId}`)
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -476,17 +476,13 @@ export default function HomePage() {
                   key={index}
                   className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:scale-105"
                   onClick={() => {
-                    const questionData = {
-                      question: example.question,
-                      profile: example.profile
-                    }
-                    localStorage.setItem('wetHelder_mainscreen_question', JSON.stringify(questionData))
-                    sessionStorage.setItem('autoSubmitQuery', example.question)
-                    sessionStorage.setItem('autoSubmitProfile', example.profile)
+                    // Clear any existing data to prevent conflicts
+                    localStorage.removeItem('wetHelder_mainscreen_question')
                     
                     const params = new URLSearchParams({
                       q: example.question,
-                      profile: example.profile
+                      profile: example.profile,
+                      autoSubmit: 'true'
                     })
                     router.push(`/ask?${params.toString()}`)
                   }}
