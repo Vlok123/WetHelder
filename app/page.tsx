@@ -57,7 +57,7 @@ import {
 const professionProfiles = [
   {
     id: 'algemeen',
-    name: 'Algemeen',
+    name: 'Algemeen/Burger',
     description: 'Volledig juridisch antwoord zonder specialisatie',
     icon: Info,
     color: 'bg-gray-50 text-gray-700 border-gray-200'

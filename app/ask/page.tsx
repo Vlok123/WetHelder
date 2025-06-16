@@ -67,7 +67,7 @@ type Profession = 'aspirant' | 'student' | 'politieagent' | 'advocaat' | 'algeme
 const professionConfig = {
   algemeen: {
     icon: Info,
-    label: 'Algemeen',
+    label: 'Algemeen/Burger',
     color: 'text-gray-700 bg-gray-50 border-gray-200',
     description: 'Volledig juridisch antwoord zonder specialisatie'
   },
@@ -973,7 +973,7 @@ function AskPageContent() {
                   {/* Profession Selector */}
                   <div className="flex-1 min-w-0">
                     <label className="block text-xs font-medium text-slate-600 mb-1">
-                      Functieprofiel
+                      Functieprofiel / Beroep
                     </label>
                     <Select value={profession} onValueChange={(value) => setProfession(value as Profession)}>
                       <SelectTrigger className="w-full h-9">

@@ -28,7 +28,7 @@ import {
 } from 'lucide-react'
 
 const professionProfiles = [
-  { id: 'algemeen', name: 'Burger/Algemeen', icon: Users },
+  { id: 'algemeen', name: 'Algemeen/Burger', icon: Users },
   { id: 'jurist', name: 'Jurist/Advocaat', icon: Scale },
   { id: 'politieagent', name: 'Politieagent', icon: Shield },
   { id: 'boa', name: 'BOA', icon: Shield },

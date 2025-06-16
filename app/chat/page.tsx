@@ -27,7 +27,7 @@ interface ChatSettings {
 const professionProfiles = [
   {
     id: 'algemeen',
-    name: 'Burger/Algemeen',
+    name: 'Algemeen/Burger',
     description: 'Voor alle burgers met juridische vragen',
     icon: Users,
     color: 'bg-blue-50 text-blue-700 border-blue-200'
