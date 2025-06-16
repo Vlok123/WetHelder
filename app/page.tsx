@@ -128,6 +128,7 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedRole, setSelectedRole] = useState('algemeen')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [wetUitlegEnabled, setWetUitlegEnabled] = useState(false)
   const router = useRouter()
 
   const handleSearch = async () => {
@@ -153,6 +154,12 @@ export default function HomePage() {
       q: query,
       profile: selectedRole
     })
+    
+    // Add Wet & Uitleg parameter if enabled
+    if (wetUitlegEnabled) {
+      params.set('wetuitleg', 'true')
+      localStorage.setItem('wetUitlegEnabled', 'true')
+    }
     
     // Use router.push for better navigation
     router.push(`/ask?${params.toString()}`)
@@ -255,28 +262,32 @@ export default function HomePage() {
                     </Select>
                     
                     <Button
-                      variant="outline"
+                      variant={wetUitlegEnabled ? "default" : "outline"}
                       size="sm"
-                      className="flex items-center gap-2 text-sm h-10 w-full sm:w-auto"
-                      onClick={() => {
-                        // Store preference and redirect to ask page with role
-                        localStorage.setItem('wetUitlegEnabled', 'true')
-                        const params = new URLSearchParams({
-                          profile: selectedRole,
-                          wetuitleg: 'true'
-                        })
-                        router.push(`/ask?${params.toString()}`)
-                      }}
+                      className={`flex items-center gap-2 text-sm h-10 w-full sm:w-auto transition-all ${
+                        wetUitlegEnabled 
+                          ? 'bg-green-600 hover:bg-green-700 text-white border-green-600' 
+                          : 'border-gray-300 hover:bg-gray-50'
+                      }`}
+                      onClick={() => setWetUitlegEnabled(!wetUitlegEnabled)}
                     >
                       <BookOpen className="h-4 w-4" />
-                      <span className="hidden sm:inline">Wet & Uitleg modus</span>
-                      <span className="sm:hidden">Wet & Uitleg</span>
-                      <Badge variant="secondary" className="text-xs">Nieuw</Badge>
+                      <span className="hidden sm:inline">
+                        {wetUitlegEnabled ? 'Wet & Uitleg: AAN' : 'Wet & Uitleg modus'}
+                      </span>
+                      <span className="sm:hidden">
+                        {wetUitlegEnabled ? 'W&U: AAN' : 'Wet & Uitleg'}
+                      </span>
+                      {wetUitlegEnabled ? (
+                        <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">Actief</Badge>
+                      ) : (
+                        <Badge variant="secondary" className="text-xs">Nieuw</Badge>
+                      )}
                     </Button>
                   </div>
                   
                   <p className="text-sm text-gray-600 text-center">
-                    💡 <strong>Tip:</strong> Selecteer eerst uw functie voor een antwoord op maat, stel dan uw vraag
+                    💡 <strong>Tip:</strong> Selecteer eerst uw functie, schakel eventueel Wet & Uitleg in voor diepgaande analyses, stel dan uw vraag
                   </p>
                 </div>
               </CardContent>
