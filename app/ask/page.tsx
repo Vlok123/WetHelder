@@ -651,9 +651,9 @@ function AskPageContent() {
     checkRateLimit()
   }, [session])
 
-  // Extra safety: clear input when not loading and input state is different from DOM
+  // Sync DOM with React state only when necessary (not during clearing)
   useEffect(() => {
-    if (!isLoading && inputRef.current && input !== inputRef.current.value) {
+    if (!isLoading && inputRef.current && input && input !== inputRef.current.value) {
       inputRef.current.value = input
     }
   }, [input, isLoading])
@@ -675,29 +675,29 @@ function AskPageContent() {
       setProfession(mappedProfession)
     }
     
-    // Set input if URL has query (regardless of auto-submit)
-    if (urlQuery && input !== urlQuery) {
+    // Set input if URL has query AND we haven't processed this URL yet
+    if (urlQuery && !hasAutoSubmitted.current) {
       console.log('📝 Setting input:', urlQuery)
       setInput(urlQuery)
-    }
-    
-    // Auto-submit ONLY if autoSubmit flag is true and we haven't done it yet
-    if (urlQuery && shouldAutoSubmit && !hasAutoSubmitted.current) {
-      hasAutoSubmitted.current = true
-      console.log('⚡ Auto-submitting question...')
       
-      // Wait a bit for state updates, then submit with the correct profession
-      setTimeout(() => {
-        const professionToUse = urlProfile ? mapProfileToProfession(urlProfile) : profession
-        console.log('🚀 Submitting with profession:', professionToUse)
+      // Auto-submit ONLY if autoSubmit flag is true
+      if (shouldAutoSubmit) {
+        hasAutoSubmitted.current = true
+        console.log('⚡ Auto-submitting question...')
         
-        const fakeEvent = { preventDefault: () => {} } as React.FormEvent
-        handleSubmit(fakeEvent, professionToUse)
-      }, 100)
+        // Wait a bit for state updates, then submit with the correct profession
+        setTimeout(() => {
+          const professionToUse = urlProfile ? mapProfileToProfession(urlProfile) : profession
+          console.log('🚀 Submitting with profession:', professionToUse)
+          
+          const fakeEvent = { preventDefault: () => {} } as React.FormEvent
+          handleSubmit(fakeEvent, professionToUse)
+        }, 100)
+      }
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams, input])
+  }, [searchParams])
 
   const handleSubmit = useCallback(async (e: React.FormEvent, overrideProfession?: Profession) => {
     e.preventDefault()
