@@ -135,6 +135,11 @@ export async function streamingCompletion({
   history,
   wetUitleg = false
 }: CompletionParams) {
+  // Check if OpenAI API key is configured
+  if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-your-openai-api-key-here') {
+    console.error('❌ OpenAI API key not configured')
+    throw new Error('OpenAI API key is niet geconfigureerd. Neem contact op met de beheerder.')
+  }
   // Build profession-specific system prompt
   const professionPrompt = getProfessionSpecificPrompt(profession)
   
@@ -235,9 +240,21 @@ Gebruik deze structuur ALTIJD wanneer Wet & Uitleg is ingeschakeld.` : ""
         controller.close()
       } catch (error) {
         console.error('❌ Streaming error:', error)
-        const errorData = JSON.stringify({ 
-          content: "Er is een fout opgetreden bij het verwerken van je vraag. Probeer het opnieuw." 
-        })
+        let errorMessage = "Er is een fout opgetreden bij het verwerken van je vraag. Probeer het opnieuw."
+        
+        if (error instanceof Error) {
+          if (error.message.includes('API key')) {
+            errorMessage = "⚠️ **Configuratiefout**: De OpenAI API key is niet correct geconfigureerd. Neem contact op met de beheerder."
+          } else if (error.message.includes('quota')) {
+            errorMessage = "⚠️ **API Limiet**: De API limiet is bereikt. Probeer het later opnieuw."
+          } else if (error.message.includes('rate limit')) {
+            errorMessage = "⚠️ **Te veel verzoeken**: Wacht even en probeer het opnieuw."
+          } else {
+            errorMessage = `⚠️ **Fout**: ${error.message}`
+          }
+        }
+        
+        const errorData = JSON.stringify({ content: errorMessage })
         controller.enqueue(`data: ${errorData}\n\n`)
         controller.close()
       }
