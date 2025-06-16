@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { Navigation } from '@/components/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -97,70 +97,95 @@ const dummyRulings: Ruling[] = [
 
 export default function JurisprudentiePage() {
   const [query, setQuery] = useState("")
-  const [filtered, setFiltered] = useState<Ruling[]>(dummyRulings)
+  const [filtered, setFiltered] = useState<Ruling[]>([])
   const [yearFilter, setYearFilter] = useState("")
   const [courtFilter, setCourtFilter] = useState("")
   const [caseTypeFilter, setCaseTypeFilter] = useState("")
   const [isSearched, setIsSearched] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSearch = () => {
+  const handleSearch = useCallback(async () => {
     if (!query.trim()) {
-      setFiltered(dummyRulings)
+      setFiltered([])
       setIsSearched(false)
+      setError(null)
       return
     }
 
-    const q = query.toLowerCase()
-    const searchResults = dummyRulings.filter(
-      (r) =>
-        r.article.toLowerCase().includes(q) ||
-        r.topic.toLowerCase().includes(q) ||
-        r.title.toLowerCase().includes(q) ||
-        r.summary.toLowerCase().includes(q)
-    )
+    setIsLoading(true)
+    setError(null)
     
-    setFiltered(searchResults)
-    setIsSearched(true)
-  }
+    try {
+      console.log('🔍 Searching jurisprudentie for:', query)
+      
+      const response = await fetch('/api/jurisprudentie', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query,
+          filters: {
+            year: yearFilter || undefined,
+            court: courtFilter || undefined,
+            caseType: caseTypeFilter || undefined,
+          }
+        })
+      })
 
-  const applyFilters = () => {
-    let results = [...dummyRulings]
-    
-    if (query.trim()) {
-      const q = query.toLowerCase()
-      results = results.filter(
-        (r) =>
-          r.article.toLowerCase().includes(q) ||
-          r.topic.toLowerCase().includes(q) ||
-          r.title.toLowerCase().includes(q) ||
-          r.summary.toLowerCase().includes(q)
-      )
-    }
-    
-    if (yearFilter) {
-      results = results.filter(r => r.year.toString() === yearFilter)
-    }
-    
-    if (courtFilter) {
-      results = results.filter(r => r.court === courtFilter)
-    }
-    
-    if (caseTypeFilter) {
-      results = results.filter(r => r.caseType === caseTypeFilter)
-    }
-    
-    setFiltered(results)
-    setIsSearched(true)
-  }
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
 
-  const clearFilters = () => {
+      const data = await response.json()
+      
+      if (data.success) {
+        // Converteer API resultaten naar frontend formaat
+        const convertedResults: Ruling[] = data.results.map((result: any) => ({
+          ecli: result.ecli,
+          title: result.title,
+          summary: result.summary,
+          date: result.date,
+          court: result.court,
+          article: result.article,
+          topic: result.topic,
+          link: result.link,
+          year: result.year,
+          caseType: result.caseType
+        }))
+        
+        setFiltered(convertedResults)
+        setIsSearched(true)
+        console.log(`✅ ${convertedResults.length} jurisprudentie resultaten geladen`)
+      } else {
+        throw new Error(data.message || 'Search failed')
+      }
+      
+    } catch (error) {
+      console.error('❌ Error searching jurisprudentie:', error)
+      setError(error instanceof Error ? error.message : 'Er is een fout opgetreden bij het zoeken')
+      setFiltered([])
+    } finally {
+      setIsLoading(false)
+    }
+  }, [query, yearFilter, courtFilter, caseTypeFilter])
+
+  const applyFilters = useCallback(() => {
+    // Filters worden nu geïntegreerd in de handleSearch functie
+    // Deze functie triggert gewoon een nieuwe search met filters
+    handleSearch()
+  }, [handleSearch])
+
+  const clearFilters = useCallback(() => {
     setQuery("")
     setYearFilter("")
     setCourtFilter("")
     setCaseTypeFilter("")
-    setFiltered(dummyRulings)
+    setFiltered([])
     setIsSearched(false)
-  }
+    setError(null)
+  }, [])
 
   const getCourtColor = (court: string) => {
     switch (court) {
@@ -248,9 +273,9 @@ export default function JurisprudentiePage() {
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 className="flex-1"
               />
-              <Button onClick={handleSearch} className="px-6">
+              <Button onClick={handleSearch} className="px-6" disabled={isLoading}>
                 <Search className="h-4 w-4 mr-2" />
-                Zoeken
+                {isLoading ? 'Zoeken...' : 'Zoeken'}
               </Button>
             </div>
 
@@ -310,20 +335,50 @@ export default function JurisprudentiePage() {
 
         {/* Results */}
         <div className="space-y-4">
+          {/* Error Message */}
+          {error && (
+            <Card className="border-red-200 bg-red-50">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 text-red-800">
+                  <ExternalLink className="h-4 w-4" />
+                  <span className="font-medium">Fout bij zoeken:</span>
+                </div>
+                <p className="text-red-700 mt-1">{error}</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Loading State */}
+          {isLoading && (
+            <Card>
+              <CardContent className="p-8 text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  Zoeken in jurisprudentie...
+                </h3>
+                <p className="text-gray-600">
+                  We doorzoeken Google, rechtspraak.nl en OpenRechtspraak.nl voor actuele uitspraken
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Results Header */}
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900">
-              {isSearched ? (
-                filtered.length === 0 ? 'Geen uitspraken gevonden' : 
-                `${filtered.length} uitspraak${filtered.length !== 1 ? 'en' : ''} gevonden`
-              ) : (
-                `Alle uitspraken (${filtered.length})`
-              )}
-            </h2>
-          </div>
+          {!isLoading && (
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-900">
+                {isSearched ? (
+                  filtered.length === 0 ? 'Geen uitspraken gevonden' : 
+                  `${filtered.length} uitspraak${filtered.length !== 1 ? 'en' : ''} gevonden`
+                ) : (
+                  'Voer een zoekterm in om te beginnen'
+                )}
+              </h2>
+            </div>
+          )}
 
           {/* Results List */}
-          {filtered.length === 0 && isSearched ? (
+          {!isLoading && filtered.length === 0 && isSearched && !error && (
             <Card>
               <CardContent className="p-8 text-center">
                 <Scale className="h-12 w-12 mx-auto mb-4 text-gray-400" />
@@ -338,60 +393,61 @@ export default function JurisprudentiePage() {
                 </Button>
               </CardContent>
             </Card>
-          ) : (
-            filtered.map((ruling) => (
-              <Card key={ruling.ecli} className="hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        {ruling.title}
-                      </h3>
-                      
-                      <div className="flex flex-wrap items-center gap-2 mb-3">
-                        <Badge variant="outline" className={getCourtColor(ruling.court)}>
-                          <Building className="h-3 w-3 mr-1" />
-                          {ruling.court}
-                        </Badge>
-                        <Badge variant="outline" className="text-gray-600">
-                          <Calendar className="h-3 w-3 mr-1" />
-                          {new Date(ruling.date).toLocaleDateString('nl-NL')}
-                        </Badge>
-                        <Badge variant="secondary" className={getCaseTypeColor(ruling.caseType)}>
-                          {ruling.caseType}
-                        </Badge>
-                        <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                          <FileText className="h-3 w-3 mr-1" />
-                          {ruling.article}
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <p className="text-gray-700 leading-relaxed mb-4">
-                    {ruling.summary}
-                  </p>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm text-gray-600">
-                      <span className="font-medium">ECLI:</span> {ruling.ecli}
-                    </div>
-                    <Button variant="outline" size="sm" asChild>
-                      <a
-                        href={ruling.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                        Volledige uitspraak
-                      </a>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
           )}
+
+          {/* Actual Results */}
+          {!isLoading && filtered.length > 0 && filtered.map((ruling) => (
+            <Card key={ruling.ecli} className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      {ruling.title}
+                    </h3>
+                    
+                    <div className="flex flex-wrap items-center gap-2 mb-3">
+                      <Badge variant="outline" className={getCourtColor(ruling.court)}>
+                        <Building className="h-3 w-3 mr-1" />
+                        {ruling.court}
+                      </Badge>
+                      <Badge variant="outline" className="text-gray-600">
+                        <Calendar className="h-3 w-3 mr-1" />
+                        {new Date(ruling.date).toLocaleDateString('nl-NL')}
+                      </Badge>
+                      <Badge variant="secondary" className={getCaseTypeColor(ruling.caseType)}>
+                        {ruling.caseType}
+                      </Badge>
+                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                        <FileText className="h-3 w-3 mr-1" />
+                        {ruling.article}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+                
+                <p className="text-gray-700 leading-relaxed mb-4">
+                  {ruling.summary}
+                </p>
+                
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-gray-600">
+                    <span className="font-medium">ECLI:</span> {ruling.ecli}
+                  </div>
+                  <Button variant="outline" size="sm" asChild>
+                    <a
+                      href={ruling.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      Volledige uitspraak
+                    </a>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         {/* Footer Info */}
@@ -402,8 +458,8 @@ export default function JurisprudentiePage() {
               <div>
                 <h4 className="font-medium text-gray-900 mb-2">Over deze jurisprudentie</h4>
                 <p className="text-sm text-gray-600">
-                  Deze uitspraken zijn afkomstig van rechtspraak.nl en worden gebruikt ter illustratie. 
-                  Voor actuele en volledige informatie raadpleeg altijd de officiële bronnen.
+                  Deze uitspraken zijn live opgehaald via Google Custom Search API, rechtspraak.nl en OpenRechtspraak.nl. 
+                  Voor de meest actuele en volledige informatie raadpleeg altijd de officiële bronnen via de verstrekte links.
                 </p>
               </div>
             </div>
