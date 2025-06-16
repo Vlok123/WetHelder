@@ -242,7 +242,7 @@ export default function JurisprudentiePage() {
             <div className="flex gap-2">
               <Input
                 type="text"
-                placeholder="Bijv. '96b Sv' of 'doorzoeken voertuig'"
+                placeholder="Bijv. &apos;96b Sv&apos; of &apos;doorzoeken voertuig&apos;"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
