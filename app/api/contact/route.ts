@@ -1,22 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 
-// E-mail configuratie (gebruik environment variables voor beveiliging)
+// E-mail configuratie - Direct configuration for info@calmpoint.nl
 const createTransporter = () => {
-  // Check if SMTP credentials are available
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    return null
+  // Hardcoded SMTP configuration for immediate fix
+  const SMTP_CONFIG = {
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: {
+      user: 'info@calmpoint.nl',
+      pass: 'pqka pgcd lldj lagt'
+    }
   }
   
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    secure: false, // true voor 465, false voor andere poorten
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  })
+  try {
+    const transporter = nodemailer.createTransport(SMTP_CONFIG)
+    console.log('✅ SMTP Transporter created successfully for info@calmpoint.nl')
+    return transporter
+  } catch (error) {
+    console.error('❌ SMTP Transporter creation failed:', error)
+    return null
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -68,8 +73,9 @@ export async function POST(request: NextRequest) {
     // Als SMTP is geconfigureerd, verstuur e-mail
     if (transporter) {
       const mailOptions = {
-        from: process.env.SMTP_USER,
-        to: process.env.CONTACT_EMAIL || 'info@calmpoint.nl',
+        from: 'info@calmpoint.nl',
+        to: 'info@calmpoint.nl',
+        replyTo: email, // Reply-to is set to the sender's email
         subject: `WetHelder Contact: ${typeLabels[type] || 'Bericht'} - ${subject}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -118,13 +124,33 @@ Verzonden op: ${new Date().toLocaleString('nl-NL')}
 
       try {
         await transporter.sendMail(mailOptions)
-        console.log('✅ E-mail succesvol verzonden naar:', process.env.CONTACT_EMAIL || 'info@calmpoint.nl')
+        console.log('✅ E-mail succesvol verzonden naar: info@calmpoint.nl')
+        console.log('📧 Email details:', {
+          from: 'info@calmpoint.nl',
+          to: 'info@calmpoint.nl',
+          replyTo: email,
+          subject: `WetHelder Contact: ${typeLabels[type] || 'Bericht'} - ${subject}`
+        })
       } catch (emailError) {
         console.error('❌ Fout bij verzenden e-mail:', emailError)
-        // Continue anyway - message is logged
+        // For debugging, log the full error
+        if (emailError instanceof Error) {
+          console.error('❌ Email error details:', {
+            message: emailError.message,
+            stack: emailError.stack
+          })
+        }
+        return NextResponse.json(
+          { error: 'Er is een fout opgetreden bij het verzenden van de e-mail. Het bericht is wel gelogd.' },
+          { status: 500 }
+        )
       }
     } else {
-      console.log('⚠️ SMTP niet geconfigureerd - bericht alleen gelogd')
+      console.log('⚠️ SMTP transporter creation failed - bericht alleen gelogd')
+      return NextResponse.json(
+        { error: 'E-mail service is momenteel niet beschikbaar. Probeer het later opnieuw of neem direct contact op.' },
+        { status: 500 }
+      )
     }
 
     return NextResponse.json(
