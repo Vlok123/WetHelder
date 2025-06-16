@@ -81,7 +81,8 @@ export async function GET(request: NextRequest) {
       status: 'active' // For now, all users are active
     }))
 
-    return NextResponse.json({
+    // Create response with no-cache headers
+    const response = NextResponse.json({
       users: formattedUsers,
       pagination: {
         page,
@@ -90,13 +91,20 @@ export async function GET(request: NextRequest) {
         pages: Math.ceil(totalUsers / limit)
       }
     })
+    response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('Expires', '0')
+    
+    return response
 
   } catch (error) {
     console.error('Admin users error:', error)
-    return NextResponse.json(
+    const errorResponse = NextResponse.json(
       { error: 'Failed to fetch users' },
       { status: 500 }
     )
+    errorResponse.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+    return errorResponse
   }
 }
 

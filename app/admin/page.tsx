@@ -122,11 +122,22 @@ export default function AdminDashboard() {
     }
     
     try {
+      // Add timestamp to force fresh data and prevent any caching
+      const timestamp = Date.now()
+      const fetchOptions = {
+        cache: 'no-store' as RequestCache,
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      }
+      
       const [statsRes, usersRes, metricsRes, queriesRes] = await Promise.all([
-        fetch('/api/admin/stats', { cache: 'no-store' }),
-        fetch('/api/admin/users', { cache: 'no-store' }),
-        fetch('/api/admin/metrics', { cache: 'no-store' }),
-        fetch(`/api/admin/queries?limit=${queryLimit}&page=${queryPage}&search=${encodeURIComponent(querySearchTerm)}&userType=${queryUserTypeFilter}&profession=${queryProfessionFilter}`, { cache: 'no-store' })
+        fetch(`/api/admin/stats?_t=${timestamp}`, fetchOptions),
+        fetch(`/api/admin/users?_t=${timestamp}`, fetchOptions),
+        fetch(`/api/admin/metrics?_t=${timestamp}`, fetchOptions),
+        fetch(`/api/admin/queries?limit=${queryLimit}&page=${queryPage}&search=${encodeURIComponent(querySearchTerm)}&userType=${queryUserTypeFilter}&profession=${queryProfessionFilter}&_t=${timestamp}`, fetchOptions)
       ])
 
       if (statsRes.ok) {
@@ -170,7 +181,15 @@ export default function AdminDashboard() {
 
   const fetchQueries = useCallback(async () => {
     try {
-      const response = await fetch(`/api/admin/queries?limit=${queryLimit}&page=${queryPage}&search=${encodeURIComponent(querySearchTerm)}&userType=${queryUserTypeFilter}&profession=${queryProfessionFilter}`, { cache: 'no-store' })
+      const timestamp = Date.now()
+      const response = await fetch(`/api/admin/queries?limit=${queryLimit}&page=${queryPage}&search=${encodeURIComponent(querySearchTerm)}&userType=${queryUserTypeFilter}&profession=${queryProfessionFilter}&_t=${timestamp}`, { 
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      })
       
       if (response.ok) {
         const data = await response.json()
@@ -194,14 +213,15 @@ export default function AdminDashboard() {
     }
   }, [session, status, router, fetchAdminData])
 
-  // Auto-refresh functionality
+  // Auto-refresh functionality with more frequent updates
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null
     
     if (autoRefresh && !isLoading) {
       interval = setInterval(() => {
+        console.log('🔄 Auto-refreshing admin data...')
         fetchAdminData(false) // Silent refresh
-      }, 30000) // Refresh every 30 seconds
+      }, 15000) // Refresh every 15 seconds (more frequent)
     }
     
     return () => {
@@ -217,6 +237,15 @@ export default function AdminDashboard() {
       if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
         event.preventDefault()
         if (!isRefreshing) {
+          console.log('⌨️ Keyboard shortcut refresh triggered')
+          fetchAdminData(true)
+        }
+      }
+      // Add F5 as additional refresh shortcut
+      if (event.key === 'F5') {
+        event.preventDefault()
+        if (!isRefreshing) {
+          console.log('⌨️ F5 refresh triggered')
           fetchAdminData(true)
         }
       }
@@ -421,13 +450,21 @@ export default function AdminDashboard() {
               {/* Refresh Status */}
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 {lastRefresh && (
-                  <span>
-                    Laatste update: {lastRefresh.toLocaleTimeString('nl-NL')}
-                  </span>
+                  <div className="flex items-center gap-1">
+                    <div className={`w-2 h-2 rounded-full ${autoRefresh ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`}></div>
+                    <span>
+                      {lastRefresh.toLocaleTimeString('nl-NL')}
+                    </span>
+                  </div>
                 )}
                 {autoRefresh && (
-                  <Badge variant="secondary" className="text-xs">
-                    Auto-refresh aan
+                  <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
+                    Live (15s)
+                  </Badge>
+                )}
+                {!autoRefresh && (
+                  <Badge variant="outline" className="text-xs">
+                    Handmatig
                   </Badge>
                 )}
               </div>
@@ -446,13 +483,16 @@ export default function AdminDashboard() {
               {/* Manual Refresh */}
               <Button
                 variant="outline"
-                onClick={() => fetchAdminData(true)}
+                onClick={() => {
+                  console.log('🔄 Manual refresh triggered')
+                  fetchAdminData(true)
+                }}
                 disabled={isRefreshing}
                 className="flex items-center gap-2"
-                title="Vernieuwen (Ctrl+R / Cmd+R)"
+                title="Vernieuwen (Ctrl+R / Cmd+R) - Force refresh alle data"
               >
                 <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                {isRefreshing ? 'Bezig...' : 'Vernieuwen'}
+                {isRefreshing ? 'Vernieuwen...' : 'Force Refresh'}
               </Button>
               
               <Button

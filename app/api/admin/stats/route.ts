@@ -156,18 +156,27 @@ export async function GET(request: NextRequest) {
       lastBackup
     }
 
-    return NextResponse.json(stats)
+    // Create response with no-cache headers
+    const response = NextResponse.json(stats)
+    response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('Expires', '0')
+    
+    return response
 
   } catch (error) {
     console.error('Admin stats error:', error)
-    return NextResponse.json(
+    const errorResponse = NextResponse.json(
       { error: 'Failed to fetch admin stats' },
       { status: 500 }
     )
+    errorResponse.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+    return errorResponse
   }
 }
 
 // Also support POST for refresh functionality
 export async function POST(request: NextRequest) {
+  console.log('📊 Admin stats POST request - force refresh')
   return GET(request)
 } 
