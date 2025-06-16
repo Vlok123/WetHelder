@@ -549,6 +549,7 @@ function AskPageContent() {
   const [selectedCitationQuery, setSelectedCitationQuery] = useState<{queryId: string, question: string} | null>(null)
   const [wetUitlegEnabled, setWetUitlegEnabled] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
   const hasAutoSubmitted = useRef(false)
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -703,7 +704,12 @@ function AskPageContent() {
       currentStateProfession: profession, 
       finalProfession: currentProfession 
     })
+    
+    // Ensure input is cleared immediately
     setInput('')
+    if (inputRef.current) {
+      inputRef.current.value = ''
+    }
     setIsLoading(true)
 
     const newMessage: Message = {
@@ -953,6 +959,7 @@ function AskPageContent() {
                 {/* Question Input */}
                 <div className="flex gap-2">
                   <Input
+                    ref={inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Stel je juridische vraag..."
