@@ -24,8 +24,8 @@ NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=your-nextauth-secret-here
 
 # OAuth Providers (Google OAuth CONFIGURED)
-GOOGLE_CLIENT_ID=1048447585708-a299qofj0iij9dq8k2e5sc3bvgt3eau3.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=1048447585708-a299qofj0iij9dq8k2e5sc3bvgt3eau3.apps.googleusercontent.com
+GOOGLE_CLIENT_ID=1048447585708-iilp5e4gar087mq2uc9u4h9brntr5vgn.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=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
 
 # Facebook OAuth (TEMPORARILY DISABLED)
 # FACEBOOK_CLIENT_ID=your-facebook-app-id
