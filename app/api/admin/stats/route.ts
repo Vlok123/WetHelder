@@ -55,8 +55,23 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // Get total queries
+    // Get total queries (including anonymous)
     const totalQueries = await prisma.query.count()
+
+    // Get queries by user type
+    const loggedInQueries = await prisma.query.count({
+      where: {
+        userId: {
+          not: null
+        }
+      }
+    })
+
+    const anonymousQueries = await prisma.query.count({
+      where: {
+        userId: null
+      }
+    })
 
     // Get today's queries
     const today = new Date()
@@ -73,8 +88,39 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // Calculate average queries per user
-    const avgQueriesPerUser = totalUsers > 0 ? (totalQueries / totalUsers).toFixed(1) : '0'
+    const todayLoggedInQueries = await prisma.query.count({
+      where: {
+        createdAt: {
+          gte: today,
+          lt: tomorrow
+        },
+        userId: {
+          not: null
+        }
+      }
+    })
+
+    const todayAnonymousQueries = await prisma.query.count({
+      where: {
+        createdAt: {
+          gte: today,
+          lt: tomorrow
+        },
+        userId: null
+      }
+    })
+
+    // Calculate average queries per user (only for logged in users)
+    const avgQueriesPerUser = totalUsers > 0 ? (loggedInQueries / totalUsers).toFixed(1) : '0'
+
+    // Get queries by profession for anonymous users
+    const anonymousQueriesByProfession = await prisma.query.groupBy({
+      by: ['profession'],
+      where: {
+        userId: null
+      },
+      _count: true
+    })
 
     // System health check (simplified)
     let systemHealth: 'healthy' | 'warning' | 'error' = 'healthy'
@@ -95,8 +141,16 @@ export async function GET(request: NextRequest) {
       freeUsers,
       adminUsers,
       totalQueries,
+      loggedInQueries,
+      anonymousQueries,
       todayQueries,
+      todayLoggedInQueries,
+      todayAnonymousQueries,
       avgQueriesPerUser,
+      anonymousQueriesByProfession: anonymousQueriesByProfession.map(item => ({
+        profession: item.profession,
+        count: item._count
+      })),
       systemHealth,
       databaseSize,
       lastBackup

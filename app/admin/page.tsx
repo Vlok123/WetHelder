@@ -44,8 +44,13 @@ interface AdminStats {
   premiumUsers: number
   freeUsers: number
   totalQueries: number
+  loggedInQueries: number
+  anonymousQueries: number
   todayQueries: number
+  todayLoggedInQueries: number
+  todayAnonymousQueries: number
   avgQueriesPerUser: number
+  anonymousQueriesByProfession: Array<{ profession: string; count: number }>
   systemHealth: 'healthy' | 'warning' | 'error'
   databaseSize: string
   lastBackup: string
@@ -63,6 +68,20 @@ interface UserData {
   status: 'active' | 'suspended'
 }
 
+interface QueryData {
+  id: string
+  question: string
+  fullQuestion: string
+  answer: string
+  fullAnswer: string
+  profession: string
+  userType: 'logged' | 'anonymous'
+  userEmail: string
+  userName: string
+  userRole: string
+  createdAt: string
+}
+
 interface SystemMetric {
   name: string
   value: string
@@ -75,11 +94,15 @@ export default function AdminDashboard() {
   const router = useRouter()
   const [stats, setStats] = useState<AdminStats | null>(null)
   const [users, setUsers] = useState<UserData[]>([])
+  const [queries, setQueries] = useState<QueryData[]>([])
   const [metrics, setMetrics] = useState<SystemMetric[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [activeTab, setActiveTab] = useState('overview') // overview, users, queries
+  const [queryUserTypeFilter, setQueryUserTypeFilter] = useState('all')
+  const [queryProfessionFilter, setQueryProfessionFilter] = useState('all')
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -96,10 +119,11 @@ export default function AdminDashboard() {
 
   const fetchAdminData = async () => {
     try {
-      const [statsRes, usersRes, metricsRes] = await Promise.all([
+      const [statsRes, usersRes, metricsRes, queriesRes] = await Promise.all([
         fetch('/api/admin/stats'),
         fetch('/api/admin/users'),
-        fetch('/api/admin/metrics')
+        fetch('/api/admin/metrics'),
+        fetch('/api/admin/queries?limit=50')
       ])
 
       if (statsRes.ok) {
@@ -115,6 +139,11 @@ export default function AdminDashboard() {
       if (metricsRes.ok) {
         const metricsData = await metricsRes.json()
         setMetrics(metricsData.metrics || [])
+      }
+
+      if (queriesRes.ok) {
+        const queriesData = await queriesRes.json()
+        setQueries(queriesData.queries || [])
       }
     } catch (error) {
       console.error('Error fetching admin data:', error)
@@ -326,7 +355,7 @@ export default function AdminDashboard() {
           </Card>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center gap-3">
@@ -376,139 +405,317 @@ export default function AdminDashboard() {
             </Card>
           </div>
 
-          {/* User Management */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Gebruikersbeheer
-              </CardTitle>
-              <CardDescription>
-                Beheer alle gebruikers en hun toegangsniveaus
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {/* Filters */}
-              <div className="flex flex-col md:flex-row gap-4 mb-6">
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Zoek gebruikers..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
+          {/* Query Statistics */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3">
+                  <UserCheck className="h-8 w-8 text-blue-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Ingelogde Vragen</p>
+                    <p className="text-2xl font-bold">{stats?.loggedInQueries || 0}</p>
+                    <p className="text-xs text-muted-foreground">Vandaag: {stats?.todayLoggedInQueries || 0}</p>
                   </div>
                 </div>
-                <Select value={roleFilter} onValueChange={setRoleFilter}>
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder="Filter op rol" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Alle rollen</SelectItem>
-                    <SelectItem value="FREE">Gratis</SelectItem>
-                    <SelectItem value="PREMIUM">Premium</SelectItem>
-                    <SelectItem value="ADMIN">Admin</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder="Filter op status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Alle statussen</SelectItem>
-                    <SelectItem value="active">Actief</SelectItem>
-                    <SelectItem value="suspended">Geschorst</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              </CardContent>
+            </Card>
 
-              {/* Users Table */}
-              <div className="overflow-x-auto">
-                <div className="space-y-4">
-                  {filteredUsers.map((user) => (
-                    <Card key={user.id} className="border-l-4 border-l-primary">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                              <h4 className="font-medium">{user.name}</h4>
-                              <Badge variant="outline" className={getRoleColor(user.role)}>
-                                {user.role}
-                              </Badge>
-                              <Badge variant="outline" className={getStatusColor(user.status)}>
-                                {user.status === 'active' ? 'Actief' : 'Geschorst'}
-                              </Badge>
-                            </div>
-                            <div className="text-sm text-muted-foreground space-y-1">
-                              <p>{user.email}</p>
-                              <div className="flex items-center gap-4">
-                                <span>Aangemeld: {formatDate(user.createdAt)}</span>
-                                <span>Laatst actief: {formatDate(user.lastActive)}</span>
-                                <span>Vragen: {user.totalQueries}</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleUserAction(user.id, 'view')}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleUserAction(user.id, 'edit')}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleUserAction(user.id, user.status === 'active' ? 'suspend' : 'activate')}
-                            >
-                              {user.status === 'active' ? <Lock className="h-4 w-4" /> : <Unlock className="h-4 w-4" />}
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3">
+                  <UserX className="h-8 w-8 text-orange-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Anonieme Vragen</p>
+                    <p className="text-2xl font-bold">{stats?.anonymousQueries || 0}</p>
+                    <p className="text-xs text-muted-foreground">Vandaag: {stats?.todayAnonymousQueries || 0}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3">
+                  <Calendar className="h-8 w-8 text-green-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Vandaag Totaal</p>
+                    <p className="text-2xl font-bold">{stats?.todayQueries || 0}</p>
+                    <p className="text-xs text-muted-foreground">Gem. per gebruiker: {stats?.avgQueriesPerUser || 0}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Anonymous Queries by Profession */}
+          {stats?.anonymousQueriesByProfession && stats.anonymousQueriesByProfession.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5" />
+                  Anonieme Vragen per Profiel
+                </CardTitle>
+                <CardDescription>
+                  Verdeling van anonieme vragen over verschillende beroepsprofielen
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {stats.anonymousQueriesByProfession.map((item, index) => (
+                    <div key={index} className="text-center p-4 bg-gray-50 rounded-lg">
+                      <p className="text-2xl font-bold text-blue-600">{item.count}</p>
+                      <p className="text-sm text-muted-foreground capitalize">{item.profession}</p>
+                    </div>
                   ))}
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
 
-          {/* System Metrics */}
+          {/* Tabbed Interface */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5" />
-                Systeemmetrieken
-              </CardTitle>
+              <div className="flex items-center gap-4">
+                <Button
+                  variant={activeTab === 'overview' ? 'default' : 'outline'}
+                  onClick={() => setActiveTab('overview')}
+                  className="flex items-center gap-2"
+                >
+                  <BarChart3 className="h-4 w-4" />
+                  Overzicht
+                </Button>
+                <Button
+                  variant={activeTab === 'users' ? 'default' : 'outline'}
+                  onClick={() => setActiveTab('users')}
+                  className="flex items-center gap-2"
+                >
+                  <Users className="h-4 w-4" />
+                  Gebruikers
+                </Button>
+                <Button
+                  variant={activeTab === 'queries' ? 'default' : 'outline'}
+                  onClick={() => setActiveTab('queries')}
+                  className="flex items-center gap-2"
+                >
+                  <MessageSquare className="h-4 w-4" />
+                  Alle Vragen
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {metrics.map((metric, index) => (
-                  <div key={index} className="text-center">
-                    <p className="text-2xl font-bold">{metric.value}</p>
-                    <p className="text-sm text-muted-foreground">{metric.name}</p>
-                    <div className={`text-xs mt-1 ${
-                      metric.status === 'up' ? 'text-green-600' : 
-                      metric.status === 'down' ? 'text-red-600' : 'text-gray-600'
-                    }`}>
-                      {metric.change !== 0 && (
-                        <>
-                          {metric.change > 0 ? '+' : ''}{metric.change}%
-                        </>
-                      )}
+              {activeTab === 'overview' && (
+                <div className="space-y-6">
+                  {/* System Metrics */}
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">Systeemmetrieken</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {metrics.map((metric, index) => (
+                        <div key={index} className="text-center">
+                          <p className="text-2xl font-bold">{metric.value}</p>
+                          <p className="text-sm text-muted-foreground">{metric.name}</p>
+                          <div className={`text-xs mt-1 ${
+                            metric.status === 'up' ? 'text-green-600' : 
+                            metric.status === 'down' ? 'text-red-600' : 'text-gray-600'
+                          }`}>
+                            {metric.change > 0 ? '+' : ''}{metric.change}%
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
+
+              {activeTab === 'users' && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Gebruikersbeheer</h3>
+                  {/* Filters */}
+                  <div className="flex flex-col md:flex-row gap-4 mb-6">
+                    <div className="flex-1">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Zoek gebruikers..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
+                    <Select value={roleFilter} onValueChange={setRoleFilter}>
+                      <SelectTrigger className="w-48">
+                        <SelectValue placeholder="Filter op rol" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Alle rollen</SelectItem>
+                        <SelectItem value="FREE">Gratis</SelectItem>
+                        <SelectItem value="PREMIUM">Premium</SelectItem>
+                        <SelectItem value="ADMIN">Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                      <SelectTrigger className="w-48">
+                        <SelectValue placeholder="Filter op status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Alle statussen</SelectItem>
+                        <SelectItem value="active">Actief</SelectItem>
+                        <SelectItem value="suspended">Geschorst</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Users Table */}
+                  <div className="overflow-x-auto">
+                    <div className="space-y-4">
+                      {filteredUsers.map((user) => (
+                        <Card key={user.id} className="border-l-4 border-l-primary">
+                          <CardContent className="p-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-2">
+                                  <h4 className="font-medium">{user.name}</h4>
+                                  <Badge variant="outline" className={getRoleColor(user.role)}>
+                                    {user.role}
+                                  </Badge>
+                                  <Badge variant="outline" className={getStatusColor(user.status)}>
+                                    {user.status === 'active' ? 'Actief' : 'Geschorst'}
+                                  </Badge>
+                                </div>
+                                <div className="text-sm text-muted-foreground space-y-1">
+                                  <p>{user.email}</p>
+                                  <div className="flex items-center gap-4">
+                                    <span>Aangemeld: {formatDate(user.createdAt)}</span>
+                                    <span>Laatst actief: {formatDate(user.lastActive)}</span>
+                                    <span>Vragen: {user.totalQueries}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleUserAction(user.id, 'view')}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleUserAction(user.id, 'edit')}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleUserAction(user.id, user.status === 'active' ? 'suspend' : 'activate')}
+                                >
+                                  {user.status === 'active' ? <Lock className="h-4 w-4" /> : <Unlock className="h-4 w-4" />}
+                                </Button>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'queries' && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Alle Vragen</h3>
+                  {/* Query Filters */}
+                  <div className="flex flex-col md:flex-row gap-4 mb-6">
+                    <div className="flex-1">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Zoek vragen..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
+                    <Select value={queryUserTypeFilter} onValueChange={setQueryUserTypeFilter}>
+                      <SelectTrigger className="w-48">
+                        <SelectValue placeholder="Filter op gebruikerstype" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Alle gebruikerstypes</SelectItem>
+                        <SelectItem value="logged">Ingelogde</SelectItem>
+                        <SelectItem value="anonymous">Anonieme</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={queryProfessionFilter} onValueChange={setQueryProfessionFilter}>
+                      <SelectTrigger className="w-48">
+                        <SelectValue placeholder="Filter op beroep" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Alle beroepen</SelectItem>
+                        <SelectItem value="PROFESSION_1">Beroep 1</SelectItem>
+                        <SelectItem value="PROFESSION_2">Beroep 2</SelectItem>
+                        <SelectItem value="PROFESSION_3">Beroep 3</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Queries Table */}
+                  <div className="overflow-x-auto">
+                    <div className="space-y-4">
+                      {queries.map((query) => (
+                        <Card key={query.id} className="border-l-4 border-l-primary">
+                          <CardContent className="p-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-2">
+                                  <h4 className="font-medium">{query.question}</h4>
+                                  <Badge variant="outline" className={getRoleColor(query.userRole)}>
+                                    {query.userRole}
+                                  </Badge>
+                                </div>
+                                <div className="text-sm text-muted-foreground space-y-1">
+                                  <p>{query.fullQuestion}</p>
+                                  <div className="flex items-center gap-4">
+                                    <span>Gebruiker: {query.userName}</span>
+                                    <span>Gebruikerstype: {query.userType === 'logged' ? 'Ingelogd' : 'Anoniem'}</span>
+                                    <span>Beroep: {query.profession}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleUserAction(query.id, 'view')}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleUserAction(query.id, 'edit')}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleUserAction(query.id, 'delete')}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

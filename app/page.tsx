@@ -245,6 +245,94 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* How It Works Section */}
+      <section className="py-16 bg-white border-t border-gray-100">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Hoe Werkt WetHelder?</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Drie eenvoudige stappen naar betrouwbare juridische informatie
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* Step 1: Ask Questions */}
+            <Card className="text-center p-6 hover:shadow-lg transition-all duration-200">
+              <div className="w-16 h-16 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-6">
+                <MessageSquare className="h-8 w-8" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">1. Stel Juridische Vragen</h3>
+              <p className="text-gray-600 mb-4">
+                Stel juridische vragen en krijg antwoord op grond van <strong>officiële bronnen</strong>. 
+                Onze AI doorzoekt 56+ betrouwbare juridische databases voor actuele informatie.
+              </p>
+              <div className="text-sm text-blue-600 font-medium">
+                ✓ Wetgeving • Rechtspraak • Jurisprudentie
+              </div>
+            </Card>
+
+            {/* Step 2: Choose Profile */}
+            <Card className="text-center p-6 hover:shadow-lg transition-all duration-200">
+              <div className="w-16 h-16 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mx-auto mb-6">
+                <Users className="h-8 w-8" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">2. Gebruik Een Functieprofiel</h3>
+              <p className="text-gray-600 mb-4">
+                Gebruik een functieprofiel voor <strong>gerichte antwoorden</strong>. 
+                Een advocaat krijgt een ander antwoord dan een politieagent - aangepast aan uw werkcontext.
+              </p>
+              <div className="text-sm text-purple-600 font-medium">
+                ✓ 8 Hoofdprofielen • Aangepaste Antwoorden
+              </div>
+            </Card>
+
+            {/* Step 3: Wet & Uitleg */}
+            <Card className="text-center p-6 hover:shadow-lg transition-all duration-200">
+              <div className="w-16 h-16 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-6">
+                <BookOpen className="h-8 w-8" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">3. Wet & Uitleg Voor Diepgang</h3>
+              <p className="text-gray-600 mb-4">
+                <strong>Wet & Uitleg gaat de diepte in</strong> - gebruik dit enkel wanneer je diepgang wilt. 
+                Niet voor overige vragen. Krijg uitgebreide juridische analyses met artikelverwijzingen.
+              </p>
+              <div className="text-sm text-green-600 font-medium">
+                ✓ Diepgaande Analyse • Artikelverwijzingen
+              </div>
+            </Card>
+          </div>
+
+          {/* Usage Tips */}
+          <div className="mt-12 max-w-4xl mx-auto">
+            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+              <CardContent className="p-6">
+                <div className="text-center mb-4">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">💡 Gebruikstips</h4>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4 text-sm">
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span><strong>Voor snelle vragen:</strong> Gebruik het standaard chatvenster zonder Wet & Uitleg</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span><strong>Voor complexe analyses:</strong> Schakel Wet & Uitleg in voor uitgebreide uitleg</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span><strong>Kies het juiste profiel:</strong> Politieagent, advocaat, burger - elk krijgt passende antwoorden</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span><strong>Alle antwoorden:</strong> Gebaseerd op officiële Nederlandse wetgeving en rechtspraak</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* Profession Profiles */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">

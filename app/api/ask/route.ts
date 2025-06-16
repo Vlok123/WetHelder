@@ -16,6 +16,9 @@ import {
 } from '@/lib/officialSources'
 import { searchGoogleCustom } from '@/lib/googleSearch'
 import { streamingCompletion } from '@/lib/openai'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -157,6 +160,10 @@ export async function POST(request: NextRequest) {
 
     console.log('🚀 WetHelder.nl Routing gestart voor vraag:', question)
 
+    // Get user session (optional for anonymous users)
+    const session = await getServerSession(authOptions)
+    const userId = session?.user?.id || null
+
     // STAP 1: Eerste controle via officiele_bronnen.json
     console.log('📋 STAP 1: Controle officiele_bronnen.json')
     let jsonSources: JsonBron[] = []
@@ -184,7 +191,7 @@ export async function POST(request: NextRequest) {
       console.log('🌐 Searching Google Custom Search API for:', question)
       
       try {
-        const results = await searchGoogleCustom(question)
+        const results = await searchGoogleCustomAPI(question)
         if (results.length > 0) {
           googleResults = results.map(r => `${r.title}\n${r.snippet}\nBron: ${r.link}`).join('\n\n')
           console.log(`✅ ${results.length} Google zoekresultaten gevonden`)
@@ -215,6 +222,11 @@ export async function POST(request: NextRequest) {
     })
 
     console.log('✅ OpenAI response voltooid')
+
+    // Save query to database (async, don't wait for it)
+    saveQueryToDatabase(question, '', profession, userId, jsonSources, googleResults)
+      .catch(error => console.error('❌ Error saving query to database:', error))
+
     return new NextResponse(stream)
 
   } catch (error) {
@@ -222,6 +234,39 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ 
       error: 'Er is een fout opgetreden bij het verwerken van je vraag. Probeer het opnieuw.' 
     }, { status: 500 })
+  }
+}
+
+/**
+ * Save query to database for admin analytics
+ */
+async function saveQueryToDatabase(
+  question: string, 
+  answer: string, 
+  profession: string, 
+  userId: string | null,
+  jsonSources: JsonBron[],
+  googleResults: string
+) {
+  try {
+    const sources = JSON.stringify({
+      jsonSources: jsonSources.map(s => ({ naam: s.naam, url: s.url })),
+      googleResults: googleResults ? 'Used Google API' : 'No Google API used'
+    })
+
+    await prisma.query.create({
+      data: {
+        question,
+        answer: answer || 'Response streamed', // We can't capture the full streamed response easily
+        profession,
+        userId,
+        sources
+      }
+    })
+
+    console.log('✅ Query saved to database')
+  } catch (error) {
+    console.error('❌ Error saving query to database:', error)
   }
 }
 
