@@ -23,11 +23,13 @@ DATABASE_URL=postgresql://username:password@localhost:5432/wethelder
 NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=your-nextauth-secret-here
 
-# OAuth Providers
-GOOGLE_CLIENT_ID=your-google-oauth-client-id
-GOOGLE_CLIENT_SECRET=your-google-oauth-client-secret
-FACEBOOK_CLIENT_ID=your-facebook-app-id
-FACEBOOK_CLIENT_SECRET=your-facebook-app-secret
+# OAuth Providers (Google OAuth CONFIGURED)
+GOOGLE_CLIENT_ID=1048447585708-a299qofj0iij9dq8k2e5sc3bvgt3eau3.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=1048447585708-a299qofj0iij9dq8k2e5sc3bvgt3eau3.apps.googleusercontent.com
+
+# Facebook OAuth (TEMPORARILY DISABLED)
+# FACEBOOK_CLIENT_ID=your-facebook-app-id
+# FACEBOOK_CLIENT_SECRET=your-facebook-app-secret
 
 # Email Configuration (voor password reset)
 EMAIL_SERVER_HOST=smtp.gmail.com
@@ -90,7 +92,10 @@ Voeg toe aan `.env`: `NEXTAUTH_SECRET=generated-secret`
    GOOGLE_CLIENT_SECRET=your-google-oauth-client-secret
    ```
 
-#### Facebook OAuth
+#### Facebook OAuth (TIJDELIJK UITGESCHAKELD)
+Facebook OAuth is momenteel uitgeschakeld. Alleen Google OAuth is actief.
+
+<!-- Facebook setup instructies (uitgeschakeld):
 1. Ga naar [Facebook Developers](https://developers.facebook.com/)
 2. Maak een nieuwe app aan of selecteer bestaande app
 3. Ga naar "Settings" → "Basic"
@@ -104,6 +109,7 @@ Voeg toe aan `.env`: `NEXTAUTH_SECRET=generated-secret`
    FACEBOOK_CLIENT_ID=your-facebook-app-id
    FACEBOOK_CLIENT_SECRET=your-facebook-app-secret
    ```
+-->
 
 ### 5. Database (PostgreSQL)
 Voor lokale development:
