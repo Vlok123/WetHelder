@@ -383,7 +383,7 @@ export default function JurisprudentiePage() {
                   Zoeken in jurisprudentie...
                 </h3>
                 <p className="text-gray-600">
-                  We doorzoeken Google, rechtspraak.nl en OpenRechtspraak.nl voor actuele uitspraken
+                  We doorzoeken rechtspraak.nl en andere juridische databases voor actuele uitspraken
                 </p>
               </CardContent>
             </Card>
@@ -484,7 +484,7 @@ export default function JurisprudentiePage() {
               <div>
                 <h4 className="font-medium text-gray-900 mb-2">Over deze jurisprudentie</h4>
                 <p className="text-sm text-gray-600">
-                  Deze uitspraken zijn live opgehaald via Google Custom Search API, rechtspraak.nl en OpenRechtspraak.nl. 
+                  Deze uitspraken zijn live opgehaald via rechtspraak.nl en andere juridische databases. 
                   Voor de meest actuele en volledige informatie raadpleeg altijd de officiële bronnen via de verstrekte links.
                 </p>
               </div>

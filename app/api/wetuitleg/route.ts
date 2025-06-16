@@ -163,10 +163,15 @@ export async function GET(request: NextRequest) {
   }
 }
 
+interface ChatMessage {
+  role: 'user' | 'assistant' | 'system'
+  content: string
+}
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
-    const { query } = await request.json()
+    const { query, history = [] } = await request.json()
 
     if (!query || typeof query !== 'string') {
       return NextResponse.json(
@@ -223,21 +228,38 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
       context += 'Geen specifieke zoekresultaten gevonden. Gebruik je algemene kennis van Nederlandse wetgeving.'
     }
 
-    const messages = [
+    const messages: Array<{role: 'system' | 'user' | 'assistant', content: string}> = [
       {
         role: 'system' as const,
-        content: LEGAL_ANALYSIS_PROMPT
-      },
-      {
-        role: 'user' as const,
-        content: `Vraag: ${query}
+        content: LEGAL_ANALYSIS_PROMPT + `
+
+BELANGRIJK: Je hebt toegang tot eerdere gesprekken. Gebruik deze context om:
+- Voort te bouwen op eerder gegeven uitleg
+- Specifiekere verdieping te geven als er doorgevraagd wordt
+- Verbanden te leggen met eerder besproken artikelen
+- Bij vervolgvragen: verwijs naar eerdere uitleg waar relevant
+
+Als dit een vervolgvraag lijkt te zijn, behandel het als een doorvraag op eerder gesprek.`
+      }
+    ]
+
+    // Add conversation history (last 10 exchanges)
+    const recentHistory = (history as ChatMessage[]).slice(-20) // Last 20 messages (10 exchanges)
+    messages.push(...recentHistory.map(msg => ({
+      role: msg.role,
+      content: msg.content
+    })))
+
+    // Add current question
+    messages.push({
+      role: 'user' as const,
+      content: `Vraag: ${query}
 
 Context uit zoekresultaten:
 ${context}
 
 Geef een volledige juridische analyse volgens de gevraagde structuur.`
-      }
-    ]
+    })
 
     console.log('🤖 Sending request to OpenAI...')
 

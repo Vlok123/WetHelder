@@ -37,6 +37,8 @@ interface LegalAnalysis {
   sources: string[]
   timestamp: Date
   isLoading?: boolean
+  type: 'user' | 'assistant'
+  fullResponse?: string // Store the complete response for conversation context
 }
 
 export default function WetUitlegPage() {
@@ -46,6 +48,7 @@ export default function WetUitlegPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [remainingQuestions, setRemainingQuestions] = useState<number | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -53,6 +56,35 @@ export default function WetUitlegPage() {
 
   useEffect(() => {
     scrollToBottom()
+  }, [analyses])
+
+  // Load conversation from localStorage on mount
+  useEffect(() => {
+    const savedAnalyses = localStorage.getItem('wetHelder_wetuitleg_conversation')
+    
+    if (savedAnalyses) {
+      try {
+        const parsedAnalyses = JSON.parse(savedAnalyses)
+        // Validate and restore analyses
+        const validAnalyses = parsedAnalyses.filter((analysis: any) => 
+          analysis.id && analysis.query && analysis.timestamp
+        ).map((analysis: any) => ({
+          ...analysis,
+          timestamp: new Date(analysis.timestamp)
+        }))
+        setAnalyses(validAnalyses)
+      } catch (error) {
+        console.error('Error loading wetuitleg conversation:', error)
+        localStorage.removeItem('wetHelder_wetuitleg_conversation')
+      }
+    }
+  }, [])
+
+  // Save conversation to localStorage whenever analyses change
+  useEffect(() => {
+    if (analyses.length > 0) {
+      localStorage.setItem('wetHelder_wetuitleg_conversation', JSON.stringify(analyses))
+    }
   }, [analyses])
 
   // Check rate limit status on page load
@@ -83,6 +115,9 @@ export default function WetUitlegPage() {
 
     const query = input.trim()
     setInput('')
+    if (inputRef.current) {
+      inputRef.current.value = ''
+    }
     setIsLoading(true)
 
     // Create temporary analysis with loading state
@@ -98,18 +133,36 @@ export default function WetUitlegPage() {
       relatedArticles: '',
       sources: [],
       timestamp: new Date(),
-      isLoading: true
+      isLoading: true,
+      type: 'assistant',
+      fullResponse: ''
     }
 
     setAnalyses(prev => [...prev, tempAnalysis])
 
     try {
+      // Build conversation history for API (last 10 analyses)
+      const userMessages = analyses.slice(-10).map(analysis => ({
+        role: 'user' as const,
+        content: analysis.query
+      }))
+      
+      const assistantMessages = analyses.slice(-10).filter(analysis => analysis.fullResponse).map(analysis => ({
+        role: 'assistant' as const,
+        content: analysis.fullResponse || ''
+      }))
+      
+      const conversationHistory = [...userMessages, ...assistantMessages]
+
       const response = await fetch('/api/wetuitleg', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ 
+          query,
+          history: conversationHistory 
+        }),
       })
 
       if (!response.ok) {
@@ -132,7 +185,7 @@ export default function WetUitlegPage() {
         // Update the analysis with accumulated content
         setAnalyses(prev => prev.map(analysis => 
           analysis.id === tempAnalysis.id 
-            ? { ...analysis, isLoading: false, ...parseAnalysisContent(accumulatedContent) }
+            ? { ...analysis, isLoading: false, fullResponse: accumulatedContent, ...parseAnalysisContent(accumulatedContent) }
             : analysis
         ))
       }
@@ -214,6 +267,7 @@ export default function WetUitlegPage() {
 
   const clearAnalyses = () => {
     setAnalyses([])
+    localStorage.removeItem('wetHelder_wetuitleg_conversation')
   }
 
   const formatText = (text: string): React.ReactElement => {
@@ -495,9 +549,10 @@ export default function WetUitlegPage() {
               {/* Question Input */}
               <div className="flex gap-2">
                 <Input
+                  ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Bijvoorbeeld: Geef mij een volledige juridische uitleg van artikel 96b van het Wetboek van Strafvordering"
+                  placeholder="Bijvoorbeeld: Geef mij een volledige juridische uitleg van artikel 96b van het Wetboek van Strafvordering. Stel ook vervolgvragen!"
                   className="flex-1"
                   disabled={isLoading}
                 />
@@ -521,9 +576,11 @@ export default function WetUitlegPage() {
                     variant="outline"
                     size="sm"
                     onClick={clearAnalyses}
-                    className="h-9"
+                    className="h-9 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                    title="Wis alle analyses van dit gesprek"
                   >
-                    Wissen
+                    <Scale className="h-4 w-4 mr-1" />
+                    Wis gesprek
                   </Button>
                 </div>
               )}
