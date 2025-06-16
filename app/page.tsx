@@ -306,6 +306,124 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Example Questions Section */}
+      <section className="py-12 bg-gradient-to-br from-gray-50 to-slate-100">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              Inspiratie voor Uw Vraag
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+              Populaire juridische vragen uit verschillende rechtsgebieden. Klik op een vraag om direct een antwoord te krijgen.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
+            {[
+              {
+                question: "Wat zijn mijn rechten als huurder bij geluidsoverlast?",
+                category: "Huurrecht",
+                icon: Home,
+                color: "bg-blue-50 text-blue-700 border-blue-200",
+                profile: "algemeen"
+              },
+              {
+                question: "Wanneer mag ik iemand aanhouden als BOA?",
+                category: "Handhaving",
+                icon: Shield,
+                color: "bg-orange-50 text-orange-700 border-orange-200",
+                profile: "boa"
+              },
+              {
+                question: "Hoe stel ik een arbeidscontract juist op?",
+                category: "Arbeidsrecht",
+                icon: Briefcase,
+                color: "bg-purple-50 text-purple-700 border-purple-200",
+                profile: "advocaat"
+              },
+              {
+                question: "Welke stappen bij echtscheiding met kinderen?",
+                category: "Familierecht",
+                icon: Heart,
+                color: "bg-pink-50 text-pink-700 border-pink-200",
+                profile: "algemeen"
+              },
+              {
+                question: "Wat is het verschil tussen eigendom en erfpacht?",
+                category: "Vastgoedrecht",
+                icon: Building,
+                color: "bg-green-50 text-green-700 border-green-200",
+                profile: "algemeen"
+              },
+              {
+                question: "Hoe bereken ik schadevergoeding bij verkeersongeluk?",
+                category: "Verkeersrecht",
+                icon: Calculator,
+                color: "bg-indigo-50 text-indigo-700 border-indigo-200",
+                profile: "advocaat"
+              }
+            ].map((example, index) => {
+              const IconComponent = example.icon
+              return (
+                <Card 
+                  key={index}
+                  className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:scale-105"
+                  onClick={() => {
+                    const questionData = {
+                      question: example.question,
+                      profile: example.profile
+                    }
+                    localStorage.setItem('wetHelder_mainscreen_question', JSON.stringify(questionData))
+                    sessionStorage.setItem('autoSubmitQuery', example.question)
+                    sessionStorage.setItem('autoSubmitProfile', example.profile)
+                    
+                    const params = new URLSearchParams({
+                      q: example.question,
+                      profile: example.profile
+                    })
+                    router.push(`/ask?${params.toString()}`)
+                  }}
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start gap-3">
+                      <div className={`p-2 rounded-lg ${example.color} group-hover:scale-110 transition-transform flex-shrink-0`}>
+                        <IconComponent className="h-4 w-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <Badge variant="secondary" className="text-xs mb-2">
+                          {example.category}
+                        </Badge>
+                        <CardTitle className="text-sm leading-tight group-hover:text-blue-600 transition-colors">
+                          {example.question}
+                        </CardTitle>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="flex items-center justify-between text-xs text-gray-500">
+                      <span>Klik voor antwoord</span>
+                      <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+          
+          <div className="text-center mt-8">
+            <p className="text-sm text-gray-600 mb-4">
+              Niet uw vraag erbij? Stel gewoon uw eigen juridische vraag hierboven.
+            </p>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/ask">
+                <Search className="h-4 w-4 mr-2" />
+                Alle vragen stellen
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* How It Works Section */}
       <section className="py-16 bg-white border-t border-gray-100">
         <div className="container mx-auto px-4">
