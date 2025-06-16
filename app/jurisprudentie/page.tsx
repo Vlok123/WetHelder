@@ -217,10 +217,10 @@ export default function JurisprudentiePage() {
             <CardContent className="pt-0">
               <div className="grid md:grid-cols-2 gap-4 text-sm text-blue-800">
                 <div>
-                  <strong>Zoek op wetsartikel:</strong> bijv. "96b Sv", "95 Sv", "8 EVRM"
+                  <strong>Zoek op wetsartikel:</strong> bijv. &quot;96b Sv&quot;, &quot;95 Sv&quot;, &quot;8 EVRM&quot;
                 </div>
                 <div>
-                  <strong>Zoek op onderwerp:</strong> bijv. "doorzoeken", "fouillering", "privacy"
+                  <strong>Zoek op onderwerp:</strong> bijv. &quot;doorzoeken&quot;, &quot;fouillering&quot;, &quot;privacy&quot;
                 </div>
               </div>
             </CardContent>

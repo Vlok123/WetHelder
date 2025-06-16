@@ -640,14 +640,14 @@ export default function HomePage() {
                     <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
                     <div>
                       <h4 className="font-semibold text-gray-900">Zoek op Wetsartikel</h4>
-                      <p className="text-sm text-gray-600">Bijv. "96b Sv", "95 Sv", "8 EVRM" - vind alle relevante uitspraken</p>
+                      <p className="text-sm text-gray-600">Bijv. &quot;96b Sv&quot;, &quot;95 Sv&quot;, &quot;8 EVRM&quot; - vind alle relevante uitspraken</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
                     <div>
                       <h4 className="font-semibold text-gray-900">Zoek op Onderwerp</h4>
-                      <p className="text-sm text-gray-600">Bijv. "doorzoeken voertuig", "fouillering", "privacy rechten"</p>
+                      <p className="text-sm text-gray-600">Bijv. &quot;doorzoeken voertuig&quot;, &quot;fouillering&quot;, &quot;privacy rechten&quot;</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
