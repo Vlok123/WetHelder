@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { 
   Search, 
   Gavel, 
@@ -271,31 +270,29 @@ export default function JurisprudentiePage() {
               
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-1 block">Rechter</label>
-                <Select value={courtFilter} onValueChange={setCourtFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Alle rechters" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">Alle rechters</SelectItem>
-                    <SelectItem value="Hoge Raad">Hoge Raad</SelectItem>
-                    <SelectItem value="Gerechtshof">Gerechtshof</SelectItem>
-                    <SelectItem value="Rechtbank">Rechtbank</SelectItem>
-                  </SelectContent>
-                </Select>
+                <select
+                  value={courtFilter}
+                  onChange={(e) => setCourtFilter(e.target.value)}
+                  className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                >
+                  <option value="">Alle rechters</option>
+                  <option value="Hoge Raad">Hoge Raad</option>
+                  <option value="Gerechtshof">Gerechtshof</option>
+                  <option value="Rechtbank">Rechtbank</option>
+                </select>
               </div>
               
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-1 block">Rechtsgebied</label>
-                <Select value={caseTypeFilter} onValueChange={setCaseTypeFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Alle gebieden" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">Alle gebieden</SelectItem>
-                    <SelectItem value="Strafrecht">Strafrecht</SelectItem>
-                    <SelectItem value="Grondrechten">Grondrechten</SelectItem>
-                  </SelectContent>
-                </Select>
+                <select
+                  value={caseTypeFilter}
+                  onChange={(e) => setCaseTypeFilter(e.target.value)}
+                  className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                >
+                  <option value="">Alle gebieden</option>
+                  <option value="Strafrecht">Strafrecht</option>
+                  <option value="Grondrechten">Grondrechten</option>
+                </select>
               </div>
               
               <div className="flex gap-2 items-end">
