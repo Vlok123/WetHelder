@@ -312,8 +312,9 @@ Je hebt het maximum aantal gratis vragen (4 per dag) bereikt.
     console.log('🤖 STAP 4: Input samenstelling voor ChatGPT')
     console.log(`🤖 Starting OpenAI request met ${jsonSources.length} JSON bronnen en ${googleResults ? '10' : '0'} Google resultaten`)
 
-    // Stream de response
-    const stream = await streamingCompletion({
+    // Create a stream that captures the response for database storage
+    let fullResponse = ''
+    const originalStream = await streamingCompletion({
       question,
       profession,
       jsonContext,
@@ -322,15 +323,56 @@ Je hebt het maximum aantal gratis vragen (4 per dag) bereikt.
       wetUitleg
     })
 
-    console.log('✅ OpenAI response voltooid')
+    const transformedStream = new ReadableStream({
+      async start(controller) {
+        const reader = originalStream.getReader()
+        
+        try {
+          while (true) {
+            const { done, value } = await reader.read()
+            
+            if (done) {
+              // Save query to database with full response
+              const clientIp = !session?.user ? (request.headers.get('x-forwarded-for') || 
+                               request.headers.get('x-real-ip') || 'unknown') : null
+              saveQueryToDatabase(question, fullResponse, profession, userId, jsonSources, googleResults, clientIp)
+                .catch(error => console.error('❌ Error saving query to database:', error))
+              
+              controller.close()
+              break
+            }
+            
+            // Decode and collect the response content
+            const chunk = new TextDecoder().decode(value)
+            
+            // Extract content from data: {content: "..."} format
+            const matches = chunk.match(/data: ({.*?})/g)
+            if (matches) {
+              for (const match of matches) {
+                try {
+                  const data = JSON.parse(match.replace('data: ', ''))
+                  if (data.content) {
+                    fullResponse += data.content
+                  }
+                } catch (e) {
+                  // Ignore parsing errors for non-JSON chunks
+                }
+              }
+            }
+            
+            // Forward the chunk to the client
+            controller.enqueue(value)
+          }
+        } catch (error) {
+          console.error('❌ Stream error:', error)
+          controller.error(error)
+        }
+      }
+    })
 
-    // Save query to database (async, don't wait for it)
-    const clientIp = !session?.user ? (request.headers.get('x-forwarded-for') || 
-                     request.headers.get('x-real-ip') || 'unknown') : null
-    saveQueryToDatabase(question, '', profession, userId, jsonSources, googleResults, clientIp)
-      .catch(error => console.error('❌ Error saving query to database:', error))
+    console.log('✅ OpenAI response streaming started')
 
-    return new NextResponse(stream)
+    return new NextResponse(transformedStream)
 
   } catch (error) {
     console.error('❌ API Error:', error)
@@ -362,7 +404,7 @@ async function saveQueryToDatabase(
     await prisma.query.create({
       data: {
         question,
-        answer: answer || 'Response streamed', // We can't capture the full streamed response easily
+        answer: answer || 'Geen antwoord beschikbaar',
         profession,
         userId,
         sources

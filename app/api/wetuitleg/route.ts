@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 import OpenAI from 'openai'
 
 const openai = new OpenAI({
@@ -250,7 +251,8 @@ Geef een volledige juridische analyse volgens de gevraagde structuur.`
 
     console.log('✅ OpenAI request successful, starting stream...')
 
-    // Create a readable stream
+    // Create a readable stream that captures full response
+    let fullResponse = ''
     const encoder = new TextEncoder()
     const stream = new ReadableStream({
       async start(controller) {
@@ -258,9 +260,31 @@ Geef een volledige juridische analyse volgens de gevraagde structuur.`
           for await (const chunk of completion) {
             const content = chunk.choices[0]?.delta?.content || ''
             if (content) {
+              fullResponse += content
               controller.enqueue(encoder.encode(content))
             }
           }
+          
+          // Save query to database with full response
+          try {
+            await prisma.query.create({
+              data: {
+                question: query,
+                answer: fullResponse,
+                profession: 'wetteksten', // Special identifier for wetuitleg queries
+                userId: session?.user?.id || null,
+                sources: JSON.stringify({
+                  type: 'wetuitleg',
+                  searchResults: searchResults.length,
+                  hasGoogleResults: searchResults.length > 0
+                })
+              }
+            })
+            console.log('✅ Wetuitleg query saved to database')
+          } catch (dbError) {
+            console.error('❌ Error saving wetuitleg query to database:', dbError)
+          }
+          
           controller.close()
         } catch (error) {
           console.error('Error in stream:', error)
