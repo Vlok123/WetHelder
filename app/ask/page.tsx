@@ -602,15 +602,23 @@ function AskPageContent() {
     localStorage.setItem('wetHelder_profession', profession)
   }, [profession])
 
-  // Check for Wet & Uitleg preference from localStorage
+  // Check for Wet & Uitleg preference from localStorage and URL parameters
   useEffect(() => {
+    // Check URL parameter first
+    const wetuitlegParam = searchParams.get('wetuitleg')
+    if (wetuitlegParam === 'true') {
+      setWetUitlegEnabled(true)
+      return
+    }
+    
+    // Fall back to localStorage
     const wetUitlegPref = localStorage.getItem('wetUitlegEnabled')
     if (wetUitlegPref === 'true') {
       setWetUitlegEnabled(true)
       // Clear the preference after using it
       localStorage.removeItem('wetUitlegEnabled')
     }
-  }, [])
+  }, [searchParams])
 
   // Check rate limit status on page load
   useEffect(() => {

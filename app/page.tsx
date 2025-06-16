@@ -227,7 +227,7 @@ export default function HomePage() {
                   </div>
                   
                   {/* Role selector and Wet & Uitleg button */}
-                  <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
+                  <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-center">
                     <Select value={selectedRole} onValueChange={(value) => setSelectedRole(value)}>
                       <SelectTrigger className="w-full sm:w-auto h-10 min-w-[200px]">
                         <SelectValue placeholder="Selecteer uw functie" />
@@ -244,18 +244,20 @@ export default function HomePage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex items-center gap-2 text-sm h-10"
+                      className="flex items-center gap-2 text-sm h-10 w-full sm:w-auto"
                       onClick={() => {
                         // Store preference and redirect to ask page with role
                         localStorage.setItem('wetUitlegEnabled', 'true')
                         const params = new URLSearchParams({
-                          profile: selectedRole
+                          profile: selectedRole,
+                          wetuitleg: 'true'
                         })
-                        window.location.href = `/ask?${params.toString()}`
+                        router.push(`/ask?${params.toString()}`)
                       }}
                     >
                       <BookOpen className="h-4 w-4" />
-                      <span>Wet & Uitleg modus</span>
+                      <span className="hidden sm:inline">Wet & Uitleg modus</span>
+                      <span className="sm:hidden">Wet & Uitleg</span>
                       <Badge variant="secondary" className="text-xs">Nieuw</Badge>
                     </Button>
                   </div>
