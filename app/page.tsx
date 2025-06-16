@@ -34,73 +34,193 @@ import {
   Heart,
   Briefcase,
   Search,
-  Mail
+  Mail,
+  Info,
+  CheckCircle,
+  Bot,
+  Menu,
+  X,
+  History,
+  Bookmark,
+  Settings,
+  Sun,
+  Moon,
+  Mic,
+  Plus,
+  ChevronRight,
+  LogIn,
+  LogOut,
+  Trash2,
+  Loader2
 } from 'lucide-react'
 
 const professionProfiles = [
   {
     id: 'algemeen',
-    name: 'Burger/Algemeen',
-    description: 'Voor alle burgers met juridische vragen',
-    icon: Users,
-    color: 'bg-blue-50 text-blue-700 border-blue-200'
+    name: 'Algemeen',
+    description: 'Volledig juridisch antwoord zonder specialisatie',
+    icon: Info,
+    color: 'bg-gray-50 text-gray-700 border-gray-200'
   },
   {
     id: 'advocaat',
-    name: 'Advocaat/Jurist',
-    description: 'Juridische professionals',
+    name: 'Advocaat',
+    description: 'Procesrecht, verdedigingsstrategieën, jurisprudentie en ECLI-nummers',
     icon: Scale,
     color: 'bg-purple-50 text-purple-700 border-purple-200'
   },
   {
     id: 'politieagent',
     name: 'Politieagent',
-    description: 'Handhaving en strafrecht',
+    description: 'Praktische bevoegdheden, dwangmiddelen, aanhoudingsrecht en doorzoekingsprocedures',
     icon: Shield,
-    color: 'bg-green-50 text-green-700 border-green-200'
+    color: 'bg-indigo-50 text-indigo-700 border-indigo-200'
   },
   {
     id: 'boa',
-    name: 'BOA/Handhaver',
-    description: 'Buitengewoon opsporingsambtenaar',
+    name: 'BOA / Handhaver',
+    description: 'Domeinspecifieke bevoegdheden, APV-handhaving en verschil met politiebevoegdheden',
     icon: Shield,
+    color: 'bg-cyan-50 text-cyan-700 border-cyan-200'
+  },
+  {
+    id: 'rechter',
+    name: 'Rechter',
+    description: 'Procesrecht, bewijsrecht, motiveringsplicht en uitspraakvorming',
+    icon: Gavel,
+    color: 'bg-red-50 text-red-700 border-red-200'
+  },
+  {
+    id: 'notaris',
+    name: 'Notaris',
+    description: 'Burgerlijk recht en notariële praktijk',
+    icon: FileText,
+    color: 'bg-emerald-50 text-emerald-700 border-emerald-200'
+  },
+  {
+    id: 'deurwaarder',
+    name: 'Deurwaarder',
+    description: 'Executierecht en beslagprocedures',
+    icon: FileText,
     color: 'bg-orange-50 text-orange-700 border-orange-200'
   },
   {
-    id: 'student',
-    name: 'Student',
-    description: 'Rechtenstudenten en onderzoek',
-    icon: GraduationCap,
-    color: 'bg-pink-50 text-pink-700 border-pink-200'
+    id: 'bedrijfsjurist',
+    name: 'Bedrijfsjurist',
+    description: 'Ondernemingsrecht en compliance',
+    icon: Building,
+    color: 'bg-slate-50 text-slate-700 border-slate-200'
+  },
+  {
+    id: 'gemeenteambtenaar',
+    name: 'Gemeenteambtenaar',
+    description: 'Bestuursrecht en lokale verordeningen',
+    icon: MapPin,
+    color: 'bg-green-50 text-green-700 border-green-200'
   },
   {
     id: 'gemeentejurist',
     name: 'Gemeentejurist',
-    description: 'Bestuursrecht en lokale verordeningen',
-    icon: Briefcase,
+    description: 'APVs, Gemeentewet, Omgevingswet, bestuurlijke sancties',
+    icon: Building,
+    color: 'bg-emerald-50 text-emerald-700 border-emerald-200'
+  },
+  {
+    id: 'belastingadviseur',
+    name: 'Belastingadviseur',
+    description: 'Fiscaal recht en belastingwetgeving',
+    icon: Calculator,
+    color: 'bg-yellow-50 text-yellow-700 border-yellow-200'
+  },
+  {
+    id: 'accountant',
+    name: 'Accountant',
+    description: 'Financieel recht en verslaggeving',
+    icon: Calculator,
+    color: 'bg-blue-50 text-blue-700 border-blue-200'
+  },
+  {
+    id: 'makelaar',
+    name: 'Makelaar',
+    description: 'Vastgoedrecht en makelaarsrecht',
+    icon: Home,
+    color: 'bg-teal-50 text-teal-700 border-teal-200'
+  },
+  {
+    id: 'verzekeringsagent',
+    name: 'Verzekeringsagent',
+    description: 'Verzekeringsrecht en aansprakelijkheid',
+    icon: Shield,
+    color: 'bg-purple-50 text-purple-700 border-purple-200'
+  },
+  {
+    id: 'hr-medewerker',
+    name: 'HR-medewerker',
+    description: 'Arbeidsrecht en personeelsbeleid',
+    icon: Users,
+    color: 'bg-pink-50 text-pink-700 border-pink-200'
+  },
+  {
+    id: 'compliance-officer',
+    name: 'Compliance Officer',
+    description: 'Toezichtrecht en compliance',
+    icon: CheckCircle,
     color: 'bg-indigo-50 text-indigo-700 border-indigo-200'
   },
   {
-    id: 'beveiliger',
-    name: 'Beveiliger',
-    description: 'Private beveiliging en toezicht',
+    id: 'veiligheidsbeambte',
+    name: 'Veiligheidsbeambte',
+    description: 'Veiligheidsrecht en preventie',
     icon: Shield,
     color: 'bg-red-50 text-red-700 border-red-200'
   },
   {
+    id: 'beveiliger',
+    name: 'Beveiliger',
+    description: 'WPBR, APVs, onderscheid publieke/private bevoegdheden',
+    icon: Shield,
+    color: 'bg-orange-50 text-orange-700 border-orange-200'
+  },
+  {
+    id: 'trainer',
+    name: 'Trainer / Opleider',
+    description: 'Volledig gestructureerde antwoorden voor educatief gebruik',
+    icon: GraduationCap,
+    color: 'bg-blue-50 text-blue-700 border-blue-200'
+  },
+  {
+    id: 'vervoersmedewerker',
+    name: 'Vervoersmedewerker',
+    description: 'Wet personenvervoer, Spoorwegwet, OV-bevoegdheden',
+    icon: Users,
+    color: 'bg-green-50 text-green-700 border-green-200'
+  },
+  {
     id: 'zorgprofessional',
     name: 'Zorgprofessional',
-    description: 'Gezondheidszorg en psychiatrie',
-    icon: Users,
-    color: 'bg-teal-50 text-teal-700 border-teal-200'
+    description: 'Wvggz, Wzd, AVG/WGBO bij gegevensuitwisseling',
+    icon: Heart,
+    color: 'bg-pink-50 text-pink-700 border-pink-200'
+  },
+  {
+    id: 'aspirant',
+    name: 'Aspirant',
+    description: 'Uitgebreide uitleg met praktijkvoorbeelden',
+    icon: UserCheck,
+    color: 'bg-blue-50 text-blue-700 border-blue-200'
+  },
+  {
+    id: 'student',
+    name: 'Student',
+    description: 'Stapsgewijze uitleg, structuur voor verslagen en uitgebreide bronvermelding',
+    icon: GraduationCap,
+    color: 'bg-green-50 text-green-700 border-green-200'
   }
 ]
 
-
-
 const stats = [
   { number: '56+', label: 'Officiële bronnen' },
-  { number: '22', label: 'Beroepsprofielen' },
+  { number: '23', label: 'Beroepsprofielen' },
   { number: '8', label: 'Hoofddoelgroepen' },
   { number: '24/7', label: 'Beschikbaar' }
 ]
@@ -503,7 +623,7 @@ export default function HomePage() {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-7xl mx-auto">
             {professionProfiles.map((profile) => {
               const IconComponent = profile.icon
               return (
@@ -512,23 +632,29 @@ export default function HomePage() {
                   className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:scale-105"
                   onClick={() => handleProfileSelect(profile.id)}
                 >
-                  <CardHeader>
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${profile.color} group-hover:scale-110 transition-transform`}>
-                        <IconComponent className="h-5 w-5" />
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start gap-3">
+                      <div className={`p-2 rounded-lg ${profile.color} group-hover:scale-110 transition-transform flex-shrink-0`}>
+                        <IconComponent className="h-4 w-4" />
                       </div>
-                      <div>
-                        <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
+                      <div className="min-w-0">
+                        <CardTitle className="text-sm font-semibold group-hover:text-blue-600 transition-colors leading-tight">
                           {profile.name}
                         </CardTitle>
-                        <CardDescription>{profile.description}</CardDescription>
+                        <CardDescription className="text-xs mt-1 overflow-hidden" style={{
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical'
+                        }}>
+                          {profile.description}
+                        </CardDescription>
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <Button variant="ghost" size="sm" className="w-full justify-between group-hover:bg-blue-50 group-hover:text-blue-600">
-                      Start chat met dit profiel
-                      <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  <CardContent className="pt-0">
+                    <Button variant="ghost" size="sm" className="w-full justify-between group-hover:bg-blue-50 group-hover:text-blue-600 text-xs h-8">
+                      Start chat
+                      <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </CardContent>
                 </Card>
@@ -537,8 +663,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-
 
       {/* Benefits */}
       <section className="py-16 bg-white">
@@ -653,7 +777,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
 
     </div>
   )

@@ -75,7 +75,7 @@ export default function Home() {
                   Gratis Account
                 </h3>
                 <ul className="text-gray-600 space-y-2">
-                  <li>✓ 2 gratis vragen</li>
+                  <li>✓ 4 gratis vragen</li>
                   <li>✓ Directe antwoorden</li>
                   <li>✓ Toegang tot basisinformatie</li>
                 </ul>

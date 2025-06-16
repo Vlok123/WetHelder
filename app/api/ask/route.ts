@@ -201,13 +201,13 @@ export async function POST(request: NextRequest) {
 
       console.log(`🔍 Anonymous user (IP: ${clientIp}) has asked ${recentQuestions} questions in last 24h`)
 
-      if (recentQuestions >= 2) {
+      if (recentQuestions >= 4) {
         console.log('❌ Rate limit exceeded for anonymous user')
         
         // Instead of returning an error, return a friendly rate limit message as a stream
         const rateLimitMessage = `🔒 **Limiet bereikt**
 
-Je hebt het maximum aantal gratis vragen (2 per dag) bereikt. 
+Je hebt het maximum aantal gratis vragen (4 per dag) bereikt. 
 
 **Maak een gratis account aan om:**
 • Onbeperkt vragen te stellen
@@ -406,7 +406,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    const remaining = Math.max(0, 2 - recentQuestions)
+    const remaining = Math.max(0, 4 - recentQuestions)
 
     return NextResponse.json({
       remainingQuestions: remaining,

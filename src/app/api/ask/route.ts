@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
         }
       });
 
-      if (anonQuestions >= 2) {
+      if (anonQuestions >= 4) {
         return NextResponse.json(
           { error: 'Maak een account aan om meer vragen te stellen' },
           { status: 403 }
