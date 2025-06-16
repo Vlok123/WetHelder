@@ -208,16 +208,16 @@ const professionConfig = {
 const formatText = (text: string): React.ReactElement => {
   if (!text) return <div></div>
   
-  // Step 1: Clean all markdown syntax completely and apply UI/UX rules
+  // Step 1: Clean markdown syntax but preserve and enhance links
   const processedText = text
     // Remove AI references
     .replace(/\b(AI|artificial intelligence|machine learning|ML|chatbot|bot|assistant|model)\b/gi, 'systeem')
-    // Remove ALL markdown formatting completely
+    // Remove most markdown formatting but preserve links
     .replace(/\*\*(.*?)\*\*/g, '$1')  // Bold - remove asterisks
     .replace(/\*(.*?)\*/g, '$1')      // Italic - remove asterisks  
     .replace(/`([^`]*)`/g, '$1')      // Inline code - remove backticks
     .replace(/```[\s\S]*?```/g, '')   // Code blocks - remove completely
-    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')  // Links - keep text only
+    // Keep markdown links for processing later: [text](url) stays as is
     .replace(/^>\s*/gm, '')           // Blockquotes - remove > symbols
     .replace(/^#{1,6}\s*/gm, '')      // Headers - remove # symbols completely
     .replace(/^[\*\-\+]\s+/gm, '• ')  // Convert bullet points to simple bullets
@@ -228,6 +228,123 @@ const formatText = (text: string): React.ReactElement => {
 
   const elements: React.ReactElement[] = []
   let key = 0
+
+  // Helper function to process text and make links clickable
+  const processLinksInText = (text: string): React.ReactNode => {
+    // First handle markdown links [text](url)
+    const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g
+    // Then handle plain URLs
+    const urlRegex = /(https?:\/\/[^\s<>"{}|\\^`[\]]+)/g
+    // Handle wetten.overheid.nl specific links
+    const wettenRegex = /(wetten\.overheid\.nl[^\s<>"{}|\\^`[\]]*)/g
+    
+    let lastIndex = 0
+    const parts: React.ReactNode[] = []
+    let partKey = 0
+    
+    // Process markdown links first
+    const allMatches: Array<{start: number, end: number, text: string, url: string, type: 'markdown' | 'url' | 'wetten'}> = []
+    
+    // Find markdown links
+    let markdownMatch: RegExpExecArray | null
+    while ((markdownMatch = markdownLinkRegex.exec(text)) !== null) {
+      allMatches.push({
+        start: markdownMatch.index,
+        end: markdownMatch.index + markdownMatch[0].length,
+        text: markdownMatch[1],
+        url: markdownMatch[2],
+        type: 'markdown'
+      })
+    }
+    
+    // Find plain URLs (but not those already in markdown links)
+    markdownLinkRegex.lastIndex = 0 // Reset regex
+    let urlMatch: RegExpExecArray | null
+    while ((urlMatch = urlRegex.exec(text)) !== null) {
+      const isInMarkdownLink = allMatches.some(m => 
+        urlMatch!.index >= m.start && urlMatch!.index < m.end
+      )
+      if (!isInMarkdownLink) {
+        allMatches.push({
+          start: urlMatch.index,
+          end: urlMatch.index + urlMatch[0].length,
+          text: urlMatch[1],
+          url: urlMatch[1],
+          type: 'url'
+        })
+      }
+    }
+    
+    // Find wetten.overheid.nl links (but not those already found)
+    urlRegex.lastIndex = 0 // Reset regex
+    let wettenMatch: RegExpExecArray | null
+    while ((wettenMatch = wettenRegex.exec(text)) !== null) {
+      const isAlreadyFound = allMatches.some(m => 
+        wettenMatch!.index >= m.start && wettenMatch!.index < m.end
+      )
+      if (!isAlreadyFound) {
+        const fullUrl = wettenMatch[1].startsWith('http') ? wettenMatch[1] : `https://${wettenMatch[1]}`
+        allMatches.push({
+          start: wettenMatch.index,
+          end: wettenMatch.index + wettenMatch[0].length,
+          text: wettenMatch[1],
+          url: fullUrl,
+          type: 'wetten'
+        })
+      }
+    }
+    
+    // Sort matches by position
+    allMatches.sort((a, b) => a.start - b.start)
+    
+    // Build the result with clickable links
+    allMatches.forEach(linkMatch => {
+      // Add text before the link
+      if (linkMatch.start > lastIndex) {
+        const beforeText = text.slice(lastIndex, linkMatch.start)
+        if (beforeText) {
+          parts.push(<span key={partKey++}>{beforeText}</span>)
+        }
+      }
+      
+      // Add the clickable link
+      const linkText = linkMatch.text
+      const linkUrl = linkMatch.url
+      
+      // Ensure URL has protocol
+      const finalUrl = linkUrl.startsWith('http') ? linkUrl : `https://${linkUrl}`
+      
+      parts.push(
+        <a
+          key={partKey++}
+          href={finalUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 underline hover:no-underline transition-colors inline-flex items-center gap-1"
+        >
+          {linkText}
+          <ExternalLink className="h-3 w-3" />
+        </a>
+      )
+      
+      lastIndex = linkMatch.end
+    })
+    
+    // Add remaining text after the last link
+    if (lastIndex < text.length) {
+      const remainingText = text.slice(lastIndex)
+      if (remainingText) {
+        parts.push(<span key={partKey++}>{remainingText}</span>)
+      }
+    }
+    
+    // If no links were found, return the original text
+    if (parts.length === 0) {
+      return text
+    }
+    
+    return <>{parts}</>
+  }
 
   // Step 2: Split into logical sections by double newlines for natural reading
   const sections = processedText.split(/\n\n+/).filter(s => s.trim())
@@ -252,7 +369,9 @@ const formatText = (text: string): React.ReactElement => {
           <div className="flex items-start gap-4">
             <span className="text-amber-600 text-2xl flex-shrink-0 mt-1">⚖️</span>
             <div className="text-gray-800 leading-relaxed">
-              <div dangerouslySetInnerHTML={{ __html: formattedText }} />
+              <div className="space-y-2">
+                {processLinksInText(formattedText.replace(/<span class="[^"]*">([^<]*)<\/span>/g, '$1'))}
+              </div>
             </div>
           </div>
         </div>
@@ -265,7 +384,7 @@ const formatText = (text: string): React.ReactElement => {
       elements.push(
         <div key={key++} className="mt-8 mb-4">
           <h3 className="text-lg font-semibold text-gray-900 border-b border-blue-300 pb-2 mb-4">
-            {trimmedSection.replace(/:$/, '')}
+            {processLinksInText(trimmedSection.replace(/:$/, ''))}
           </h3>
         </div>
       )
@@ -285,7 +404,9 @@ const formatText = (text: string): React.ReactElement => {
               return (
                 <li key={idx} className="flex items-start gap-2">
                   <span className="text-blue-600 text-sm flex-shrink-0 mt-2">•</span>
-                  <span className="text-gray-800 leading-relaxed">{cleanLine}</span>
+                  <span className="text-gray-800 leading-relaxed">
+                    {processLinksInText(cleanLine)}
+                  </span>
                 </li>
               )
             })}
@@ -302,7 +423,7 @@ const formatText = (text: string): React.ReactElement => {
           <div className="flex items-start gap-3">
             <span className="text-blue-600 text-lg flex-shrink-0 mt-1">ℹ️</span>
             <div className="text-blue-900 leading-relaxed">
-              {trimmedSection}
+              {processLinksInText(trimmedSection)}
             </div>
           </div>
         </div>
@@ -317,7 +438,7 @@ const formatText = (text: string): React.ReactElement => {
           <div className="flex items-start gap-3">
             <span className="text-green-600 text-lg flex-shrink-0 mt-1">✅</span>
             <div className="text-green-900 leading-relaxed">
-              {trimmedSection}
+              {processLinksInText(trimmedSection)}
             </div>
           </div>
         </div>
@@ -348,7 +469,7 @@ const formatText = (text: string): React.ReactElement => {
       paragraphs.forEach(para => {
         elements.push(
           <p key={key++} className="text-gray-800 leading-relaxed text-base mb-4">
-            {para}
+            {processLinksInText(para)}
           </p>
         )
       })
@@ -356,7 +477,7 @@ const formatText = (text: string): React.ReactElement => {
       // Short section - single paragraph with natural spacing
       elements.push(
         <p key={key++} className="text-gray-800 leading-relaxed text-base mb-4">
-          {trimmedSection}
+          {processLinksInText(trimmedSection)}
         </p>
       )
     }
@@ -367,7 +488,7 @@ const formatText = (text: string): React.ReactElement => {
     return (
       <div className="space-y-4">
         <p className="text-gray-800 leading-relaxed text-base">
-          {processedText}
+          {processLinksInText(processedText)}
         </p>
       </div>
     )

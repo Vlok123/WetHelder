@@ -8,24 +8,32 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 import { 
-  Scale, 
   MessageSquare, 
-  Search, 
-  BookOpen, 
+  ArrowRight, 
+  CheckCircle2, 
   Users, 
+  Scale, 
+  FileText, 
   Shield, 
-  GraduationCap, 
-  Briefcase,
-  ArrowRight,
-  Star,
-  Zap,
-  Globe,
+  Zap, 
+  Globe, 
+  Clock, 
   Lock,
-  Clock,
-  CheckCircle2,
-  Check
+  BookOpen,
+  Check,
+  UserCheck,
+  GraduationCap,
+  Gavel,
+  Building,
+  MapPin,
+  Calculator,
+  Home,
+  Heart,
+  Briefcase,
+  Search
 } from 'lucide-react'
 
 const professionProfiles = [
@@ -123,6 +131,7 @@ const stats = [
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedRole, setSelectedRole] = useState('algemeen')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
 
@@ -134,10 +143,12 @@ export default function HomePage() {
     // Store query in sessionStorage
     const query = searchQuery.trim()
     sessionStorage.setItem('autoSubmitQuery', query)
+    sessionStorage.setItem('autoSubmitProfile', selectedRole)
     
-    // Navigate to /ask with query parameters
+    // Navigate to /ask with query and profile parameters
     const params = new URLSearchParams({
-      q: query
+      q: query,
+      profile: selectedRole
     })
     
     // Use router.push for better navigation
@@ -188,6 +199,18 @@ export default function HomePage() {
                 <div className="space-y-4">
                   {/* Desktop: side by side, Mobile: stacked */}
                   <div className="flex flex-col sm:flex-row gap-3">
+                    <Select value={selectedRole} onValueChange={(value) => setSelectedRole(value)}>
+                      <SelectTrigger className="w-full sm:w-auto h-12">
+                        <SelectValue placeholder="Selecteer uw functie" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {professionProfiles.map((profile) => (
+                          <SelectItem key={profile.id} value={profile.id}>
+                            {profile.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <Input
                       placeholder="Stel uw juridische vraag..."
                       value={searchQuery}
@@ -226,7 +249,7 @@ export default function HomePage() {
                   </div>
                   
                   <p className="text-sm text-gray-600 text-center">
-                    💡 <strong>Tip:</strong> In het chatvenster kun je je functieprofiel instellen voor een beter antwoord op maat
+                    💡 <strong>Tip:</strong> Selecteer eerst uw functie voor een antwoord op maat, stel dan uw vraag
                   </p>
                 </div>
               </CardContent>
