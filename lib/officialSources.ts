@@ -1421,6 +1421,30 @@ export const COMMON_LEGAL_MISTAKES: LegalCorrection[] = [
     sourceArticle: 'Opiumwet'
   },
   {
+    incorrectTerm: 'lachgas is niet strafbaar',
+    correctTerm: 'lachgas valt onder de Opiumwet sinds 1 januari 2023',
+    explanation: 'Lachgas (N2O) is per 1 januari 2023 toegevoegd aan lijst II van de Opiumwet en is dus strafbaar',
+    sourceArticle: 'Opiumwet artikel 2 en 3, Besluit van 9 december 2022, Stb. 2022, 564'
+  },
+  {
+    incorrectTerm: 'lachgas vervoer is toegestaan',
+    correctTerm: 'lachgas vervoer is strafbaar onder de Opiumwet',
+    explanation: 'Het vervoeren van lachgas voor menselijke consumptie is strafbaar sinds 1 januari 2023',
+    sourceArticle: 'Opiumwet artikel 2 lid 1 en artikel 10'
+  },
+  {
+    incorrectTerm: 'lachgas verkoop is legaal',
+    correctTerm: 'lachgas verkoop voor menselijke consumptie is verboden',
+    explanation: 'De verkoop van lachgas voor menselijke consumptie is verboden sinds 1 januari 2023',
+    sourceArticle: 'Opiumwet artikel 2 lid 1 en artikel 10'
+  },
+  {
+    incorrectTerm: 'N2O is vrij verkrijgbaar',
+    correctTerm: 'N2O (lachgas) valt onder de Opiumwet',
+    explanation: 'Distikstofmonoxide (N2O/lachgas) staat sinds 1 januari 2023 op lijst II van de Opiumwet',
+    sourceArticle: 'Opiumwet bijlage II, gewijzigd bij Besluit van 9 december 2022'
+  },
+  {
     incorrectTerm: 'artikel160',
     correctTerm: 'artikel 160',
     explanation: 'Voeg altijd een spatie toe tussen "artikel" en het nummer',
@@ -1477,6 +1501,12 @@ export interface BijzondereWet {
 
 const BIJZONDERE_WETGEVING: BijzondereWet[] = [
   {
+    naam: "Opiumwet",
+    trefwoorden: ["opium", "drugs", "verdovende middelen", "softdrugs", "harddrugs", "cannabis", "cocaïne", "heroïne", "xtc", "mdma", "lsd", "lachgas", "n2o", "distikstofmonoxide", "ballonnetjes", "whippets", "drugshandel", "drugsvervoer", "drugsbezit"],
+    url: "https://wetten.overheid.nl/BWBR0001941",
+    categorie: "Drugswetgeving"
+  },
+  {
     naam: "Wet op de economische delicten",
     trefwoorden: ["economisch delict", "wed", "vuurwerk", "milieu", "economische overtreding"],
     url: "https://wetten.overheid.nl/BWBR0002063",
@@ -1502,7 +1532,7 @@ const BIJZONDERE_WETGEVING: BijzondereWet[] = [
   },
   {
     naam: "Geneesmiddelenwet",
-    trefwoorden: ["medicijn", "geneesmiddel", "apotheek", "medicatie", "drugs"],
+    trefwoorden: ["medicijn", "geneesmiddel", "apotheek", "medicatie", "farmaceutisch"],
     url: "https://wetten.overheid.nl/BWBR0021505",
     categorie: "Gezondheidswetgeving"
   },
@@ -1537,13 +1567,85 @@ const WETSUPDATES: WetUpdate[] = [
     nieuwArtikel: "artikel 2.1 Wet dieren",
     datumWijziging: new Date("2022-01-01"),
     toelichting: "Hernummering bij Wet dieren modernisering"
+  },
+  {
+    oudArtikel: "lachgas is niet strafbaar",
+    nieuwArtikel: "lachgas valt onder de Opiumwet (lijst II)",
+    datumWijziging: new Date("2023-01-01"),
+    toelichting: "Lachgas (N2O/distikstofmonoxide) is per 1 januari 2023 toegevoegd aan lijst II van de Opiumwet bij Besluit van 9 december 2022, Stb. 2022, 564"
+  },
+  {
+    oudArtikel: "N2O vervoer vrij toegestaan",
+    nieuwArtikel: "N2O vervoer strafbaar onder Opiumwet artikel 2/10",
+    datumWijziging: new Date("2023-01-01"),
+    toelichting: "Het vervoeren van lachgas voor menselijke consumptie is strafbaar geworden onder artikel 2 en 10 van de Opiumwet"
+  },
+  {
+    oudArtikel: "ballonnetjes lachgas legaal",
+    nieuwArtikel: "ballonnetjes lachgas illegaal onder Opiumwet",
+    datumWijziging: new Date("2023-01-01"),
+    toelichting: "Het gebruik van ballonnetjes voor lachgasconsumptie valt nu onder de strafbare feiten van de Opiumwet"
   }
 ];
 
 export async function checkActueleWetgeving(tekst: string): Promise<WetUpdate[]> {
+  const tekstLowerCase = tekst.toLowerCase();
   const relevantUpdates = WETSUPDATES.filter(update => 
-    tekst.includes(update.oudArtikel)
+    tekstLowerCase.includes(update.oudArtikel.toLowerCase()) ||
+    // Check voor gerelateerde termen
+    (update.oudArtikel.toLowerCase().includes('lachgas') && 
+     (tekstLowerCase.includes('lachgas') || tekstLowerCase.includes('n2o') || tekstLowerCase.includes('distikstofmonoxide')))
   );
   
   return relevantUpdates;
+}
+
+// Nieuwe functie voor uitgebreide actualiteitscontrole
+export interface ActualiteitsWaarschuwing {
+  onderwerp: string;
+  huidigeStatus: string;
+  wijzigingsDatum: Date;
+  bronUrl?: string;
+  urgentie: 'LAAG' | 'MEDIUM' | 'HOOG' | 'KRITIEK';
+}
+
+const ACTUALITEITS_DATABASE: ActualiteitsWaarschuwing[] = [
+  {
+    onderwerp: "Lachgas/N2O regelgeving",
+    huidigeStatus: "Lachgas valt sinds 1 januari 2023 onder de Opiumwet (lijst II). Verkoop, vervoer en bezit voor menselijke consumptie is strafbaar.",
+    wijzigingsDatum: new Date("2023-01-01"),
+    bronUrl: "https://wetten.overheid.nl/BWBR0001941",
+    urgentie: "KRITIEK"
+  },
+  {
+    onderwerp: "Vuurwerkregels",
+    huidigeStatus: "Vuurwerkregels worden jaarlijks aangepast. Controleer altijd de meest recente regels via de gemeente.",
+    wijzigingsDatum: new Date("2023-12-01"),
+    bronUrl: "https://www.rijksoverheid.nl/onderwerpen/vuurwerk",
+    urgentie: "MEDIUM"
+  },
+  {
+    onderwerp: "COVID-19 maatregelen",
+    huidigeStatus: "COVID-19 maatregelen zijn grotendeels opgeheven. Controleer voor actuele informatie de rijksoverheid.",
+    wijzigingsDatum: new Date("2023-03-01"),
+    bronUrl: "https://www.rijksoverheid.nl/onderwerpen/coronavirus-covid-19",
+    urgentie: "LAAG"
+  }
+];
+
+export async function checkActualiteit(vraag: string): Promise<ActualiteitsWaarschuwing[]> {
+  const vraagLowerCase = vraag.toLowerCase();
+  
+  return ACTUALITEITS_DATABASE.filter(item => {
+    const onderwerp = item.onderwerp.toLowerCase();
+    const trefwoorden = onderwerp.split(/[\s\/\-]+/);
+    
+    return trefwoorden.some(trefwoord => 
+      trefwoord.length > 2 && vraagLowerCase.includes(trefwoord)
+    );
+  }).sort((a, b) => {
+    // Sorteer op urgentie (KRITIEK eerst)
+    const urgentieOrder = { 'KRITIEK': 4, 'HOOG': 3, 'MEDIUM': 2, 'LAAG': 1 };
+    return urgentieOrder[b.urgentie] - urgentieOrder[a.urgentie];
+  });
 } 

@@ -11,8 +11,10 @@ import {
 import {
   checkBijzondereWetgeving,
   checkActueleWetgeving,
+  checkActualiteit,
   type BijzondereWet,
-  type WetUpdate
+  type WetUpdate,
+  type ActualiteitsWaarschuwing
 } from '@/lib/officialSources'
 import { searchGoogleCustom } from '@/lib/googleSearch'
 import { streamingCompletion } from '@/lib/openai'
@@ -276,6 +278,32 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
       console.error('❌ Fout bij JSON bronnen zoeken:', error)
     }
 
+    // STAP 1.5: Actualiteitscontrole
+    console.log('🔍 STAP 1.5: Actualiteitscontrole')
+    let actualiteitsWaarschuwingen: ActualiteitsWaarschuwing[] = []
+    let wetUpdates: WetUpdate[] = []
+    
+    try {
+      actualiteitsWaarschuwingen = await checkActualiteit(question)
+      wetUpdates = await checkActueleWetgeving(question)
+      
+      if (actualiteitsWaarschuwingen.length > 0) {
+        console.log(`⚠️ ${actualiteitsWaarschuwingen.length} actualiteitswaarschuwingen gevonden`)
+        actualiteitsWaarschuwingen.forEach(waarschuwing => {
+          console.log(`⚠️ ${waarschuwing.urgentie}: ${waarschuwing.onderwerp}`)
+        })
+      }
+      
+      if (wetUpdates.length > 0) {
+        console.log(`📝 ${wetUpdates.length} wetsupdates gevonden`)
+        wetUpdates.forEach(update => {
+          console.log(`📝 Update: ${update.oudArtikel} → ${update.nieuwArtikel}`)
+        })
+      }
+    } catch (error) {
+      console.error('❌ Fout bij actualiteitscontrole:', error)
+    }
+
     // STAP 2: Evalueer of Google API nodig is
     console.log('🔍 STAP 2: Evaluatie Google API noodzaak')
     let googleResults: string = ''
@@ -328,7 +356,9 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
       jsonContext,
       googleResults,
       history,
-      wetUitleg
+      wetUitleg,
+      actualiteitsWaarschuwingen,
+      wetUpdates
     })
 
     const transformedStream = new ReadableStream({

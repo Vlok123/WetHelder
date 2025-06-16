@@ -1,6 +1,7 @@
 import OpenAI from 'openai'
 import { ChatMessage } from '@/types/chat'
 import { performContextAnalysis } from './contextAnalysis'
+import type { ActualiteitsWaarschuwing, WetUpdate } from './officialSources'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -13,6 +14,8 @@ interface CompletionParams {
   googleResults: string
   history: ChatMessage[]
   wetUitleg?: boolean
+  actualiteitsWaarschuwingen?: ActualiteitsWaarschuwing[]
+  wetUpdates?: WetUpdate[]
 }
 
 function getProfessionSpecificPrompt(profession: string): string {
@@ -134,7 +137,9 @@ export async function streamingCompletion({
   jsonContext,
   googleResults,
   history,
-  wetUitleg = false
+  wetUitleg = false,
+  actualiteitsWaarschuwingen = [],
+  wetUpdates = []
 }: CompletionParams) {
   // Check if OpenAI API key is configured
   if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-your-openai-api-key-here') {
@@ -191,24 +196,63 @@ Structureer je antwoord als volgt:
 
 Gebruik deze structuur ALTIJD wanneer Wet & Uitleg is ingeschakeld.` : ""
 
+  // Build actualiteitscontrole section
+  let actualiteitsSection = ""
+  if (actualiteitsWaarschuwingen.length > 0 || wetUpdates.length > 0) {
+    const actualiteitsLines = ["🚨 **KRITIEKE ACTUALITEITSCONTROLE** - VERPLICHT TE VERMELDEN:", ""]
+    
+    if (actualiteitsWaarschuwingen.length > 0) {
+      actualiteitsLines.push("**ACTUELE WIJZIGINGEN:**")
+      actualiteitsWaarschuwingen.forEach(waarschuwing => {
+        actualiteitsLines.push(`⚠️ ${waarschuwing.urgentie}: ${waarschuwing.onderwerp}`)
+        actualiteitsLines.push(`   Status: ${waarschuwing.huidigeStatus}`)
+        actualiteitsLines.push(`   Datum wijziging: ${waarschuwing.wijzigingsDatum.toLocaleDateString('nl-NL')}`)
+        if (waarschuwing.bronUrl) {
+          actualiteitsLines.push(`   Bron: ${waarschuwing.bronUrl}`)
+        }
+        actualiteitsLines.push("")
+      })
+    }
+    
+    if (wetUpdates.length > 0) {
+      actualiteitsLines.push("**VEROUDERDE INFORMATIE GEDETECTEERD:**")
+      wetUpdates.forEach(update => {
+        actualiteitsLines.push(`❌ FOUT: "${update.oudArtikel}"`)
+        actualiteitsLines.push(`✅ CORRECT: "${update.nieuwArtikel}"`)
+        actualiteitsLines.push(`   Datum wijziging: ${update.datumWijziging.toLocaleDateString('nl-NL')}`)
+        if (update.toelichting) {
+          actualiteitsLines.push(`   Toelichting: ${update.toelichting}`)
+        }
+        actualiteitsLines.push("")
+      })
+    }
+    
+    actualiteitsLines.push("**INSTRUCTIE: GEBRUIK ALTIJD DE ACTUELE INFORMATIE HIERBOVEN. Vermeld expliciet als er recente wijzigingen zijn geweest.**")
+    actualiteitsLines.push("")
+    
+    actualiteitsSection = actualiteitsLines.join('\n')
+  }
+
   // Phase 2: Build base system prompt
   const baseSystemPrompt = [
     professionPrompt,
     wetUitlegInstructions,
     "",
+    actualiteitsSection,
     "Gebruik UITSLUITEND de volgende bronnen voor je antwoord.",
     "Baseer elk onderdeel van je antwoord op de juridische gegevens uit deze context.",
     "",
     "KERNPRINCIPES VOOR JURIDISCHE ANTWOORDEN:",
-    "- Gebruik ALLEEN informatie uit de aangeleverde bronnen",
+    "- Gebruik ALLEEN informatie uit de aangeleverde bronnen en actualiteitscontrole",
     "- Geef UITGEBREIDE juridische analyses",
     "- Vermeld ALTIJD de wettelijke grondslag",
     "- Leg juridische begrippen uit met wetsverwijzingen",
-    "- Geef MEERDERE juridische invalshoeken waar mogelijk",
+    "- Geef MEERDERE juridische invalshoeken waar mogelijk", 
     "- Voor APV-vragen: gebruik de Google zoekresultaten voor specifieke lokale bepalingen",
     "- Als Google resultaten beschikbaar zijn: gebruik deze voor actuele en specifieke informatie",
     "- Zeg NOOIT dat je geen live zoekopdrachten kunt uitvoeren - je hebt toegang tot actuele juridische bronnen",
     "- Voor lokale regelgeving (APV): combineer algemene juridische principes met specifieke lokale informatie uit de zoekresultaten",
+    "- Als er actualiteitscontrole informatie is: vermeld dit PROMINENTAAL in je antwoord",
     "",
     jsonContext ? "BESCHIKBARE JURIDISCHE BRONNEN:" : "GEEN SPECIFIEKE JURIDISCHE BRONNEN BESCHIKBAAR",
     jsonContext || "Gebruik algemene juridische kennis, maar vermeld dit expliciet.",
