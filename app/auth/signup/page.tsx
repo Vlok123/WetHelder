@@ -73,7 +73,19 @@ export default function SignUpPage() {
     setError('')
     
     try {
-      await signIn(provider, { callbackUrl: '/dashboard' })
+      // signIn will redirect automatically, so we don't await it
+      const result = await signIn(provider, { 
+        callbackUrl: '/dashboard',
+        redirect: false 
+      })
+      
+      if (result?.error) {
+        setError('Er ging iets mis bij het registreren met ' + provider)
+        setIsLoading(false)
+      } else if (result?.url) {
+        // Redirect manually if needed
+        window.location.href = result.url
+      }
     } catch (error) {
       console.error('OAuth sign in error:', error)
       setError('Er ging iets mis bij het registreren')

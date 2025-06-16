@@ -51,14 +51,34 @@ export default function SignInPage() {
   }
 
   const handleOAuthSignIn = async (provider: string) => {
+    console.log('Starting OAuth sign in with provider:', provider)
     setIsLoading(true)
     setError('')
     
     try {
-      await signIn(provider, { callbackUrl: '/dashboard' })
+      console.log('Calling signIn with provider:', provider)
+      const result = await signIn(provider, { 
+        callbackUrl: '/dashboard',
+        redirect: false 
+      })
+      
+      console.log('SignIn result:', result)
+      
+      if (result?.error) {
+        console.error('SignIn error:', result.error)
+        setError('Er ging iets mis bij het inloggen met ' + provider + ': ' + result.error)
+        setIsLoading(false)
+      } else if (result?.url) {
+        console.log('Redirecting to:', result.url)
+        window.location.href = result.url
+      } else {
+        console.log('No URL in result, trying direct redirect')
+        // Fallback: try direct redirect
+        await signIn(provider, { callbackUrl: '/dashboard' })
+      }
     } catch (error) {
       console.error('OAuth sign in error:', error)
-      setError('Er ging iets mis bij het inloggen')
+      setError('Er ging iets mis bij het inloggen: ' + (error as Error).message)
       setIsLoading(false)
     }
   }
