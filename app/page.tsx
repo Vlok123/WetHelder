@@ -664,6 +664,94 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Features */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Twee Manieren om Juridische Hulp te Krijgen</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Kies de methode die het beste bij uw vraag past
+            </p>
+          </div>
+          
+          <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {/* Chat Feature */}
+            <Card className="p-6 hover:shadow-lg transition-shadow">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                  <MessageSquare className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">Juridische Chat</h3>
+                  <p className="text-sm text-gray-600">Voor snelle vragen en directe antwoorden</p>
+                </div>
+              </div>
+              <ul className="space-y-2 mb-6">
+                <li className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span>Snelle antwoorden op juridische vragen</span>
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span>Aangepast per beroepsprofiel</span>
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span>Bronvermelding en citaten</span>
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span>4 gratis vragen per dag</span>
+                </li>
+              </ul>
+              <Button className="w-full" asChild>
+                <Link href="/ask">
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Start Chat
+                </Link>
+              </Button>
+            </Card>
+
+            {/* Wet & Uitleg Feature */}
+            <Card className="p-6 hover:shadow-lg transition-shadow border-2 border-blue-200">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
+                  <Scale className="h-6 w-6 text-purple-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">Wet & Uitleg</h3>
+                  <p className="text-sm text-gray-600">Voor uitgebreide wetsartikel analyses</p>
+                </div>
+              </div>
+              <ul className="space-y-2 mb-6">
+                <li className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span>Volledige wetsartikel teksten</span>
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span>Praktische toepassingen</span>
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span>Relevante jurisprudentie</span>
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span>Verwante artikelen</span>
+                </li>
+              </ul>
+              <Button className="w-full" variant="outline" asChild>
+                <Link href="/wetuitleg">
+                  <Scale className="h-4 w-4 mr-2" />
+                  Probeer Wet & Uitleg
+                </Link>
+              </Button>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* Benefits */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
@@ -758,10 +846,10 @@ export default function HomePage() {
                 Start Gratis Chat
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="bg-transparent" asChild>
-              <Link href="/contact">
-                <Mail className="h-5 w-5 mr-2" />
-                Contact & Vragen
+            <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-blue-600" asChild>
+              <Link href="/wetuitleg">
+                <Scale className="h-5 w-5 mr-2" />
+                Wet & Uitleg
               </Link>
             </Button>
           </div>
