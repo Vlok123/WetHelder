@@ -1026,10 +1026,11 @@ function AskPageContent() {
                       variant="outline"
                       size="sm"
                       onClick={clearConversation}
-                      className="h-9"
+                      className="h-9 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                      title="Wis alle berichten van dit gesprek"
                     >
                       <Trash2 className="h-4 w-4 mr-1" />
-                      Wissen
+                      Wis gesprek
                     </Button>
                   )}
                 </div>
