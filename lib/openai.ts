@@ -28,13 +28,16 @@ function getProfessionSpecificPrompt(profession: string): string {
 - Geef concrete voorbeelden van wanneer welke bevoegdheid gebruikt kan worden`,
 
     boa: `${basePrompt} Je beantwoordt vragen specifiek voor BOA's en handhavers. Focus op:
-- Wet op de Bijzondere Opsporingsdiensten (WBOD)
-- Domeinspecifieke bevoegdheden per BOA-type
-- Verschil tussen BOA-bevoegdheden en politiebevoegdheden
-- APV-handhaving en gemeentelijke verordeningen
-- Wet Economische Delicten (WED)
-- Wanneer wel/niet doorverwijzen naar politie
-- Praktische handhavingssituaties`,
+- Wet op de Bijzondere Opsporingsdiensten (WBOD) - bevoegdheden en grenzen
+- Domeinspecifieke bevoegdheden per BOA-type - welke bevoegdheden bij welk domein
+- Verschil tussen BOA-bevoegdheden en politiebevoegdheden - wanneer doorverwijzen
+- APV-handhaving en gemeentelijke verordeningen - praktische toepassing
+- Wet Economische Delicten (WED) - economische overtredingen
+- Wanneer wel/niet doorverwijzen naar politie - escalatieprocedures
+- Praktische handhavingssituaties - concrete voorbeelden
+- Proces-verbaal opmaken - vereisten en procedures
+- Bestuurlijke sancties vs strafrechtelijke vervolging
+- Voor specifieke APV-bepalingen: raadpleeg LokaleRegelgeving.Overheid.nl`,
 
     advocaat: `${basePrompt} Je beantwoordt vragen specifiek voor advocaten. Focus op:
 - Uitgebreide wettelijke grondslagen met artikelnummers
@@ -91,13 +94,16 @@ function getProfessionSpecificPrompt(profession: string): string {
 - Privacy in de arbeidsrelatie (AVG)`,
 
     gemeentejurist: `${basePrompt} Je beantwoordt vragen specifiek voor gemeentejuristen. Focus op:
-- Algemene Plaatselijke Verordeningen (APV)
-- Gemeentewet en provinciewet
-- Omgevingswet en ruimtelijke ordening
-- Bestuurlijke sancties en dwangsom
-- Wet openbare manifestaties (Wom)
-- Algemene wet bestuursrecht (Awb)
-- Lokale democratie en raadsbevoegdheden`,
+- Algemene Plaatselijke Verordeningen (APV) - structuur, bevoegdheden en handhaving
+- Gemeentewet en provinciewet - bestuurlijke organisatie en bevoegdheden
+- Omgevingswet en ruimtelijke ordening - vergunningen en handhaving
+- Bestuurlijke sancties en dwangsom - procedures en rechtsbescherming
+- Wet openbare manifestaties (Wom) - demonstratierecht en openbare orde
+- Algemene wet bestuursrecht (Awb) - bestuursprocedures en rechtsbescherming
+- Lokale democratie en raadsbevoegdheden - besluitvorming en controle
+- APV-handhaving door BOA's en politie - bevoegdheidsverdeling
+- Bestuursdwang en last onder dwangsom - toepassing en procedures
+- Voor specifieke APV-bepalingen: verwijs naar LokaleRegelgeving.Overheid.nl`,
 
     student: `${basePrompt} Je beantwoordt vragen specifiek voor studenten. Focus op:
 - Volledige uitleg van juridische concepten
@@ -180,6 +186,9 @@ Gebruik deze structuur ALTIJD wanneer Wet & Uitleg is ingeschakeld.` : ""
     "- Vermeld ALTIJD de wettelijke grondslag",
     "- Leg juridische begrippen uit met wetsverwijzingen",
     "- Geef MEERDERE juridische invalshoeken waar mogelijk",
+    "- Voor APV-vragen: verwijs naar LokaleRegelgeving.Overheid.nl voor specifieke gemeentelijke verordeningen",
+    "- Zeg NOOIT dat je geen live zoekopdrachten kunt uitvoeren - je hebt toegang tot actuele juridische bronnen",
+    "- Voor lokale regelgeving (APV): geef algemene juridische principes en verwijs naar de juiste bronnen",
     "",
     jsonContext ? "BESCHIKBARE BRONNEN:" : "GEEN SPECIFIEKE BRONNEN BESCHIKBAAR",
     jsonContext || "Gebruik algemene juridische kennis, maar vermeld dit expliciet.",

@@ -145,7 +145,16 @@ export async function searchJsonSources(query: string, limit: number = 10): Prom
     return sources.slice(0, limit)
   }
   
-  const searchTerms = query.toLowerCase().split(' ').filter(term => term.length > 2)
+  // Belangrijke juridische afkortingen die niet gefilterd moeten worden
+  const importantLegalTerms = [
+    'apv', 'bw', 'sr', 'sv', 'wvsr', 'wvw', 'awb', 'atw', 'cao', 'eu', 'gdpr', 'avg',
+    'ilo', 'kvk', 'afm', 'dnb', 'acm', 'cbp', 'ap', 'rvs', 'rvd', 'ovj', 'om'
+  ]
+  
+  // Filter zoektermen: behoud termen > 2 karakters OF belangrijke juridische termen
+  const searchTerms = query.toLowerCase().split(' ').filter(term => 
+    term.length > 2 || importantLegalTerms.includes(term.toLowerCase())
+  )
   
   const scoredSources = sources.map(source => {
     let score = 0
@@ -160,12 +169,21 @@ export async function searchJsonSources(query: string, limit: number = 10): Prom
     
     // Score op basis van matches
     searchTerms.forEach(term => {
-      if (source.naam.toLowerCase().includes(term)) score += 10
-      if (source.topic.toLowerCase().includes(term)) score += 8
-      if (source.trefwoorden.some(keyword => keyword.toLowerCase().includes(term))) score += 8
-      if (source.beschrijving.toLowerCase().includes(term)) score += 5
-      if (source.categorie.toLowerCase().includes(term)) score += 3
-      if (searchableText.includes(term)) score += 1
+      const lowerTerm = term.toLowerCase()
+      
+      // Exacte matches krijgen hogere score
+      if (source.naam.toLowerCase().includes(lowerTerm)) score += 10
+      if (source.topic.toLowerCase().includes(lowerTerm)) score += 8
+      if (source.trefwoorden.some(keyword => keyword.toLowerCase().includes(lowerTerm))) score += 8
+      if (source.beschrijving.toLowerCase().includes(lowerTerm)) score += 5
+      if (source.categorie.toLowerCase().includes(lowerTerm)) score += 3
+      if (searchableText.includes(lowerTerm)) score += 1
+      
+      // Extra score voor belangrijke juridische termen
+      if (importantLegalTerms.includes(lowerTerm)) {
+        if (source.topic.toLowerCase().includes(lowerTerm)) score += 15
+        if (source.naam.toLowerCase().includes(lowerTerm)) score += 12
+      }
     })
     
     return { source, score }
