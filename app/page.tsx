@@ -612,17 +612,126 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Jurisprudentie Section */}
+      <section className="py-16 bg-gradient-to-br from-slate-50 to-blue-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Jurisprudentie Zoeken</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Doorzoek relevante rechtspraak en uitspraken per wetsartikel of onderwerp
+            </p>
+          </div>
+          
+          <div className="max-w-4xl mx-auto">
+            <Card className="p-8 bg-white shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center">
+                  <Gavel className="h-8 w-8" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">Jurisprudentie Database</h3>
+                  <p className="text-gray-600">Zoek relevante uitspraken van Nederlandse rechters</p>
+                </div>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-6 mb-8">
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Zoek op Wetsartikel</h4>
+                      <p className="text-sm text-gray-600">Bijv. "96b Sv", "95 Sv", "8 EVRM" - vind alle relevante uitspraken</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Zoek op Onderwerp</h4>
+                      <p className="text-sm text-gray-600">Bijv. "doorzoeken voertuig", "fouillering", "privacy rechten"</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Uitspraken in Begrijpelijke Taal</h4>
+                      <p className="text-sm text-gray-600">Samenvattingen die ook voor niet-juristen duidelijk zijn</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Officiële ECLI-nummers</h4>
+                      <p className="text-sm text-gray-600">Directe links naar volledige uitspraken op rechtspraak.nl</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Geavanceerde Filters</h4>
+                      <p className="text-sm text-gray-600">Filter op jaar, type rechter, rechtsgebied en meer</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Hoge Raad tot Rechtbank</h4>
+                      <p className="text-sm text-gray-600">Uitspraken van alle Nederlandse rechtsniveaus</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-6 mb-6">
+                <h4 className="font-semibold text-gray-900 mb-3">Voorbeelden van zoekopdrachten:</h4>
+                <div className="grid md:grid-cols-2 gap-3 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="bg-white">96b Sv</Badge>
+                    <span className="text-gray-600">→ Doorzoeken voertuigen</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="bg-white">95 Sv</Badge>
+                    <span className="text-gray-600">→ Fouillering personen</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="bg-white">8 EVRM</Badge>
+                    <span className="text-gray-600">→ Privacy rechten</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="bg-white">huiszoeking</Badge>
+                    <span className="text-gray-600">→ Alle huiszoeking cases</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="text-center">
+                <Button size="lg" asChild className="bg-purple-600 hover:bg-purple-700">
+                  <Link href="/jurisprudentie">
+                    <Gavel className="h-5 w-5 mr-2" />
+                    Doorzoek Jurisprudentie
+                  </Link>
+                </Button>
+                <p className="text-sm text-gray-600 mt-3">
+                  Perfect voor advocaten, rechtenstudenten, politieagenten en iedereen die rechtspraak wil begrijpen
+                </p>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* How It Works Section */}
       <section className="py-16 bg-white border-t border-gray-100">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Hoe Werkt WetHelder?</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Drie eenvoudige stappen naar betrouwbare juridische informatie
+              Vier verschillende manieren naar betrouwbare juridische informatie
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {/* Step 1: Ask Questions */}
             <Card className="text-center p-6 hover:shadow-lg transition-all duration-200">
               <div className="w-16 h-16 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-6">
@@ -658,13 +767,28 @@ export default function HomePage() {
               <div className="w-16 h-16 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-6">
                 <BookOpen className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">3. Wet & Uitleg Voor Diepgang</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">3. Wetteksten Voor Diepgang</h3>
               <p className="text-gray-600 mb-4">
-                <strong>Wet & Uitleg gaat de diepte in</strong> - gebruik dit enkel wanneer je diepgang wilt. 
+                <strong>Wetteksten gaat de diepte in</strong> - gebruik dit enkel wanneer je diepgang wilt. 
                 Niet voor overige vragen. Krijg uitgebreide juridische analyses met artikelverwijzingen.
               </p>
               <div className="text-sm text-green-600 font-medium">
                 ✓ Diepgaande Analyse • Artikelverwijzingen
+              </div>
+            </Card>
+
+            {/* Step 4: Jurisprudentie */}
+            <Card className="text-center p-6 hover:shadow-lg transition-all duration-200">
+              <div className="w-16 h-16 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mx-auto mb-6">
+                <Gavel className="h-8 w-8" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">4. Jurisprudentie Zoeken</h3>
+              <p className="text-gray-600 mb-4">
+                <strong>Zoek relevante rechtspraak</strong> per wetsartikel of onderwerp. 
+                Vind uitspraken van Hoge Raad tot rechtbank met begrijpelijke samenvattingen.
+              </p>
+              <div className="text-sm text-purple-600 font-medium">
+                ✓ ECLI-nummers • Filters • Begrijpelijke Taal
               </div>
             </Card>
           </div>
@@ -687,11 +811,11 @@ export default function HomePage() {
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span><strong>Kies het juiste profiel:</strong> Politieagent, advocaat, burger - elk krijgt passende antwoorden</span>
+                    <span><strong>Voor rechtspraak:</strong> Gebruik Jurisprudentie om uitspraken per wetsartikel te vinden</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span><strong>Alle antwoorden:</strong> Gebaseerd op officiële Nederlandse wetgeving en rechtspraak</span>
+                    <span><strong>Kies het juiste profiel:</strong> Politieagent, advocaat, burger - elk krijgt passende antwoorden</span>
                   </div>
                 </div>
               </CardContent>
