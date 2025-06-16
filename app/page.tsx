@@ -140,12 +140,20 @@ export default function HomePage() {
     
     setIsSubmitting(true)
     
-    // Store query in sessionStorage
+    // Store query in localStorage with the key that ask page listens for
     const query = searchQuery.trim()
+    const questionData = {
+      question: query,
+      profile: selectedRole
+    }
+    
+    localStorage.setItem('wetHelder_mainscreen_question', JSON.stringify(questionData))
+    
+    // Also store in sessionStorage as backup
     sessionStorage.setItem('autoSubmitQuery', query)
     sessionStorage.setItem('autoSubmitProfile', selectedRole)
     
-    // Navigate to /ask with query and profile parameters
+    // Navigate to /ask with query and profile parameters as additional backup
     const params = new URLSearchParams({
       q: query,
       profile: selectedRole
@@ -197,20 +205,8 @@ export default function HomePage() {
             <Card className="max-w-2xl mx-auto mb-8 shadow-lg">
               <CardContent className="p-6">
                 <div className="space-y-4">
-                  {/* Desktop: side by side, Mobile: stacked */}
+                  {/* Search input with submit button */}
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <Select value={selectedRole} onValueChange={(value) => setSelectedRole(value)}>
-                      <SelectTrigger className="w-full sm:w-auto h-12">
-                        <SelectValue placeholder="Selecteer uw functie" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {professionProfiles.map((profile) => (
-                          <SelectItem key={profile.id} value={profile.id}>
-                            {profile.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
                     <Input
                       placeholder="Stel uw juridische vraag..."
                       value={searchQuery}
@@ -230,16 +226,32 @@ export default function HomePage() {
                     </Button>
                   </div>
                   
-                  {/* Wet & Uitleg Toggle */}
-                  <div className="flex justify-center">
+                  {/* Role selector and Wet & Uitleg button */}
+                  <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
+                    <Select value={selectedRole} onValueChange={(value) => setSelectedRole(value)}>
+                      <SelectTrigger className="w-full sm:w-auto h-10 min-w-[200px]">
+                        <SelectValue placeholder="Selecteer uw functie" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {professionProfiles.map((profile) => (
+                          <SelectItem key={profile.id} value={profile.id}>
+                            {profile.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex items-center gap-2 text-sm"
+                      className="flex items-center gap-2 text-sm h-10"
                       onClick={() => {
-                        // Store preference and redirect to ask page
+                        // Store preference and redirect to ask page with role
                         localStorage.setItem('wetUitlegEnabled', 'true')
-                        window.location.href = '/ask'
+                        const params = new URLSearchParams({
+                          profile: selectedRole
+                        })
+                        window.location.href = `/ask?${params.toString()}`
                       }}
                     >
                       <BookOpen className="h-4 w-4" />
