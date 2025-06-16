@@ -39,7 +39,9 @@ import {
   PanelRight,
   Copy,
   Share2,
-  ExternalLink
+  ExternalLink,
+  ToggleLeft,
+  ToggleRight
 } from 'lucide-react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
@@ -426,6 +428,7 @@ function AskPageContent() {
   const [selectedCitationQuery, setSelectedCitationQuery] = useState<{queryId: string, question: string} | null>(null)
   const [activeTab, setActiveTab] = useState<'history' | 'favorites'>('history')
   const [showSidebar, setShowSidebar] = useState(false)
+  const [wetUitlegEnabled, setWetUitlegEnabled] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const hasAutoSubmitted = useRef(false)
   const router = useRouter()
@@ -725,7 +728,8 @@ function AskPageContent() {
         body: JSON.stringify({
           question,
           profession: currentProfession,
-          history: conversationHistory
+          history: conversationHistory,
+          wetUitleg: wetUitlegEnabled
         }),
       })
 
@@ -791,7 +795,7 @@ function AskPageContent() {
     } finally {
       setIsLoading(false)
     }
-  }, [input, isLoading, profession, messages, setMessages, setInput, setIsLoading, setRemainingQuestions])
+  }, [input, isLoading, profession, messages, setMessages, setInput, setIsLoading, setRemainingQuestions, wetUitlegEnabled])
 
   const clearConversation = () => {
     setMessages([])
@@ -977,6 +981,24 @@ function AskPageContent() {
                           })}
                         </SelectContent>
                       </Select>
+                    </div>
+
+                    {/* Wet & Uitleg Toggle */}
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant={wetUitlegEnabled ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setWetUitlegEnabled(!wetUitlegEnabled)}
+                        className="h-9 flex items-center gap-2"
+                      >
+                        {wetUitlegEnabled ? (
+                          <ToggleRight className="h-4 w-4" />
+                        ) : (
+                          <ToggleLeft className="h-4 w-4" />
+                        )}
+                        <span className="text-xs">Wet & Uitleg</span>
+                      </Button>
                     </div>
 
                     {/* Clear Button */}

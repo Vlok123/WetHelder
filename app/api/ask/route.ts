@@ -149,7 +149,7 @@ function needsGoogleSearch(jsonSources: JsonBron[], query: string): boolean {
 
 export async function POST(request: NextRequest) {
   try {
-    const { question, profession = 'algemeen', history = [] } = await request.json()
+    const { question, profession = 'algemeen', history = [], wetUitleg = false } = await request.json()
 
     if (!question) {
       return NextResponse.json({ error: 'Vraag is verplicht' }, { status: 400 })
@@ -210,7 +210,8 @@ export async function POST(request: NextRequest) {
       profession,
       jsonContext,
       googleResults,
-      history
+      history,
+      wetUitleg
     })
 
     console.log('✅ OpenAI response voltooid')

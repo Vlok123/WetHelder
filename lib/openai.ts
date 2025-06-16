@@ -11,6 +11,7 @@ interface CompletionParams {
   jsonContext: string
   googleResults: string
   history: ChatMessage[]
+  wetUitleg?: boolean
 }
 
 function getProfessionSpecificPrompt(profession: string): string {
@@ -125,13 +126,50 @@ export async function streamingCompletion({
   profession,
   jsonContext,
   googleResults,
-  history
+  history,
+  wetUitleg = false
 }: CompletionParams) {
   // Build profession-specific system prompt
   const professionPrompt = getProfessionSpecificPrompt(profession)
   
+  const wetUitlegInstructions = wetUitleg ? `
+
+📌 SPECIALE INSTRUCTIE: "WET & UITLEG" MODUS ACTIEF
+
+Structureer je antwoord als volgt:
+
+1. **KORT ANTWOORD** (2-3 zinnen)
+   - Directe conclusie in duidelijke taal
+   - Praktisch antwoord op de vraag
+
+2. **WET & UITLEG** (uitgebreide juridische onderbouwing)
+   
+   Voor elke relevante stap:
+   
+   **Stap X: [Beschrijving]**
+   - **Wettelijke grondslag**: [Wetnaam] artikel [nummer] lid [nummer]
+   - **Uitleg**: Korte uitleg van de werking van dit artikel
+   - **Link**: https://wetten.overheid.nl/[exacte-link-naar-artikel]
+   - **Praktijk**: Hoe dit in de praktijk werkt
+   
+   **Belangrijke aandachtspunten:**
+   - Benoem altijd of sprake moet zijn van een **verdachte** (art. 27 Sv)
+   - Vermeld bij **heterdaad** situaties (art. 128 Sv)
+   - Onderscheid tussen **doorzoeken**, **inzage**, **inbeslagname**
+   - Benoem of toestemming van (hulp)OvJ vereist is
+   - Vermeld bij **klachtdelicten** (art. 164 Sv)
+   - Voeg relevante jurisprudentie toe (ECLI-nummers)
+
+3. **PRAKTIJKTIPS**
+   - Concrete handelingsperspectieven
+   - Veelgemaakte fouten
+   - Procedurele vereisten
+
+Gebruik deze structuur ALTIJD wanneer Wet & Uitleg is ingeschakeld.` : ""
+
   const systemPrompt = [
     professionPrompt,
+    wetUitlegInstructions,
     "",
     "Gebruik UITSLUITEND de volgende bronnen voor je antwoord.",
     "Baseer elk onderdeel van je antwoord op de juridische gegevens uit deze context.",
