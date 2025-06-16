@@ -36,7 +36,7 @@ import {
   RefreshCw,
   Clock,
   RotateCcw,
-  PanelRight,
+
   Copy,
   Share2,
   ExternalLink,
@@ -547,8 +547,6 @@ function AskPageContent() {
   const [remainingQuestions, setRemainingQuestions] = useState<number | null>(null)
   const [userRole, setUserRole] = useState<string>('ANONYMOUS')
   const [selectedCitationQuery, setSelectedCitationQuery] = useState<{queryId: string, question: string} | null>(null)
-  const [activeTab, setActiveTab] = useState<'history' | 'favorites'>('history')
-  const [showSidebar, setShowSidebar] = useState(false)
   const [wetUitlegEnabled, setWetUitlegEnabled] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const hasAutoSubmitted = useRef(false)
@@ -642,6 +640,15 @@ function AskPageContent() {
 
     checkRateLimit()
   }, [session])
+
+  // Set profession from URL parameter on page load (without auto-submit)
+  useEffect(() => {
+    const profile = searchParams.get('profile')
+    if (profile && !hasAutoSubmitted.current) {
+      const mappedProfession = mapProfileToProfession(profile)
+      setProfession(mappedProfession)
+    }
+  }, [searchParams])
 
   // Auto-submit from URL parameters or sessionStorage
   useEffect(() => {
@@ -941,7 +948,6 @@ function AskPageContent() {
   const handleSearchSelect = (searchTerm: string, profession: string) => {
     setInput(searchTerm)
     setProfession(mapProfileToProfession(profession))
-    setShowSidebar(false)
   }
 
   const copyToClipboard = (text: string) => {
@@ -957,10 +963,9 @@ function AskPageContent() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Navigation />
       
-      <div className="container mx-auto px-4 py-6 max-w-6xl">
-        <div className="flex gap-6">
-          {/* Main Content */}
-          <div className="flex-1 min-w-0">
+      <div className="container mx-auto px-4 py-6 max-w-4xl">
+        {/* Main Content */}
+        <div className="w-full">
             {/* Header */}
             <div className="mb-6">
               <div className="flex items-center justify-between mb-4">
@@ -972,14 +977,6 @@ function AskPageContent() {
                     Stel je juridische vraag en krijg direct een betrouwbaar antwoord
                   </p>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowSidebar(!showSidebar)}
-                  className="lg:hidden"
-                >
-                  <PanelRight className="h-4 w-4" />
-                </Button>
               </div>
 
               {/* Rate limit info */}
@@ -1111,7 +1108,7 @@ function AskPageContent() {
                     </Button>
                   </div>
 
-                                    {/* Options */}
+                  {/* Options */}
                   <div className="flex flex-col lg:flex-row gap-3 lg:items-end">
                     {/* Profession Selector */}
                     <div className="flex-1 min-w-0">
@@ -1175,60 +1172,6 @@ function AskPageContent() {
             </Card>
 
             <div ref={messagesEndRef} />
-          </div>
-
-          {/* Sidebar */}
-          <div className={`${showSidebar ? 'block' : 'hidden'} lg:block w-80 flex-shrink-0`}>
-            <Card className="sticky top-6">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Geschiedenis & Favorieten</CardTitle>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowSidebar(false)}
-                    className="lg:hidden h-8 w-8 p-0"
-                  >
-                    ×
-                  </Button>
-                </div>
-                <div className="flex bg-gray-100 rounded-lg p-1">
-                  <button
-                    onClick={() => setActiveTab('history')}
-                    className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      activeTab === 'history'
-                        ? 'bg-white text-gray-900 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    <History className="h-4 w-4" />
-                    Geschiedenis
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('favorites')}
-                    className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      activeTab === 'favorites'
-                        ? 'bg-white text-gray-900 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    <Heart className="h-4 w-4" />
-                    Favorieten
-                  </button>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-0">
-                {activeTab === 'history' ? (
-                  <div className="space-y-2">
-                    <p className="text-sm text-gray-500">Zoekgeschiedenis wordt hier weergegeven</p>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <p className="text-sm text-gray-500">Favorieten worden hier weergegeven</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>
