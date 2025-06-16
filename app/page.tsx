@@ -571,9 +571,9 @@ export default function HomePage() {
                     Start Chat
                   </Link>
                 </Button>
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <Lock className="h-4 w-4" />
-                  <span>Gratis te gebruiken • Geen registratie vereist</span>
+                <div className="flex items-center gap-2 text-sm text-green-600">
+                  <CheckCircle2 className="h-4 w-4" />
+                  <span className="font-medium">Accounts zijn tijdelijk helemaal gratis!</span>
                 </div>
               </div>
             </div>
@@ -642,8 +642,14 @@ export default function HomePage() {
             </Button>
           </div>
           
-          <div className="mt-6 text-sm opacity-75">
-            Geen creditcard vereist • Direct beginnen
+          <div className="mt-6 text-sm opacity-90">
+            <div className="flex items-center justify-center gap-2">
+              <CheckCircle2 className="h-4 w-4" />
+              <span className="font-medium">Accounts zijn tijdelijk helemaal gratis!</span>
+            </div>
+            <div className="mt-1 opacity-75">
+              Geen creditcard vereist • Direct beginnen
+            </div>
           </div>
         </div>
       </section>
