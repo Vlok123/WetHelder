@@ -36,12 +36,12 @@ import {
   RefreshCw,
   Clock,
   RotateCcw,
-
   Copy,
   Share2,
   ExternalLink,
   ToggleLeft,
-  ToggleRight
+  ToggleRight,
+  Bookmark
 } from 'lucide-react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
@@ -966,213 +966,212 @@ function AskPageContent() {
       <div className="container mx-auto px-4 py-6 max-w-4xl">
         {/* Main Content */}
         <div className="w-full">
-            {/* Header */}
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                    Juridische Assistent
-                  </h1>
-                  <p className="text-gray-600">
-                    Stel je juridische vraag en krijg direct een betrouwbaar antwoord
-                  </p>
-                </div>
+          {/* Header */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                  Juridische Assistent
+                </h1>
+                <p className="text-gray-600">
+                  Stel je juridische vraag en krijg direct een betrouwbaar antwoord
+                </p>
               </div>
-
-              {/* Rate limit info */}
-              {!session && remainingQuestions !== null && (
-                <div className={`mb-4 p-3 border rounded-lg ${
-                  remainingQuestions === 0 
-                    ? 'bg-red-50 border-red-200' 
-                    : 'bg-amber-50 border-amber-200'
-                }`}>
-                  <p className={`text-sm ${
-                    remainingQuestions === 0 ? 'text-red-800' : 'text-amber-800'
-                  }`}>
-                    <Info className="h-4 w-4 inline mr-1" />
-                    {remainingQuestions === 0 ? (
-                      <>
-                        Je hebt het maximum aantal gratis vragen bereikt.{' '}
-                        <Link href="/auth/signin" className={`ml-1 underline hover:no-underline ${
-                          remainingQuestions === 0 ? 'text-red-900' : 'text-amber-900'
-                        }`}>
-                          Maak een gratis account aan voor onbeperkte vragen
-                        </Link>
-                      </>
-                    ) : (
-                      <>
-                        Je hebt nog {remainingQuestions} gratis vragen over.{' '}
-                        <Link href="/auth/signin" className="ml-1 text-amber-900 underline hover:no-underline">
-                          Log in voor onbeperkte vragen
-                        </Link>
-                      </>
-                    )}
-                  </p>
-                </div>
-              )}
             </div>
 
-            {/* Chat Messages */}
-            <div className="space-y-6 mb-6">
-              {messages.map((message) => (
-                <div key={message.id} className="space-y-4">
-                  {/* User Question */}
-                  <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                      <User className="h-4 w-4 text-white" />
-                    </div>
-                    <div className="flex-1 bg-white rounded-lg p-4 shadow-sm border">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="font-medium text-gray-900">Je vraag</span>
-                        {message.profession && (
-                          <Badge variant="secondary" className="text-xs">
-                            {professionConfig[message.profession as keyof typeof professionConfig]?.label}
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-gray-800">{message.question}</p>
-                    </div>
-                  </div>
+            {/* Rate limit info */}
+            {!session && remainingQuestions !== null && (
+              <div className={`mb-4 p-3 border rounded-lg ${
+                remainingQuestions === 0 
+                  ? 'bg-red-50 border-red-200' 
+                  : 'bg-amber-50 border-amber-200'
+              }`}>
+                <p className={`text-sm ${
+                  remainingQuestions === 0 ? 'text-red-800' : 'text-amber-800'
+                }`}>
+                  <Info className="h-4 w-4 inline mr-1" />
+                  {remainingQuestions === 0 ? (
+                    <>
+                      Je hebt het maximum aantal gratis vragen bereikt.{' '}
+                      <Link href="/auth/signin" className={`ml-1 underline hover:no-underline ${
+                        remainingQuestions === 0 ? 'text-red-900' : 'text-amber-900'
+                      }`}>
+                        Maak een gratis account aan voor onbeperkte vragen
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      Je hebt nog {remainingQuestions} gratis vragen over.{' '}
+                      <Link href="/auth/signin" className="ml-1 text-amber-900 underline hover:no-underline">
+                        Log in voor onbeperkte vragen
+                      </Link>
+                    </>
+                  )}
+                </p>
+              </div>
+            )}
+          </div>
 
-                  {/* WetHelder Response */}
-                  <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
-                      <Bot className="h-4 w-4 text-white" />
+          {/* Chat Messages */}
+          <div className="space-y-6 mb-6">
+            {messages.map((message) => (
+              <div key={message.id} className="space-y-4">
+                {/* User Question */}
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                    <User className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="flex-1 bg-white rounded-lg p-4 shadow-sm border">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="font-medium text-gray-900">Je vraag</span>
+                      {message.profession && (
+                        <Badge variant="secondary" className="text-xs">
+                          {professionConfig[message.profession as keyof typeof professionConfig]?.label}
+                        </Badge>
+                      )}
                     </div>
-                    <div className="flex-1 bg-white rounded-lg p-4 shadow-sm border">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="font-medium text-gray-900">WetHelder</span>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => copyToClipboard(message.answer)}
-                            className="h-8 w-8 p-0"
-                          >
-                            <Copy className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => shareResponse(message.question, message.answer)}
-                            className="h-8 w-8 p-0"
-                          >
-                            <Share2 className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                            title="Favoriet toevoegen"
-                          >
-                            <Heart className="h-3 w-3" />
-                          </Button>
-                        </div>
+                    <p className="text-gray-800">{message.question}</p>
+                  </div>
+                </div>
+
+                {/* WetHelder Response */}
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
+                    <Bot className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="flex-1 bg-white rounded-lg p-4 shadow-sm border">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="font-medium text-gray-900">WetHelder</span>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => copyToClipboard(message.answer)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => shareResponse(message.question, message.answer)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Share2 className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                          title="Favoriet toevoegen"
+                        >
+                          <Heart className="h-3 w-3" />
+                        </Button>
                       </div>
-                      
-                      {message.isLoading ? (
-                        <div className="flex items-center gap-2 text-gray-600">
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          <span>Aan het denken...</span>
-                        </div>
-                      ) : (
-                                              <div className="prose prose-sm max-w-none">
+                    </div>
+                    
+                    {message.isLoading ? (
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span>Aan het denken...</span>
+                      </div>
+                    ) : (
+                      <div className="prose prose-sm max-w-none">
                         {formatText(message.answer)}
                       </div>
-                      )}
-                    </div>
+                    )}
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
+          </div>
 
-            {/* Input Form */}
-            <Card className="sticky bottom-6 shadow-lg border-2">
-              <CardContent className="p-4">
-                <form onSubmit={(e) => handleSubmit(e, profession)} className="space-y-4">
-                  {/* Question Input */}
-                  <div className="flex gap-2">
-                    <Input
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      placeholder="Stel je juridische vraag..."
-                      className="flex-1"
-                      disabled={isLoading}
-                    />
-                    <Button type="submit" disabled={isLoading || !input.trim() || (!session && remainingQuestions === 0)}>
-                      {isLoading ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+          {/* Input Form */}
+          <Card className="sticky bottom-6 shadow-lg border-2">
+            <CardContent className="p-4">
+              <form onSubmit={(e) => handleSubmit(e, profession)} className="space-y-4">
+                {/* Question Input */}
+                <div className="flex gap-2">
+                  <Input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Stel je juridische vraag..."
+                    className="flex-1"
+                    disabled={isLoading}
+                  />
+                  <Button type="submit" disabled={isLoading || !input.trim() || (!session && remainingQuestions === 0)}>
+                    {isLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Send className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+
+                {/* Options */}
+                <div className="flex flex-col lg:flex-row gap-3 lg:items-end">
+                  {/* Profession Selector */}
+                  <div className="flex-1 min-w-0">
+                    <label className="block text-xs font-medium text-slate-600 mb-1">
+                      Functieprofiel
+                    </label>
+                    <Select value={profession} onValueChange={(value) => setProfession(value as Profession)}>
+                      <SelectTrigger className="w-full h-9">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.entries(professionConfig).map(([key, config]) => {
+                          const IconComponent = config.icon
+                          return (
+                            <SelectItem key={key} value={key}>
+                              <div className="flex items-center gap-2">
+                                <IconComponent className="h-4 w-4" />
+                                <span>{config.label}</span>
+                              </div>
+                            </SelectItem>
+                          )
+                        })}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Wet & Uitleg Toggle */}
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant={wetUitlegEnabled ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setWetUitlegEnabled(!wetUitlegEnabled)}
+                      className="h-9 flex items-center gap-2"
+                    >
+                      {wetUitlegEnabled ? (
+                        <ToggleRight className="h-4 w-4" />
                       ) : (
-                        <Send className="h-4 w-4" />
+                        <ToggleLeft className="h-4 w-4" />
                       )}
+                      <span className="text-xs">Wet & Uitleg</span>
                     </Button>
                   </div>
 
-                  {/* Options */}
-                  <div className="flex flex-col lg:flex-row gap-3 lg:items-end">
-                    {/* Profession Selector */}
-                    <div className="flex-1 min-w-0">
-                      <label className="block text-xs font-medium text-slate-600 mb-1">
-                        Functieprofiel
-                      </label>
-                      <Select value={profession} onValueChange={(value) => setProfession(value as Profession)}>
-                        <SelectTrigger className="w-full h-9">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.entries(professionConfig).map(([key, config]) => {
-                            const IconComponent = config.icon
-                            return (
-                              <SelectItem key={key} value={key}>
-                                <div className="flex items-center gap-2">
-                                  <IconComponent className="h-4 w-4" />
-                                  <span>{config.label}</span>
-                                </div>
-                              </SelectItem>
-                            )
-                          })}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                  {/* Clear Button */}
+                  {messages.length > 0 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={clearConversation}
+                      className="h-9"
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      Wissen
+                    </Button>
+                  )}
+                </div>
+              </form>
+            </CardContent>
+          </Card>
 
-                    {/* Wet & Uitleg Toggle */}
-                    <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        variant={wetUitlegEnabled ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setWetUitlegEnabled(!wetUitlegEnabled)}
-                        className="h-9 flex items-center gap-2"
-                      >
-                        {wetUitlegEnabled ? (
-                          <ToggleRight className="h-4 w-4" />
-                        ) : (
-                          <ToggleLeft className="h-4 w-4" />
-                        )}
-                        <span className="text-xs">Wet & Uitleg</span>
-                      </Button>
-                    </div>
-
-                    {/* Clear Button */}
-                    {messages.length > 0 && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={clearConversation}
-                        className="h-9"
-                      >
-                        <Trash2 className="h-4 w-4 mr-1" />
-                        Wissen
-                      </Button>
-                    )}
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-
-            <div ref={messagesEndRef} />
-          </div>
+          <div ref={messagesEndRef} />
         </div>
       </div>
 
