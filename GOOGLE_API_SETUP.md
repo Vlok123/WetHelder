@@ -8,7 +8,7 @@ WetHelder.nl gebruikt een intelligente routing-strategie die eerst zoekt in loka
 ```bash
 # Google Custom Search API
 GOOGLE_API_KEY=your_google_api_key_here
-GOOGLE_SEARCH_ENGINE_ID=your_custom_search_engine_id_here
+GOOGLE_CSE_ID=your_custom_search_engine_id_here
 ```
 
 ## Setup Instructies
@@ -46,7 +46,7 @@ GOOGLE_SEARCH_ENGINE_ID=your_custom_search_engine_id_here
 - `autoriteitpersoonsgegevens.nl` - Privacy wetgeving
 
 4. Stel de search engine in op "Search the entire web but emphasize included sites"
-5. Kopieer de Search Engine ID naar `GOOGLE_SEARCH_ENGINE_ID`
+5. Kopieer de Search Engine ID naar `GOOGLE_CSE_ID`
 
 ## Routing Logica
 
@@ -130,7 +130,7 @@ Voeg toe aan je `.env.local`:
 ```bash
 # Google Custom Search API
 GOOGLE_API_KEY=your_google_api_key_here
-GOOGLE_SEARCH_ENGINE_ID=your_custom_search_engine_id_here
+GOOGLE_CSE_ID=your_custom_search_engine_id_here
 ```
 
 ## 📊 Usage & Limits
