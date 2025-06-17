@@ -253,8 +253,8 @@ export async function streamingCompletion({
     "",
     "KERNPRINCIPES VOOR JURIDISCHE ANTWOORDEN:",
     "- Gebruik ALLEEN informatie uit de aangeleverde OFFICIËLE JURIDISCHE BRONNEN sectie",
-    "- VERBODEN: Vermeld GEEN websites, bronnen of referenties die niet expliciet in de OFFICIËLE JURIDISCHE BRONNEN sectie staan",
-    "- Als er GEEN officiële bronnen beschikbaar zijn: geef een algemeen juridisch advies maar vermeld GEEN specifieke websites",
+    "- BELANGRIJK: Voor APV-vragen en lokale regelgeving, gebruik actief de gevonden bronnen van lokaleregelgeving.overheid.nl",
+    "- Verwijs specifiek naar artikelnummers en wettelijke bepalingen uit de aangeleverde bronnen",
     "- Geef UITGEBREIDE juridische analyses gebaseerd op algemene wettelijke kennis",
     "- Vermeld ALTIJD de wettelijke grondslag (wetboek en artikelnummer)",
     "- Leg juridische begrippen uit met wetsverwijzingen",
@@ -269,8 +269,8 @@ export async function streamingCompletion({
     jsonContext ? "=== OFFICIËLE JURIDISCHE BRONNEN (GEBRUIK ALLEEN DEZE BRONNEN) ===" : "=== GEEN OFFICIËLE JURIDISCHE BRONNEN BESCHIKBAAR ===",
     jsonContext || "⚠️ INSTRUCTIE: Gebruik algemene juridische kennis uit Nederlandse wetgeving, maar vermeld GEEN specifieke websites of externe bronnen.",
     "",
-    googleResults ? "=== ACHTERGROND INFORMATIE (GEBRUIK NIET ALS BRON - ALLEEN TER REFERENTIE) ===" : "",
-    googleResults ? `${googleResults}\n\n⚠️ BELANGRIJK: Gebruik deze informatie alleen voor begrip, maar vermeld deze websites NIET als bron in je antwoord.` : "",
+    googleResults ? "=== AANVULLENDE OFFICIËLE JURIDISCHE BRONNEN ===" : "",
+    googleResults ? `${googleResults}\n\n✅ INSTRUCTIE: Deze bronnen bevatten actuele juridische informatie van overheid.nl en andere officiële websites. Gebruik deze informatie actief en verwijs naar de specifieke artikelen en bronnen.` : "",
   ].filter(line => line !== "").join('\n')
 
   // Phase 3: Apply context analysis and build enhanced prompt
