@@ -69,9 +69,10 @@ function incrementRateLimit(ip: string): void {
 
 async function searchGoogle(query: string): Promise<string[]> {
   try {
-    const searchQuery = `${query} site:wetten.overheid.nl OR site:rechtspraak.nl`
+    // Enhanced search to include APV sources and municipal websites
+    const searchQuery = `${query} (site:wetten.overheid.nl OR site:rechtspraak.nl OR "APV" OR "algemene plaatselijke verordening" OR site:*.nl "verordening" OR "gemeentewet" OR "provinciale staten" OR "waterschapswet")`
     const response = await fetch(
-      `https://www.googleapis.com/customsearch/v1?key=${process.env.GOOGLE_API_KEY}&cx=${process.env.GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(searchQuery)}&num=5`
+      `https://www.googleapis.com/customsearch/v1?key=${process.env.GOOGLE_API_KEY}&cx=${process.env.GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(searchQuery)}&num=8`
     )
     
     if (!response.ok) {
@@ -95,17 +96,18 @@ async function searchGoogle(query: string): Promise<string[]> {
   }
 }
 
-const LEGAL_ANALYSIS_PROMPT = `Je bent een juridische AI-assistent gespecialiseerd in Nederlandse wetgeving. Je taak is om uitgebreide uitleg te geven over specifieke wetsartikelen.
+const LEGAL_ANALYSIS_PROMPT = `Je bent een juridische AI-assistent gespecialiseerd in Nederlandse wetgeving. Je taak is om uitgebreide uitleg te geven over specifieke wetsartikelen, inclusief APV's en lokale verordeningen.
 
 BELANGRIJKE INSTRUCTIES:
-- Gebruik uitsluitend actuele Nederlandse wetgeving
+- Gebruik uitsluitend actuele Nederlandse wetgeving (Rijkswetten, provinciale verordeningen, APV's)
 - Controleer of het artikel niet vervallen is
 - Verwijs naar het volledige wetsartikel (inclusief lid en sublid)
 - Geef praktische uitleg over toepassing
 - Benoem relevante bijzonderheden, uitzonderingen en interpretatieproblemen
 - Voeg waar relevant jurisprudentie toe met ECLI-nummers
 - Vermeld verwante artikelen die vaak samen voorkomen
-- Voeg altijd een link toe naar wetten.overheid.nl
+- Voor rijkswetten: link naar wetten.overheid.nl
+- Voor APV's en lokale verordeningen: vermeld gemeente/provincie en zoek naar officiële bronnen
 
 KRITISCH: Citeer ALTIJD eerst de volledige wettekst voordat je uitleg geeft. Gebruikers willen eerst het artikel zien en daarna pas de uitleg.
 
@@ -113,10 +115,10 @@ STRUCTUUR VAN JE ANTWOORD:
 Gebruik exact deze markers voor elke sectie:
 
 WETSARTIKEL:
-[Volledige tekst van het wetsartikel - DIT IS VERPLICHT EN MOET ALTIJD ALS EERSTE]
+[Volledige tekst van het wetsartikel/APV-artikel - DIT IS VERPLICHT EN MOET ALTIJD ALS EERSTE]
 
 LINK:
-[Link naar wetten.overheid.nl]
+[Link naar wetten.overheid.nl voor rijkswetten, of gemeentelijke/provinciale website voor APV's]
 
 SAMENVATTING:
 [Korte, begrijpelijke uitleg: wat regelt dit artikel?]
@@ -125,7 +127,7 @@ TOELICHTING:
 [Uitgebreide uitleg met bijzonderheden, uitzonderingen, interpretatieproblemen]
 
 PRAKTIJK:
-[Concrete situaties waarin dit artikel een rol speelt, vooral voor politieagenten/juristen/handhavers]
+[Concrete situaties waarin dit artikel een rol speelt, vooral voor politieagenten/juristen/BOA's/gemeentelijke handhavers. Voor APV's: focus op lokale handhaving]
 
 JURISPRUDENTIE:
 [Relevante uitspraken met ECLI-nummers en korte uitleg]
@@ -134,7 +136,7 @@ VERWANTE ARTIKELEN:
 [Andere artikelen die vaak samen voorkomen, met uitleg waarom]
 
 BRONNEN:
-[Links naar officiële bronnen zoals wetten.overheid.nl, rechtspraak.nl]
+[Links naar officiële bronnen: wetten.overheid.nl (rijkswetten), gemeentelijke/provinciale websites (APV's), rechtspraak.nl (jurisprudentie)]
 
 Zorg ervoor dat je antwoord compleet, accuraat en praktisch bruikbaar is voor juridische professionals.`
 
@@ -261,6 +263,8 @@ Context uit zoekresultaten:
 ${context}
 
 BELANGRIJK: Begin ALTIJD met het citeren van de volledige wettekst in de WETSARTIKEL sectie, zelfs als de vraag algemeen is. Gebruikers willen eerst het artikel zien voordat de uitleg komt.
+
+Als het om een APV of lokale verordening gaat, vermeld dan expliciet de gemeente/provincie en geef praktische handhavingsinformatie.
 
 Geef een volledige juridische analyse volgens de gevraagde structuur.`
     })
