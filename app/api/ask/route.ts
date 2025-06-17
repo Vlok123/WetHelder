@@ -396,66 +396,35 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
 
     // Create a stream that captures the response for database storage
     let fullResponse = ''
-    const originalStream = await streamingCompletion({
+    const originalStream = await streamingCompletion(
       question,
+      jsonSources,
+      googleResults ? [{ title: "Google Results", content: googleResults }] : [],
       profession,
-      jsonContext,
-      googleResults,
-      history,
-      wetUitleg,
-      actualiteitsWaarschuwingen,
-      wetUpdates
-    })
+      wetUitleg
+    )
 
     const transformedStream = new ReadableStream({
       async start(controller) {
-        const reader = originalStream.getReader()
-        
         try {
-          while (true) {
-            const { done, value } = await reader.read()
-            
-            if (done) {
-              // Save query to database with full response
-              const clientIp = !session?.user ? (request.headers.get('x-forwarded-for') || 
-                               request.headers.get('x-real-ip') || 'unknown') : null
-              saveQueryToDatabase(question, fullResponse, profession, userId, jsonSources, googleResults, clientIp)
-                .catch(error => console.error('❌ Error saving query to database:', error))
+          for await (const chunk of originalStream) {
+            if (chunk.choices[0]?.delta?.content) {
+              const content = chunk.choices[0].delta.content
+              fullResponse += content
               
-              controller.close()
-              break
+              // Send to client in the expected format
+              const data = JSON.stringify({ content })
+              controller.enqueue(new TextEncoder().encode(`data: ${data}\n\n`))
             }
-            
-            // Decode and collect the response content
-            let chunk = ''
-            if (value instanceof Uint8Array) {
-              chunk = new TextDecoder().decode(value)
-            } else if (typeof value === 'string') {
-              chunk = value
-            } else {
-              // Skip processing if value is not in expected format
-              controller.enqueue(value)
-              continue
-            }
-            
-            // Extract content from data: {content: "..."} format
-            const matches = chunk.match(/data: ({.*?})/g)
-            if (matches) {
-              for (const match of matches) {
-                try {
-                  const data = JSON.parse(match.replace('data: ', ''))
-                  if (data.content) {
-                    fullResponse += data.content
-                  }
-                } catch (e) {
-                  // Ignore parsing errors for non-JSON chunks
-                }
-              }
-            }
-            
-            // Forward the chunk to the client
-            controller.enqueue(value)
           }
+          
+          // Save query to database with full response
+          const clientIp = !session?.user ? (request.headers.get('x-forwarded-for') || 
+                           request.headers.get('x-real-ip') || 'unknown') : null
+          saveQueryToDatabase(question, fullResponse, profession, userId, jsonSources, googleResults, clientIp)
+            .catch(error => console.error('❌ Error saving query to database:', error))
+          
+          controller.close()
         } catch (error) {
           console.error('❌ Stream error:', error)
           controller.error(error)
