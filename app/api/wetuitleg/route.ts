@@ -95,11 +95,11 @@ async function searchGoogle(query: string): Promise<string[]> {
     let searchQuery = ''
     
     if (gemeente) {
-      // Gemeente-specifieke zoekopdracht
-      searchQuery = `${query} (site:${gemeente}.nl OR site:www.${gemeente}.nl OR "APV ${gemeente}" OR "algemene plaatselijke verordening ${gemeente}" OR "${gemeente} verordening")`
+      // Gemeente-specifieke zoekopdracht - brede search voor betere resultaten
+      searchQuery = `${query} "${gemeente}" ("APV" OR "algemene plaatselijke verordening" OR "verordening")`
     } else {
-      // Algemene APV zoekopdracht  
-      searchQuery = `${query} (site:wetten.overheid.nl OR site:rechtspraak.nl OR site:lokaleregelgeving.overheid.nl OR "APV" OR "algemene plaatselijke verordening" OR site:*.nl "verordening" OR "gemeentewet")`
+      // Algemene APV zoekopdracht - geen site-restrictie vanwege beperkte CSE  
+      searchQuery = `${query} ("APV" OR "algemene plaatselijke verordening" OR "gemeenteverordening" OR "lokale regelgeving")`
     }
     
     const response = await fetch(
