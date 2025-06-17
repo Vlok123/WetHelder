@@ -37,7 +37,6 @@ import {
   Mail,
   Info,
   CheckCircle,
-  Bot,
   Menu,
   X,
   History,
@@ -51,7 +50,10 @@ import {
   LogIn,
   LogOut,
   Trash2,
-  Loader2
+  Loader2,
+  UserPlus,
+  Eye,
+  EyeOff
 } from 'lucide-react'
 
 const professionProfiles = [
@@ -414,14 +416,14 @@ export default function HomePage() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-16 bg-white">
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Hoe Werkt WetHelder?
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              WetHelder combineert officiële juridische bronnen met geavanceerde AI om u accurate en betrouwbare juridische informatie te bieden.
+              WetHelder combineert officiële juridische bronnen met geavanceerde technologie om u accurate en betrouwbare juridische informatie te bieden.
             </p>
           </div>
           
@@ -446,12 +448,12 @@ export default function HomePage() {
               {/* Step 2 */}
               <div className="text-center group">
                 <div className="w-16 h-16 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                  <Bot className="h-8 w-8 text-green-600" />
+                  <Search className="h-8 w-8 text-green-600" />
                 </div>
                 <div className="bg-green-50 rounded-lg p-6 h-full">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">2. AI Analyse</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">2. Intelligente Analyse</h3>
                   <p className="text-gray-600 mb-4">
-                    Onze AI doorzoekt duizenden officiële bronnen: wetten, jurisprudentie, APV&apos;s en actuele regelgeving.
+                    Ons systeem doorzoekt duizenden officiële bronnen: wetten, jurisprudentie, APV&apos;s en actuele regelgeving.
                   </p>
                   <div className="text-sm text-green-600 font-medium">
                     66+ officiële bronnen • Real-time updates
@@ -477,8 +479,8 @@ export default function HomePage() {
             </div>
 
             {/* Additional Features */}
-            <div className="mt-12 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Waarom WetHelder?</h3>
+            <div className="mt-16 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">Waarom WetHelder?</h3>
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="text-center">
                   <div className="w-12 h-12 mx-auto mb-3 bg-blue-100 rounded-full flex items-center justify-center">
@@ -515,9 +517,9 @@ export default function HomePage() {
       </section>
 
       {/* Example Questions Section */}
-      <section className="py-12 bg-gradient-to-br from-gray-50 to-slate-100">
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-slate-100">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
+          <div className="text-center mb-12">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
               Inspiratie voor Uw Vraag
             </h2>
@@ -629,9 +631,9 @@ export default function HomePage() {
       </section>
 
       {/* Wetteksten Section */}
-      <section className="py-16 bg-gradient-to-br from-blue-50 to-indigo-100">
+      <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Wetteksten</h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Ontdek onze geavanceerde Wetteksten functie voor uitgebreide juridische analyses van Nederlandse wetsartikelen
@@ -640,7 +642,7 @@ export default function HomePage() {
           
           <div className="max-w-4xl mx-auto">
             <Card className="p-8 bg-white shadow-lg hover:shadow-xl transition-all duration-300">
-              <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center gap-4 mb-8">
                 <div className="w-16 h-16 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
                   <BookOpen className="h-8 w-8" />
                 </div>
@@ -650,8 +652,8 @@ export default function HomePage() {
                 </div>
               </div>
               
-              <div className="grid md:grid-cols-2 gap-6 mb-8">
-                <div className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-8 mb-10">
+                <div className="space-y-6">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
                     <div>
@@ -674,7 +676,7 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
                     <div>
@@ -706,7 +708,7 @@ export default function HomePage() {
                     Probeer Wetteksten
                   </Link>
                 </Button>
-                <p className="text-sm text-gray-600 mt-3">
+                <p className="text-sm text-gray-600 mt-4">
                   Perfect voor juristen, advocaten, studenten en iedereen die diepgaande wetsuitleg nodig heeft
                 </p>
               </div>
@@ -716,9 +718,9 @@ export default function HomePage() {
       </section>
 
       {/* Jurisprudentie Section */}
-      <section className="py-16 bg-gradient-to-br from-slate-50 to-blue-50">
+      <section className="py-20 bg-gradient-to-br from-slate-50 to-blue-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Jurisprudentie Zoeken</h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Doorzoek relevante rechtspraak en uitspraken per wetsartikel of onderwerp
@@ -727,7 +729,7 @@ export default function HomePage() {
           
           <div className="max-w-4xl mx-auto">
             <Card className="p-8 bg-white shadow-lg hover:shadow-xl transition-all duration-300">
-              <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center gap-4 mb-8">
                 <div className="w-16 h-16 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center">
                   <Gavel className="h-8 w-8" />
                 </div>
@@ -737,8 +739,8 @@ export default function HomePage() {
                 </div>
               </div>
               
-              <div className="grid md:grid-cols-2 gap-6 mb-8">
-                <div className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-8 mb-10">
+                <div className="space-y-6">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
                     <div>
@@ -761,7 +763,7 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
                     <div>
@@ -786,9 +788,9 @@ export default function HomePage() {
                 </div>
               </div>
               
-              <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-6 mb-6">
-                <h4 className="font-semibold text-gray-900 mb-3">Voorbeelden van zoekopdrachten:</h4>
-                <div className="grid md:grid-cols-2 gap-3 text-sm">
+              <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-6 mb-8">
+                <h4 className="font-semibold text-gray-900 mb-4">Voorbeelden van zoekopdrachten:</h4>
+                <div className="grid md:grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="bg-white">96b Sv</Badge>
                     <span className="text-gray-600">→ Doorzoeken voertuigen</span>
@@ -815,7 +817,7 @@ export default function HomePage() {
                     Doorzoek Jurisprudentie
                   </Link>
                 </Button>
-                <p className="text-sm text-gray-600 mt-3">
+                <p className="text-sm text-gray-600 mt-4">
                   Perfect voor advocaten, rechtenstudenten, politieagenten en iedereen die rechtspraak wil begrijpen
                 </p>
               </div>
@@ -825,9 +827,9 @@ export default function HomePage() {
       </section>
 
       {/* Profession Profiles */}
-      <section className="py-16 bg-white">
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Kies Uw Profiel</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Selecteer uw beroep voor aangepaste juridische antwoorden. Klik op een profiel om direct te beginnen met chatten.
@@ -876,9 +878,9 @@ export default function HomePage() {
       </section>
 
       {/* Features */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Twee Manieren om Juridische Hulp te Krijgen</h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Kies de methode die het beste bij uw vraag past
