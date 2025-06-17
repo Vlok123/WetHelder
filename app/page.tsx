@@ -438,7 +438,7 @@ export default function HomePage() {
                     Typ uw juridische vraag in gewone taal. Kies eventueel uw professionele achtergrond voor gespecialiseerde antwoorden.
                   </p>
                   <div className="text-sm text-blue-600 font-medium">
-                    Bijvoorbeeld: "Wat zijn mijn rechten als huurder?"
+                    Bijvoorbeeld: &quot;Wat zijn mijn rechten als huurder?&quot;
                   </div>
                 </div>
               </div>
@@ -451,7 +451,7 @@ export default function HomePage() {
                 <div className="bg-green-50 rounded-lg p-6 h-full">
                   <h3 className="text-xl font-bold text-gray-900 mb-3">2. AI Analyse</h3>
                   <p className="text-gray-600 mb-4">
-                    Onze AI doorzoekt duizenden officiële bronnen: wetten, jurisprudentie, APV's en actuele regelgeving.
+                    Onze AI doorzoekt duizenden officiële bronnen: wetten, jurisprudentie, APV&apos;s en actuele regelgeving.
                   </p>
                   <div className="text-sm text-green-600 font-medium">
                     66+ officiële bronnen • Real-time updates

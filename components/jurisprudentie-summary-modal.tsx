@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -43,20 +43,7 @@ export default function JurisprudentieSummaryModal({
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Reset state when modal opens/closes
-  useEffect(() => {
-    if (isOpen && ruling) {
-      setSummary('')
-      setError(null)
-      generateSummary()
-    } else {
-      setSummary('')
-      setError(null)
-      setIsLoading(false)
-    }
-  }, [isOpen, ruling])
-
-  const generateSummary = async () => {
+  const generateSummary = useCallback(async () => {
     if (!ruling) return
 
     setIsLoading(true)
@@ -74,7 +61,20 @@ export default function JurisprudentieSummaryModal({
       }
       setIsLoading(false)
     }, 300) // Korte delay voor UX
-  }
+  }, [ruling])
+
+  // Reset state when modal opens/closes
+  useEffect(() => {
+    if (isOpen && ruling) {
+      setSummary('')
+      setError(null)
+      generateSummary()
+    } else {
+      setSummary('')
+      setError(null)
+      setIsLoading(false)
+    }
+  }, [isOpen, ruling, generateSummary])
 
   const getCourtColor = (court: string) => {
     switch (court) {
@@ -191,7 +191,7 @@ export default function JurisprudentieSummaryModal({
                     Voor deze uitspraak is geen samenvatting beschikbaar.
                   </p>
                   <p className="text-sm text-gray-500">
-                    Klik op "Volledige uitspraak" om de uitspraak direct te bekijken.
+                    Klik op &quot;Volledige uitspraak&quot; om de uitspraak direct te bekijken.
                   </p>
                 </div>
               )}
