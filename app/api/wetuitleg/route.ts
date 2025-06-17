@@ -107,11 +107,13 @@ BELANGRIJKE INSTRUCTIES:
 - Vermeld verwante artikelen die vaak samen voorkomen
 - Voeg altijd een link toe naar wetten.overheid.nl
 
+KRITISCH: Citeer ALTIJD eerst de volledige wettekst voordat je uitleg geeft. Gebruikers willen eerst het artikel zien en daarna pas de uitleg.
+
 STRUCTUUR VAN JE ANTWOORD:
 Gebruik exact deze markers voor elke sectie:
 
 WETSARTIKEL:
-[Volledige tekst van het wetsartikel]
+[Volledige tekst van het wetsartikel - DIT IS VERPLICHT EN MOET ALTIJD ALS EERSTE]
 
 LINK:
 [Link naar wetten.overheid.nl]
@@ -257,6 +259,8 @@ Als dit een vervolgvraag lijkt te zijn, behandel het als een doorvraag op eerder
 
 Context uit zoekresultaten:
 ${context}
+
+BELANGRIJK: Begin ALTIJD met het citeren van de volledige wettekst in de WETSARTIKEL sectie, zelfs als de vraag algemeen is. Gebruikers willen eerst het artikel zien voordat de uitleg komt.
 
 Geef een volledige juridische analyse volgens de gevraagde structuur.`
     })
