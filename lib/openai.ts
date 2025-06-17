@@ -59,7 +59,7 @@ Kun je een vraag niet volledig beantwoorden? Lever toch een **praktisch kader** 
 # ===== EINDE SYSTEM PROMPT =====`;
 
   // Add JSON sources if available
-  let contextSections = []
+  const contextSections: string[] = []
   
   if (jsonSources && jsonSources.length > 0) {
     contextSections.push("=== OFFICIËLE JURIDISCHE BRONNEN ===")

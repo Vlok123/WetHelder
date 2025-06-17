@@ -696,8 +696,7 @@ function AskPageContent() {
       }
     }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams])
+  }, [searchParams, profession])
 
   const handleSubmit = useCallback(async (e: React.FormEvent, overrideProfession?: Profession) => {
     e.preventDefault()
@@ -824,7 +823,7 @@ function AskPageContent() {
     } finally {
       setIsLoading(false)
     }
-  }, [isLoading, profession, messages, setMessages, setInput, setIsLoading, setRemainingQuestions, wetUitlegEnabled])
+  }, [isLoading, profession, messages, setMessages, setInput, setIsLoading, setRemainingQuestions, wetUitlegEnabled, input])
 
   const clearConversation = () => {
     setMessages([])
