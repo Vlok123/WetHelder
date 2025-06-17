@@ -1,9 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
-  // Force use of /app directory instead of /src/app
+  // App directory is enabled by default in Next.js 13.4+
   pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
   serverExternalPackages: ["@prisma/client", "prisma"],
   typescript: {
