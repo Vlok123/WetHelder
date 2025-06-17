@@ -49,6 +49,86 @@
       "Scope": "NL"
     },
     {
+      "Categorie": "APV – Amsterdam",
+      "Topic": "APV Amsterdam",
+      "Bron (naam)": "Gemeente Amsterdam APV",
+      "URL": "https://www.amsterdam.nl/bestuur-organisatie/organisatie/ruimte-economie/veiligheid/publicaties-verordeningen/apv/",
+      "Omschrijving": "Algemene Plaatselijke Verordening Amsterdam",
+      "Scope": "Amsterdam"
+    },
+    {
+      "Categorie": "APV – Rotterdam", 
+      "Topic": "APV Rotterdam",
+      "Bron (naam)": "Gemeente Rotterdam APV",
+      "URL": "https://www.rotterdam.nl/wonen-leven/apv/",
+      "Omschrijving": "Algemene Plaatselijke Verordening Rotterdam",
+      "Scope": "Rotterdam"
+    },
+    {
+      "Categorie": "APV – Den Haag",
+      "Topic": "APV Den Haag",
+      "Bron (naam)": "Gemeente Den Haag APV", 
+      "URL": "https://www.denhaag.nl/home/bestuur-en-organisatie/contact-met-de-gemeente/regels-en-verordeningen/apv.htm",
+      "Omschrijving": "Algemene Plaatselijke Verordening Den Haag",
+      "Scope": "Den Haag"
+    },
+    {
+      "Categorie": "APV – Utrecht",
+      "Topic": "APV Utrecht",
+      "Bron (naam)": "Gemeente Utrecht APV",
+      "URL": "https://www.utrecht.nl/bestuur-en-organisatie/regels-en-beleid/apv/",
+      "Omschrijving": "Algemene Plaatselijke Verordening Utrecht", 
+      "Scope": "Utrecht"
+    },
+    {
+      "Categorie": "APV – Nijmegen",
+      "Topic": "APV Nijmegen",
+      "Bron (naam)": "Gemeente Nijmegen APV",
+      "URL": "https://www.nijmegen.nl/dienstverlening/regels-en-vergunningen/apv/",
+      "Omschrijving": "Algemene Plaatselijke Verordening Nijmegen - campers, parkeren, evenementen",
+      "Scope": "Nijmegen"
+    },
+    {
+      "Categorie": "APV – Eindhoven",
+      "Topic": "APV Eindhoven", 
+      "Bron (naam)": "Gemeente Eindhoven APV",
+      "URL": "https://www.eindhoven.nl/stad-en-wijk/regels-en-vergunningen/apv",
+      "Omschrijving": "Algemene Plaatselijke Verordening Eindhoven",
+      "Scope": "Eindhoven"
+    },
+    {
+      "Categorie": "APV – Groningen",
+      "Topic": "APV Groningen",
+      "Bron (naam)": "Gemeente Groningen APV",
+      "URL": "https://gemeente.groningen.nl/algemene-plaatselijke-verordening",
+      "Omschrijving": "Algemene Plaatselijke Verordening Groningen",
+      "Scope": "Groningen"
+    },
+    {
+      "Categorie": "APV – Tilburg",
+      "Topic": "APV Tilburg", 
+      "Bron (naam)": "Gemeente Tilburg APV",
+      "URL": "https://www.tilburg.nl/stad-en-wijken/wetten-en-regels/apv/",
+      "Omschrijving": "Algemene Plaatselijke Verordening Tilburg",
+      "Scope": "Tilburg"
+    },
+    {
+      "Categorie": "APV – Almere",
+      "Topic": "APV Almere",
+      "Bron (naam)": "Gemeente Almere APV",
+      "URL": "https://www.almere.nl/over-almere/bestuur-en-organisatie/regels-en-beleid/apv/",
+      "Omschrijving": "Algemene Plaatselijke Verordening Almere",
+      "Scope": "Almere"
+    },
+    {
+      "Categorie": "APV – Breda",
+      "Topic": "APV Breda",
+      "Bron (naam)": "Gemeente Breda APV", 
+      "URL": "https://www.breda.nl/apv",
+      "Omschrijving": "Algemene Plaatselijke Verordening Breda",
+      "Scope": "Breda"
+    },
+    {
       "Categorie": "Wetgeving – nationaal",
       "Topic": "BARP",
       "Bron (naam)": "BARP – Wetten.nl",

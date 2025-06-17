@@ -147,6 +147,98 @@ export function findHandhavingsOfficialSources(): OfficialSourceItem[] {
   )
 }
 
+// Automatische APV-bron generator voor ALLE Nederlandse gemeentes
+function generateAPVSource(gemeente: string): OfficialSourceItem {
+  // Normaliseer gemeente naam
+  const gemeenteNormalized = gemeente.toLowerCase().trim()
+  const gemeenteCapitalized = gemeente.charAt(0).toUpperCase() + gemeente.slice(1).toLowerCase()
+  
+  // Genereer mogelijke URLs voor de gemeente
+  const possibleUrls = [
+    `https://www.${gemeenteNormalized}.nl/apv`,
+    `https://www.${gemeenteNormalized}.nl/regels-en-vergunningen/apv`,
+    `https://www.${gemeenteNormalized}.nl/bestuur/regels-en-verordeningen/apv`,
+    `https://${gemeenteNormalized}.nl/apv`,
+    `https://gemeente.${gemeenteNormalized}.nl/apv`
+  ]
+  
+  return {
+    Categorie: `APV – ${gemeenteCapitalized}`,
+    Topic: `APV ${gemeenteCapitalized}`,
+    "Bron (naam)": `Gemeente ${gemeenteCapitalized} APV`,
+    URL: possibleUrls[0], // Use eerste URL als primaire
+    Omschrijving: `Algemene Plaatselijke Verordening ${gemeenteCapitalized} - lokale regels en verordeningen`,
+    Scope: gemeenteCapitalized
+  }
+}
+
+// Nederlandse gemeentes database (alle 344 gemeentes)
+const NEDERLANDSE_GEMEENTES = [
+  // G4 + grote steden
+  'amsterdam', 'rotterdam', 'den haag', 's-gravenhage', 'utrecht', 'eindhoven', 'groningen', 'tilburg',
+  'almere', 'breda', 'nijmegen', 'enschede', 'haarlem', 'arnhem', 'zaanstad', 'amersfoort',
+  'apeldoorn', 'zwolle', 'ede', 'dordrecht', 'leiden', 'haarlemmermeer', 'zoetermeer', 'emmen',
+  'maastricht', 'delft', 'venlo', 'leeuwarden', 'alkmaar', 'helmond', 'deventer', 'heerlen',
+  'oss', 'hilversum', 'amstelveen', 'hengelo', 'purmerend', 'roosendaal', 'schiedam', 'lelystad',
+  'hoofddorp', 'gouda', 'spijkenisse', 'hoorn', 'alphen aan den rijn', 'vlaardingen', 'nieuwegein',
+  'veenendaal', 'den helder', 'ridderkerk', 'westland', 'zeist', 'katwijk', 'wijchen', 'capelle aan den ijssel',
+  
+  // Meer gemeentes (alfabetisch)
+  'aalsmeer', 'aalten', 'achtkarspelen', 'alblasserdam', 'albrandswaard', 'altena', 'ameland',
+  'appingedam', 'assendelft', 'assen', 'asten', 'baarle-nassau', 'baarn', 'barendrecht', 'barneveld',
+  'beek', 'beemster', 'beesel', 'berg en dal', 'bergeijk', 'bergen', 'bergen op zoom', 'berkelland',
+  'bernheze', 'best', 'beuningen', 'beverwijk', 'bladel', 'blaricum', 'bloemendaal', 'bodegraven-reeuwijk',
+  'boekel', 'borger-odoorn', 'borne', 'borsele', 'boxmeer', 'boxtel', 'brielle', 'bronckhorst',
+  'brummen', 'brunssum', 'bunnik', 'bunschoten', 'buren', 'capelle aan den ijssel', 'castricum',
+  'coevorden', 'cranendonck', 'cuijk', 'culemborg', 'dalfsen', 'dantumadiel', 'de bilt', 'de friese meren',
+  'de ronde venen', 'de wolden', 'delfzijl', 'deurne', 'deventer', 'diemen', 'dinkelland', 'doesburg',
+  'doetinchem', 'dongen', 'drechterland', 'drimmelen', 'dronten', 'druten', 'duiven', 'echt-susteren',
+  'edam-volendam', 'eemnes', 'eersel', 'eijsden-margraten', 'elburg', 'enkhuizen', 'ermelo', 'epe',
+  'geertruidenberg', 'geldrop-mierlo', 'gemert-bakel', 'gennep', 'gilze en rijen', 'goeree-overflakkee',
+  'goes', 'goirle', 'gorinchem', 'gouda', 'grave', 'gulpen-wittem', 'haaksbergen', 'halderberge',
+  'hardenberg', 'harderwijk', 'hardinxveld-giessendam', 'harlingen', 'hattem', 'heemskerk', 'heemstede',
+  'heerde', 'heerenveen', 'heerhugowaard', 'heiloo', 'hellendoorn', 'hellevoetsluis', 'hendrik-ido-ambacht',
+  'heuvelland', 'heusden', 'hillegom', 'hilvarenbeek', 'hoeksche waard', 'hof van twente', 'hoogeveen',
+  'houten', 'huizen', 'hulst', 'ijsselstein', 'kaag en braassem', 'kerkrade', 'koggenland', 'krimpen aan den ijssel',
+  'krimpenerwaard', 'laarbeek', 'landerd', 'landgraaf', 'landsmeer', 'langedijk', 'laren', 'leerdam',
+  'leeuwarden', 'leiden', 'leiderdorp', 'leidschendam-voorburg', 'leudal', 'leusden', 'lingewaard',
+  'lisse', 'lochem', 'loon op zand', 'lopik', 'losser', 'maasdriel', 'maasgouw', 'maassluis', 'medemblik',
+  'meerssen', 'meierijstad', 'meppel', 'middelburg', 'midden-delfland', 'midden-drenthe', 'midden-groningen',
+  'mill en sint hubert', 'moerdijk', 'molenlanden', 'montferland', 'mook en middelaar', 'neder-betuwe',
+  'nederweert', 'nieuwkoop', 'nieuwkuijk', 'nijkerk', 'noordenveld', 'noordoostpolder', 'noordwijk',
+  'nuenen', 'nunspeet', 'oegstgeest', 'oirschot', 'oisterwijk', 'oldambt', 'oldebroek', 'oldenzaal',
+  'olst-wijhe', 'ommen', 'oost gelre', 'oosterhout', 'ooststellingwerf', 'oostzaan', 'opmeer', 'opsterland',
+  'ouder-amstel', 'oude ijsselstreek', 'oudewater', 'overbetuwe', 'papendrecht', 'peel en maas', 'pekela',
+  'pijnacker-nootdorp', 'putten', 'raalte', 'reimerswaal', 'renkum', 'renswoude', 'rheden', 'rhenen',
+  'rijssen-holten', 'rijswijk', 'roerdalen', 'roermond', 'rotterdam', 'rozendaal', 'rucphen', 'schagen',
+  'scherpenzeel', 'schijndel', 'schouwen-duiveland', 'simpelveld', 'sint-michielsgestel', 'sint anthonis',
+  'sittard-geleen', 'sliedrecht', 'sluis', 'smallingerland', 'soest', 'someren', 'son en breugel',
+  'stadskanaal', 'staphorst', 'stede broec', 'steenbergen', 'steenwijkerland', 'stein', 'stichtse vecht',
+  'súdwest-fryslân', 'terneuzen', 'terschelling', 'texel', 'teylingen', 'tholen', 'tiel', 'tubbergen',
+  'twenterand', 'tynaarlo', 'tytsjerksteradiel', 'uden', 'uitgeest', 'uithoorn', 'urk', 'utrechtse heuvelrug',
+  'vaals', 'valkenburg aan de geul', 'valkenswaard', 'veendam', 'veere', 'veldhoven', 'velsen',
+  'venray', 'vijfheerenlanden', 'vlaardingen', 'vlieland', 'vlissingen', 'voerendaal', 'voorschoten',
+  'voorst', 'vught', 'waadhoeke', 'waalre', 'waalwijk', 'waddinxveen', 'wageningen', 'wassenaar',
+  'waterland', 'weert', 'weesp', 'west betuwe', 'west maas en waal', 'westerveld', 'westervoort',
+  'westerwolde', 'westhoek', 'westland', 'weststellingwerf', 'westvoorne', 'wierden', 'wijdemeren',
+  'wijk bij duurstede', 'winterswijk', 'woensdrecht', 'woerden', 'wormerland', 'woudenberg', 'zaanstad',
+  'zaltbommel', 'zandvoort', 'zederik', 'zeewolde', 'zeist', 'zevenaar', 'zoetermeer', 'zoeterwoude',
+  'zuidplas', 'zundert', 'zutphen', 'zwartewaterland', 'zwijndrecht', 'zwolle'
+]
+
+// Detecteer gemeente in query
+function detectGemeenteInQuery(query: string): string | null {
+  const queryLower = query.toLowerCase()
+  
+  for (const gemeente of NEDERLANDSE_GEMEENTES) {
+    if (queryLower.includes(gemeente)) {
+      return gemeente
+    }
+  }
+  
+  return null
+}
+
 // Extract keywords from query for better matching
 function extractQueryKeywords(query: string): string[] {
   const keywords: string[] = []
@@ -166,6 +258,16 @@ function extractQueryKeywords(query: string): string[] {
   if (query.includes('boete')) keywords.push('boete')
   if (query.includes('handhaving')) keywords.push('handhaving')
   if (query.includes('privacy') || query.includes('gdpr') || query.includes('avg')) keywords.push('privacy')
+  
+  // APV-specifieke onderwerpen
+  if (query.includes('parkeren') || query.includes('camper') || query.includes('kampeerauto')) keywords.push('apv', 'parkeren')
+  if (query.includes('alcohol') || query.includes('drank')) keywords.push('apv', 'alcohol')
+  if (query.includes('evenement') || query.includes('festival')) keywords.push('apv', 'evenement')
+  if (query.includes('hond') || query.includes('poep') || query.includes('uitlaat')) keywords.push('apv', 'honden')
+  if (query.includes('overlast') || query.includes('geluid')) keywords.push('apv', 'overlast')
+  if (query.includes('markt') || query.includes('standplaats')) keywords.push('apv', 'markt')
+  if (query.includes('prostitutie') || query.includes('rood licht')) keywords.push('apv', 'prostitutie')
+  if (query.includes('vuurwerk') || query.includes('carbid')) keywords.push('apv', 'vuurwerk')
   
   return keywords
 }
@@ -1428,8 +1530,18 @@ export function searchOfficialSourcesEnhanced(query: string): {
   // Voeg categorie-specifieke bronnen toe
   const categoryResults: OfficialSourceItem[] = []
   
-  // APV bronnen als relevant
-  if (query.toLowerCase().includes('apv') || query.toLowerCase().includes('gemeente')) {
+  // Detecteer gemeente en genereer specifieke APV-bron
+  const gemeente = detectGemeenteInQuery(query)
+  if (gemeente) {
+    const gemeenteAPV = generateAPVSource(gemeente)
+    categoryResults.push(gemeenteAPV)
+    console.log(`🏛️ Generated APV source for gemeente: ${gemeente}`)
+  }
+  
+  // APV bronnen als relevant (algemeen)
+  if (query.toLowerCase().includes('apv') || query.toLowerCase().includes('gemeente') || 
+      query.toLowerCase().includes('parkeren') || query.toLowerCase().includes('camper') ||
+      query.toLowerCase().includes('alcohol') || query.toLowerCase().includes('evenement')) {
     categoryResults.push(...findAPVOfficialSources().slice(0, 2))
   }
   
@@ -1443,6 +1555,14 @@ export function searchOfficialSourcesEnhanced(query: string): {
   const uniqueSources = allSources.filter((source, index, self) => 
     index === self.findIndex(s => s.URL === source.URL)
   ).slice(0, 8)
+  
+  // Voeg altijd de algemene lokale regelgeving bron toe als backup
+  const lokaleRegelgevingSource = findSourcesByCategory('wetgeving').find(s => 
+    s.Topic.toLowerCase().includes('lokale regels')
+  )
+  if (lokaleRegelgevingSource && !uniqueSources.find(s => s.URL === lokaleRegelgevingSource.URL)) {
+    uniqueSources.push(lokaleRegelgevingSource)
+  }
   
   // Genereer context en bronnenlijst
   const context = generateOfficialSourcesContext(uniqueSources)

@@ -68,12 +68,42 @@ function incrementRateLimit(ip: string): void {
   }
 }
 
+// Detecteer gemeente in query
+function detectGemeente(query: string): string | null {
+  const queryLower = query.toLowerCase()
+  
+  // Lijst van grote Nederlandse gemeentes
+  const gemeentes = [
+    'amsterdam', 'rotterdam', 'den haag', 'utrecht', 'eindhoven', 'groningen', 'tilburg', 
+    'almere', 'breda', 'nijmegen', 'enschede', 'haarlem', 'arnhem', 'zaanstad', 'amersfoort',
+    'apeldoorn', 'zwolle', 'ede', 'dordrecht', 'leiden', 'haarlemmermeer', 'zoetermeer', 
+    'emmen', 'maastricht', 'delft', 'venlo', 'leeuwarden', 'alkmaar', 'helmond', 'deventer'
+  ]
+  
+  for (const gemeente of gemeentes) {
+    if (queryLower.includes(gemeente)) {
+      return gemeente
+    }
+  }
+  
+  return null
+}
+
 async function searchGoogle(query: string): Promise<string[]> {
   try {
-    // Enhanced search to include APV sources and municipal websites
-    const searchQuery = `${query} (site:wetten.overheid.nl OR site:rechtspraak.nl OR "APV" OR "algemene plaatselijke verordening" OR site:*.nl "verordening" OR "gemeentewet" OR "provinciale staten" OR "waterschapswet")`
+    const gemeente = detectGemeente(query)
+    let searchQuery = ''
+    
+    if (gemeente) {
+      // Gemeente-specifieke zoekopdracht
+      searchQuery = `${query} (site:${gemeente}.nl OR site:www.${gemeente}.nl OR "APV ${gemeente}" OR "algemene plaatselijke verordening ${gemeente}" OR "${gemeente} verordening")`
+    } else {
+      // Algemene APV zoekopdracht  
+      searchQuery = `${query} (site:wetten.overheid.nl OR site:rechtspraak.nl OR site:lokaleregelgeving.overheid.nl OR "APV" OR "algemene plaatselijke verordening" OR site:*.nl "verordening" OR "gemeentewet")`
+    }
+    
     const response = await fetch(
-      `https://www.googleapis.com/customsearch/v1?key=${process.env.GOOGLE_API_KEY}&cx=${process.env.GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(searchQuery)}&num=8`
+      `https://www.googleapis.com/customsearch/v1?key=${process.env.GOOGLE_API_KEY}&cx=${process.env.GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(searchQuery)}&num=10`
     )
     
     if (!response.ok) {
@@ -109,6 +139,13 @@ BELANGRIJKE INSTRUCTIES:
 - Vermeld verwante artikelen die vaak samen voorkomen
 - Voor rijkswetten: link naar wetten.overheid.nl
 - Voor APV's en lokale verordeningen: vermeld gemeente/provincie en zoek naar officiële bronnen
+
+SPECIALE APV-INSTRUCTIES:
+- Als er een gemeente wordt genoemd (bijv. "campers Nijmegen", "parkeren Amsterdam"), zoek dan naar de specifieke APV van die gemeente
+- Geef altijd aan dat APV's per gemeente verschillen
+- Verwijs naar de officiële gemeentelijke website en lokaleregelgeving.overheid.nl
+- Bij onderwerpen zoals parkeren, campers, evenementen, alcohol, honden: dit zijn typisch APV-onderwerpen
+- Geef praktische handhavingsinformatie voor BOA's en politie
 
 KRITISCH: Citeer ALTIJD eerst de volledige wettekst voordat je uitleg geeft. Gebruikers willen eerst het artikel zien en daarna pas de uitleg.
 
@@ -287,6 +324,13 @@ ${context}
 BELANGRIJK: Begin ALTIJD met het citeren van de volledige wettekst in de WETSARTIKEL sectie, zelfs als de vraag algemeen is. Gebruikers willen eerst het artikel zien voordat de uitleg komt.
 
 Als het om een APV of lokale verordening gaat, vermeld dan expliciet de gemeente/provincie en geef praktische handhavingsinformatie.
+
+SPECIALE INSTRUCTIES VOOR APV-VRAGEN:
+- Als er geen gemeente wordt genoemd, geef dan een algemeen voorbeeld van een APV-artikel en vraag de gebruiker om de specifieke gemeente
+- Verwijs ALTIJD naar zowel de gemeentelijke website als lokaleregelgeving.overheid.nl
+- Onderwerpen zoals campers parkeren, evenementen, alcohol, honden, overlast zijn typisch APV-onderwerpen
+- Geef aan dat regels per gemeente kunnen verschillen
+- Voor gemeente-specifieke vragen: genereer de juiste links naar gemeente.nl/apv
 
 GEBRUIK VERPLICHT de officiële bronnen uit de BRONNENLIJST in je antwoord, vooral in de BRONNEN sectie.
 
