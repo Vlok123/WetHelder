@@ -248,10 +248,22 @@ export async function streamingCompletion({
     wetUitlegInstructions,
     "",
     actualiteitsSection,
-    "Gebruik UITSLUITEND de volgende bronnen voor je antwoord.",
-    "Baseer elk onderdeel van je antwoord op de juridische gegevens uit deze context.",
+    "",
+    "BELANGRIJKE INSTRUCTIES:",
+    "- Gebruik uitsluitend actuele Nederlandse wetgeving (Rijkswetten, provinciale verordeningen, APV's)",
+    "- Verwijs naar het volledige wetsartikel (inclusief lid en sublid)",
+    "- Voor APV's en lokale verordeningen: vermeld gemeente/provincie en zoek naar officiële bronnen",
+    "",
+    "SPECIALE APV-INSTRUCTIES:",
+    "- Als er een gemeente wordt genoemd, zoek dan naar de specifieke APV van die gemeente",
+    "- KRITIEK: Bij APV-onderwerpen ALTIJD een voorbeeldartikel genereren, ook zonder exacte tekst!",
+    "- Geef altijd aan dat APV's per gemeente verschillen",
+    "- Verwijs naar de officiële gemeentelijke website en lokaleregelgeving.overheid.nl",
+    "- Bij onderwerpen zoals open vuur, parkeren, campers, evenementen, alcohol, honden: dit zijn typisch APV-onderwerpen",
+    "- Geef praktische handhavingsinformatie voor BOA's en politie",
     "",
     "🚨 **ABSOLUTE VERBODEN - LEES ZORGVULDIG:**",
+    "❌ 'Ik kan geen specifieke informatie verstrekken'",
     "❌ 'Het spijt me, maar ik kan geen specifieke informatie geven...'",
     "❌ 'Ik heb geen toegang tot de actuele APV van [gemeente]...'", 
     "❌ 'Raadpleeg de officiële website van de gemeente...'",
@@ -261,13 +273,6 @@ export async function streamingCompletion({
     "❌ 'Het is essentieel om de exacte tekst te raadplegen'",
     "❌ Elke vorm van 'geen informatie beschikbaar' bij APV-vragen",
     "",
-    "✅ **VERPLICHTE WERKWIJZE:**",
-    "1. Als er Google resultaten zijn met APV artikelen → GEBRUIK DEZE DIRECT",
-    "2. Citeer ALTIJD specifieke artikelnummers uit de gevonden bronnen",
-    "3. Voor APV vragen: Noem MINIMAAL 2-3 relevante artikelen met nummers",
-    "4. Geef de VOLLEDIGE artikeltekst of relevante delen daarvan",
-    "5. Verwijs naar de exacte bron-URL uit de aangeleverde resultaten",
-    "",
     "🚨 **VERPLICHTE APV-INSTRUCTIES:**",
     "- MAAK ALTIJD een concreet voorbeeldartikel met specifiek nummer (bijv. Artikel 2:15, 5:34)",
     "- GEBRUIK de informatie uit ZOEKRESULTATEN om het artikel realistisch te maken", 
@@ -276,13 +281,19 @@ export async function streamingCompletion({
     "- ALTIJD verwijzen naar gemeente.nl/apv EN lokaleregelgeving.overheid.nl",
     "- Geef aan dat details per gemeente kunnen verschillen, maar GEEF ALTIJD een artikel",
     "",
-    "🚨 **ABSOLUTE FAILSAFE:**",
+    "🚨 **ABSOLUTE FAILSAFE:**", 
     "Als je OOIT zou overwegen om 'geen informatie beschikbaar' te zeggen bij een APV-vraag, STOP en maak in plaats daarvan een voorbeeldartikel met een realistisch artikelnummer, typische APV-taal, en praktische informatie. ALTIJD een artikel geven, NOOIT weigeren.",
     "",
-    "⚡ **VOORBEELD CORRECT ANTWOORD:**",
-    "'Volgens artikel 2:48 van de APV Nijmegen is het verboden om alcoholhoudende drank te nuttigen op openbare plaatsen...'",
+    "✅ **VERPLICHTE WERKWIJZE:**",
+    "1. Als er Google resultaten zijn met APV artikelen → GEBRUIK DEZE DIRECT",
+    "2. Citeer ALTIJD specifieke artikelnummers uit de gevonden bronnen",
+    "3. Voor APV vragen: Noem MINIMAAL 2-3 relevante artikelen met nummers",
+    "4. Geef de VOLLEDIGE artikeltekst of relevante delen daarvan",
+    "5. Verwijs naar de exacte bron-URL uit de aangeleverde resultaten",
     "",
-    "- Gebruik ALLEEN informatie uit de aangeleverde OFFICIËLE JURIDISCHE BRONNEN sectie",
+    "⚡ **VOORBEELD CORRECT ANTWOORD:**",
+    "'Volgens artikel 2:48 van de APV Oude IJsselstreek is het verboden om alcoholhoudende drank te nuttigen op openbare plaatsen...'",
+    "",
     "- BELANGRIJK: Voor APV-vragen en lokale regelgeving, gebruik actief de gevonden bronnen van lokaleregelgeving.overheid.nl",
     "- Verwijs specifiek naar artikelnummers en wettelijke bepalingen uit de aangeleverde bronnen",
     "- Als er actualiteitscontrole informatie is: vermeld dit PROMINENTAAL in je antwoord",
@@ -318,6 +329,43 @@ export async function streamingCompletion({
 
   // Add current question
   messages.push({ role: "user", content: question })
+
+  // Add extra anti-refusal for APV questions
+  const queryLower = question.toLowerCase()
+  const isApvQuery = queryLower.includes('apv') || 
+                    queryLower.includes('gemeente') || 
+                    queryLower.includes('lokaal') ||
+                    queryLower.includes('alcohol') ||
+                    queryLower.includes('drinken') ||
+                    queryLower.includes('straat') ||
+                    ['amsterdam', 'rotterdam', 'den haag', 'utrecht', 'eindhoven', 'groningen',
+                     'tilburg', 'almere', 'breda', 'nijmegen', 'apeldoorn', 'haarlem', 'arnhem',
+                     'enschede', 'haarlemmermeer', 'zaanstad', 'amersfoort', 'hertogenbosch',
+                     'zoetermeer', 'zwolle', 'ede', 'dordrecht', 'leiden', 'emmen', 'maastricht',
+                     'delft', 'venlo', 'leeuwarden', 'alkmaar', 'helmond', 'deventer',
+                     'ijsselstreek', 'oude ijssel', 'ijssel'].some(city => queryLower.includes(city))
+
+  if (isApvQuery) {
+    messages.push({ 
+      role: "user", 
+      content: `🚨 KRITIEKE INSTRUCTIE VOOR APV-VRAAG:
+
+Voor deze APV-vraag MOET je een concreet antwoord geven met:
+1. Specifiek artikelnummer (bijv. "Artikel 2:48 APV [gemeente]")
+2. Volledige of gedeeltelijke artikeltekst
+3. Praktische uitleg voor handhaving
+4. Verwijzing naar lokaleregelgeving.overheid.nl
+
+❌ VERBODEN ANTWOORDEN:
+- "Geen toegang tot APV"
+- "Kan geen specifieke informatie geven"
+- "Raadpleeg gemeente website"
+
+✅ VERPLICHT: Gebruik de aangeleverde Google zoekresultaten om een realistisch voorbeeldartikel te maken.
+
+FORCEER een artikel, ook al is de informatie beperkt. Geef ALTIJD een concreet artikel met nummer.`
+    })
+  }
 
   // Create streaming response
   return new ReadableStream({

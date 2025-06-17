@@ -61,8 +61,17 @@ async function searchGoogleCustomAPI(query: string): Promise<GoogleSearchResult[
     // Detecteer APV-gerelateerde vragen (ook zonder expliciet "APV" te noemen)
     const apvKeywords = [
       'apv', 'gemeentelijk', 'lokaal', 'gemeente', 'plaatselijk', 'verordening',
-      'alcohol', 'drinken', 'straat', 'openbare', 'park', 'plein', 'evenement',
-      'geluid', 'overlast', 'terras', 'vergunning', 'handhaving'
+      'alcohol', 'drinken', 'straat', 'openbaar', 'park', 'plein', 'evenement',
+      'geluid', 'overlast', 'terras', 'vergunning', 'handhaving', 'boa',
+      'camper', 'parkeren', 'kamperen', 'hondenpoep', 'hond', 'vuur', 'barbecue',
+      'muziek', 'lawaai', 'reclame', 'uithangbord', 'standplaats', 'markt',
+      'amsterdam', 'rotterdam', 'den haag', 'utrecht', 'eindhoven', 'groningen',
+      'tilburg', 'almere', 'breda', 'nijmegen', 'apeldoorn', 'haarlem', 'arnhem',
+      'enschede', 'haarlemmermeer', 'zaanstad', 'amersfoort', 'hertogenbosch',
+      'zoetermeer', 'zwolle', 'ede', 'dordrecht', 'leiden', 'emmen', 'maastricht',
+      'delft', 'venlo', 'leeuwarden', 'alkmaar', 'helmond', 'deventer',
+      'ijsselstreek', 'oude ijssel', 'ijssel',
+      'nieuw beleid', 'recent', 'actueel', 'jurisprudentie', 'uitspraak', 'vonnis', 'arrest'
     ]
     
     // Check for gemeente names
@@ -168,8 +177,18 @@ function needsGoogleSearch(jsonSources: JsonBron[], query: string): boolean {
   // Specifieke gevallen waar Google altijd wordt geraadpleegd
   const queryLower = query.toLowerCase()
   const needsGoogleKeywords = [
-    'apv', 'gemeentelijk', 'lokaal', 'nieuw beleid', 'recent', 'actueel',
-    'jurisprudentie', 'uitspraak', 'vonnis', 'arrest'
+    'apv', 'gemeentelijk', 'lokaal', 'gemeente', 'plaatselijk', 'verordening',
+    'alcohol', 'drinken', 'straat', 'openbaar', 'park', 'plein', 'evenement',
+    'geluid', 'overlast', 'terras', 'vergunning', 'handhaving', 'boa',
+    'camper', 'parkeren', 'kamperen', 'hondenpoep', 'hond', 'vuur', 'barbecue',
+    'muziek', 'lawaai', 'reclame', 'uithangbord', 'standplaats', 'markt',
+    'amsterdam', 'rotterdam', 'den haag', 'utrecht', 'eindhoven', 'groningen',
+    'tilburg', 'almere', 'breda', 'nijmegen', 'apeldoorn', 'haarlem', 'arnhem',
+    'enschede', 'haarlemmermeer', 'zaanstad', 'amersfoort', 'hertogenbosch',
+    'zoetermeer', 'zwolle', 'ede', 'dordrecht', 'leiden', 'emmen', 'maastricht',
+    'delft', 'venlo', 'leeuwarden', 'alkmaar', 'helmond', 'deventer',
+    'ijsselstreek', 'oude ijssel', 'ijssel',
+    'nieuw beleid', 'recent', 'actueel', 'jurisprudentie', 'uitspraak', 'vonnis', 'arrest'
   ]
   
   const needsGoogle = needsGoogleKeywords.some(keyword => queryLower.includes(keyword))
@@ -329,6 +348,16 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
     const queryLower = question.toLowerCase()
     const needsGoogleKeywords = [
       'apv', 'gemeentelijk', 'lokaal', 'gemeente', 'plaatselijk', 'verordening',
+      'alcohol', 'drinken', 'straat', 'openbaar', 'park', 'plein', 'evenement',
+      'geluid', 'overlast', 'terras', 'vergunning', 'handhaving', 'boa',
+      'camper', 'parkeren', 'kamperen', 'hondenpoep', 'hond', 'vuur', 'barbecue',
+      'muziek', 'lawaai', 'reclame', 'uithangbord', 'standplaats', 'markt',
+      'amsterdam', 'rotterdam', 'den haag', 'utrecht', 'eindhoven', 'groningen',
+      'tilburg', 'almere', 'breda', 'nijmegen', 'apeldoorn', 'haarlem', 'arnhem',
+      'enschede', 'haarlemmermeer', 'zaanstad', 'amersfoort', 'hertogenbosch',
+      'zoetermeer', 'zwolle', 'ede', 'dordrecht', 'leiden', 'emmen', 'maastricht',
+      'delft', 'venlo', 'leeuwarden', 'alkmaar', 'helmond', 'deventer',
+      'ijsselstreek', 'oude ijssel', 'ijssel',
       'nieuw beleid', 'recent', 'actueel', 'jurisprudentie', 'uitspraak', 'vonnis', 'arrest'
     ]
     
