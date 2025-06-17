@@ -58,9 +58,26 @@ async function searchGoogleCustomAPI(query: string): Promise<GoogleSearchResult[
     let searchQuery = query
     const queryLower = query.toLowerCase()
     
-    if (queryLower.includes('apv') || queryLower.includes('gemeentelijk') || queryLower.includes('lokaal')) {
+    // Detecteer APV-gerelateerde vragen (ook zonder expliciet "APV" te noemen)
+    const apvKeywords = [
+      'apv', 'gemeentelijk', 'lokaal', 'gemeente', 'plaatselijk', 'verordening',
+      'alcohol', 'drinken', 'straat', 'openbare', 'park', 'plein', 'evenement',
+      'geluid', 'overlast', 'terras', 'vergunning', 'handhaving'
+    ]
+    
+    // Check for gemeente names
+    const gemeenten = [
+      'amsterdam', 'rotterdam', 'den haag', 'utrecht', 'eindhoven', 'tilburg',
+      'groningen', 'almere', 'breda', 'nijmegen', 'apeldoorn', 'haarlem', 'arnhem',
+      'enschede', 'haarlemmermeer', 'zaanstad', 'amersfoort', 'hertogenbosch'
+    ]
+    
+    const hasApvKeyword = apvKeywords.some(keyword => queryLower.includes(keyword))
+    const hasGemeenteNaam = gemeenten.some(gemeente => queryLower.includes(gemeente))
+    
+    if (hasApvKeyword || hasGemeenteNaam) {
       // Voor APV vragen: voeg specifieke zoektermen toe
-      searchQuery = `${query} site:lokaleregelgeving.overheid.nl OR site:overheid.nl APV verordening`
+      searchQuery = `${query} site:lokaleregelgeving.overheid.nl OR site:overheid.nl APV "Algemene Plaatselijke Verordening"`
       console.log('🏛️ APV-specifieke zoekopdracht:', searchQuery)
     }
     
@@ -330,7 +347,7 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
       try {
         const results = await searchGoogleCustomAPI(question)
         if (results.length > 0) {
-          googleResults = results.map(r => `${r.title}\n${r.snippet}\nBron: ${r.link}`).join('\n\n')
+          googleResults = formatGoogleResultsForContext(results)
           console.log(`✅ ${results.length} Google zoekresultaten gevonden`)
           console.log(`✅ ${results.length} Google resultaten toegevoegd`)
         } else {
