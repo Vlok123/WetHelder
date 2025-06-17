@@ -413,6 +413,107 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* How It Works Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Hoe Werkt WetHelder?
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              WetHelder combineert officiële juridische bronnen met geavanceerde AI om u accurate en betrouwbare juridische informatie te bieden.
+            </p>
+          </div>
+          
+          <div className="max-w-6xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Step 1 */}
+              <div className="text-center group">
+                <div className="w-16 h-16 mx-auto mb-6 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                  <Search className="h-8 w-8 text-blue-600" />
+                </div>
+                <div className="bg-blue-50 rounded-lg p-6 h-full">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">1. Stel Uw Vraag</h3>
+                  <p className="text-gray-600 mb-4">
+                    Typ uw juridische vraag in gewone taal. Kies eventueel uw professionele achtergrond voor gespecialiseerde antwoorden.
+                  </p>
+                  <div className="text-sm text-blue-600 font-medium">
+                    Bijvoorbeeld: "Wat zijn mijn rechten als huurder?"
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="text-center group">
+                <div className="w-16 h-16 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                  <Bot className="h-8 w-8 text-green-600" />
+                </div>
+                <div className="bg-green-50 rounded-lg p-6 h-full">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">2. AI Analyse</h3>
+                  <p className="text-gray-600 mb-4">
+                    Onze AI doorzoekt duizenden officiële bronnen: wetten, jurisprudentie, APV's en actuele regelgeving.
+                  </p>
+                  <div className="text-sm text-green-600 font-medium">
+                    66+ officiële bronnen • Real-time updates
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="text-center group">
+                <div className="w-16 h-16 mx-auto mb-6 bg-purple-100 rounded-full flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                  <CheckCircle className="h-8 w-8 text-purple-600" />
+                </div>
+                <div className="bg-purple-50 rounded-lg p-6 h-full">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">3. Betrouwbaar Antwoord</h3>
+                  <p className="text-gray-600 mb-4">
+                    Ontvang een compleet antwoord met wetsartikelen, jurisprudentie en directe links naar officiële bronnen.
+                  </p>
+                  <div className="text-sm text-purple-600 font-medium">
+                    Altijd met bronvermelding • Actuele informatie
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Additional Features */}
+            <div className="mt-12 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Waarom WetHelder?</h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="text-center">
+                  <div className="w-12 h-12 mx-auto mb-3 bg-blue-100 rounded-full flex items-center justify-center">
+                    <Shield className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <h4 className="font-semibold text-gray-900 mb-2">Officiële Bronnen</h4>
+                  <p className="text-sm text-gray-600">Alleen betrouwbare, officiële juridische bronnen</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-12 h-12 mx-auto mb-3 bg-green-100 rounded-full flex items-center justify-center">
+                    <Clock className="h-6 w-6 text-green-600" />
+                  </div>
+                  <h4 className="font-semibold text-gray-900 mb-2">Altijd Actueel</h4>
+                  <p className="text-sm text-gray-600">Real-time updates van nieuwe wetten en regelgeving</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-12 h-12 mx-auto mb-3 bg-purple-100 rounded-full flex items-center justify-center">
+                    <Users className="h-6 w-6 text-purple-600" />
+                  </div>
+                  <h4 className="font-semibold text-gray-900 mb-2">Voor Professionals</h4>
+                  <p className="text-sm text-gray-600">Gespecialiseerde antwoorden per beroepsgroep</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-12 h-12 mx-auto mb-3 bg-orange-100 rounded-full flex items-center justify-center">
+                    <Zap className="h-6 w-6 text-orange-600" />
+                  </div>
+                  <h4 className="font-semibold text-gray-900 mb-2">Snel & Accuraat</h4>
+                  <p className="text-sm text-gray-600">Binnen seconden een compleet juridisch antwoord</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Example Questions Section */}
       <section className="py-12 bg-gradient-to-br from-gray-50 to-slate-100">
         <div className="container mx-auto px-4">
@@ -718,109 +819,6 @@ export default function HomePage() {
                   Perfect voor advocaten, rechtenstudenten, politieagenten en iedereen die rechtspraak wil begrijpen
                 </p>
               </div>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Section */}
-      <section className="py-16 bg-white border-t border-gray-100">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Hoe Werkt WetHelder?</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Vier verschillende manieren naar betrouwbare juridische informatie
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-            {/* Step 1: Ask Questions */}
-            <Card className="text-center p-6 hover:shadow-lg transition-all duration-200">
-              <div className="w-16 h-16 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-6">
-                <MessageSquare className="h-8 w-8" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">1. Stel Juridische Vragen</h3>
-              <p className="text-gray-600 mb-4">
-                Stel juridische vragen en krijg antwoord op grond van <strong>officiële bronnen</strong>. 
-                Onze AI doorzoekt 56+ betrouwbare juridische databases voor actuele informatie.
-              </p>
-              <div className="text-sm text-blue-600 font-medium">
-                ✓ Wetgeving • Rechtspraak • Jurisprudentie
-              </div>
-            </Card>
-
-            {/* Step 2: Choose Profile */}
-            <Card className="text-center p-6 hover:shadow-lg transition-all duration-200">
-              <div className="w-16 h-16 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mx-auto mb-6">
-                <Users className="h-8 w-8" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">2. Gebruik Een Functieprofiel</h3>
-              <p className="text-gray-600 mb-4">
-                Gebruik een functieprofiel voor <strong>gerichte antwoorden</strong>. 
-                Een advocaat krijgt een ander antwoord dan een politieagent - aangepast aan uw werkcontext.
-              </p>
-              <div className="text-sm text-purple-600 font-medium">
-                ✓ 8 Hoofdprofielen • Aangepaste Antwoorden
-              </div>
-            </Card>
-
-            {/* Step 3: Wetteksten */}
-            <Card className="text-center p-6 hover:shadow-lg transition-all duration-200">
-              <div className="w-16 h-16 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-6">
-                <BookOpen className="h-8 w-8" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">3. Wetteksten Voor Diepgang</h3>
-              <p className="text-gray-600 mb-4">
-                <strong>Wetteksten gaat de diepte in</strong> - gebruik dit enkel wanneer je diepgang wilt. 
-                Niet voor overige vragen. Krijg uitgebreide juridische analyses met artikelverwijzingen.
-              </p>
-              <div className="text-sm text-green-600 font-medium">
-                ✓ Diepgaande Analyse • Artikelverwijzingen
-              </div>
-            </Card>
-
-            {/* Step 4: Jurisprudentie */}
-            <Card className="text-center p-6 hover:shadow-lg transition-all duration-200">
-              <div className="w-16 h-16 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mx-auto mb-6">
-                <Gavel className="h-8 w-8" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">4. Jurisprudentie Zoeken</h3>
-              <p className="text-gray-600 mb-4">
-                <strong>Zoek relevante rechtspraak</strong> per wetsartikel of onderwerp. 
-                Vind uitspraken van Hoge Raad tot rechtbank met begrijpelijke samenvattingen.
-              </p>
-              <div className="text-sm text-purple-600 font-medium">
-                ✓ ECLI-nummers • Filters • Begrijpelijke Taal
-              </div>
-            </Card>
-          </div>
-
-          {/* Usage Tips */}
-          <div className="mt-12 max-w-4xl mx-auto">
-            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-              <CardContent className="p-6">
-                <div className="text-center mb-4">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-2">💡 Gebruikstips</h4>
-                </div>
-                <div className="grid md:grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span><strong>Voor snelle vragen:</strong> Gebruik het standaard chatvenster zonder Wet & Uitleg</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span><strong>Voor complexe analyses:</strong> Schakel Wet & Uitleg in voor uitgebreide uitleg</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span><strong>Voor rechtspraak:</strong> Gebruik Jurisprudentie om uitspraken per wetsartikel te vinden</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span><strong>Kies het juiste profiel:</strong> Politieagent, advocaat, burger - elk krijgt passende antwoorden</span>
-                  </div>
-                </div>
-              </CardContent>
             </Card>
           </div>
         </div>
