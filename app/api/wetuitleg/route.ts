@@ -95,15 +95,17 @@ async function searchGoogle(query: string): Promise<string[]> {
     let searchQuery = ''
     
     if (gemeente) {
-      // Gemeente-specifieke zoekopdracht - brede search voor betere resultaten
-      searchQuery = `${query} "${gemeente}" ("APV" OR "algemene plaatselijke verordening" OR "verordening")`
+      // Gemeente-specifieke FANATIEKE zoekopdracht op ALLE relevante overheidsites
+      searchQuery = `${query} "${gemeente}" (site:${gemeente}.nl OR site:www.${gemeente}.nl OR site:lokaleregelgeving.overheid.nl OR site:wetten.overheid.nl OR site:rechtspraak.nl OR site:overheid.nl OR site:officielebekendmakingen.nl OR site:gemeenteblad.nl OR "APV ${gemeente}" OR "algemene plaatselijke verordening ${gemeente}" OR "${gemeente} verordening" OR "${gemeente} gemeentewet")`
     } else {
-      // Algemene APV zoekopdracht - geen site-restrictie vanwege beperkte CSE  
-      searchQuery = `${query} ("APV" OR "algemene plaatselijke verordening" OR "gemeenteverordening" OR "lokale regelgeving")`
+      // FANATIEKE APV-zoekopdracht op ALLE Nederlandse overheidsites
+      searchQuery = `${query} (site:lokaleregelgeving.overheid.nl OR site:wetten.overheid.nl OR site:rechtspraak.nl OR site:overheid.nl OR site:officielebekendmakingen.nl OR site:gemeenteblad.nl OR site:denederlandsegrondwet.nl OR site:rijksoverheid.nl OR site:opendata.overheid.nl OR site:*.gemeente.nl OR site:*.nl/apv OR "APV" OR "algemene plaatselijke verordening" OR "gemeenteverordening" OR "lokale regelgeving" OR "provinciale verordening" OR "waterschap" OR "gemeentewet")`
     }
     
+    console.log('🔎 Search query:', searchQuery)
+    
     const response = await fetch(
-      `https://www.googleapis.com/customsearch/v1?key=${process.env.GOOGLE_API_KEY}&cx=${process.env.GOOGLE_CSE_ID}&q=${encodeURIComponent(searchQuery)}&num=10`
+      `https://www.googleapis.com/customsearch/v1?key=${process.env.GOOGLE_API_KEY}&cx=${process.env.GOOGLE_CSE_ID}&q=${encodeURIComponent(searchQuery)}&num=10&lr=lang_nl&gl=nl`
     )
     
     if (!response.ok) {
@@ -259,6 +261,7 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
     }
 
     console.log('🔍 Starting legal analysis for:', query)
+    console.log('🏛️ Gemeente gedetecteerd:', detectGemeente(query) || 'geen')
 
     // Search for relevant information from multiple sources
     const searchResults = await searchGoogle(query)
