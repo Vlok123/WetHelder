@@ -4,6 +4,9 @@
     "app/api/ask/route.ts": {
       "maxDuration": 60
     },
+    "app/api/wetuitleg/route.ts": {
+      "maxDuration": 60
+    },
     "app/api/ingest/route.ts": {
       "maxDuration": 60
     }
