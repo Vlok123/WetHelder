@@ -198,8 +198,9 @@ export async function POST(request: NextRequest) {
     // STAP 2: Zoek via rechtspraak.nl API als backup/aanvulling
     console.log('⚖️ Stap 2: Rechtspraak.nl API')
     try {
-      const rechtspraakResults = await fetchRechtspraak(20)
+      const rechtspraakResults = await fetchRechtspraak(20, query)
       const relevantResults = rechtspraakResults.filter(doc => {
+        if (!query) return true
         const searchText = (doc.titel + ' ' + doc.samenvatting + ' ' + doc.volledigeTekst).toLowerCase()
         return searchText.includes(query.toLowerCase())
       })

@@ -8,6 +8,10 @@
 import { prisma } from './prisma'
 import fs from 'fs'
 import path from 'path'
+import { parseString } from 'xml2js'
+import { promisify } from 'util'
+
+const parseXML = promisify(parseString)
 
 // Types voor verschillende bronnen
 export interface WetgevingDocument {
@@ -378,23 +382,46 @@ export async function fetchKOOPDocuments(query: string = '', limit: number = 50)
 
 // === 3. RECHTSPRAAK (ECLI Feed) ===
 
-export async function fetchRechtspraak(limit: number = 100): Promise<JurisprudentieDocument[]> {
+export async function fetchRechtspraak(limit: number = 100, query?: string): Promise<JurisprudentieDocument[]> {
   console.log('⚖️ Fetching Rechtspraak...')
   
   try {
-    // RSS feed van rechtspraak.nl
-    const response = await fetch('https://data.rechtspraak.nl/uitspraken/feed/uitspraken.rss')
+    // Bouw de URL met query parameters
+    const params = new URLSearchParams({
+      rows: limit.toString(),
+      format: 'xml'
+    })
     
-    if (!response.ok) {
-      console.warn('Rechtspraak RSS niet beschikbaar, gebruik API fallback')
-      return await fetchRechtspraakAPI(limit)
+    // Voeg zoekterm toe als die er is
+    if (query && query.trim()) {
+      params.append('q', query.trim())
     }
     
-    const rssText = await response.text()
+    const url = `https://data.rechtspraak.nl/uitspraken/search?${params.toString()}`
+    console.log('🔍 Rechtspraak API URL:', url)
     
-    // Parse RSS (in echte implementatie zou je een XML parser gebruiken)
-    // Voor nu gebruiken we de API fallback
-    return await fetchRechtspraakAPI(limit)
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'WetHelder/1.0 (https://wethelder.nl)',
+        'Accept': 'application/xml'
+      }
+    })
+    
+    if (!response.ok) {
+      console.warn('Rechtspraak Open Data API niet beschikbaar, status:', response.status)
+      return []
+    }
+    
+    const xmlText = await response.text()
+    
+    // Parse XML naar JavaScript object
+    const result = await parseXML(xmlText)
+    
+    // Extraheer de uitspraken uit de XML structuur
+    const uitspraken = extractUitsprakenFromXML(result)
+    
+    console.log(`✅ ${uitspraken.length} uitspraken gevonden via Rechtspraak Open Data API`)
+    return uitspraken
     
   } catch (error) {
     console.error('Error fetching Rechtspraak:', error)
@@ -402,28 +429,138 @@ export async function fetchRechtspraak(limit: number = 100): Promise<Jurispruden
   }
 }
 
-async function fetchRechtspraakAPI(limit: number): Promise<JurisprudentieDocument[]> {
+/**
+ * Extraheer uitspraken uit de XML structuur van rechtspraak.nl
+ */
+function extractUitsprakenFromXML(xmlResult: any): JurisprudentieDocument[] {
   try {
-    const response = await fetch(`https://uitspraken.rechtspraak.nl/api/uitspraken?limit=${limit}&format=json`)
+    // Rechtspraak.nl XML heeft verschillende mogelijke structuren
+    // Controleer meest voorkomende paden
+    let docs: any[] = []
     
-    if (!response.ok) {
+    // Probeer verschillende XML structuren
+    if (xmlResult?.response?.docs) {
+      docs = Array.isArray(xmlResult.response.docs) ? xmlResult.response.docs : [xmlResult.response.docs]
+    } else if (xmlResult?.result?.doc) {
+      docs = Array.isArray(xmlResult.result.doc) ? xmlResult.result.doc : [xmlResult.result.doc]
+    } else if (xmlResult?.docs) {
+      docs = Array.isArray(xmlResult.docs) ? xmlResult.docs : [xmlResult.docs]
+    } else if (xmlResult?.doc) {
+      docs = Array.isArray(xmlResult.doc) ? xmlResult.doc : [xmlResult.doc]
+    }
+    
+    if (docs.length === 0) {
+      console.log('⚠️ Geen uitspraken gevonden in XML structuur')
       return []
     }
     
-    const data = await response.json()
+    return docs.map((doc: any) => {
+      // Extraheer velden uit XML document
+      const ecli = extractXMLValue(doc, ['ecli', 'identifier', 'id'])
+      const titel = extractXMLValue(doc, ['title', 'titel', 'dcterms:title'])
+      const samenvatting = extractXMLValue(doc, ['summary', 'samenvatting', 'inhoudsindicatie', 'dcterms:abstract'])
+      const volledigeTekst = extractXMLValue(doc, ['text', 'tekst', 'content', 'volledigetekst'])
+      const instantie = extractXMLValue(doc, ['creator', 'instantie', 'dcterms:creator'])
+      const datum = extractXMLValue(doc, ['date', 'datum', 'dcterms:issued', 'dcterms:created'])
+      const type = extractXMLValue(doc, ['type', 'dcterms:type'])
+      const rechtsgebieden = extractXMLArray(doc, ['subject', 'rechtsgebied', 'dcterms:subject'])
+      const trefwoorden = extractXMLArray(doc, ['keyword', 'trefwoord', 'dcterms:subject'])
+      
+      return {
+        ecli: ecli || `RECHTSPRAAK-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        titel: titel || 'Uitspraak zonder titel',
+        samenvatting: samenvatting || '',
+        volledigeTekst: volledigeTekst || '',
+        instantie: instantie || extractInstantie(ecli || ''),
+        datum: parseDate(datum) || new Date(),
+        uitspraakType: type || 'uitspraak',
+        rechtsgebied: rechtsgebieden,
+        trefwoorden: trefwoorden,
+        wetsartikelen: extractWetsartikelen(volledigeTekst || samenvatting || '')
+      }
+    }).filter(doc => doc.ecli && doc.ecli !== 'RECHTSPRAAK-' && doc.titel)
     
-    return data.results?.map((item: any) => ({
-      ecli: item.ecli,
-      titel: item.titel || item.title,
-      samenvatting: item.samenvatting || item.inhoudsindicatie,
-      volledigeTekst: item.tekst || item.content || '',
-      instantie: item.instantie || extractInstantie(item.ecli),
-      datum: new Date(item.datum || item.uitspraakdatum),
-      uitspraakType: item.type || 'uitspraak',
-      rechtsgebied: item.rechtsgebieden || [],
-      trefwoorden: item.trefwoorden || [],
-      wetsartikelen: extractWetsartikelen(item.tekst || '')
-    })) || []
+  } catch (error) {
+    console.error('Error extracting uitspraken from XML:', error)
+    return []
+  }
+}
+
+/**
+ * Extraheer waarde uit XML object met verschillende mogelijke veldnamen
+ */
+function extractXMLValue(obj: any, fieldNames: string[]): string {
+  if (!obj) return ''
+  
+  for (const fieldName of fieldNames) {
+    const value = obj[fieldName]
+    if (value) {
+      // XML parser geeft arrays terug, pak eerste waarde
+      if (Array.isArray(value)) {
+        return value[0]?.toString() || ''
+      }
+      return value.toString()
+    }
+  }
+  
+  return ''
+}
+
+/**
+ * Extraheer array van waarden uit XML object
+ */
+function extractXMLArray(obj: any, fieldNames: string[]): string[] {
+  if (!obj) return []
+  
+  for (const fieldName of fieldNames) {
+    const value = obj[fieldName]
+    if (value) {
+      if (Array.isArray(value)) {
+        return value.map(v => v?.toString()).filter(Boolean)
+      }
+      return [value.toString()]
+    }
+  }
+  
+  return []
+}
+
+/**
+ * Parse datum string naar Date object
+ */
+function parseDate(dateString: string): Date | null {
+  if (!dateString) return null
+  
+  try {
+    // Verschillende datum formaten proberen
+    const date = new Date(dateString)
+    if (!isNaN(date.getTime())) {
+      return date
+    }
+    
+    // ISO datum formaat
+    const isoMatch = dateString.match(/(\d{4})-(\d{2})-(\d{2})/)
+    if (isoMatch) {
+      return new Date(parseInt(isoMatch[1]), parseInt(isoMatch[2]) - 1, parseInt(isoMatch[3]))
+    }
+    
+    // Nederlandse datum formaat
+    const nlMatch = dateString.match(/(\d{1,2})-(\d{1,2})-(\d{4})/)
+    if (nlMatch) {
+      return new Date(parseInt(nlMatch[3]), parseInt(nlMatch[2]) - 1, parseInt(nlMatch[1]))
+    }
+    
+    return null
+  } catch (error) {
+    return null
+  }
+}
+
+async function fetchRechtspraakAPI(limit: number): Promise<JurisprudentieDocument[]> {
+  try {
+    // Dit endpoint bestaat niet meer - verwijderd
+    console.warn('❌ Oude Rechtspraak API endpoint niet meer beschikbaar')
+    return []
     
   } catch (error) {
     console.error('Error fetching Rechtspraak API:', error)
@@ -841,13 +978,18 @@ export async function fetchDataOverheid(query: string = '', limit: number = 10):
 // === 18. OPENRECHTSPRAAK.NL API ===
 
 export async function fetchOpenRechtspraak(query: string = '', limit: number = 20): Promise<JurisprudentieDocument[]> {
-  console.log('⚖️ Fetching OpenRechtspraak.nl...')
+  console.log('📖 Fetching OpenRechtspraak.nl...')
   
   try {
-    const encodedQuery = encodeURIComponent(query)
-    const url = `https://openrechtspraak.nl/api/v1/uitspraken?q=${encodedQuery}&size=${limit}&format=json`
+    // Gebruik de werkende OpenRechtspraak.nl API
+    const baseUrl = 'https://openrechtspraak.nl/api/v1/person'
+    const params = new URLSearchParams({
+      limit: Math.min(limit, 100).toString(),
+      offset: '0',
+      ...(query && { q: query })
+    })
     
-    const response = await fetch(url, {
+    const response = await fetch(`${baseUrl}?${params}`, {
       headers: {
         'User-Agent': 'WetHelder/1.0 (https://wethelder.nl)',
         'Accept': 'application/json'
@@ -861,27 +1003,83 @@ export async function fetchOpenRechtspraak(query: string = '', limit: number = 2
     
     const data = await response.json()
     
-    if (!data.results) {
+    if (!data.data || data.data.length === 0) {
+      console.log('ℹ️ Geen OpenRechtspraak resultaten gevonden')
       return []
     }
     
-    return data.results.map((item: any) => ({
-      ecli: item.ecli,
-      titel: item.titel || `Uitspraak ${item.ecli}`,
-      samenvatting: item.samenvatting || item.inhoudsindicatie || '',
-      volledigeTekst: item.tekst || '',
-      instantie: item.instantie || extractInstantie(item.ecli),
-      datum: new Date(item.datum || item.uitspraakdatum || Date.now()),
-      uitspraakType: item.type || 'uitspraak',
-      rechtsgebied: item.rechtsgebieden || [],
-      trefwoorden: item.trefwoorden || [],
-      wetsartikelen: extractWetsartikelen(item.tekst || '')
-    }))
+    // Voor elke persoon, haal uitspraken op
+    const allVerdicts: JurisprudentieDocument[] = []
+    
+    // Neem alleen de eerste paar personen om API rate limits te respecteren
+    const personsToCheck = data.data.slice(0, Math.min(3, data.data.length))
+    
+    for (const person of personsToCheck) {
+      try {
+        const verdictsResponse = await fetch(`https://openrechtspraak.nl/api/v1/person/${person.id}/verdicts?limit=10`, {
+          headers: {
+            'User-Agent': 'WetHelder/1.0 (https://wethelder.nl)',
+            'Accept': 'application/json'
+          }
+        })
+        
+        if (verdictsResponse.ok) {
+          const verdictsData = await verdictsResponse.json()
+          
+          if (verdictsData.data && verdictsData.data.length > 0) {
+            const convertedVerdicts = verdictsData.data.map((verdict: any) => ({
+              ecli: verdict.ecli,
+              titel: verdict.title,
+              samenvatting: verdict.summary,
+              volledigeTekst: '', // Volledige tekst niet beschikbaar via deze API
+              instantie: extractInstantieFromURI(verdict.institution),
+              datum: new Date(verdict.issued),
+              uitspraakType: verdict.type,
+              rechtsgebied: [verdict.subject],
+              trefwoorden: [verdict.procedure],
+              wetsartikelen: []
+            }))
+            
+            allVerdicts.push(...convertedVerdicts)
+          }
+        }
+        
+        // Respecteer rate limits
+        await new Promise(resolve => setTimeout(resolve, 100))
+        
+      } catch (error) {
+        console.warn('Error fetching verdicts for person:', person.id, error)
+      }
+    }
+    
+    console.log(`✅ ${allVerdicts.length} OpenRechtspraak uitspraken gevonden`)
+    return allVerdicts
     
   } catch (error) {
-    console.error('Error fetching OpenRechtspraak.nl:', error)
+    console.error('Error fetching OpenRechtspraak:', error)
     return []
   }
+}
+
+function extractInstantieFromURI(institutionURI: string): string {
+  if (!institutionURI) return 'Onbekend'
+  
+  const institutionMap: { [key: string]: string } = {
+    'Rechtbank_Amsterdam': 'Rechtbank Amsterdam',
+    'Rechtbank_Rotterdam': 'Rechtbank Rotterdam',
+    'Rechtbank_Den_Haag': 'Rechtbank Den Haag',
+    'Gerechtshof_Amsterdam': 'Gerechtshof Amsterdam',
+    'Gerechtshof_Den_Haag': 'Gerechtshof Den Haag',
+    'Hoge_Raad': 'Hoge Raad'
+  }
+  
+  for (const [key, value] of Object.entries(institutionMap)) {
+    if (institutionURI.includes(key)) {
+      return value
+    }
+  }
+  
+  return 'Rechtbank'
 }
 
 // === 19. BOETEBASE OM (ENHANCED) ===

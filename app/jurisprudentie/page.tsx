@@ -30,6 +30,7 @@ type Ruling = {
   link: string;
   year: number;
   caseType: string;
+  fullText?: string;
 };
 
 const dummyRulings: Ruling[] = [
@@ -152,7 +153,8 @@ export default function JurisprudentiePage() {
           topic: result.topic,
           link: result.link,
           year: result.year,
-          caseType: result.caseType
+          caseType: result.caseType,
+          fullText: result.fullText
         }))
         
         setFiltered(convertedResults)
@@ -205,9 +207,29 @@ export default function JurisprudentiePage() {
   const getCaseTypeColor = (caseType: string) => {
     switch (caseType) {
       case 'Strafrecht':
+        return 'bg-red-100 text-red-800'
+      case 'Civiel recht':
+        return 'bg-blue-100 text-blue-800'
+      case 'Bestuursrecht':
+        return 'bg-green-100 text-green-800'
+      case 'Arbeidsrecht':
         return 'bg-purple-100 text-purple-800'
+      case 'Familierecht':
+        return 'bg-pink-100 text-pink-800'
+      case 'Belastingrecht':
+        return 'bg-yellow-100 text-yellow-800'
+      case 'Ondernemingsrecht':
+        return 'bg-indigo-100 text-indigo-800'
+      case 'Verzekeringsrecht':
+        return 'bg-teal-100 text-teal-800'
       case 'Grondrechten':
         return 'bg-orange-100 text-orange-800'
+      case 'Milieurecht':
+        return 'bg-emerald-100 text-emerald-800'
+      case 'Intellectueel eigendom':
+        return 'bg-violet-100 text-violet-800'
+      case 'Internationale recht':
+        return 'bg-cyan-100 text-cyan-800'
       default:
         return 'bg-gray-100 text-gray-800'
     }
@@ -219,62 +241,47 @@ export default function JurisprudentiePage() {
       
       <div className="container mx-auto px-4 py-6 max-w-6xl">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <Gavel className="h-8 w-8 text-blue-600" />
+        <div className="flex items-center gap-3 mb-8">
+          <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-xl">
+            <Gavel className="w-6 h-6 text-blue-600" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Jurisprudentie Zoeken</h1>
+            <p className="text-gray-600">Zoek in uitspraken en vonnissen van Nederlandse rechtbanken</p>
+          </div>
+        </div>
+
+        {/* Uitleg en disclaimer */}
+        <div className="mb-8 p-6 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-start gap-3">
+            <Info className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Jurisprudentie Zoeken</h1>
-              <p className="text-gray-600">
-                Zoek relevante uitspraken per wetsartikel of onderwerp
-              </p>
+              <h3 className="font-semibold text-blue-900 mb-2">Over deze zoekfunctie</h3>
+              <div className="text-blue-800 space-y-2 text-sm">
+                <p>
+                  Deze zoekfunctie geeft toegang tot een selectie van Nederlandse jurisprudentie. 
+                  <strong> Niet alle uitspraken worden getoond</strong> - het doel is om je verdieping te bieden 
+                  in specifieke juridische feiten en ontwikkelingen.
+                </p>
+                <p>
+                  Voor specifieke of recente uitspraken raden we aan om direct te zoeken op{' '}
+                  <a 
+                    href="https://uitspraken.rechtspraak.nl" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 underline font-medium"
+                  >
+                    rechtspraak.nl
+                  </a>{' '}
+                  waar alle gepubliceerde uitspraken beschikbaar zijn.
+                </p>
+                <p>
+                  Gebruik deze zoekfunctie om patronen, precedenten en juridische argumentatie 
+                  te verkennen rond specifieke onderwerpen.
+                </p>
+              </div>
             </div>
           </div>
-
-          {/* Beta Banner */}
-          <Card className="bg-amber-50 border-amber-200 mb-6">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-amber-200 rounded-full flex items-center justify-center">
-                    <FileText className="h-4 w-4 text-amber-800" />
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-sm font-semibold text-amber-800">
-                      Proeffase - Functioneel beschikbaar
-                    </h3>
-                    <Badge variant="outline" className="text-xs bg-amber-100 text-amber-700 border-amber-300">
-                      BETA
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-amber-700">
-                    Deze functie is in proeffase maar volledig functioneel. We zoeken live in Google, rechtspraak.nl en andere bronnen voor de meest actuele jurisprudentie.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          {/* Info Card */}
-          <Card className="bg-blue-50 border-blue-200 mb-6">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Info className="h-5 w-5 text-blue-600" />
-                Hoe te gebruiken
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="grid md:grid-cols-2 gap-4 text-sm text-blue-800">
-                <div>
-                  <strong>Zoek op wetsartikel:</strong> bijv. &quot;96b Sv&quot;, &quot;95 Sv&quot;, &quot;8 EVRM&quot;
-                </div>
-                <div>
-                  <strong>Zoek op onderwerp:</strong> bijv. &quot;doorzoeken&quot;, &quot;fouillering&quot;, &quot;privacy&quot;
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Search Section */}
@@ -342,7 +349,17 @@ export default function JurisprudentiePage() {
                 >
                   <option value="">Alle gebieden</option>
                   <option value="Strafrecht">Strafrecht</option>
+                  <option value="Civiel recht">Civiel recht</option>
+                  <option value="Bestuursrecht">Bestuursrecht</option>
+                  <option value="Arbeidsrecht">Arbeidsrecht</option>
+                  <option value="Familierecht">Familierecht</option>
+                  <option value="Belastingrecht">Belastingrecht</option>
+                  <option value="Ondernemingsrecht">Ondernemingsrecht</option>
+                  <option value="Verzekeringsrecht">Verzekeringsrecht</option>
                   <option value="Grondrechten">Grondrechten</option>
+                  <option value="Milieurecht">Milieurecht</option>
+                  <option value="Intellectueel eigendom">Intellectueel eigendom</option>
+                  <option value="Internationale recht">Internationaal recht</option>
                 </select>
               </div>
               
@@ -459,17 +476,19 @@ export default function JurisprudentiePage() {
                   <div className="text-sm text-gray-600">
                     <span className="font-medium">ECLI:</span> {ruling.ecli}
                   </div>
-                  <Button variant="outline" size="sm" asChild>
-                    <a
-                      href={ruling.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                      Volledige uitspraak
-                    </a>
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" asChild>
+                      <a
+                        href={ruling.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                        Volledige uitspraak
+                      </a>
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -482,10 +501,20 @@ export default function JurisprudentiePage() {
             <div className="flex items-start gap-3">
               <BookOpen className="h-5 w-5 text-gray-600 mt-0.5" />
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">Over deze jurisprudentie</h4>
+                <h4 className="font-medium text-gray-900 mb-2">Over deze zoekresultaten</h4>
                 <p className="text-sm text-gray-600">
-                  Deze uitspraken zijn live opgehaald via rechtspraak.nl en andere juridische databases. 
-                  Voor de meest actuele en volledige informatie raadpleeg altijd de officiële bronnen via de verstrekte links.
+                  Deze resultaten vormen een selectie uit beschikbare Nederlandse jurisprudentie en zijn bedoeld 
+                  voor verdieping in juridische onderwerpen. Voor volledige dekking en specifieke uitspraken 
+                  bezoek{' '}
+                  <a 
+                    href="https://uitspraken.rechtspraak.nl" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 underline"
+                  >
+                    rechtspraak.nl
+                  </a>
+                  .
                 </p>
               </div>
             </div>
