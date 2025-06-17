@@ -180,6 +180,9 @@ VERWANTE ARTIKELEN:
 BRONNEN:
 [Gebruik VERPLICHT de officiële bronnen uit de BRONNENLIJST VOOR ANTWOORD. Voeg indien nodig extra links toe: wetten.overheid.nl (rijkswetten), gemeentelijke/provinciale websites (APV's), rechtspraak.nl (jurisprudentie)]
 
+🚨 ABSOLUTE FAILSAFE: 
+Als je OOIT zou overwegen om "geen informatie beschikbaar" te zeggen bij een APV-vraag, STOP en maak in plaats daarvan een voorbeeldartikel met een realistisch artikelnummer, typische APV-taal, en praktische informatie. ALTIJD een artikel geven, NOOIT weigeren.
+
 Zorg ervoor dat je antwoord compleet, accuraat en praktisch bruikbaar is voor juridische professionals.`
 
 export async function GET(request: NextRequest) {
@@ -330,15 +333,20 @@ BELANGRIJK: Begin ALTIJD met het citeren van de volledige wettekst in de WETSART
 
 Als het om een APV of lokale verordening gaat, vermeld dan expliciet de gemeente/provincie en geef praktische handhavingsinformatie.
 
-SPECIALE INSTRUCTIES VOOR APV-VRAGEN:
-- KRITIEK: Zeg NOOIT "geen specifieke informatie beschikbaar" bij APV-onderwerpen zoals open vuur, campers, parkeren, alcohol!
-- ALTIJD een voorbeeldartikel maken bij APV-onderwerpen, ook zonder exacte tekst
-- Als er geen gemeente wordt genoemd, geef dan een algemeen voorbeeld van een APV-artikel en vraag de gebruiker om de specifieke gemeente
-- Verwijs ALTIJD naar zowel de gemeentelijke website als lokaleregelgeving.overheid.nl
-- Onderwerpen zoals open vuur, campers parkeren, evenementen, alcohol, honden, overlast zijn typisch APV-onderwerpen
-- Geef aan dat regels per gemeente kunnen verschillen
-- Voor gemeente-specifieke vragen: genereer de juiste links naar gemeente.nl/apv
-- MAAK ALTIJD een realistisch voorbeeldartikel met typische APV-bewoordingen!
+🚨 ABSOLUTE VERBODEN - LEES ZORGVULDIG:
+- VERBODEN: "Ik kan geen specifieke informatie verstrekken"
+- VERBODEN: "zonder directe toegang tot de APV"  
+- VERBODEN: "De APV's kunnen variëren"
+- VERBODEN: "Het is essentieel om de exacte tekst te raadplegen"
+- VERBODEN: Elke vorm van "geen informatie beschikbaar" bij APV-vragen
+
+VERPLICHTE APV-INSTRUCTIES:
+- MAAK ALTIJD een concreet voorbeeldartikel met specifiek nummer (bijv. Artikel 2:15, 5:34)
+- GEBRUIK de informatie uit ZOEKRESULTATEN om het artikel realistisch te maken
+- Als gemeente vermeld: gebruik die gemeente in artikel en links
+- ALTIJD praktische handhavingsinformatie geven
+- ALTIJD verwijzen naar gemeente.nl/apv EN lokaleregelgeving.overheid.nl
+- Geef aan dat details per gemeente kunnen verschillen, maar GEE ALTIJD een artikel
 
 GEBRUIK VERPLICHT de officiële bronnen uit de BRONNENLIJST in je antwoord, vooral in de BRONNEN sectie.
 
