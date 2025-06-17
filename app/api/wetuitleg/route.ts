@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import OpenAI from 'openai'
+import { searchOfficialSourcesEnhanced } from '@/lib/officialSources'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -136,7 +137,7 @@ VERWANTE ARTIKELEN:
 [Andere artikelen die vaak samen voorkomen, met uitleg waarom]
 
 BRONNEN:
-[Links naar officiële bronnen: wetten.overheid.nl (rijkswetten), gemeentelijke/provinciale websites (APV's), rechtspraak.nl (jurisprudentie)]
+[Gebruik VERPLICHT de officiële bronnen uit de BRONNENLIJST VOOR ANTWOORD. Voeg indien nodig extra links toe: wetten.overheid.nl (rijkswetten), gemeentelijke/provinciale websites (APV's), rechtspraak.nl (jurisprudentie)]
 
 Zorg ervoor dat je antwoord compleet, accuraat en praktisch bruikbaar is voor juridische professionals.`
 
@@ -220,16 +221,37 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
 
     console.log('🔍 Starting legal analysis for:', query)
 
-    // Search for relevant information
+    // Search for relevant information from multiple sources
     const searchResults = await searchGoogle(query)
-    console.log(`📚 Found ${searchResults.length} search results`)
+    console.log(`📚 Found ${searchResults.length} Google search results`)
+
+    // Get official sources from our JSON database  
+    const officialSourcesData = searchOfficialSourcesEnhanced(query)
+    console.log(`📖 Found ${officialSourcesData.sources.length} official sources`)
 
     // Prepare context for AI
-    let context = 'Zoekresultaten:\n\n'
+    let context = 'BESCHIKBARE BRONNEN:\n\n'
+    
+    // Add official sources context first (most reliable)
+    if (officialSourcesData.sources.length > 0) {
+      context += '=== OFFICIËLE BRONNEN ===\n'
+      context += officialSourcesData.context + '\n\n'
+    }
+    
+    // Add Google search results as supplementary info
     if (searchResults.length > 0) {
-      context += searchResults.join('\n\n---\n\n')
-    } else {
-      context += 'Geen specifieke zoekresultaten gevonden. Gebruik je algemene kennis van Nederlandse wetgeving.'
+      context += '=== AANVULLENDE INFORMATIE ===\n'
+      context += searchResults.join('\n\n---\n\n') + '\n\n'
+    }
+    
+    if (searchResults.length === 0 && officialSourcesData.sources.length === 0) {
+      context += 'Geen specifieke zoekresultaten gevonden. Gebruik je algemene kennis van Nederlandse wetgeving.\n\n'
+    }
+    
+    // Add official sources list for BRONNEN section
+    if (officialSourcesData.bronnenList.length > 0) {
+      context += '=== BRONNENLIJST VOOR ANTWOORD ===\n'
+      context += officialSourcesData.bronnenList.join('\n') + '\n\n'
     }
 
     const messages: Array<{role: 'system' | 'user' | 'assistant', content: string}> = [
@@ -265,6 +287,8 @@ ${context}
 BELANGRIJK: Begin ALTIJD met het citeren van de volledige wettekst in de WETSARTIKEL sectie, zelfs als de vraag algemeen is. Gebruikers willen eerst het artikel zien voordat de uitleg komt.
 
 Als het om een APV of lokale verordening gaat, vermeld dan expliciet de gemeente/provincie en geef praktische handhavingsinformatie.
+
+GEBRUIK VERPLICHT de officiële bronnen uit de BRONNENLIJST in je antwoord, vooral in de BRONNEN sectie.
 
 Geef een volledige juridische analyse volgens de gevraagde structuur.`
     })

@@ -6,6 +6,8 @@
  */
 
 import { prisma } from './prisma'
+import fs from 'fs'
+import path from 'path'
 
 // Types voor verschillende bronnen
 export interface WetgevingDocument {
@@ -17,6 +19,15 @@ export interface WetgevingDocument {
   artikelNr?: string
   wetboek?: string
   status: 'ACTIVE' | 'SUPERSEDED' | 'DELETED'
+}
+
+export interface OfficialSourceItem {
+  Categorie: string
+  Topic: string
+  "Bron (naam)": string
+  URL: string
+  Omschrijving: string
+  Scope: string
 }
 
 export interface JurisprudentieDocument {
@@ -42,6 +53,146 @@ export interface BoeteDocument {
   wetboek?: string
   geldigVan: Date
   geldigTot?: Date
+}
+
+// === OFFICIËLE BRONNEN CACHE ===
+let officialSourcesCache: OfficialSourceItem[] | null = null
+
+// Laad het officiele_bronnen.json bestand
+export function loadOfficialSources(): OfficialSourceItem[] {
+  if (officialSourcesCache !== null) {
+    return officialSourcesCache
+  }
+
+  try {
+    const filePath = path.join(process.cwd(), 'data', 'officiele_bronnen.json')
+    const fileContent = fs.readFileSync(filePath, 'utf-8')
+    const data = JSON.parse(fileContent)
+    
+    const sources = data.Sheet1 || []
+    officialSourcesCache = sources
+    console.log(`📚 Loaded ${sources.length} official sources from officiele_bronnen.json`)
+    return sources
+  } catch (error) {
+    console.error('Error loading officiele_bronnen.json:', error)
+    officialSourcesCache = []
+    return []
+  }
+}
+
+// Zoek relevante bronnen gebaseerd op query
+export function findRelevantOfficialSources(query: string, maxResults: number = 5): OfficialSourceItem[] {
+  const sources = loadOfficialSources()
+  const queryLower = query.toLowerCase()
+  
+  // Score elke bron op relevantie
+  const scoredSources = sources.map(source => {
+    let score = 0
+    
+    // Exacte matches krijgen hoge score
+    if (source.Topic.toLowerCase().includes(queryLower)) score += 10
+    if (source.Omschrijving.toLowerCase().includes(queryLower)) score += 8
+    if (source.Categorie.toLowerCase().includes(queryLower)) score += 6
+    if (source["Bron (naam)"].toLowerCase().includes(queryLower)) score += 5
+    
+    // Specifieke trefwoorden detecteren
+    const keywords = extractQueryKeywords(queryLower)
+    for (const keyword of keywords) {
+      if (source.Topic.toLowerCase().includes(keyword)) score += 3
+      if (source.Omschrijving.toLowerCase().includes(keyword)) score += 2
+    }
+    
+    return { source, score }
+  })
+  
+  // Sorteer op score en return top resultaten
+  return scoredSources
+    .filter(item => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, maxResults)
+    .map(item => item.source)
+}
+
+// Zoek specifieke categorieën
+export function findSourcesByCategory(category: string): OfficialSourceItem[] {
+  const sources = loadOfficialSources()
+  return sources.filter(source => 
+    source.Categorie.toLowerCase().includes(category.toLowerCase())
+  )
+}
+
+// Zoek APV/lokale regelgeving bronnen
+export function findAPVOfficialSources(): OfficialSourceItem[] {
+  const sources = loadOfficialSources()
+  
+  return sources.filter(source => 
+    source.Topic.toLowerCase().includes('apv') ||
+    source.Topic.toLowerCase().includes('lokale') ||
+    source.Topic.toLowerCase().includes('gemeente') ||
+    source.Omschrijving.toLowerCase().includes('plaatselijke') ||
+    source.Omschrijving.toLowerCase().includes('gemeente')
+  )
+}
+
+// Zoek handhavingsbronnen (voor BOA's/politie)
+export function findHandhavingsOfficialSources(): OfficialSourceItem[] {
+  const sources = loadOfficialSources()
+  
+  return sources.filter(source => 
+    source.Categorie.toLowerCase().includes('handhaving') ||
+    source.Topic.toLowerCase().includes('politie') ||
+    source.Topic.toLowerCase().includes('boete') ||
+    source.Omschrijving.toLowerCase().includes('handhaving') ||
+    source.Omschrijving.toLowerCase().includes('politie')
+  )
+}
+
+// Extract keywords from query for better matching
+function extractQueryKeywords(query: string): string[] {
+  const keywords: string[] = []
+  
+  // Wetboeken detecteren
+  if (query.includes('strafrecht') || query.includes(' sr ')) keywords.push('strafrecht')
+  if (query.includes('burgerlijk') || query.includes(' bw ')) keywords.push('burgerlijk')
+  if (query.includes('verkeer') || query.includes('wvw')) keywords.push('verkeer')
+  if (query.includes('bestuursrecht') || query.includes('awb')) keywords.push('bestuursrecht')
+  if (query.includes('politie')) keywords.push('politie')
+  if (query.includes('apv')) keywords.push('apv')
+  if (query.includes('gemeente')) keywords.push('gemeente')
+  if (query.includes('provincie')) keywords.push('provincie')
+  if (query.includes('belasting')) keywords.push('belasting')
+  if (query.includes('arbeidsrecht') || query.includes('cao')) keywords.push('arbeidsrecht')
+  if (query.includes('jurisprudentie') || query.includes('rechtspraak')) keywords.push('jurisprudentie')
+  if (query.includes('boete')) keywords.push('boete')
+  if (query.includes('handhaving')) keywords.push('handhaving')
+  if (query.includes('privacy') || query.includes('gdpr') || query.includes('avg')) keywords.push('privacy')
+  
+  return keywords
+}
+
+// Genereer context voor AI gebaseerd op gevonden bronnen
+export function generateOfficialSourcesContext(sources: OfficialSourceItem[]): string {
+  if (sources.length === 0) {
+    return "Geen specifieke officiële bronnen gevonden voor deze query."
+  }
+  
+  let context = "Relevante officiële bronnen:\n\n"
+  
+  for (const source of sources) {
+    context += `**${source["Bron (naam)"]}** (${source.Categorie})\n`
+    context += `- Topic: ${source.Topic}\n`
+    context += `- Omschrijving: ${source.Omschrijving}\n`
+    context += `- URL: ${source.URL}\n\n`
+  }
+  
+  return context
+}
+
+// Genereer bronnenlijst voor de BRONNEN sectie
+export function generateOfficialBronnenList(sources: OfficialSourceItem[]): string[] {
+  return sources.map(source => 
+    `${source["Bron (naam)"]}: ${source.URL} - ${source.Omschrijving}`
+  )
 }
 
 // === 1. WETTENBANK (Basiswettenbestand) ===
@@ -1198,38 +1349,109 @@ export async function saveJurisprudentieToDatabase(doc: JurisprudentieDocument):
 
 export async function searchOfficialSources(query: string, limit: number = 5): Promise<any[]> {
   try {
-    // Voor nu gebruiken we full-text search, later vector similarity
-    const documents = await prisma.legalDocument.findMany({
-      where: {
-        OR: [
-          { titel: { contains: query, mode: 'insensitive' } },
-          { tekst: { contains: query, mode: 'insensitive' } }
-        ],
-        status: 'ACTIVE'
-      },
-      take: limit,
-      orderBy: { datum: 'desc' }
-    })
+    // 1. Zoek in officiële bronnen JSON voor directe referenties
+    const officialSources = findRelevantOfficialSources(query, Math.floor(limit / 2))
+    const officialResults = officialSources.map(source => ({
+      id: `official-${source["Bron (naam)"].replace(/\s+/g, '-').toLowerCase()}`,
+      titel: `${source["Bron (naam)"]} - ${source.Topic}`,
+      tekst: source.Omschrijving,
+      uri: source.URL,
+      categorie: source.Categorie,
+      scope: source.Scope,
+      type: 'official_source'
+    }))
+
+    // 2. Zoek in database (bestaande functionaliteit)
+    let dbResults: any[] = []
+    try {
+      const documents = await prisma.legalDocument.findMany({
+        where: {
+          OR: [
+            { titel: { contains: query, mode: 'insensitive' } },
+            { tekst: { contains: query, mode: 'insensitive' } }
+          ],
+          status: 'ACTIVE'
+        },
+        take: Math.floor(limit / 2),
+        orderBy: { datum: 'desc' }
+      })
+      
+      const jurisprudentie = await prisma.jurisprudentie.findMany({
+        where: {
+          OR: [
+            { titel: { contains: query, mode: 'insensitive' } },
+            { samenvatting: { contains: query, mode: 'insensitive' } }
+          ]
+        },
+        take: Math.floor(limit / 2),
+        orderBy: { datum: 'desc' }
+      })
+      
+      dbResults = [
+        ...documents.map(doc => ({ ...doc, type: 'wetgeving' })),
+        ...jurisprudentie.map(doc => ({ ...doc, type: 'jurisprudentie' }))
+      ]
+    } catch (dbError) {
+      console.warn('Database search failed, using only official sources:', dbError)
+    }
     
-    const jurisprudentie = await prisma.jurisprudentie.findMany({
-      where: {
-        OR: [
-          { titel: { contains: query, mode: 'insensitive' } },
-          { samenvatting: { contains: query, mode: 'insensitive' } }
-        ]
-      },
-      take: limit,
-      orderBy: { datum: 'desc' }
-    })
+    // 3. Combineer resultaten (officiële bronnen eerst)
+    const combinedResults = [...officialResults, ...dbResults]
     
-    return [
-      ...documents.map(doc => ({ ...doc, type: 'wetgeving' })),
-      ...jurisprudentie.map(doc => ({ ...doc, type: 'jurisprudentie' }))
-    ]
+    return combinedResults.slice(0, limit)
     
   } catch (error) {
     console.error('Error searching official sources:', error)
-    return []
+    // Fallback: return alleen officiële bronnen als database faalt
+    const officialSources = findRelevantOfficialSources(query, limit)
+    return officialSources.map(source => ({
+      id: `official-${source["Bron (naam)"].replace(/\s+/g, '-').toLowerCase()}`,
+      titel: `${source["Bron (naam)"]} - ${source.Topic}`,
+      tekst: source.Omschrijving,
+      uri: source.URL,
+      categorie: source.Categorie,
+      scope: source.Scope,
+      type: 'official_source'
+    }))
+  }
+}
+
+// Nieuwe functie: Enhanced search met officiële bronnen context
+export function searchOfficialSourcesEnhanced(query: string): {
+  sources: OfficialSourceItem[]
+  context: string
+  bronnenList: string[]
+} {
+  // Basis zoekresultaten
+  const sources = findRelevantOfficialSources(query, 5)
+  
+  // Voeg categorie-specifieke bronnen toe
+  const categoryResults: OfficialSourceItem[] = []
+  
+  // APV bronnen als relevant
+  if (query.toLowerCase().includes('apv') || query.toLowerCase().includes('gemeente')) {
+    categoryResults.push(...findAPVOfficialSources().slice(0, 2))
+  }
+  
+  // Handhaving bronnen als relevant
+  if (query.toLowerCase().includes('politie') || query.toLowerCase().includes('handhaving') || query.toLowerCase().includes('boete')) {
+    categoryResults.push(...findHandhavingsOfficialSources().slice(0, 2))
+  }
+  
+  // Combineer en dedupliceer
+  const allSources = [...sources, ...categoryResults]
+  const uniqueSources = allSources.filter((source, index, self) => 
+    index === self.findIndex(s => s.URL === source.URL)
+  ).slice(0, 8)
+  
+  // Genereer context en bronnenlijst
+  const context = generateOfficialSourcesContext(uniqueSources)
+  const bronnenList = generateOfficialBronnenList(uniqueSources)
+  
+  return {
+    sources: uniqueSources,
+    context,
+    bronnenList
   }
 }
 
