@@ -26,6 +26,38 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
+// Store conversation context temporarily (in production, use Redis or database)
+const conversationCache = new Map<string, ConversationContext>()
+
+interface ConversationContext {
+  lastQuery: string
+  lastSources: JsonBron[]
+  lastGoogleResults: string
+  lastTopics: string[]
+  timestamp: number
+  questionCount: number
+}
+
+/**
+ * Cleanup oude conversatie contexten (elke 30 minuten)
+ */
+setInterval(() => {
+  const now = Date.now()
+  const expired: string[] = []
+  
+  conversationCache.forEach((context, sessionId) => {
+    if (now - context.timestamp > 30 * 60 * 1000) { // 30 minuten
+      expired.push(sessionId)
+    }
+  })
+  
+  expired.forEach(sessionId => conversationCache.delete(sessionId))
+  
+  if (expired.length > 0) {
+    console.log(`🧹 Cleaned up ${expired.length} expired conversation contexts`)
+  }
+}, 30 * 60 * 1000) // Run every 30 minutes
+
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system'
   content: string
@@ -36,6 +68,151 @@ interface GoogleSearchResult {
   link: string
   snippet: string
   source: string
+}
+
+/**
+ * Detecteert of de huidige vraag een vervolgvraag is over hetzelfde onderwerp
+ */
+function isFollowUpQuestion(currentQuery: string, context: ConversationContext | undefined): boolean {
+  if (!context || Date.now() - context.timestamp > 30 * 60 * 1000) { // 30 minuten timeout
+    return false
+  }
+
+  const currentLower = currentQuery.toLowerCase()
+  const lastLower = context.lastQuery.toLowerCase()
+
+  // Extract key topics from both queries
+  const currentTopics = extractLegalTopics(currentQuery)
+  const lastTopics = context.lastTopics
+
+  // Check for overlap in legal topics
+  const topicOverlap = currentTopics.filter(topic => 
+    lastTopics.some(lastTopic => 
+      topic.includes(lastTopic) || lastTopic.includes(topic) || 
+      levenshteinDistance(topic, lastTopic) < 3
+    )
+  )
+
+  // Check for follow-up patterns
+  const followUpPatterns = [
+    'en als ik', 'maar wat als', 'en dan', 'maar dan', 'wat gebeurt als',
+    'mag ik ook', 'en dan ook', 'geldt dat ook', 'en in het geval',
+    'maar dan moet', 'en als dat', 'wat als ik dan', 'en wanneer',
+    'hoe zit het met', 'en voor', 'geldt hetzelfde', 'dezelfde wet',
+    'dat artikel', 'die wet', 'die regel', 'dit geval', 'hierbij',
+    'verder nog', 'ook nog', 'andere vraag', 'vervolgvraag',
+    'kan je uitleggen', 'wat betekent dat', 'hoe werkt dat'
+  ]
+
+  const hasFollowUpPattern = followUpPatterns.some(pattern => 
+    currentLower.includes(pattern)
+  )
+
+  // Check for question continuation indicators
+  const continuationWords = ['ook', 'verder', 'daarnaast', 'tevens', 'bovendien', 'extra', 'aanvullend']
+  const hasContinuation = continuationWords.some(word => currentLower.includes(word))
+
+  // Beslissingslogica
+  const isFollowUp = (
+    topicOverlap.length > 0 || // Overlap in juridische onderwerpen
+    hasFollowUpPattern || // Expliciete vervolgvraag patronen  
+    (hasContinuation && context.questionCount < 5) // Continuation woorden binnen 5 vragen
+  )
+
+  console.log(`🔍 Follow-up detectie: ${isFollowUp ? 'JA' : 'NEE'}`)
+  if (isFollowUp) {
+    console.log(`📚 Topic overlap: ${topicOverlap.join(', ')}`)
+    console.log(`🔗 Follow-up pattern: ${hasFollowUpPattern}`)
+    console.log(`➡️ Hergebruik van ${context.lastSources.length} bronnen`)
+  }
+
+  return isFollowUp
+}
+
+/**
+ * Extraheert juridische onderwerpen uit een vraag
+ */
+function extractLegalTopics(query: string): string[] {
+  const topics: string[] = []
+  const queryLower = query.toLowerCase()
+
+  // Wetten en wetboeken
+  const juridischeWetten = [
+    'strafrecht', 'burgerlijk recht', 'bestuursrecht', 'arbeidsrecht',
+    'huurrecht', 'verkeersrecht', 'milieurecht', 'belastingrecht',
+    'apv', 'algemene plaatselijke verordening', 'gemeentewet',
+    'politiewet', 'opiumwet', 'wegenverkeerswet', 'burgerlijk wetboek',
+    'wetboek van strafrecht', 'awb', 'algemene wet bestuursrecht'
+  ]
+
+  // Specifieke onderwerpen
+  const juridischeOnderwerpen = [
+    'alcohol', 'parkeren', 'geluid', 'overlast', 'vergunning',
+    'handhaving', 'boete', 'dwangsom', 'eigendom', 'huur',
+    'contract', 'arbeidsovereenkomst', 'ontslag', 'discriminatie',
+    'privacy', 'belasting', 'uitkering', 'pensioen'
+  ]
+
+  // Gemeenten (voor APV)
+  const juridischeGemeenten = [
+    'amsterdam', 'rotterdam', 'den haag', 'utrecht', 'eindhoven',
+    'tilburg', 'groningen', 'almere', 'breda', 'nijmegen'
+  ]
+
+  // Check voor matches
+  const allTopics = [...juridischeWetten, ...juridischeOnderwerpen, ...juridischeGemeenten]
+  allTopics.forEach(topic => {
+    if (queryLower.includes(topic)) {
+      topics.push(topic)
+    }
+  })
+
+  return topics
+}
+
+/**
+ * Berekent Levenshtein distance voor topic vergelijking
+ */
+function levenshteinDistance(str1: string, str2: string): number {
+  const matrix = []
+  for (let i = 0; i <= str2.length; i++) {
+    matrix[i] = [i]
+  }
+  for (let j = 0; j <= str1.length; j++) {
+    matrix[0][j] = j
+  }
+  for (let i = 1; i <= str2.length; i++) {
+    for (let j = 1; j <= str1.length; j++) {
+      if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1]
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1,
+          matrix[i][j - 1] + 1,
+          matrix[i - 1][j] + 1
+        )
+      }
+    }
+  }
+  return matrix[str2.length][str1.length]
+}
+
+/**
+ * Genereert een sessie-ID voor conversatie tracking
+ */
+function getSessionId(userId: string | null, request: NextRequest): string {
+  if (userId) {
+    return `user_${userId}`
+  }
+  
+  // Voor anonieme gebruikers: gebruik IP + User-Agent hash
+  const ip = request.headers.get('x-forwarded-for') || 
+            request.headers.get('x-real-ip') || 'unknown'
+  const userAgent = request.headers.get('user-agent') || 'unknown'
+  
+  // Simpele hash functie
+  const hash = Buffer.from(ip + userAgent).toString('base64').slice(0, 10)
+  return `anon_${hash}`
 }
 
 /**
@@ -215,6 +392,17 @@ export async function POST(request: NextRequest) {
     const session = await getServerSession(authOptions)
     const userId = session?.user?.id || null
 
+    // Get conversation context
+    const sessionId = getSessionId(userId, request)
+    const existingContext = conversationCache.get(sessionId)
+    const isFollowUp = isFollowUpQuestion(question, existingContext)
+
+    if (isFollowUp && existingContext) {
+      console.log('🔗 VERVOLGVRAAG GEDETECTEERD - Hergebruik bestaande bronnen')
+      console.log(`📚 Hergebruik: ${existingContext.lastSources.length} JSON bronnen`)
+      console.log(`🌐 Hergebruik: ${existingContext.lastGoogleResults ? 'Google resultaten' : 'Geen Google resultaten'}`)
+    }
+
     // Rate limit check for anonymous users
     if (!session?.user) {
       const clientIp = request.headers.get('x-forwarded-for') || 
@@ -297,21 +485,55 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
       }
     }
 
-    // STAP 1: Eerste controle via officiele_bronnen.json
-    console.log('📋 STAP 1: Controle officiele_bronnen.json')
+    // STAP 1: Bronnen bepalen (hergebruik bij vervolgvragen)
     let jsonSources: JsonBron[] = []
     let jsonContext = ''
     
-    try {
-      jsonSources = await searchJsonSources(question, 10)
+    if (isFollowUp && existingContext) {
+      // HERVOLGVRAAG: Hergebruik bestaande bronnen
+      console.log('📋 STAP 1: Hergebruik bestaande JSON bronnen voor vervolgvraag')
+      jsonSources = existingContext.lastSources
       if (jsonSources.length > 0) {
         jsonContext = formatJsonSourcesForContext(jsonSources)
-        console.log(`✅ ${jsonSources.length} relevante JSON bronnen gevonden`)
-      } else {
-        console.log('ℹ️ Geen relevante JSON bronnen gevonden')
+        console.log(`✅ ${jsonSources.length} JSON bronnen hergebruikt uit vorige vraag`)
       }
-    } catch (error) {
-      console.error('❌ Fout bij JSON bronnen zoeken:', error)
+      
+      // Voeg eventueel extra bronnen toe als nieuwe onderwerpen worden gedetecteerd
+      const currentTopics = extractLegalTopics(question)
+      const lastTopics = existingContext.lastTopics
+      const newTopics = currentTopics.filter(topic => !lastTopics.includes(topic))
+      
+      if (newTopics.length > 0) {
+        console.log(`🔍 Nieuwe onderwerpen gedetecteerd: ${newTopics.join(', ')} - Zoek aanvullende bronnen`)
+        try {
+          const additionalSources = await searchJsonSources(question, 5)
+          const uniqueAdditionalSources = additionalSources.filter(newSource => 
+            !jsonSources.some(existingSource => existingSource.url === newSource.url)
+          )
+          
+          if (uniqueAdditionalSources.length > 0) {
+            jsonSources = [...jsonSources, ...uniqueAdditionalSources]
+            jsonContext = formatJsonSourcesForContext(jsonSources)
+            console.log(`✅ ${uniqueAdditionalSources.length} aanvullende JSON bronnen toegevoegd`)
+          }
+        } catch (error) {
+          console.error('❌ Fout bij zoeken aanvullende bronnen:', error)
+        }
+      }
+    } else {
+      // NIEUWE VRAAG: Normale bronnen zoeken
+      console.log('📋 STAP 1: Controle officiele_bronnen.json')
+      try {
+        jsonSources = await searchJsonSources(question, 10)
+        if (jsonSources.length > 0) {
+          jsonContext = formatJsonSourcesForContext(jsonSources)
+          console.log(`✅ ${jsonSources.length} relevante JSON bronnen gevonden`)
+        } else {
+          console.log('ℹ️ Geen relevante JSON bronnen gevonden')
+        }
+      } catch (error) {
+        console.error('❌ Fout bij JSON bronnen zoeken:', error)
+      }
     }
 
     // STAP 1.5: Actualiteitscontrole
@@ -340,59 +562,106 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
       console.error('❌ Fout bij actualiteitscontrole:', error)
     }
 
-    // STAP 2: Evalueer of Google API nodig is
-    console.log('🔍 STAP 2: Evaluatie Google API noodzaak')
+    // STAP 2: Google API bepalen (hergebruik bij vervolgvragen)
     let googleResults: string = ''
     
-    // Check if query needs Google API
-    const queryLower = question.toLowerCase()
-    const needsGoogleKeywords = [
-      'apv', 'gemeentelijk', 'lokaal', 'gemeente', 'plaatselijk', 'verordening',
-      'alcohol', 'drinken', 'straat', 'openbaar', 'park', 'plein', 'evenement',
-      'geluid', 'overlast', 'terras', 'vergunning', 'handhaving', 'boa',
-      'camper', 'parkeren', 'kamperen', 'hondenpoep', 'hond', 'vuur', 'barbecue',
-      'muziek', 'lawaai', 'reclame', 'uithangbord', 'standplaats', 'markt',
-      'amsterdam', 'rotterdam', 'den haag', 'utrecht', 'eindhoven', 'groningen',
-      'tilburg', 'almere', 'breda', 'nijmegen', 'apeldoorn', 'haarlem', 'arnhem',
-      'enschede', 'haarlemmermeer', 'zaanstad', 'amersfoort', 'hertogenbosch',
-      'zoetermeer', 'zwolle', 'ede', 'dordrecht', 'leiden', 'emmen', 'maastricht',
-      'delft', 'venlo', 'leeuwarden', 'alkmaar', 'helmond', 'deventer',
-      'ijsselstreek', 'oude ijssel', 'ijssel',
-      'nieuw beleid', 'recent', 'actueel', 'jurisprudentie', 'uitspraak', 'vonnis', 'arrest'
-    ]
-    
-    const needsGoogle = needsGoogleKeywords.some(keyword => queryLower.includes(keyword)) || jsonSources.length < 3
-    
-    if (needsGoogle) {
-      if (needsGoogleKeywords.some(keyword => queryLower.includes(keyword))) {
-        console.log('🔍 Query bevat keywords die Google API vereisen (APV/lokaal/actueel)')
+    if (isFollowUp && existingContext) {
+      // VERVOLGVRAAG: Hergebruik Google resultaten
+      console.log('🔍 STAP 2: Hergebruik Google resultaten voor vervolgvraag')
+      googleResults = existingContext.lastGoogleResults
+      if (googleResults) {
+        console.log('✅ Google resultaten hergebruikt uit vorige vraag')
+        console.log('⏭️ STAP 3: Google API overgeslagen - hergebruik bestaande resultaten')
       } else {
-        console.log('🔍 Beperkte JSON dekking - Google API wordt geraadpleegd')
+        console.log('ℹ️ Geen Google resultaten om te hergebruiken')
       }
       
-      console.log('🌐 STAP 3: Google Custom Search API wordt geraadpleegd')
-      console.log('🌐 Searching Google Custom Search API for:', question)
+      // Check of nieuwe vraag nieuwe Google zoeking vereist
+      const currentTopics = extractLegalTopics(question)
+      const lastTopics = existingContext.lastTopics
+      const hasNewLegalTopics = currentTopics.some(topic => !lastTopics.includes(topic))
       
-      try {
-        const results = await searchGoogleCustomAPI(question)
-        if (results.length > 0) {
-          googleResults = formatGoogleResultsForContext(results)
-          console.log(`✅ ${results.length} Google zoekresultaten gevonden`)
-          console.log(`✅ ${results.length} Google resultaten toegevoegd`)
-        } else {
-          console.log('ℹ️ Geen Google zoekresultaten gevonden')
+      const queryLower = question.toLowerCase()
+      const needsNewGoogleKeywords = [
+        'nieuw artikel', 'ander artikel', 'andere wet', 'andere gemeente', 
+        'andere regel', 'ander geval', 'uitzondering', 'anders'
+      ]
+      const needsNewGoogleSearch = needsNewGoogleKeywords.some(keyword => queryLower.includes(keyword))
+      
+      if (hasNewLegalTopics || needsNewGoogleSearch) {
+        console.log('🔍 Nieuwe context vereist aanvullende Google zoeking')
+        try {
+          const results = await searchGoogleCustomAPI(question)
+          if (results.length > 0) {
+            const newGoogleResults = formatGoogleResultsForContext(results)
+            // Combineer met bestaande resultaten (vermijd duplicaten)
+            googleResults = googleResults ? `${googleResults}\n\n=== AANVULLENDE BRONNEN ===\n\n${newGoogleResults}` : newGoogleResults
+            console.log(`✅ ${results.length} aanvullende Google zoekresultaten toegevoegd`)
+          }
+        } catch (error) {
+          console.error('❌ Fout bij aanvullende Google zoeken:', error)
         }
-      } catch (error) {
-        console.error('❌ Fout bij Google zoeken:', error)
       }
     } else {
-      console.log('✅ Voldoende JSON dekking - Google API niet nodig')
-      console.log('⏭️ STAP 3: Google API overgeslagen - voldoende JSON dekking')
+      // NIEUWE VRAAG: Normale Google evaluatie
+      console.log('🔍 STAP 2: Evaluatie Google API noodzaak')
+      
+      // Check if query needs Google API
+      const queryLower = question.toLowerCase()
+      const needsGoogleKeywords = [
+        'apv', 'gemeentelijk', 'lokaal', 'gemeente', 'plaatselijk', 'verordening',
+        'alcohol', 'drinken', 'straat', 'openbaar', 'park', 'plein', 'evenement',
+        'geluid', 'overlast', 'terras', 'vergunning', 'handhaving', 'boa',
+        'camper', 'parkeren', 'kamperen', 'hondenpoep', 'hond', 'vuur', 'barbecue',
+        'muziek', 'lawaai', 'reclame', 'uithangbord', 'standplaats', 'markt',
+        'amsterdam', 'rotterdam', 'den haag', 'utrecht', 'eindhoven', 'groningen',
+        'tilburg', 'almere', 'breda', 'nijmegen', 'apeldoorn', 'haarlem', 'arnhem',
+        'enschede', 'haarlemmermeer', 'zaanstad', 'amersfoort', 'hertogenbosch',
+        'zoetermeer', 'zwolle', 'ede', 'dordrecht', 'leiden', 'emmen', 'maastricht',
+        'delft', 'venlo', 'leeuwarden', 'alkmaar', 'helmond', 'deventer',
+        'ijsselstreek', 'oude ijssel', 'ijssel',
+        'nieuw beleid', 'recent', 'actueel', 'jurisprudentie', 'uitspraak', 'vonnis', 'arrest'
+      ]
+      
+      const needsGoogle = needsGoogleKeywords.some(keyword => queryLower.includes(keyword)) || jsonSources.length < 3
+      
+      if (needsGoogle) {
+        if (needsGoogleKeywords.some(keyword => queryLower.includes(keyword))) {
+          console.log('🔍 Query bevat keywords die Google API vereisen (APV/lokaal/actueel)')
+        } else {
+          console.log('🔍 Beperkte JSON dekking - Google API wordt geraadpleegd')
+        }
+        
+        console.log('🌐 STAP 3: Google Custom Search API wordt geraadpleegd')
+        console.log('🌐 Searching Google Custom Search API for:', question)
+        
+        try {
+          const results = await searchGoogleCustomAPI(question)
+          if (results.length > 0) {
+            googleResults = formatGoogleResultsForContext(results)
+            console.log(`✅ ${results.length} Google zoekresultaten gevonden`)
+            console.log(`✅ ${results.length} Google resultaten toegevoegd`)
+          } else {
+            console.log('ℹ️ Geen Google zoekresultaten gevonden')
+          }
+        } catch (error) {
+          console.error('❌ Fout bij Google zoeken:', error)
+        }
+      } else {
+        console.log('✅ Voldoende JSON dekking - Google API niet nodig')
+        console.log('⏭️ STAP 3: Google API overgeslagen - voldoende JSON dekking')
+      }
     }
 
-    // STAP 4: Samenstellen input voor ChatGPT
+    // STAP 4: Samenstellen input voor ChatGPT (met conversatie context)
     console.log('🤖 STAP 4: Input samenstelling voor ChatGPT')
-    console.log(`🤖 Starting OpenAI request met ${jsonSources.length} JSON bronnen en ${googleResults ? '10' : '0'} Google resultaten`)
+    console.log(`🤖 Starting OpenAI request met ${jsonSources.length} JSON bronnen en ${googleResults ? 'Google resultaten' : 'geen Google resultaten'}`)
+    
+    // Voeg conversatie context toe voor betere vervolgvragen
+    const conversationHistory = isFollowUp && existingContext ? [{
+      role: 'user' as const,
+      content: `Vorige vraag: "${existingContext.lastQuery}"`
+    }] : []
 
     // Create a stream that captures the response for database storage
     let fullResponse = ''
@@ -401,7 +670,8 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
       jsonSources,
       googleResults ? [{ title: "Google Results", content: googleResults }] : [],
       profession,
-      wetUitleg
+      wetUitleg,
+      conversationHistory
     )
 
     const transformedStream = new ReadableStream({
@@ -423,6 +693,19 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
                            request.headers.get('x-real-ip') || 'unknown') : null
           saveQueryToDatabase(question, fullResponse, profession, userId, jsonSources, googleResults, clientIp)
             .catch(error => console.error('❌ Error saving query to database:', error))
+          
+          // Update conversation context for future follow-up questions
+          const currentTopics = extractLegalTopics(question)
+          const newContext: ConversationContext = {
+            lastQuery: question,
+            lastSources: jsonSources,
+            lastGoogleResults: googleResults,
+            lastTopics: currentTopics,
+            timestamp: Date.now(),
+            questionCount: existingContext ? existingContext.questionCount + 1 : 1
+          }
+          conversationCache.set(sessionId, newContext)
+          console.log(`💾 Conversatie context opgeslagen voor sessie: ${sessionId}`)
           
           controller.close()
         } catch (error) {

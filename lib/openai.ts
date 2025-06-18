@@ -143,7 +143,8 @@ export async function streamingCompletion(
   jsonSources: any[] = [],
   googleResults: any[] = [],
   profession: string = "Algemeen",
-  wetUitleg: boolean = false
+  wetUitleg: boolean = false,
+  conversationHistory: any[] = []
 ) {
   console.log("🤖 Starting OpenAI request met", jsonSources.length, "JSON bronnen en", googleResults.length, "Google resultaten")
 
@@ -152,6 +153,12 @@ export async function streamingCompletion(
   // Build system message with improved prompt
   const systemMessage = buildSystemPrompt(profession, jsonSources, googleResults, wetUitleg)
   messages.push({ role: "system", content: systemMessage })
+
+  // Add conversation history for context (if this is a follow-up question)
+  if (conversationHistory.length > 0) {
+    console.log("🔗 Adding conversation context for follow-up question")
+    conversationHistory.forEach(msg => messages.push(msg))
+  }
 
   // Add user question
   messages.push({ role: "user", content: question })
