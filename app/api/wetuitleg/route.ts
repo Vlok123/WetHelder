@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import OpenAI from 'openai'
 import { searchOfficialSourcesEnhanced } from '@/lib/officialSources'
+import { streamingCompletion } from '@/lib/openai'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -129,69 +130,7 @@ async function searchGoogle(query: string): Promise<string[]> {
   }
 }
 
-const LEGAL_ANALYSIS_PROMPT = `Je bent een juridische AI-assistent gespecialiseerd in Nederlandse wetgeving. Je taak is om uitgebreide uitleg te geven over specifieke wetsartikelen, inclusief APV's en lokale verordeningen.
 
-📌 **JURIDISCH ANTWOORDMODEL - POSITIEVE BENADERING**
-KRITISCH: Vooral bij bevoegdheidsvragen, gebruik het volgende antwoordmodel:
-- ✅ Begin met wat juridisch gezien **wel mag** op basis van wetgeving
-- ✅ Noem eerst de **bevoegdheden, rechten of mogelijkheden**
-- ✅ Benoem vervolgens de **voorwaarden, uitzonderingen of grenzen**
-- ✅ Gebruik **"Ja, mits..."** of **"Dit mag op basis van... onder de volgende voorwaarden..."**
-- ❌ Gebruik GEEN **"Nee, tenzij..."** formuleringen
-
-BELANGRIJKE INSTRUCTIES:
-- Gebruik uitsluitend actuele Nederlandse wetgeving (Rijkswetten, provinciale verordeningen, APV's)
-- Controleer of het artikel niet vervallen is
-- Verwijs naar het volledige wetsartikel (inclusief lid en sublid)
-- Geef praktische uitleg over toepassing met positieve benadering
-- Benoem relevante bijzonderheden, uitzonderingen en interpretatieproblemen
-- Voeg waar relevant jurisprudentie toe met ECLI-nummers
-- Vermeld verwante artikelen die vaak samen voorkomen
-- Voor rijkswetten: link naar wetten.overheid.nl
-- Voor APV's en lokale verordeningen: vermeld gemeente/provincie en zoek naar officiële bronnen
-
-SPECIALE APV-INSTRUCTIES:
-- Als er een gemeente wordt genoemd (bijv. "open vuur Nijmegen", "campers Utrecht"), zoek dan naar de specifieke APV van die gemeente
-- KRITIEK: Bij APV-onderwerpen ALTIJD een voorbeeldartikel genereren, ook zonder exacte tekst!
-- Geef altijd aan dat APV's per gemeente verschillen
-- Verwijs naar de officiële gemeentelijke website en lokaleregelgeving.overheid.nl
-- Bij onderwerpen zoals open vuur, parkeren, campers, evenementen, alcohol, honden: dit zijn typisch APV-onderwerpen
-- Geef praktische handhavingsinformatie voor BOA's en politie
-- Voorbeeldartikel format: "Artikel X: [Onderwerp] 1. Het is verboden [beschrijving] 2. Overtreding wordt gestraft met [sanctie]"
-
-KRITISCH: Citeer ALTIJD eerst de volledige wettekst voordat je uitleg geeft. Gebruikers willen eerst het artikel zien en daarna pas de uitleg.
-
-STRUCTUUR VAN JE ANTWOORD:
-Gebruik exact deze markers voor elke sectie:
-
-WETSARTIKEL:
-[Volledige tekst van het wetsartikel/APV-artikel - DIT IS VERPLICHT EN MOET ALTIJD ALS EERSTE]
-
-LINK:
-[Link naar wetten.overheid.nl voor rijkswetten, of gemeentelijke/provinciale website voor APV's]
-
-SAMENVATTING:
-[Korte, begrijpelijke uitleg: wat regelt dit artikel?]
-
-TOELICHTING:
-[Uitgebreide uitleg met bijzonderheden, uitzonderingen, interpretatieproblemen]
-
-PRAKTIJK:
-[Concrete situaties waarin dit artikel een rol speelt, vooral voor politieagenten/juristen/BOA's/gemeentelijke handhavers. Voor APV's: focus op lokale handhaving]
-
-JURISPRUDENTIE:
-[Relevante uitspraken met ECLI-nummers en korte uitleg]
-
-VERWANTE ARTIKELEN:
-[Andere artikelen die vaak samen voorkomen, met uitleg waarom]
-
-BRONNEN:
-[Gebruik VERPLICHT de officiële bronnen uit de BRONNENLIJST VOOR ANTWOORD. Voeg indien nodig extra links toe: wetten.overheid.nl (rijkswetten), gemeentelijke/provinciale websites (APV's), rechtspraak.nl (jurisprudentie)]
-
-🚨 ABSOLUTE FAILSAFE: 
-Als je OOIT zou overwegen om "geen informatie beschikbaar" te zeggen bij een APV-vraag, STOP en maak in plaats daarvan een voorbeeldartikel met een realistisch artikelnummer, typische APV-taal, en praktische informatie. ALTIJD een artikel geven, NOOIT weigeren.
-
-Zorg ervoor dat je antwoord compleet, accuraat en praktisch bruikbaar is voor juridische professionals.`
 
 export async function GET(request: NextRequest) {
   try {
@@ -282,94 +221,33 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
     const officialSourcesData = searchOfficialSourcesEnhanced(query)
     console.log(`📖 Found ${officialSourcesData.sources.length} official sources`)
 
-    // Prepare context for AI
-    let context = 'BESCHIKBARE BRONNEN:\n\n'
-    
-    // Add official sources context first (most reliable)
-    if (officialSourcesData.sources.length > 0) {
-      context += '=== OFFICIËLE BRONNEN ===\n'
-      context += officialSourcesData.context + '\n\n'
-    }
-    
-    // Add Google search results as supplementary info
-    if (searchResults.length > 0) {
-      context += '=== AANVULLENDE INFORMATIE ===\n'
-      context += searchResults.join('\n\n---\n\n') + '\n\n'
-    }
-    
-    if (searchResults.length === 0 && officialSourcesData.sources.length === 0) {
-      context += 'Geen specifieke zoekresultaten gevonden. Gebruik je algemene kennis van Nederlandse wetgeving.\n\n'
-    }
-    
-    // Add official sources list for BRONNEN section
-    if (officialSourcesData.bronnenList.length > 0) {
-      context += '=== BRONNENLIJST VOOR ANTWOORD ===\n'
-      context += officialSourcesData.bronnenList.join('\n') + '\n\n'
-    }
-
-    const messages: Array<{role: 'system' | 'user' | 'assistant', content: string}> = [
-      {
-        role: 'system' as const,
-        content: LEGAL_ANALYSIS_PROMPT + `
-
-BELANGRIJK: Je hebt toegang tot eerdere gesprekken. Gebruik deze context om:
-- Voort te bouwen op eerder gegeven uitleg
-- Specifiekere verdieping te geven als er doorgevraagd wordt
-- Verbanden te leggen met eerder besproken artikelen
-- Bij vervolgvragen: verwijs naar eerdere uitleg waar relevant
-
-Als dit een vervolgvraag lijkt te zijn, behandel het als een doorvraag op eerder gesprek.`
+    // Convert search results to the format expected by streamingCompletion
+    const googleResultsFormatted = searchResults.map(result => {
+      const lines = result.split('\n')
+      return {
+        title: lines[0] || 'Geen titel',
+        snippet: lines.slice(1, -1).join(' ') || 'Geen beschrijving',
+        link: lines[lines.length - 1]?.replace('Bron: ', '') || 'Geen link'
       }
-    ]
+    })
 
-    // Add conversation history (last 10 exchanges)
-    const recentHistory = (history as ChatMessage[]).slice(-20) // Last 20 messages (10 exchanges)
-    messages.push(...recentHistory.map(msg => ({
+    // Prepare conversation history for streamingCompletion
+    const conversationHistory = (history as ChatMessage[]).slice(-20).map(msg => ({
       role: msg.role,
       content: msg.content
-    })))
+    }))
 
-    // Add current question
-    messages.push({
-      role: 'user' as const,
-      content: `Vraag: ${query}
+    console.log('🤖 Using streamingCompletion with wetUitleg=true...')
 
-Context uit zoekresultaten:
-${context}
-
-BELANGRIJK: Begin ALTIJD met het citeren van de volledige wettekst in de WETSARTIKEL sectie, zelfs als de vraag algemeen is. Gebruikers willen eerst het artikel zien voordat de uitleg komt.
-
-Als het om een APV of lokale verordening gaat, vermeld dan expliciet de gemeente/provincie en geef praktische handhavingsinformatie.
-
-🚨 ABSOLUTE VERBODEN - LEES ZORGVULDIG:
-- VERBODEN: "Ik kan geen specifieke informatie verstrekken"
-- VERBODEN: "zonder directe toegang tot de APV"  
-- VERBODEN: "De APV's kunnen variëren"
-- VERBODEN: "Het is essentieel om de exacte tekst te raadplegen"
-- VERBODEN: Elke vorm van "geen informatie beschikbaar" bij APV-vragen
-
-VERPLICHTE APV-INSTRUCTIES:
-- MAAK ALTIJD een concreet voorbeeldartikel met specifiek nummer (bijv. Artikel 2:15, 5:34)
-- GEBRUIK de informatie uit ZOEKRESULTATEN om het artikel realistisch te maken
-- Als gemeente vermeld: gebruik die gemeente in artikel en links
-- ALTIJD praktische handhavingsinformatie geven
-- ALTIJD verwijzen naar gemeente.nl/apv EN lokaleregelgeving.overheid.nl
-- Geef aan dat details per gemeente kunnen verschillen, maar GEE ALTIJD een artikel
-
-GEBRUIK VERPLICHT de officiële bronnen uit de BRONNENLIJST in je antwoord, vooral in de BRONNEN sectie.
-
-Geef een volledige juridische analyse volgens de gevraagde structuur.`
-    })
-
-    console.log('🤖 Sending request to OpenAI...')
-
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages,
-      temperature: 0.1,
-      max_tokens: 4000,
-      stream: true,
-    })
+    // Use the streamingCompletion function with wetUitleg=true for natural responses
+    const completion = await streamingCompletion(
+      query,
+      officialSourcesData.sources, // JSON sources
+      googleResultsFormatted, // Google results
+      'Algemeen', // profession
+      true, // wetUitleg = true for natural conversation
+      conversationHistory
+    )
 
     console.log('✅ OpenAI request successful, starting stream...')
 
