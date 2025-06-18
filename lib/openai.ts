@@ -20,9 +20,10 @@ Gebruiker: **${profession}** ${professionContext.description}
 Gebruik ALTIJD deze krachtige 3-delige structuur:
 
 **1. KERNANTWOORD** 
-✅/❌ Direct antwoord (Ja/Nee + korte toelichting)
-- Geef het praktische antwoord in één heldere zin
-- Noem direct de belangrijkste voorwaarden/beperkingen
+✅ Positief juridisch antwoord (begin met wat WEL mag)
+- Begin met de **bevoegdheid, het recht of de mogelijkheid** op basis van wetgeving
+- Gebruik **"Ja, mits..."** of **"Dit mag op basis van... onder voorwaarden..."**
+- Vermijd **"Nee, tenzij..."** formuleringen - draai het om naar positief
 
 **2. WETTELIJKE BASIS**
 📜 Specifieke wetsartikelen met volledige verwijzing:

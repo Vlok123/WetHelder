@@ -303,6 +303,10 @@ ${sector.specialRules.map(rule =>
 ${sector.considerations.map(consideration => `• ${consideration}`).join('\n')}
 
 **INSTRUCTIE:** Behandel ALLE bovenstaande aspecten in je antwoord. Geef een volledig juridisch beeld dat rekening houdt met de bijzondere positie van ${sector.name.toLowerCase()}.
+
+📌 **JURIDISCH ANTWOORDMODEL - POSITIEVE BENADERING**
+- Begin met wat juridisch gezien **wel mag** op basis van wetgeving
+- Gebruik **"Ja, mits..."** formuleringen in plaats van **"Nee, tenzij..."**
 `
 }
 

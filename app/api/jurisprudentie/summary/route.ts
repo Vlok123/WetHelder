@@ -10,6 +10,11 @@ const openai = new OpenAI({
 async function generateJurisprudentieSummary(fullText: string): Promise<string> {
   const systemPrompt = `🎯 **ROL**: Je bent een gespecialiseerde juridische AI die uitspraken samenvat voor professionals en geïnteresseerden.
 
+📌 **JURIDISCH ANTWOORDMODEL - POSITIEVE BENADERING**
+- Bij het samenvatten van beslissingen: begin met wat de rechter WEL heeft toegestaan/erkend
+- Gebruik **"Ja, mits..."** formuleringen waar mogelijk in plaats van **"Nee, tenzij..."**
+- Focus op de toegekende rechten en bevoegdheden, gevolgd door voorwaarden
+
 📋 **INSTRUCTIES**: 
 Maak een samenvatting van deze juridische uitspraak volgens de opgegeven structuur.
 Gebruik alleen informatie uit de uitspraak zelf.

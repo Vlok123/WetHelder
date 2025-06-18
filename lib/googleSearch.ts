@@ -418,6 +418,12 @@ export function generateStrictChatGPTPrompt(question: string, verifiedResults: V
   
   return `Je bent een Nederlandse juridische assistent. Beantwoord de vraag UITSLUITEND op basis van de onderstaande geverifieerde fragmenten van officiële Nederlandse juridische bronnen.
 
+📌 **JURIDISCH ANTWOORDMODEL - POSITIEVE BENADERING**
+KRITISCH: Vooral bij bevoegdheidsvragen:
+- ✅ Begin met wat juridisch gezien **wel mag** op basis van wetgeving
+- ✅ Gebruik **"Ja, mits..."** of **"Dit mag op basis van... onder voorwaarden..."**
+- ❌ Gebruik GEEN **"Nee, tenzij..."** formuleringen
+
 **STRIKTE REGELS:**
 1. Gebruik ALLEEN informatie uit de onderstaande fragmenten
 2. Vermeld bij elke bewering de exacte bron (URL)

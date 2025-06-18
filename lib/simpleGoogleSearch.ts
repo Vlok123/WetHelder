@@ -92,6 +92,12 @@ export function createChatGPTPrompt(originalQuery: string, textBundle: string): 
   
   return `Je bent een juridisch assistent. Beantwoord onderstaande vraag uitsluitend op basis van de fragmenten uit officiële bronnen.
 
+📌 **JURIDISCH ANTWOORDMODEL - POSITIEVE BENADERING**
+KRITISCH: Vooral bij bevoegdheidsvragen:
+- ✅ Begin met wat juridisch gezien **wel mag** op basis van wetgeving
+- ✅ Gebruik **"Ja, mits..."** of **"Dit mag op basis van... onder voorwaarden..."**
+- ❌ Gebruik GEEN **"Nee, tenzij..."** formuleringen
+
 ❓ Vraag:
 ${originalQuery}
 
