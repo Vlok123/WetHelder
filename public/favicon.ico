@@ -1,1 +1,3 @@
- 
+# This is a placeholder for favicon.ico
+# In production, this should be replaced with a proper 16x16, 32x32, 48x48 ICO file
+# For now, browsers will fall back to icon.svg 
