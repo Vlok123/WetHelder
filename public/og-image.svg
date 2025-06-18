@@ -1,0 +1,32 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#f8fafc"/>
+  
+  <!-- Header section with blue background -->
+  <rect width="1200" height="200" fill="#2563eb"/>
+  
+  <!-- WetHelder logo/text -->
+  <text x="100" y="120" font-family="Inter, Arial, sans-serif" font-size="72" font-weight="bold" fill="white">WetHelder</text>
+  
+  <!-- Subtitle -->
+  <text x="100" y="280" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="600" fill="#1e293b">Nederlandse Wetgeving &amp; Juridische Vragen</text>
+  
+  <!-- Description -->
+  <text x="100" y="340" font-family="Inter, Arial, sans-serif" font-size="24" fill="#64748b">Doorzoek Nederlandse wetgeving, stel juridische vragen</text>
+  <text x="100" y="380" font-family="Inter, Arial, sans-serif" font-size="24" fill="#64748b">en krijg professionele uitleg</text>
+  
+  <!-- Features -->
+  <text x="100" y="450" font-family="Inter, Arial, sans-serif" font-size="20" fill="#475569">✓ 15.000+ Wetsartikelen</text>
+  <text x="400" y="450" font-family="Inter, Arial, sans-serif" font-size="20" fill="#475569">✓ Rechtspraak &amp; Jurisprudentie</text>
+  <text x="750" y="450" font-family="Inter, Arial, sans-serif" font-size="20" fill="#475569">✓ Voor Professionals</text>
+  
+  <!-- Website URL -->
+  <text x="100" y="550" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="600" fill="#2563eb">wethelder.nl</text>
+  
+  <!-- Decorative elements -->
+  <circle cx="1050" cy="150" r="60" fill="white" opacity="0.2"/>
+  <circle cx="1100" cy="100" r="40" fill="white" opacity="0.15"/>
+  <rect x="950" y="400" width="200" height="4" fill="#2563eb" opacity="0.3" rx="2"/>
+  <rect x="950" y="420" width="150" height="4" fill="#2563eb" opacity="0.2" rx="2"/>
+  <rect x="950" y="440" width="180" height="4" fill="#2563eb" opacity="0.25" rx="2"/>
+</svg> 

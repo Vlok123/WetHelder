@@ -49,10 +49,18 @@ export const metadata: Metadata = {
     siteName: 'WetHelder',
     images: [
       {
+        url: '/og-image.svg',
+        width: 1200,
+        height: 630,
+        alt: 'WetHelder - Nederlandse Wetgeving Platform',
+        type: 'image/svg+xml',
+      },
+      {
         url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'WetHelder - Nederlandse Wetgeving Platform',
+        type: 'image/png',
       },
     ],
   },
@@ -60,7 +68,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'WetHelder - Nederlandse Wetgeving & Juridische Vragen',
     description: 'Doorzoek Nederlandse wetgeving, stel juridische vragen en krijg professionele uitleg.',
-    images: ['/og-image.png'],
+    images: ['/og-image.svg', '/og-image.png'],
     creator: '@wethelder',
   },
   robots: {
@@ -96,12 +104,22 @@ export default function RootLayout({
   return (
     <html lang="nl" suppressHydrationWarning className={inter.variable}>
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
+        {/* Favicons - Multiple formats for maximum compatibility */}
+        <link rel="icon" href="/favicon.ico" sizes="48x48" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
         <link rel="manifest" href="/manifest.json" />
+        
+        {/* Theme colors */}
         <meta name="theme-color" content="#3B82F6" />
         <meta name="msapplication-TileColor" content="#3B82F6" />
+        
+        {/* Microsoft Tiles */}
+        <meta name="msapplication-square70x70logo" content="/mstile-70x70.png" />
+        <meta name="msapplication-square150x150logo" content="/mstile-150x150.png" />
+        <meta name="msapplication-wide310x150logo" content="/mstile-310x150.png" />
+        <meta name="msapplication-square310x310logo" content="/mstile-310x310.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         
         {/* Additional SEO Meta Tags */}
@@ -121,6 +139,20 @@ export default function RootLayout({
         <meta name="rating" content="general" />
         <meta name="referrer" content="origin-when-cross-origin" />
         <meta name="color-scheme" content="light dark" />
+        
+        {/* Additional SEO */}
+        <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+        <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+        
+        {/* Social Media Meta Tags */}
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@wethelder" />
+        
+        {/* Performance Hints */}
+        <link rel="preload" href="/icon.svg" as="image" type="image/svg+xml" />
+        <link rel="prefetch" href="/og-image.svg" as="image" type="image/svg+xml" />
         
         {/* Preconnect for Performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />

@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://wethelder.nl/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /_next/
+Disallow: /uploads/
+
+# Allow important pages
+Allow: /ask
+Allow: /jurisprudentie
+Allow: /wetuitleg
+Allow: /search
+Allow: /contact 

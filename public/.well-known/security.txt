@@ -1,0 +1,16 @@
+Contact: mailto:security@wethelder.nl
+Expires: 2025-12-31T23:59:59.000Z
+Preferred-Languages: nl, en
+Canonical: https://wethelder.nl/.well-known/security.txt
+
+# Security Policy
+# We take security seriously. Please report vulnerabilities responsibly.
+# 
+# Scope: wethelder.nl and all subdomains
+# 
+# Please include:
+# - Detailed description of the vulnerability
+# - Steps to reproduce
+# - Potential impact
+# 
+# We will respond within 48 hours and work with you to resolve the issue. 
