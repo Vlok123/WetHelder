@@ -349,9 +349,19 @@ const formatText = (text: string): React.ReactElement => {
   // Step 2: Split into logical sections by double newlines for natural reading
   const sections = processedText.split(/\n\n+/).filter(s => s.trim())
 
-  sections.forEach((section) => {
+  sections.forEach((section, sectionIndex) => {
     const trimmedSection = section.trim()
     if (!trimmedSection) return
+
+    // Detect main response sections (KERNANTWOORD, WETTELIJKE BASIS, etc.)
+    const isMainSection = /^(KERNANTWOORD|WETTELIJKE BASIS|PRAKTISCHE TOELICHTING|BRONNEN|GERELATEERDE ARTIKELEN|VOORBEELDEN|SAMENVATTING|CONCLUSIE|PRAKTIJKVOORBEELD|UITLEG|TOELICHTING|LET OP|BELANGRIJK|WAARSCHUWING)/i.test(trimmedSection)
+    
+    // Add extra spacing before main sections (except the first one)
+    if (isMainSection && sectionIndex > 0) {
+      elements.push(
+        <div key={key++} className="h-6"></div> // Extra spacing
+      )
+    }
 
     // Detect wettelijke grondslag formatting: "De verdachte (art. 47 Sr)"
     const hasLegalReference = /\b(art\.?\s*\d+|artikel\s*\d+|wetboek|BW|Sr|Sv|AWR|Grondwet|ECLI)\b/i.test(trimmedSection)
@@ -379,13 +389,30 @@ const formatText = (text: string): React.ReactElement => {
       return
     }
 
-    // Detect section headers (natural titles ending with colon)
-    if (trimmedSection.endsWith(':') && trimmedSection.length < 100 && !trimmedSection.includes('.')) {
+    // Detect main section headers (KERNANTWOORD, WETTELIJKE BASIS, etc.)
+    if (isMainSection && trimmedSection.length < 150) {
+      const sectionTitle = trimmedSection.replace(/^(KERNANTWOORD|WETTELIJKE BASIS|PRAKTISCHE TOELICHTING|BRONNEN|GERELATEERDE ARTIKELEN|VOORBEELDEN|SAMENVATTING|CONCLUSIE|PRAKTIJKVOORBEELD|UITLEG|TOELICHTING|LET OP|BELANGRIJK|WAARSCHUWING)\s*/i, '$1')
+      
       elements.push(
-        <div key={key++} className="mt-8 mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 border-b border-blue-300 pb-2 mb-4">
+        <div key={key++} className="mt-8 mb-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+            <h3 className="text-lg font-bold text-blue-800 uppercase tracking-wide">
+              {sectionTitle.replace(/:$/, '')}
+            </h3>
+          </div>
+        </div>
+      )
+      return
+    }
+
+    // Detect section headers (natural titles ending with colon)
+    if (trimmedSection.endsWith(':') && trimmedSection.length < 100 && !trimmedSection.includes('.') && !isMainSection) {
+      elements.push(
+        <div key={key++} className="mt-6 mb-4">
+          <h4 className="text-base font-semibold text-gray-800 border-b border-gray-200 pb-2">
             {processLinksInText(trimmedSection.replace(/:$/, ''))}
-          </h3>
+          </h4>
         </div>
       )
       return
