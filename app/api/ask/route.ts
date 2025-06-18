@@ -16,7 +16,7 @@ import {
   type WetUpdate,
   type ActualiteitsWaarschuwing
 } from '@/lib/officialSources'
-import { searchGoogleCustom } from '@/lib/googleSearch'
+
 import { streamingCompletion } from '@/lib/openai'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
