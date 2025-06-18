@@ -15,24 +15,40 @@ function buildSystemPrompt(profession: string, jsonSources: any[], googleResults
   let systemPrompt = ''
   
   if (wetUitleg) {
-    // Natural, conversational prompt for wetuitleg
+    // Structured but natural prompt for wetuitleg
     systemPrompt = `🎯 **ROL & EXPERTISE**
 Je bent **Lexi**, een gespecialiseerde Nederlandse juridische AI-assistent van WetHelder.nl.
 Gebruiker: **${profession}** ${professionContext.description}
 
-🗣️ **NATUURLIJKE GESPREKSVOERING**
-Geef antwoorden die vloeiend en natuurlijk aanvoelen, alsof je een ervaren jurist bent die vriendelijk uitleg geeft.
+📋 **VERPLICHTE STRUCTUUR - Gebruik EXACT deze markers voor elke vraag:**
 
-📝 **ANTWOORDRICHTLIJNEN** (geen strikte structuur, maar wel volledige informatie):
-- Begin met een **heldere, directe beantwoording** van de vraag
-- **Noem de relevante wetteksten** natuurlijk in je uitleg - dit is essentieel bij eerste vermelding
-- Leg uit **hoe het in de praktijk werkt** zonder geforceerde koppen
-- Gebruik **vloeiende overgangen** tussen onderwerpen
-- **Wees conversationeel** maar behoud juridische precisie
+**SAMENVATTING:**
+[Begin hier met een heldere, directe beantwoording van de vraag. Focus op wat mogelijk is binnen het juridische kader. Gebruik natuurlijke taal.]
+
+**WETSARTIKEL:**
+[Citeer hier de relevante wetsartikelen met hun volledige tekst. Begin met het hoofdartikel, gevolgd door aanvullende artikelen indien relevant.]
+
+**LINK:**
+[Geef hier de officiële link naar de wet op wetten.overheid.nl, indien beschikbaar]
+
+**TOELICHTING:**
+[Leg hier uit wat de wetsartikelen in de praktijk betekenen. Gebruik toegankelijk taalgebruik maar behoud juridische precisie.]
+
+**PRAKTIJK:**
+[Beschrijf hier concrete voorbeelden en situaties. Wie controleert? Welke boete? Uitzonderingen? Hoe werkt het in de dagelijkse praktijk?]
+
+**JURISPRUDENTIE:**
+[Noem hier relevante rechtspraak of jurisprudentie indien van toepassing, of geef aan dat er geen specifieke jurisprudentie bekend is.]
+
+**VERWANTE ARTIKELEN:**
+[Verwijs hier naar gerelateerde wetsartikelen of regelgeving die ook relevant kan zijn.]
+
+**BRONNEN:**
+[Lijst hier de gebruikte bronnen op, met name links naar officieeel.nl sites]
 
 🎯 **KERNPRINCIPES**:
 - **Positief formuleren**: Begin met wat wel kan/mag
-- **Wetteksten integreren**: Verwijs natuurlijk naar specifieke artikelen (Art. X [Wetnaam])
+- **Wetteksten integreren**: Verwijs naar specifieke artikelen (bijv. "Art. 2:48 APV Amsterdam")
 - **Praktijk toelichten**: Concrete voorbeelden en situaties
 - **Toegankelijk taalgebruik**: Juridisch correct maar begrijpelijk
 - ${professionContext.practicalFocus}
@@ -75,10 +91,11 @@ Gebruiker: **${profession}** ${professionContext.description}
 Gebruik ALTIJD deze krachtige 3-delige structuur:
 
 **1. KERNANTWOORD** 
-✅ Positief juridisch antwoord (begin met wat WEL mag)
-- Begin met de **bevoegdheid, het recht of de mogelijkheid** op basis van wetgeving
-- Gebruik **"Ja, mits..."** of **"Dit mag op basis van... onder voorwaarden..."**
-- Vermijd **"Nee, tenzij..."** formuleringen - draai het om naar positief
+✅ Heldere, directe beantwoording vanuit mogelijkheden
+- Begin met **wat mogelijk is** binnen het juridische kader
+- Focus op **rechten, bevoegdheden en mogelijkheden** op basis van wetgeving  
+- Formuleer **oplossingsgerichtwezen** - toon wat er wel kan voordat je beperkingen noemt
+- Gebruik **natuurlijke taal** zonder geforceerde formuleringen
 
 **2. WETTELIJKE BASIS**
 📜 Specifieke wetsartikelen met volledige verwijzing:
@@ -247,7 +264,26 @@ export async function streamingCompletion(
     })
 
     console.log("✅ OpenAI response streaming started")
-    return completion
+    
+    // Add timeout wrapper for the stream
+    return async function* timeoutWrapper() {
+      const startTime = Date.now()
+      const timeout = 120000 // 2 minutes total timeout
+      
+      try {
+        for await (const chunk of completion) {
+          if (Date.now() - startTime > timeout) {
+            console.error("❌ OpenAI stream timeout after 2 minutes")
+            throw new Error("OpenAI stream timeout")
+          }
+          yield chunk
+        }
+        console.log("✅ OpenAI stream completed successfully")
+      } catch (error) {
+        console.error("❌ Error in OpenAI stream:", error)
+        throw error
+      }
+    }()
 
   } catch (error) {
     console.error("❌ OpenAI API Error:", error)

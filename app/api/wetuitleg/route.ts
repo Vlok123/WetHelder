@@ -130,8 +130,6 @@ async function searchGoogle(query: string): Promise<string[]> {
   }
 }
 
-
-
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
@@ -257,12 +255,28 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
     const stream = new ReadableStream({
       async start(controller) {
         try {
+          let hasContent = false
+          
           for await (const chunk of completion) {
             const content = chunk.choices[0]?.delta?.content || ''
             if (content) {
+              hasContent = true
               fullResponse += content
               controller.enqueue(encoder.encode(content))
             }
+            
+            // Check if the completion is done
+            if (chunk.choices[0]?.finish_reason) {
+              console.log('✅ Completion finished with reason:', chunk.choices[0].finish_reason)
+              break
+            }
+          }
+          
+          // Ensure we always have some content
+          if (!hasContent) {
+            const fallbackMessage = "Er is een probleem opgetreden bij het genereren van de response. Probeer het opnieuw."
+            fullResponse = fallbackMessage
+            controller.enqueue(encoder.encode(fallbackMessage))
           }
           
           // Save query to database with full response
@@ -285,11 +299,18 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
             console.error('❌ Error saving wetuitleg query to database:', dbError)
           }
           
+          console.log('✅ Stream completed successfully')
           controller.close()
         } catch (error) {
-          console.error('Error in stream:', error)
-          controller.error(error)
+          console.error('❌ Error in stream:', error)
+          const errorContent = "Er is een fout opgetreden. Probeer het opnieuw."
+          controller.enqueue(encoder.encode(errorContent))
+          controller.close()
         }
+      },
+      
+      cancel() {
+        console.log('🔄 Stream cancelled by client')
       }
     })
 

@@ -154,6 +154,11 @@ export default function WetUitlegPage() {
       
       const conversationHistory = [...userMessages, ...assistantMessages]
 
+      // Add timeout to prevent hanging
+      const timeoutId = setTimeout(() => {
+        throw new Error('Request timeout - response took too long')
+      }, 30000) // 30 second timeout
+
       const response = await fetch('/api/wetuitleg', {
         method: 'POST',
         headers: {
@@ -165,6 +170,8 @@ export default function WetUitlegPage() {
         }),
       })
 
+      clearTimeout(timeoutId)
+
       if (!response.ok) {
         throw new Error('Failed to get analysis')
       }
@@ -173,21 +180,46 @@ export default function WetUitlegPage() {
       if (!reader) throw new Error('No reader available')
 
       let accumulatedContent = ''
+      let lastUpdateTime = Date.now()
       const decoder = new TextDecoder()
+      const readerTimeout = 45000 // 45 seconds for reading
 
+      const startTime = Date.now()
+      
       while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Stream reading timeout')), readerTimeout)
+        })
+        
+        const readPromise = reader.read()
+        
+        try {
+          const { done, value } = await Promise.race([readPromise, timeoutPromise]) as any
+          
+          if (done) {
+            console.log('✅ Stream completed, total time:', Date.now() - startTime, 'ms')
+            break
+          }
 
-        const chunk = decoder.decode(value, { stream: true })
-        accumulatedContent += chunk
+          const chunk = decoder.decode(value, { stream: true })
+          if (chunk) {
+            accumulatedContent += chunk
+            lastUpdateTime = Date.now()
 
-        // Update the analysis with accumulated content
-        setAnalyses(prev => prev.map(analysis => 
-          analysis.id === tempAnalysis.id 
-            ? { ...analysis, isLoading: false, fullResponse: accumulatedContent, ...parseAnalysisContent(accumulatedContent) }
-            : analysis
-        ))
+            // Update the analysis with accumulated content
+            setAnalyses(prev => prev.map(analysis => 
+              analysis.id === tempAnalysis.id 
+                ? { ...analysis, isLoading: false, fullResponse: accumulatedContent, ...parseAnalysisContent(accumulatedContent) }
+                : analysis
+            ))
+          }
+        } catch (timeoutError) {
+          console.error('❌ Stream timeout:', timeoutError)
+          if (accumulatedContent.length === 0) {
+            throw new Error('No response received - request timed out')
+          }
+          break // If we have some content, continue with what we have
+        }
       }
 
       // Update remaining questions if not logged in
