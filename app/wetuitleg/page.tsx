@@ -245,15 +245,15 @@ export default function WetUitlegPage() {
   }
 
   const parseAnalysisContent = (content: string) => {
-    // Parse the structured response from the API
+    // Parse the structured response from the API with fallbacks
     const sections = {
-      articleText: extractSection(content, 'WETSARTIKEL:', 'LINK:'),
-      officialLink: extractSection(content, 'LINK:', 'SAMENVATTING:'),
-      summary: extractSection(content, 'SAMENVATTING:', 'TOELICHTING:'),
-      explanation: extractSection(content, 'TOELICHTING:', 'PRAKTIJK:'),
-      practicalApplication: extractSection(content, 'PRAKTIJK:', 'JURISPRUDENTIE:'),
-      jurisprudence: extractSection(content, 'JURISPRUDENTIE:', 'VERWANTE ARTIKELEN:'),
-      relatedArticles: extractSection(content, 'VERWANTE ARTIKELEN:', 'BRONNEN:'),
+      articleText: extractSection(content, 'WETSARTIKEL:', 'LINK:') || extractSection(content, '**WETSARTIKEL:**', '**LINK:**'),
+      officialLink: extractSection(content, 'LINK:', 'SAMENVATTING:') || extractSection(content, '**LINK:**', '**SAMENVATTING:**'),
+      summary: extractSection(content, 'SAMENVATTING:', 'TOELICHTING:') || extractSection(content, '**SAMENVATTING:**', '**TOELICHTING:**'),
+      explanation: extractSection(content, 'TOELICHTING:', 'PRAKTIJK:') || extractSection(content, '**TOELICHTING:**', '**PRAKTIJK:**'),
+      practicalApplication: extractSection(content, 'PRAKTIJK:', 'JURISPRUDENTIE:') || extractSection(content, '**PRAKTIJK:**', '**JURISPRUDENTIE:**'),
+      jurisprudence: extractSection(content, 'JURISPRUDENTIE:', 'VERWANTE ARTIKELEN:') || extractSection(content, '**JURISPRUDENTIE:**', '**VERWANTE ARTIKELEN:**'),
+      relatedArticles: extractSection(content, 'VERWANTE ARTIKELEN:', 'BRONNEN:') || extractSection(content, '**VERWANTE ARTIKELEN:**', '**BRONNEN:**'),
       sources: extractSources(content)
     }
 
@@ -267,11 +267,17 @@ export default function WetUitlegPage() {
     const contentStart = startIndex + startMarker.length
     const endIndex = content.indexOf(endMarker, contentStart)
     
+    let extractedContent = ''
     if (endIndex === -1) {
-      return content.substring(contentStart).trim()
+      extractedContent = content.substring(contentStart).trim()
+    } else {
+      extractedContent = content.substring(contentStart, endIndex).trim()
     }
     
-    return content.substring(contentStart, endIndex).trim()
+    // Clean up any remaining **markers that weren't part of proper formatting
+    extractedContent = extractedContent.replace(/^\*\*|\*\*$/g, '').trim()
+    
+    return extractedContent
   }
 
   const extractSources = (content: string): string[] => {
@@ -305,42 +311,56 @@ export default function WetUitlegPage() {
   const formatText = (text: string): React.ReactElement => {
     if (!text) return <div></div>
 
-    const lines = text.split('\n')
+         // Clean up and preprocess the text
+     let processedText = text
+       .replace(/\*\*(SAMENVATTING|WETSARTIKEL|LINK|TOELICHTING|PRAKTIJK|JURISPRUDENTIE|VERWANTE ARTIKELEN|BRONNEN):\*\*/g, '') // Remove section headers
+       .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>') // Bold
+       .replace(/### (.*?)(?=\n|$)/g, '<h3 class="text-lg font-semibold mt-4 mb-2 text-gray-900">$1</h3>') // Headers
+       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline hover:no-underline">$1</a>') // Links
+    
+    const lines = processedText.split('\n')
     const elements: React.ReactNode[] = []
     let key = 0
 
     lines.forEach((line, index) => {
-      if (line.trim()) {
-        // Check for different formatting patterns
-        if (line.includes('**') || line.includes('###')) {
-          // Bold text or headers
-          const formatted = line
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/### (.*)/g, '<h3 class="text-lg font-semibold mt-4 mb-2">$1</h3>')
-          
+      const trimmedLine = line.trim()
+      if (trimmedLine) {
+        if (trimmedLine.startsWith('- ') || trimmedLine.startsWith('• ')) {
+          // List items with rich formatting
+          const listContent = trimmedLine.substring(2)
           elements.push(
-            <div key={key++} dangerouslySetInnerHTML={{ __html: formatted }} className="mb-2" />
-          )
-        } else if (line.startsWith('- ') || line.startsWith('• ')) {
-          // List items
-          elements.push(
-            <div key={key++} className="flex items-start gap-2 mb-1">
+            <div key={key++} className="flex items-start gap-3 mb-2">
               <span className="text-blue-600 text-sm flex-shrink-0 mt-2">•</span>
-              <span className="text-gray-800">{line.substring(2)}</span>
+              <div 
+                className="text-gray-800 leading-relaxed flex-1" 
+                dangerouslySetInnerHTML={{ __html: listContent }}
+              />
             </div>
+          )
+        } else if (trimmedLine.includes('<h3') || trimmedLine.includes('<strong>') || trimmedLine.includes('<a href')) {
+          // Lines with HTML formatting
+          elements.push(
+            <div 
+              key={key++} 
+              className="mb-3 leading-relaxed" 
+              dangerouslySetInnerHTML={{ __html: trimmedLine }} 
+            />
           )
         } else {
           // Regular paragraphs
           elements.push(
             <p key={key++} className="text-gray-800 leading-relaxed mb-3">
-              {line}
+              {trimmedLine}
             </p>
           )
         }
+      } else if (index < lines.length - 1) {
+        // Add spacing for empty lines
+        elements.push(<div key={key++} className="h-2" />)
       }
     })
 
-    return <div className="space-y-2">{elements}</div>
+    return <div className="space-y-1">{elements}</div>
   }
 
   return (
@@ -467,16 +487,13 @@ export default function WetUitlegPage() {
 
                       {/* Official Link */}
                       {analysis.officialLink && (
-                        <div className="flex items-center gap-2">
-                          <ExternalLink className="h-4 w-4 text-blue-600" />
-                          <a 
-                            href={analysis.officialLink} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 underline hover:no-underline"
-                          >
-                            Bekijk op wetten.overheid.nl
-                          </a>
+                        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                          <div className="flex items-center gap-2">
+                            <ExternalLink className="h-4 w-4 text-blue-600" />
+                            <div className="text-gray-800 leading-relaxed">
+                              {formatText(analysis.officialLink)}
+                            </div>
+                          </div>
                         </div>
                       )}
 
