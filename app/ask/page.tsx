@@ -591,29 +591,40 @@ function AskPageContent() {
 
   // Load conversation from localStorage on mount
   useEffect(() => {
-    const savedConversation = localStorage.getItem('wetHelder_conversation')
-    let savedProfession = localStorage.getItem('wetHelder_profession')
+    const savedMessages = localStorage.getItem('wetHelder_ask_conversation')
     
-    // Also check for the main screen selected profile for consistency
-    if (!savedProfession) {
-      savedProfession = localStorage.getItem('wetHelder_selected_profile')
-    }
-    
-    if (savedConversation) {
+    if (savedMessages) {
       try {
-        const parsedMessages = JSON.parse(savedConversation)
+        const parsedMessages = JSON.parse(savedMessages)
         // Validate and restore messages
         const validMessages = parsedMessages.filter((msg: any) => 
-          msg.id && msg.question && msg.answer && msg.timestamp
+          msg.id && msg.question && msg.timestamp
         ).map((msg: any) => ({
           ...msg,
           timestamp: new Date(msg.timestamp)
         }))
         setMessages(validMessages)
       } catch (error) {
-        console.error('Error loading conversation:', error)
-        localStorage.removeItem('wetHelder_conversation')
+        console.error('Error loading ask conversation:', error)
+        localStorage.removeItem('wetHelder_ask_conversation')
       }
+    }
+  }, [])
+
+  // Save conversation to localStorage whenever messages change
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('wetHelder_ask_conversation', JSON.stringify(messages))
+    }
+  }, [messages])
+
+  // Load profession from localStorage
+  useEffect(() => {
+    let savedProfession = localStorage.getItem('wetHelder_profession')
+    
+    // Also check for the main screen selected profile for consistency
+    if (!savedProfession) {
+      savedProfession = localStorage.getItem('wetHelder_selected_profile')
     }
     
     // Only set profession from localStorage if no URL profile parameter exists
@@ -622,14 +633,7 @@ function AskPageContent() {
       console.log('📂 Loading profession from localStorage:', savedProfession)
       setProfession(savedProfession as Profession)
     }
-  }, [])
-
-  // Save conversation to localStorage whenever messages change
-  useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem('wetHelder_conversation', JSON.stringify(messages))
-    }
-  }, [messages])
+  }, [searchParams])
 
   // Save profession to localStorage whenever it changes (both keys for consistency)
   useEffect(() => {
@@ -772,8 +776,8 @@ function AskPageContent() {
     setMessages(prev => [...prev, newMessage])
 
     try {
-      // Build conversation history for API
-      const conversationHistory = messages.slice(-10).map(m => ({
+      // Build conversation history for API - gebruik ALLE berichten uit de huidige chat
+      const conversationHistory = messages.map(m => ({
         role: m.type === 'user' ? 'user' as const : 'assistant' as const,
         content: m.type === 'user' ? m.question : m.answer
       }))
@@ -854,7 +858,7 @@ function AskPageContent() {
 
   const clearConversation = () => {
     setMessages([])
-    localStorage.removeItem('wetHelder_conversation')
+    localStorage.removeItem('wetHelder_ask_conversation')
   }
 
   const handleSearchSelect = (searchTerm: string, profession: string) => {

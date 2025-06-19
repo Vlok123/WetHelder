@@ -274,10 +274,14 @@ export default function WetUitlegPage() {
       extractedContent = content.substring(contentStart, endIndex).trim()
     }
     
-    // Clean up any remaining **markers that weren't part of proper formatting
-    extractedContent = extractedContent.replace(/^\*\*|\*\*$/g, '').trim()
-    
-    return extractedContent
+         // Clean up any remaining **markers that weren't part of proper formatting
+     extractedContent = extractedContent
+       .replace(/^\*\*|\*\*$/g, '') // Remove ** at start/end
+       .replace(/\*\*\s*\*\*/g, '') // Remove empty ** pairs
+       .replace(/\*\*([A-Z\s]+):\*\*/g, '') // Remove section headers like **TITEL:**
+       .trim()
+     
+     return extractedContent
   }
 
   const extractSources = (content: string): string[] => {
@@ -311,12 +315,23 @@ export default function WetUitlegPage() {
   const formatText = (text: string): React.ReactElement => {
     if (!text) return <div></div>
 
-         // Clean up and preprocess the text
+         // Clean up and preprocess the text  
      let processedText = text
-       .replace(/\*\*(SAMENVATTING|WETSARTIKEL|LINK|TOELICHTING|PRAKTIJK|JURISPRUDENTIE|VERWANTE ARTIKELEN|BRONNEN):\*\*/g, '') // Remove section headers
-       .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>') // Bold
-       .replace(/### (.*?)(?=\n|$)/g, '<h3 class="text-lg font-semibold mt-4 mb-2 text-gray-900">$1</h3>') // Headers
-       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline hover:no-underline">$1</a>') // Links
+       // Remove all section headers that might appear in content
+       .replace(/\*\*(SAMENVATTING|WETSARTIKEL|LINK|TOELICHTING|PRAKTIJK|JURISPRUDENTIE|VERWANTE ARTIKELEN|BRONNEN):\*\*/g, '') 
+       // Remove standalone ** without content
+       .replace(/\*\*\s*\*\*/g, '')
+       // Remove ** at start/end of lines
+       .replace(/^\*\*|\*\*$/gm, '')
+       // Convert remaining **text** to bold
+       .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>') 
+       // Convert headers
+       .replace(/### (.*?)(?=\n|$)/g, '<h3 class="text-lg font-semibold mt-4 mb-2 text-gray-900">$1</h3>') 
+       // Convert markdown links
+       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline hover:no-underline">$1</a>') 
+       // Clean up any remaining double spaces
+       .replace(/\s+/g, ' ')
+       .trim()
     
     const lines = processedText.split('\n')
     const elements: React.ReactNode[] = []
