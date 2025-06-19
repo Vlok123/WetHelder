@@ -691,44 +691,6 @@ function AskPageContent() {
 
 
 
-  // Handle URL parameters for auto-submit and profile setting
-  useEffect(() => {
-    const urlQuery = searchParams.get('q')
-    const urlProfile = searchParams.get('profile')
-    const shouldAutoSubmit = searchParams.get('autoSubmit') === 'true'
-    
-    console.log('🔍 URL Params:', { urlQuery, urlProfile, shouldAutoSubmit, hasAutoSubmitted: hasAutoSubmitted.current })
-    
-    // ALWAYS set profession if URL has profile (regardless of auto-submit)
-    if (urlProfile) {
-      const mappedProfession = mapProfileToProfession(urlProfile)
-      console.log('🎯 Setting profession:', urlProfile, '→', mappedProfession)
-      setProfession(mappedProfession)
-    }
-    
-    // Set input if URL has query AND we haven't processed this URL yet
-    if (urlQuery && !hasAutoSubmitted.current) {
-      console.log('📝 Setting input:', urlQuery)
-      setInput(urlQuery)
-      
-      // Auto-submit ONLY if autoSubmit flag is true
-      if (shouldAutoSubmit) {
-        hasAutoSubmitted.current = true
-        console.log('⚡ Auto-submitting question...')
-        
-        // Wait a bit for state updates, then submit with the correct profession
-        setTimeout(() => {
-          const professionToUse = urlProfile ? mapProfileToProfession(urlProfile) : profession
-          console.log('🚀 Submitting with profession:', professionToUse)
-          
-          const fakeEvent = { preventDefault: () => {} } as React.FormEvent
-          handleSubmit(fakeEvent, professionToUse)
-        }, 100)
-      }
-    }
-
-  }, [searchParams, profession])
-
   const handleSubmit = useCallback(async (e: React.FormEvent, overrideProfession?: Profession) => {
     e.preventDefault()
     
@@ -855,6 +817,44 @@ function AskPageContent() {
       setIsLoading(false)
     }
   }, [isLoading, profession, messages, setMessages, setInput, setIsLoading, setRemainingQuestions, wetUitlegEnabled, input])
+
+  // Handle URL parameters for auto-submit and profile setting
+  useEffect(() => {
+    const urlQuery = searchParams.get('q')
+    const urlProfile = searchParams.get('profile')
+    const shouldAutoSubmit = searchParams.get('autoSubmit') === 'true'
+    
+    console.log('🔍 URL Params:', { urlQuery, urlProfile, shouldAutoSubmit, hasAutoSubmitted: hasAutoSubmitted.current })
+    
+    // ALWAYS set profession if URL has profile (regardless of auto-submit)
+    if (urlProfile) {
+      const mappedProfession = mapProfileToProfession(urlProfile)
+      console.log('🎯 Setting profession:', urlProfile, '→', mappedProfession)
+      setProfession(mappedProfession)
+    }
+    
+    // Set input if URL has query AND we haven't processed this URL yet
+    if (urlQuery && !hasAutoSubmitted.current) {
+      console.log('📝 Setting input:', urlQuery)
+      setInput(urlQuery)
+      
+      // Auto-submit ONLY if autoSubmit flag is true
+      if (shouldAutoSubmit) {
+        hasAutoSubmitted.current = true
+        console.log('⚡ Auto-submitting question...')
+        
+        // Wait a bit for state updates, then submit with the correct profession
+        setTimeout(() => {
+          const professionToUse = urlProfile ? mapProfileToProfession(urlProfile) : profession
+          console.log('🚀 Submitting with profession:', professionToUse)
+          
+          const fakeEvent = { preventDefault: () => {} } as React.FormEvent
+          handleSubmit(fakeEvent, professionToUse)
+        }, 100)
+      }
+    }
+
+  }, [searchParams, profession, handleSubmit])
 
   const clearConversation = () => {
     setMessages([])

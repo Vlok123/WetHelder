@@ -316,7 +316,7 @@ export default function WetUitlegPage() {
     if (!text) return <div></div>
 
          // Clean up and preprocess the text  
-     let processedText = text
+     const processedText = text
        // Remove all section headers that might appear in content
        .replace(/\*\*(SAMENVATTING|WETSARTIKEL|LINK|TOELICHTING|PRAKTIJK|JURISPRUDENTIE|VERWANTE ARTIKELEN|BRONNEN):\*\*/g, '') 
        // Remove standalone ** without content
