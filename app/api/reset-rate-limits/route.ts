@@ -31,6 +31,17 @@ export async function POST(request: NextRequest) {
     // Clear all anonymous queries from the last 24 hours to reset rate limits
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
     
+    // First, check for rate limit messages that may be causing issues
+    const rateLimitMessages = await prisma.query.count({
+      where: {
+        userId: null,
+        createdAt: { gte: twentyFourHoursAgo },
+        answer: { contains: 'Dagelijkse limiet bereikt' }
+      }
+    })
+    
+    console.log(`🔍 Found ${rateLimitMessages} rate limit messages in database`)
+    
     const deletedQueries = await prisma.query.deleteMany({
       where: {
         userId: null,
@@ -40,15 +51,33 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    console.log(`✅ Deleted ${deletedQueries.count} anonymous queries to reset rate limits`)
+    console.log(`✅ Deleted ${deletedQueries.count} anonymous queries to reset rate limits (including ${rateLimitMessages} rate limit messages)`)
 
+    // Clear in-memory rate limits from wetuitleg route
+    try {
+      // Call the globally available reset function if it exists
+      const resetFn = (globalThis as any).resetWetuitlegRateLimits
+      if (typeof resetFn === 'function') {
+        resetFn()
+        console.log('✅ Wetuitleg in-memory rate limits cleared')
+      } else {
+        console.log('ℹ️ Wetuitleg rate limits will reset on server restart')
+      }
+    } catch (error) {
+      console.log('ℹ️ Wetuitleg rate limits will reset on server restart')
+    }
+    
     // Note: In-memory rate limit maps will automatically reset on server restart
-    console.log('Note: In-memory rate limits will reset on next server restart')
+    console.log('Note: All rate limits have been reset')
     
     return NextResponse.json({
       success: true,
-      message: `Rate limits reset successfully. Deleted ${deletedQueries.count} anonymous queries.`,
-      resetTime: new Date().toISOString()
+      message: `Rate limits reset successfully. Deleted ${deletedQueries.count} anonymous queries (including ${rateLimitMessages} rate limit messages).`,
+      resetTime: new Date().toISOString(),
+      details: {
+        deletedQueries: deletedQueries.count,
+        rateLimitMessages: rateLimitMessages
+      }
     })
 
   } catch (error) {

@@ -421,11 +421,35 @@ export async function POST(request: NextRequest) {
           // Use IP-based tracking (storing in sources field for now)
           sources: {
             contains: clientIp
+          },
+          // Exclude rate limit messages from counting towards rate limit
+          answer: {
+            not: {
+              contains: 'Dagelijkse limiet bereikt'
+            }
           }
         }
       })
 
       console.log(`🔍 Anonymous user (IP: ${clientIp}) has asked ${recentQuestions} questions in last 24h`)
+      
+      // Debug: Show what queries were found for this IP
+      if (process.env.NODE_ENV === 'development') {
+        const debugQueries = await prisma.query.findMany({
+          where: {
+            userId: null,
+            createdAt: { gte: twentyFourHoursAgo },
+            sources: { contains: clientIp }
+          },
+          select: { question: true, answer: true, createdAt: true },
+          take: 5
+        })
+        console.log('🔍 Recent queries for this IP:', debugQueries.map(q => ({
+          question: q.question.substring(0, 50) + '...',
+          isRateLimit: q.answer.includes('Dagelijkse limiet bereikt'),
+          createdAt: q.createdAt
+        })))
+      }
 
       if (recentQuestions >= 4) {
         console.log('❌ Rate limit exceeded for anonymous user')
@@ -468,12 +492,6 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
             controller.close()
           }
         })
-
-        // Save the rate limit "query" to database for tracking
-        const clientIp = request.headers.get('x-forwarded-for') || 
-                         request.headers.get('x-real-ip') || 'unknown'
-        saveQueryToDatabase(question, rateLimitMessage, profession, null, [], '', clientIp)
-          .catch(error => console.error('❌ Error saving rate limit query:', error))
 
         return new NextResponse(stream, {
           headers: {
@@ -787,8 +805,15 @@ export async function GET(request: NextRequest) {
         createdAt: {
           gte: twentyFourHoursAgo
         },
+        // Use IP-based tracking (storing in sources field for now)
         sources: {
           contains: clientIp
+        },
+        // Exclude rate limit messages from counting towards rate limit
+        answer: {
+          not: {
+            contains: 'Dagelijkse limiet bereikt'
+          }
         }
       }
     })

@@ -27,6 +27,9 @@ function resetRateLimits(): void {
   console.log('🔄 Wetuitleg rate limits cleared')
 }
 
+// Make reset function available globally for admin route
+;(globalThis as any).resetWetuitlegRateLimits = resetRateLimits
+
 function getClientIP(request: NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for')
   const realIP = request.headers.get('x-real-ip')
