@@ -60,7 +60,7 @@ export function Navigation() {
               <Button variant="ghost" size="sm" asChild>
                 <Link href="/wetuitleg" className="text-sm">
                   <Scale className="h-4 w-4 mr-2" />
-                  Wetteksten
+                  Wetuitleg
                 </Link>
               </Button>
               <Button variant="ghost" size="sm" asChild>

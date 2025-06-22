@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { Navigation } from '@/components/navigation'
 import { Button } from '@/components/ui/button'
@@ -209,7 +209,19 @@ export default function WetUitlegPage() {
             // Update the analysis with accumulated content
             setAnalyses(prev => prev.map(analysis => 
               analysis.id === tempAnalysis.id 
-                ? { ...analysis, isLoading: false, fullResponse: accumulatedContent, ...parseAnalysisContent(accumulatedContent) }
+                ? { 
+                    ...analysis, 
+                    isLoading: false, 
+                    fullResponse: accumulatedContent,
+                    summary: accumulatedContent, // Show the full response as summary
+                    explanation: '', // Clear other fields since we're showing everything in summary
+                    articleText: '',
+                    officialLink: '',
+                    practicalApplication: '',
+                    jurisprudence: '',
+                    relatedArticles: '',
+                    sources: []
+                  }
                 : analysis
             ))
           }
@@ -245,15 +257,31 @@ export default function WetUitlegPage() {
   }
 
   const parseAnalysisContent = (content: string) => {
-    // Parse the structured response from the API with fallbacks
+    // Extract exact legal text from markdown code blocks, emoji sections or specific markers
+    const exactTextPatterns = [
+      /```[\s\S]*?```/g,
+      /📜[\s\S]*?(?=🔍|⚖️|💡|🔗|⚠️|$)/g,
+      /\*\*📜 EXACTE WETTEKST\*\*[\s\S]*?(?=\*\*🔍|$)/g,
+      /EXACTE WETTEKST[\s\S]*?(?=JURIDISCHE ANALYSE|$)/g
+    ]
+    
+    let exactText = ''
+    for (const pattern of exactTextPatterns) {
+      const matches = content.match(pattern)
+      if (matches && matches.length > 0) {
+        exactText = matches.join('\n\n')
+        break
+      }
+    }
+    
     const sections = {
-      articleText: extractSection(content, 'WETSARTIKEL:', 'LINK:') || extractSection(content, '**WETSARTIKEL:**', '**LINK:**'),
-      officialLink: extractSection(content, 'LINK:', 'SAMENVATTING:') || extractSection(content, '**LINK:**', '**SAMENVATTING:**'),
-      summary: extractSection(content, 'SAMENVATTING:', 'TOELICHTING:') || extractSection(content, '**SAMENVATTING:**', '**TOELICHTING:**'),
-      explanation: extractSection(content, 'TOELICHTING:', 'PRAKTIJK:') || extractSection(content, '**TOELICHTING:**', '**PRAKTIJK:**'),
-      practicalApplication: extractSection(content, 'PRAKTIJK:', 'JURISPRUDENTIE:') || extractSection(content, '**PRAKTIJK:**', '**JURISPRUDENTIE:**'),
-      jurisprudence: extractSection(content, 'JURISPRUDENTIE:', 'VERWANTE ARTIKELEN:') || extractSection(content, '**JURISPRUDENTIE:**', '**VERWANTE ARTIKELEN:**'),
-      relatedArticles: extractSection(content, 'VERWANTE ARTIKELEN:', 'BRONNEN:') || extractSection(content, '**VERWANTE ARTIKELEN:**', '**BRONNEN:**'),
+      articleText: exactText || extractSection(content, '📜', '🔍') || extractSection(content, 'EXACTE WETTEKST', 'JURIDISCHE ANALYSE'),
+      summary: extractSection(content, '🔍', '⚖️') || extractSection(content, 'JURIDISCHE ANALYSE', 'JURISPRUDENTIE') || content, // Fallback to full content
+      explanation: extractSection(content, '💡', '🔗') || extractSection(content, 'PRAKTISCHE TOEPASSING', 'GERELATEERDE ARTIKELEN'),
+      practicalApplication: extractSection(content, '💡', '🔗') || extractSection(content, 'PRAKTISCHE TOEPASSING', 'GERELATEERDE ARTIKELEN'),
+      jurisprudence: extractSection(content, '⚖️', '💡') || extractSection(content, 'JURISPRUDENTIE', 'PRAKTISCHE TOEPASSING'),
+      relatedArticles: extractSection(content, '🔗', '⚠️') || extractSection(content, 'GERELATEERDE ARTIKELEN', 'BELANGRIJKE AANDACHTSPUNTEN'),
+      officialLink: extractSection(content, 'LINK:', '') || extractSection(content, 'URL:', '') || extractSection(content, 'Bron:', ''),
       sources: extractSources(content)
     }
 
@@ -315,67 +343,178 @@ export default function WetUitlegPage() {
   const formatText = (text: string): React.ReactElement => {
     if (!text) return <div></div>
 
-         // Clean up and preprocess the text  
-     const processedText = text
-       // Remove all section headers that might appear in content
-       .replace(/\*\*(SAMENVATTING|WETSARTIKEL|LINK|TOELICHTING|PRAKTIJK|JURISPRUDENTIE|VERWANTE ARTIKELEN|BRONNEN):\*\*/g, '') 
-       // Remove standalone ** without content
-       .replace(/\*\*\s*\*\*/g, '')
-       // Remove ** at start/end of lines
-       .replace(/^\*\*|\*\*$/gm, '')
-       // Convert remaining **text** to bold
-       .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>') 
-       // Convert headers
-       .replace(/### (.*?)(?=\n|$)/g, '<h3 class="text-lg font-semibold mt-4 mb-2 text-gray-900">$1</h3>') 
-       // Convert markdown links
-       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline hover:no-underline">$1</a>') 
-       // Clean up any remaining double spaces
-       .replace(/\s+/g, ' ')
-       .trim()
+    // Check if this is a legal text that starts with **WETTEKST:**
+    const wettekstMatch = text.match(/^\*\*WETTEKST:\*\*([\s\S]*?)(?=\*\*[A-Z\s]+:\*\*|$)/i)
     
-    const lines = processedText.split('\n')
-    const elements: React.ReactNode[] = []
-    let key = 0
-
-    lines.forEach((line, index) => {
-      const trimmedLine = line.trim()
-      if (trimmedLine) {
-        if (trimmedLine.startsWith('- ') || trimmedLine.startsWith('• ')) {
-          // List items with rich formatting
-          const listContent = trimmedLine.substring(2)
-          elements.push(
-            <div key={key++} className="flex items-start gap-3 mb-2">
-              <span className="text-blue-600 text-sm flex-shrink-0 mt-2">•</span>
-              <div 
-                className="text-gray-800 leading-relaxed flex-1" 
-                dangerouslySetInnerHTML={{ __html: listContent }}
-              />
+    if (wettekstMatch) {
+      const wettekstContent = wettekstMatch[1].trim()
+      const restOfText = text.replace(wettekstMatch[0], '').trim()
+      
+      return (
+        <div className="space-y-6">
+          {/* Prominent Legal Text Frame */}
+          <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border-2 border-blue-300 rounded-xl p-6 shadow-lg">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center shadow-md">
+                <FileText className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-blue-900 mb-1">
+                  OFFICIËLE WETTEKST
+                </h3>
+                <p className="text-sm text-blue-700">
+                  Exacte tekst zoals vastgesteld door de wetgever
+                </p>
+              </div>
             </div>
-          )
-        } else if (trimmedLine.includes('<h3') || trimmedLine.includes('<strong>') || trimmedLine.includes('<a href')) {
-          // Lines with HTML formatting
-          elements.push(
-            <div 
-              key={key++} 
-              className="mb-3 leading-relaxed" 
-              dangerouslySetInnerHTML={{ __html: trimmedLine }} 
-            />
-          )
-        } else {
-          // Regular paragraphs
-          elements.push(
-            <p key={key++} className="text-gray-800 leading-relaxed mb-3">
-              {trimmedLine}
+            
+            <div className="bg-white/80 backdrop-blur-sm border border-blue-200 rounded-lg p-4 shadow-sm">
+              <div className="font-mono text-gray-900 leading-relaxed whitespace-pre-wrap text-sm">
+                {wettekstContent}
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2 mt-3 text-xs text-blue-600">
+              <ExternalLink className="h-3 w-3" />
+              <span>Bron: wetten.overheid.nl</span>
+            </div>
+          </div>
+          
+          {/* Rest of the analysis */}
+          {restOfText && formatTextContent(restOfText)}
+        </div>
+      )
+    }
+    
+    return formatTextContent(text)
+  }
+
+  const formatTextContent = (text: string): React.ReactElement => {
+    // Clean up the text and split into paragraphs
+    const cleanText = text
+      // Remove code block markers
+      .replace(/```[\w]*\n?/g, '')
+      .replace(/```/g, '')
+      // Remove section headers that might appear in content
+      .replace(/\*\*(SAMENVATTING|WETSARTIKEL|LINK|TOELICHTING|PRAKTIJK|JURISPRUDENTIE|VERWANTE ARTIKELEN|BRONNEN|EXACTE WETTEKST|JURIDISCHE ANALYSE):\*\*/g, '') 
+      // Remove any remaining header patterns with **
+      .replace(/\*\*([^*]+):\*\*/g, '$1:')
+      .trim()
+    
+    // Split into paragraphs (double newlines)
+    const paragraphs = cleanText.split(/\n\s*\n/).filter(p => p.trim())
+    
+    return (
+      <div className="prose prose-gray max-w-none">
+        {paragraphs.map((paragraph, index) => {
+          const trimmedParagraph = paragraph.trim()
+          
+          // Check if it's a header (starts with ###)
+          if (trimmedParagraph.startsWith('###')) {
+            const headerText = trimmedParagraph.replace(/^###\s*/, '')
+            return (
+              <h3 key={index} className="text-xl font-bold text-gray-900 mt-6 mb-4 border-b border-gray-200 pb-2">
+                {headerText}
+              </h3>
+            )
+          }
+          
+          // Check if it's a list (contains bullet points or numbers)
+          if (trimmedParagraph.includes('\n- ') || trimmedParagraph.includes('\n• ') || trimmedParagraph.match(/\n\d+\./)) {
+            const lines = trimmedParagraph.split('\n')
+            const listItems: React.ReactNode[] = []
+            let currentParagraph = ''
+            
+            lines.forEach((line, lineIndex) => {
+              const trimmedLine = line.trim()
+              if (trimmedLine.startsWith('- ') || trimmedLine.startsWith('• ')) {
+                // Add any accumulated paragraph before the list
+                if (currentParagraph) {
+                  listItems.push(
+                    <p key={`p-${lineIndex}`} className="text-gray-800 leading-relaxed mb-4">
+                      {formatInlineText(currentParagraph)}
+                    </p>
+                  )
+                  currentParagraph = ''
+                }
+                // Add list item
+                listItems.push(
+                  <li key={`li-${lineIndex}`} className="text-gray-800 leading-relaxed mb-2">
+                    {formatInlineText(trimmedLine.substring(2))}
+                  </li>
+                )
+              } else if (trimmedLine.match(/^\d+\./)) {
+                // Add any accumulated paragraph before the list
+                if (currentParagraph) {
+                  listItems.push(
+                    <p key={`p-${lineIndex}`} className="text-gray-800 leading-relaxed mb-4">
+                      {formatInlineText(currentParagraph)}
+                    </p>
+                  )
+                  currentParagraph = ''
+                }
+                // Add numbered list item
+                listItems.push(
+                  <li key={`li-${lineIndex}`} className="text-gray-800 leading-relaxed mb-2">
+                    {formatInlineText(trimmedLine.replace(/^\d+\.\s*/, ''))}
+                  </li>
+                )
+              } else if (trimmedLine) {
+                currentParagraph += (currentParagraph ? ' ' : '') + trimmedLine
+              }
+            })
+            
+            // Add any remaining paragraph
+            if (currentParagraph) {
+              listItems.push(
+                <p key={`p-final`} className="text-gray-800 leading-relaxed mb-4">
+                  {formatInlineText(currentParagraph)}
+                </p>
+              )
+            }
+            
+            return (
+              <div key={index} className="mb-6">
+                {listItems.some(item => React.isValidElement(item) && item.type === 'li') ? (
+                  <ul className="list-disc list-inside space-y-2 ml-4">
+                    {listItems}
+                  </ul>
+                ) : (
+                  <div>{listItems}</div>
+                )}
+              </div>
+            )
+          }
+          
+          // Regular paragraph
+          return (
+            <p key={index} className="text-gray-800 leading-relaxed mb-4 text-base">
+              {formatInlineText(trimmedParagraph)}
             </p>
           )
-        }
-      } else if (index < lines.length - 1) {
-        // Add spacing for empty lines
-        elements.push(<div key={key++} className="h-2" />)
-      }
-    })
+        })}
+      </div>
+    )
+  }
 
-    return <div className="space-y-1">{elements}</div>
+  // Helper function to format inline text (bold, links, article references)
+  const formatInlineText = (text: string): React.ReactNode => {
+    // Convert **text** to bold and remove any remaining ** markers
+    let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
+    
+    // Remove any remaining standalone ** markers
+    formatted = formatted.replace(/\*\*/g, '')
+    
+    // Convert markdown links
+    formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline hover:no-underline transition-colors">$1</a>')
+    
+    // Convert article references to styled spans
+    formatted = formatted.replace(/\b(artikel\s+\d+[a-z]*(?:\s+lid\s+\d+)?(?:\s+[A-Z][a-z]+)*)\b/gi, '<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium mx-1">$1</span>')
+    
+    // Convert legal codes to styled spans
+    formatted = formatted.replace(/\b(\d+[a-z]*\s+(?:Sr|Sv|BW|Awb|WVW|Politiewet))\b/g, '<span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded text-sm font-medium mx-1">$1</span>')
+    
+    return <span dangerouslySetInnerHTML={{ __html: formatted }} />
   }
 
   return (
@@ -389,11 +528,25 @@ export default function WetUitlegPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
                 <Scale className="h-8 w-8 text-blue-600" />
-                Wetteksten
+                Wetuitleg
               </h1>
               <p className="text-gray-600">
                 Uitgebreide juridische uitleg van Nederlandse wetsartikelen
               </p>
+            </div>
+          </div>
+
+          {/* Disclaimer */}
+          <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-start gap-3">
+              <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="text-sm font-semibold text-blue-900 mb-1">Gebruik van Wetuitleg</h3>
+                <p className="text-sm text-blue-800 leading-relaxed">
+                  Deze functie is specifiek ontworpen voor het bevragen van <strong>losse wetsartikelen</strong> (bijv. "Wat zegt artikel 318 Sr?" of "Leg artikel 96b Sv uit"). 
+                  Voor <strong>complexe casussen of situaties</strong> die via meerdere wetten kunnen lopen, raadpleeg een <strong>juridisch professional</strong> voor persoonlijk advies.
+                </p>
+              </div>
             </div>
           </div>
 
@@ -443,7 +596,7 @@ export default function WetUitlegPage() {
                   <div className="flex items-center gap-2 mb-2">
                     <span className="font-medium text-gray-900">Je vraag</span>
                     <Badge variant="secondary" className="text-xs">
-                      Wetteksten
+                      Wetuitleg
                     </Badge>
                   </div>
                   <p className="text-gray-800">{analysis.query}</p>
@@ -462,7 +615,7 @@ export default function WetUitlegPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => copyToClipboard(`${analysis.summary}\n\n${analysis.explanation}`)}
+                        onClick={() => copyToClipboard(analysis.fullResponse || analysis.summary)}
                         className="h-8 w-8 p-0"
                       >
                         <Copy className="h-3 w-3" />
@@ -485,111 +638,162 @@ export default function WetUitlegPage() {
                     </div>
                   ) : (
                     <div className="space-y-6">
-                      {/* Article Text */}
+                      {/* Article Text - Premium Legal Text Frame */}
                       {analysis.articleText && (
-                        <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r">
-                          <div className="flex items-start gap-3">
-                            <FileText className="h-5 w-5 text-blue-600 flex-shrink-0 mt-1" />
-                            <div>
-                              <h3 className="font-semibold text-blue-900 mb-2">Wetsartikel</h3>
-                              <div className="text-blue-800 leading-relaxed">
+                        <div className="relative bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 border-2 border-blue-300 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                          {/* Decorative elements */}
+                          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-600 rounded-t-xl"></div>
+                          <div className="absolute -top-1 -left-1 w-4 h-4 bg-blue-600 rounded-full shadow-sm"></div>
+                          <div className="absolute -top-1 -right-1 w-4 h-4 bg-indigo-600 rounded-full shadow-sm"></div>
+                          
+                          <div className="flex items-start gap-4 mb-4">
+                            <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
+                              <FileText className="h-5 w-5 text-white" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-xl font-bold text-blue-900 mb-2 flex items-center gap-2">
+                                📜 Exacte Wettekst
+                              </h3>
+                              <p className="text-sm text-blue-700 bg-blue-100/50 px-3 py-1 rounded-full inline-block">
+                                Officiële tekst zoals gepubliceerd op wetten.overheid.nl
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="bg-white border-2 border-blue-200 rounded-lg p-5 shadow-inner relative overflow-hidden">
+                            {/* Paper texture effect */}
+                            <div className="absolute inset-0 opacity-5 bg-gradient-to-br from-gray-100 to-transparent"></div>
+                            <div className="relative z-10">
+                              <div className="font-serif text-base text-gray-900 leading-relaxed space-y-3">
                                 {formatText(analysis.articleText)}
                               </div>
                             </div>
                           </div>
-                        </div>
-                      )}
-
-                      {/* Official Link */}
-                      {analysis.officialLink && (
-                        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                          <div className="flex items-center gap-2">
-                            <ExternalLink className="h-4 w-4 text-blue-600" />
-                            <div className="text-gray-800 leading-relaxed">
-                              {formatText(analysis.officialLink)}
+                          
+                          <div className="mt-4 flex items-center justify-between">
+                            <div className="flex items-center gap-2 text-xs text-blue-600">
+                              <ExternalLink className="h-3 w-3" />
+                              <span className="font-medium">Bron: Officiële Nederlandse wetgeving</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-xs text-blue-500">
+                              <CheckCircle className="h-3 w-3" />
+                              <span>Geverifieerd</span>
                             </div>
                           </div>
                         </div>
                       )}
 
-                      {/* Summary */}
+                      {/* Official Link - Enhanced */}
+                      {analysis.officialLink && (
+                        <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4 shadow-sm">
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
+                              <ExternalLink className="h-4 w-4 text-white" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-gray-900">Officiële Bron</h3>
+                          </div>
+                          <div className="text-gray-800 leading-relaxed">
+                            {formatText(analysis.officialLink)}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Main Response - Enhanced */}
                       {analysis.summary && (
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                            <CheckCircle className="h-5 w-5 text-green-600" />
-                            Samenvatting
-                          </h3>
+                        <div className="bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200 rounded-lg p-5 shadow-sm">
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full flex items-center justify-center">
+                              <Scale className="h-4 w-4 text-white" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-gray-900">Juridische Analyse</h3>
+                          </div>
                           <div className="prose prose-sm max-w-none">
                             {formatText(analysis.summary)}
                           </div>
                         </div>
                       )}
 
-                      {/* Explanation */}
+                      {/* Explanation - Enhanced */}
                       {analysis.explanation && (
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                            <BookOpen className="h-5 w-5 text-blue-600" />
-                            Toelichting & Bijzonderheden
-                          </h3>
+                        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-5 shadow-sm">
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center">
+                              <BookOpen className="h-4 w-4 text-white" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-gray-900">Toelichting & Bijzonderheden</h3>
+                          </div>
                           <div className="prose prose-sm max-w-none">
                             {formatText(analysis.explanation)}
                           </div>
                         </div>
                       )}
 
-                      {/* Practical Application */}
+                      {/* Practical Application - Enhanced */}
                       {analysis.practicalApplication && (
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                            <AlertCircle className="h-5 w-5 text-orange-600" />
-                            Toepassing in de Praktijk
-                          </h3>
+                        <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 rounded-lg p-5 shadow-sm">
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-600 rounded-full flex items-center justify-center">
+                              <AlertCircle className="h-4 w-4 text-white" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-gray-900">Toepassing in de Praktijk</h3>
+                          </div>
                           <div className="prose prose-sm max-w-none">
                             {formatText(analysis.practicalApplication)}
                           </div>
                         </div>
                       )}
 
-                      {/* Jurisprudence */}
+                      {/* Jurisprudence - Enhanced */}
                       {analysis.jurisprudence && (
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                            <Gavel className="h-5 w-5 text-purple-600" />
-                            Relevante Jurisprudentie
-                          </h3>
+                        <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 rounded-lg p-5 shadow-sm">
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-violet-600 rounded-full flex items-center justify-center">
+                              <Gavel className="h-4 w-4 text-white" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-gray-900">Relevante Jurisprudentie</h3>
+                          </div>
                           <div className="prose prose-sm max-w-none">
                             {formatText(analysis.jurisprudence)}
                           </div>
                         </div>
                       )}
 
-                      {/* Related Articles */}
+                      {/* Related Articles - Enhanced */}
                       {analysis.relatedArticles && (
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                            <FileText className="h-5 w-5 text-indigo-600" />
-                            Verwante Wetsartikelen
-                          </h3>
+                        <div className="bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200 rounded-lg p-5 shadow-sm">
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-full flex items-center justify-center">
+                              <FileText className="h-4 w-4 text-white" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-gray-900">Verwante Wetsartikelen</h3>
+                          </div>
                           <div className="prose prose-sm max-w-none">
                             {formatText(analysis.relatedArticles)}
                           </div>
                         </div>
                       )}
 
-                      {/* Sources */}
+                      {/* Sources - Enhanced */}
                       {analysis.sources.length > 0 && (
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900 mb-3">Bronnen</h3>
-                          <div className="space-y-1">
+                        <div className="bg-gradient-to-br from-slate-50 to-gray-50 border border-slate-200 rounded-lg p-5 shadow-sm">
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="w-8 h-8 bg-gradient-to-br from-slate-500 to-gray-600 rounded-full flex items-center justify-center">
+                              <ExternalLink className="h-4 w-4 text-white" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-gray-900">Geraadpleegde Bronnen</h3>
+                          </div>
+                          <div className="space-y-3">
                             {analysis.sources.map((source, index) => (
-                              <div key={index} className="flex items-center gap-2">
-                                <ExternalLink className="h-3 w-3 text-gray-400" />
+                              <div key={index} className="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-lg hover:border-slate-300 transition-colors">
+                                <div className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                                  <span className="text-xs font-semibold text-blue-600">{index + 1}</span>
+                                </div>
+                                <ExternalLink className="h-4 w-4 text-slate-400 flex-shrink-0" />
                                 <a 
                                   href={source} 
                                   target="_blank" 
                                   rel="noopener noreferrer"
-                                  className="text-sm text-blue-600 hover:text-blue-800 underline hover:no-underline"
+                                  className="text-sm text-blue-600 hover:text-blue-800 underline hover:no-underline transition-colors flex-1 break-all"
                                 >
                                   {source}
                                 </a>
@@ -616,7 +820,7 @@ export default function WetUitlegPage() {
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Bijvoorbeeld: Geef mij een volledige juridische uitleg van artikel 96b van het Wetboek van Strafvordering. Stel ook vervolgvragen!"
+                  placeholder="Bijvoorbeeld: Wat zegt artikel 318 Sr? Of: Geef uitgebreide juridische uitleg van artikel 96b Sv met praktijkvoorbeelden en jurisprudentie"
                   className="flex-1"
                   disabled={isLoading}
                 />

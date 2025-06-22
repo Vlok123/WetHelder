@@ -926,6 +926,20 @@ function AskPageContent() {
                 </p>
               </div>
             )}
+
+            {/* Professional advice disclaimer */}
+            <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+              <div className="flex items-start gap-3">
+                <Info className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="text-sm font-semibold text-amber-900 mb-1">Juridisch Advies</h3>
+                  <p className="text-sm text-amber-800 leading-relaxed">
+                    WetHelder biedt juridische informatie, maar vervangt geen persoonlijk advies van een <strong>juridisch professional</strong>. 
+                    Voor complexe casussen, specifieke situaties of belangrijke juridische beslissingen raadpleeg altijd een advocaat, notaris of andere gekwalificeerde professional.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Chat Messages */}
