@@ -543,7 +543,7 @@ export default function WetUitlegPage() {
               <div>
                 <h3 className="text-sm font-semibold text-blue-900 mb-1">Gebruik van Wetuitleg</h3>
                 <p className="text-sm text-blue-800 leading-relaxed">
-                  Deze functie is specifiek ontworpen voor het bevragen van <strong>losse wetsartikelen</strong> (bijv. "Wat zegt artikel 318 Sr?" of "Leg artikel 96b Sv uit"). 
+                  Deze functie is specifiek ontworpen voor het bevragen van <strong>losse wetsartikelen</strong> (bijv. &quot;Wat zegt artikel 318 Sr?&quot; of &quot;Leg artikel 96b Sv uit&quot;). 
                   Voor <strong>complexe casussen of situaties</strong> die via meerdere wetten kunnen lopen, raadpleeg een <strong>juridisch professional</strong> voor persoonlijk advies.
                 </p>
               </div>
