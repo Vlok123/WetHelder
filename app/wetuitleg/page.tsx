@@ -730,7 +730,7 @@ export default function WetUitlegPage() {
   // Helper function to format inline text (bold, links, article references)
   const formatInlineText = (text: string): React.ReactNode => {
     // First clean up excessive ** markers and malformed bold text
-    let cleaned = text
+    const cleaned = text
       // Remove isolated ** markers
       .replace(/\*\*\s*\*\*/g, '')
       // Fix malformed patterns like **text** **more:** 

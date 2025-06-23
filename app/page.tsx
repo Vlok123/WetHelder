@@ -331,9 +331,9 @@ export default function HomePage() {
                     <strong>Wanneer te gebruiken:</strong> Voor praktische juridische vragen, situaties, procedures of algemene uitleg.
                   </p>
                   <div className="space-y-1 text-sm text-gray-600">
-                    <p>• "Wat zijn mijn rechten als huurder?"</p>
-                    <p>• "Hoe regel ik een echtscheiding?"</p>
-                    <p>• "Welke bevoegdheden heeft een BOA?"</p>
+                    <p>• &quot;Wat zijn mijn rechten als huurder?&quot;</p>
+                    <p>• &quot;Hoe regel ik een echtscheiding?&quot;</p>
+                    <p>• &quot;Welke bevoegdheden heeft een BOA?&quot;</p>
                   </div>
                 </div>
                 
@@ -362,9 +362,9 @@ export default function HomePage() {
                     <strong>Wanneer te gebruiken:</strong> Voor uitgebreide uitleg van specifieke wetsartikelen met volledige tekst en jurisprudentie.
                   </p>
                   <div className="space-y-1 text-sm text-gray-600">
-                    <p>• "Wat zegt artikel 318 Sr?"</p>
-                    <p>• "Leg artikel 96b Sv uit"</p>
-                    <p>• "Analyseer artikel 8 EVRM"</p>
+                    <p>• &quot;Wat zegt artikel 318 Sr?&quot;</p>
+                    <p>• &quot;Leg artikel 96b Sv uit&quot;</p>
+                    <p>• &quot;Analyseer artikel 8 EVRM&quot;</p>
                   </div>
                 </div>
                 
