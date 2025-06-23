@@ -8,6 +8,11 @@ import {
   type OfficialSourceItem 
 } from '@/lib/officialSources'
 import { searchVerifiedJuridicalSources } from '@/lib/googleSearch'
+import { 
+  searchJsonSources, 
+  formatJsonSourcesForContext,
+  type JsonBron 
+} from '@/lib/jsonSources'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -104,6 +109,94 @@ function extractArticleReferences(query: string): string[] {
   
   // Remove duplicates
   return Array.from(new Set(references))
+}
+
+// APV detection and Google Search (borrowed from /ask route)
+function isAPVQuery(query: string): boolean {
+  const queryLower = query.toLowerCase()
+  
+  // APV keywords
+  const apvKeywords = [
+    'apv', 'gemeentelijk', 'lokaal', 'gemeente', 'plaatselijk', 'verordening',
+    'alcohol', 'drinken', 'straat', 'openbare', 'park', 'plein', 'evenement',
+    'geluid', 'overlast', 'terras', 'vergunning', 'handhaving', 'boa',
+    'camper', 'parkeren', 'kamperen', 'hondenpoep', 'hond', 'vuur', 'barbecue',
+    'muziek', 'lawaai', 'reclame', 'uithangbord', 'standplaats', 'markt'
+  ]
+  
+  // Gemeenten
+  const gemeenten = [
+    'amsterdam', 'rotterdam', 'den haag', 'utrecht', 'eindhoven', 'groningen',
+    'tilburg', 'almere', 'breda', 'nijmegen', 'apeldoorn', 'haarlem', 'arnhem',
+    'enschede', 'haarlemmermeer', 'zaanstad', 'amersfoort', 'hertogenbosch',
+    'zoetermeer', 'zwolle', 'ede', 'dordrecht', 'leiden', 'emmen', 'maastricht',
+    'delft', 'venlo', 'leeuwarden', 'alkmaar', 'helmond', 'deventer'
+  ]
+  
+  const hasApvKeyword = apvKeywords.some(keyword => queryLower.includes(keyword))
+  const hasGemeenteNaam = gemeenten.some(gemeente => queryLower.includes(gemeente))
+  
+  return hasApvKeyword || hasGemeenteNaam
+}
+
+async function searchGoogleForAPV(query: string): Promise<any[]> {
+  const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY
+  const GOOGLE_CSE_ID = process.env.GOOGLE_CSE_ID
+  
+  if (!GOOGLE_API_KEY || !GOOGLE_CSE_ID) {
+    console.log('⚠️ Google API credentials not available')
+    return []
+  }
+  
+  try {
+    // Enhanced search query for APV content
+    const searchQuery = `${query} (site:lokaleregelgeving.overheid.nl OR site:wetten.overheid.nl OR site:rechtspraak.nl OR site:overheid.nl OR site:officielebekendmakingen.nl OR site:gemeenteblad.nl OR site:denederlandsegrondwet.nl OR site:rijksoverheid.nl OR site:opendata.overheid.nl OR site:*.gemeente.nl OR site:*.nl/apv OR "APV" OR "algemene plaatselijke verordening" OR "gemeenteverordening" OR "lokale regelgeving" OR "provinciale verordening" OR "waterschap" OR "gemeentewet")`
+    
+    console.log('🔎 Search query:', searchQuery)
+    
+    const searchUrl = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CSE_ID}&q=${encodeURIComponent(searchQuery)}&num=10`
+    
+    const response = await fetch(searchUrl)
+    const data = await response.json()
+    
+    if (!data.items) {
+      console.log('ℹ️ Geen Google zoekresultaten gevonden')
+      return []
+    }
+    
+    const results = data.items.map((item: any) => ({
+      title: item.title,
+      link: item.link,
+      snippet: item.snippet,
+      source: extractSourceFromUrl(item.link)
+    }))
+    
+    console.log(`📚 Found ${results.length} Google search results`)
+    return results
+    
+  } catch (error) {
+    console.error('❌ Google Search API error:', error)
+    return []
+  }
+}
+
+function extractSourceFromUrl(url: string): string {
+  try {
+    const domain = new URL(url).hostname
+    
+    if (domain.includes('wetten.overheid.nl')) return 'Wetten.overheid.nl'
+    if (domain.includes('lokaleregelgeving.overheid.nl')) return 'LokaleRegelgeving.Overheid.nl'
+    if (domain.includes('rechtspraak.nl')) return 'Rechtspraak.nl'
+    if (domain.includes('overheid.nl')) return 'Overheid.nl'
+    if (domain.includes('officielebekendmakingen.nl')) return 'OfficiëleBekendemakingen.nl'
+    if (domain.includes('.gemeente.nl')) return 'Gemeente'
+    if (domain.includes('gemeenteblad.nl')) return 'Gemeenteblad'
+    if (domain.includes('rijksoverheid.nl')) return 'Rijksoverheid'
+    
+    return domain
+  } catch {
+    return 'Onbekende bron'
+  }
 }
 
 async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise<Array<{ ref: string; text: string; url: string }>> {
@@ -290,6 +383,10 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
 
     console.log('📝 Wetuitleg query:', query)
 
+    // Check if this is an APV-related query
+    const isAPV = isAPVQuery(query)
+    console.log(`🏛️ APV query detected: ${isAPV}`)
+
     // Extract article references from query
     const articleReferences = extractArticleReferences(query)
     console.log('📖 Detected article references:', articleReferences)
@@ -302,9 +399,28 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
       console.log(`✅ Found ${articleTexts.length} complete articles via Google`)
     }
 
+    // Search JSON sources for additional context (especially important for APV)
+    let jsonSources: JsonBron[] = []
+    let googleResults: any[] = []
+    
+    try {
+      console.log('📚 Loading JSON sources from officiele_bronnen.json...')
+      jsonSources = await searchJsonSources(query, 10) // Get more sources for comprehensive coverage
+      console.log(`📖 Found ${jsonSources.length} relevant official sources`)
+      
+      // For APV queries or when we need more context, also search Google
+      if (isAPV || jsonSources.length < 3) {
+        console.log('🔍 Searching for legal sources...')
+        googleResults = await searchGoogleForAPV(query)
+        console.log(`📚 Gevonden: ${googleResults.length} Google resultaten, ${jsonSources.length} JSON bronnen, ${articleTexts.length} volledige artikelen`)
+      }
+    } catch (error) {
+      console.error('❌ Error searching sources:', error)
+    }
+
     // Find relevant official sources for additional context
     const officialSources = findRelevantOfficialSources(query, 3)
-    console.log(`📖 Found ${officialSources.length} relevant official sources`)
+    console.log(`📖 Found ${officialSources.length} additional official sources`)
 
     // Prepare official legal texts section
     let officialTextsSection = ''
@@ -319,9 +435,33 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
       })
     }
     
+    // Add JSON sources (APV and other official sources)
+    if (jsonSources.length > 0) {
+      officialTextsSection += '\n\n## OFFICIËLE JURIDISCHE BRONNEN:\n\n'
+      jsonSources.forEach((source, index) => {
+        officialTextsSection += `### ${source.categorie} - ${source.naam}\n`
+        officialTextsSection += `**URL:** ${source.url}\n`
+        if (source.beschrijving) {
+          officialTextsSection += `**Beschrijving:** ${source.beschrijving}\n`
+        }
+        officialTextsSection += '\n'
+      })
+    }
+    
+    // Add Google search results (especially important for APV)
+    if (googleResults.length > 0) {
+      officialTextsSection += '\n\n## AANVULLENDE BRONNEN VIA GOOGLE:\n\n'
+      googleResults.forEach((result, index) => {
+        officialTextsSection += `### ${result.title}\n`
+        officialTextsSection += `**URL:** ${result.link}\n`
+        officialTextsSection += `**Snippet:** ${result.snippet}\n`
+        officialTextsSection += `**Bron:** ${result.source}\n\n`
+      })
+    }
+    
     // Add additional official sources for context
     if (officialSources.length > 0) {
-      officialTextsSection += '\n\n## AANVULLENDE JURIDISCHE BRONNEN:\n\n'
+      officialTextsSection += '\n\n## EXTRA JURIDISCHE CONTEXT:\n\n'
       officialSources.forEach((source, index) => {
         officialTextsSection += `### ${source.Topic}\n`
         officialTextsSection += `**Categorie:** ${source.Categorie}\n`
@@ -335,10 +475,12 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
       officialTextsSection += `\n**KRITIEKE INSTRUCTIES:**
 1. Begin je antwoord ALTIJD met de exacte wettekst in een duidelijk kader
 2. Gebruik de bovenstaande officiële wetteksten als uitgangspunt
-3. Verwijs naar exacte wetsartikelen waar mogelijk
-4. Geef uitgebreide juridische uitleg met praktische voorbeelden
-5. Gebruik GEEN emoji's of icoontjes in kopjes
-6. Structureer je antwoord volgens de opgegeven format\n\n`
+3. Voor APV-vragen: zoek actief naar specifieke artikelnummers in de Google resultaten
+4. Verwijs naar exacte wetsartikelen waar mogelijk
+5. Geef uitgebreide juridische uitleg met praktische voorbeelden
+6. Gebruik GEEN emoji's of icoontjes in kopjes
+7. Structureer je antwoord volgens de opgegeven format
+8. Voor APV: vermeld gemeente, artikelnummer, en praktische handhaving\n\n`
     }
 
     // Prepare conversation history with enhanced prompt
@@ -387,16 +529,19 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
                 answer: fullResponse,
                 userId: session?.user?.id || null,
                 sources: JSON.stringify({
-                  type: 'WETUITLEG_COMPREHENSIVE',
+                  type: 'WETUITLEG_ENHANCED',
                   articlesExtracted: articleTexts.length,
                   articleReferences: articleReferences,
-                  sourcesFound: officialSources.length,
+                  jsonSources: jsonSources.length,
+                  googleResults: googleResults.length,
+                  officialSources: officialSources.length,
+                  isAPVQuery: isAPV,
                   hasOfficialTexts: articleTexts.length > 0,
                   timestamp: new Date().toISOString()
                 })
               }
             })
-            console.log('✅ Comprehensive wetuitleg query saved to database')
+            console.log('✅ Enhanced wetuitleg query saved to database')
           } catch (dbError) {
             console.error('❌ Failed to save wetuitleg query:', dbError)
           }
@@ -413,7 +558,7 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
       }
     })
 
-    console.log('✅ Comprehensive wetuitleg stream started')
+    console.log('✅ Enhanced wetuitleg stream started')
     return new Response(stream, {
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
