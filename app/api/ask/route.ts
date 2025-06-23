@@ -320,7 +320,7 @@ function extractSourceFromUrl(url: string): string {
 }
 
 /**
- * Formatteert Google zoekresultaten voor context
+ * Formatteert Google zoekresultaten voor context - NO BOLD TEXT VERSION
  */
 function formatGoogleResultsForContext(results: GoogleSearchResult[]): string {
   if (results.length === 0) {
@@ -328,7 +328,7 @@ function formatGoogleResultsForContext(results: GoogleSearchResult[]): string {
   }
   
   return results.map(result => {
-    return `**${result.title}** (${result.source})
+    return `${result.title} (${result.source})
 URL: ${result.link}
 Samenvatting: ${result.snippet}
 ---`

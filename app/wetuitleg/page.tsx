@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { 
   Scale, 
   Search, 
@@ -20,9 +21,163 @@ import {
   Share2,
   AlertCircle,
   CheckCircle,
-  Info
+  Info,
+  Shield,
+  UserCheck,
+  GraduationCap,
+  Building,
+  MapPin,
+  Calculator,
+  Home,
+  Users,
+  Heart,
+  Trash2
 } from 'lucide-react'
 import Link from 'next/link'
+
+// Add profession types and config
+type Profession = 'aspirant' | 'student' | 'politieagent' | 'advocaat' | 'algemeen' | 'boa' | 'rechter' | 'notaris' | 'deurwaarder' | 'bedrijfsjurist' | 'gemeenteambtenaar' | 'belastingadviseur' | 'accountant' | 'makelaar' | 'verzekeringsagent' | 'hr-medewerker' | 'compliance-officer' | 'veiligheidsbeambte' | 'beveiliger' | 'gemeentejurist' | 'trainer' | 'vervoersmedewerker' | 'zorgprofessional'
+
+const professionConfig = {
+  algemeen: {
+    icon: Info,
+    label: 'Algemeen/Burger',
+    color: 'text-gray-700 bg-gray-50 border-gray-200',
+    description: 'Volledig juridisch antwoord zonder specialisatie'
+  },
+  advocaat: {
+    icon: Scale,
+    label: 'Advocaat',
+    color: 'text-purple-700 bg-purple-50 border-purple-200',
+    description: 'Procesrecht, verdedigingsstrategieën, jurisprudentie en ECLI-nummers'
+  },
+  politieagent: {
+    icon: Shield,
+    label: 'Politieagent',
+    color: 'text-indigo-700 bg-indigo-50 border-indigo-200',
+    description: 'Praktische bevoegdheden, dwangmiddelen, aanhoudingsrecht en doorzoekingsprocedures'
+  },
+  boa: {
+    icon: Shield,
+    label: 'BOA / Handhaver',
+    color: 'text-cyan-700 bg-cyan-50 border-cyan-200',
+    description: 'Domeinspecifieke bevoegdheden, APV-handhaving en verschil met politiebevoegdheden'
+  },
+  rechter: {
+    icon: Gavel,
+    label: 'Rechter',
+    color: 'text-red-700 bg-red-50 border-red-200',
+    description: 'Procesrecht, bewijsrecht, motiveringsplicht en uitspraakvorming'
+  },
+  notaris: {
+    icon: FileText,
+    label: 'Notaris',
+    color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+    description: 'Burgerlijk recht en notariële praktijk'
+  },
+  deurwaarder: {
+    icon: FileText,
+    label: 'Deurwaarder',
+    color: 'text-orange-700 bg-orange-50 border-orange-200',
+    description: 'Executierecht en beslagprocedures'
+  },
+  bedrijfsjurist: {
+    icon: Building,
+    label: 'Bedrijfsjurist',
+    color: 'text-slate-700 bg-slate-50 border-slate-200',
+    description: 'Ondernemingsrecht en compliance'
+  },
+  gemeenteambtenaar: {
+    icon: MapPin,
+    label: 'Gemeenteambtenaar',
+    color: 'text-green-700 bg-green-50 border-green-200',
+    description: 'Bestuursrecht en lokale verordeningen'
+  },
+  gemeentejurist: {
+    icon: Building,
+    label: 'Gemeentejurist',
+    color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+    description: 'APVs, Gemeentewet, Omgevingswet, bestuurlijke sancties'
+  },
+  belastingadviseur: {
+    icon: Calculator,
+    label: 'Belastingadviseur',
+    color: 'text-yellow-700 bg-yellow-50 border-yellow-200',
+    description: 'Fiscaal recht en belastingwetgeving'
+  },
+  accountant: {
+    icon: Calculator,
+    label: 'Accountant',
+    color: 'text-blue-700 bg-blue-50 border-blue-200',
+    description: 'Financieel recht en verslaggeving'
+  },
+  makelaar: {
+    icon: Home,
+    label: 'Makelaar',
+    color: 'text-teal-700 bg-teal-50 border-teal-200',
+    description: 'Vastgoedrecht en makelaarsrecht'
+  },
+  verzekeringsagent: {
+    icon: Shield,
+    label: 'Verzekeringsagent',
+    color: 'text-purple-700 bg-purple-50 border-purple-200',
+    description: 'Verzekeringsrecht en aansprakelijkheid'
+  },
+  'hr-medewerker': {
+    icon: Users,
+    label: 'HR-medewerker',
+    color: 'text-pink-700 bg-pink-50 border-pink-200',
+    description: 'Arbeidsrecht en personeelsbeleid'
+  },
+  'compliance-officer': {
+    icon: CheckCircle,
+    label: 'Compliance Officer',
+    color: 'text-indigo-700 bg-indigo-50 border-indigo-200',
+    description: 'Toezichtrecht en compliance'
+  },
+  veiligheidsbeambte: {
+    icon: Shield,
+    label: 'Veiligheidsbeambte',
+    color: 'text-red-700 bg-red-50 border-red-200',
+    description: 'Veiligheidsrecht en preventie'
+  },
+  beveiliger: {
+    icon: Shield,
+    label: 'Beveiliger',
+    color: 'text-orange-700 bg-orange-50 border-orange-200',
+    description: 'WPBR, APVs, onderscheid publieke/private bevoegdheden'
+  },
+  trainer: {
+    icon: GraduationCap,
+    label: 'Trainer / Opleider',
+    color: 'text-blue-700 bg-blue-50 border-blue-200',
+    description: 'Volledig gestructureerde antwoorden voor educatief gebruik'
+  },
+  vervoersmedewerker: {
+    icon: Users,
+    label: 'Vervoersmedewerker',
+    color: 'text-green-700 bg-green-50 border-green-200',
+    description: 'Wet personenvervoer, Spoorwegwet, OV-bevoegdheden'
+  },
+  zorgprofessional: {
+    icon: Heart,
+    label: 'Zorgprofessional',
+    color: 'text-pink-700 bg-pink-50 border-pink-200',
+    description: 'Wvggz, Wzd, AVG/WGBO bij gegevensuitwisseling'
+  },
+  aspirant: {
+    icon: UserCheck,
+    label: 'Aspirant',
+    color: 'text-blue-700 bg-blue-50 border-blue-200',
+    description: 'Uitgebreide uitleg met praktijkvoorbeelden'
+  },
+  student: {
+    icon: GraduationCap,
+    label: 'Student',
+    color: 'text-green-700 bg-green-50 border-green-200',
+    description: 'Gestructureerde uitleg met tentamentips'
+  }
+}
 
 interface LegalAnalysis {
   id: string
@@ -39,6 +194,7 @@ interface LegalAnalysis {
   isLoading?: boolean
   type: 'user' | 'assistant'
   fullResponse?: string // Store the complete response for conversation context
+  profession?: string // Add profession to interface
 }
 
 export default function WetUitlegPage() {
@@ -46,6 +202,7 @@ export default function WetUitlegPage() {
   const [analyses, setAnalyses] = useState<LegalAnalysis[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [profession, setProfession] = useState<Profession>('algemeen') // Add profession state
   const [remainingQuestions, setRemainingQuestions] = useState<number | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -86,6 +243,31 @@ export default function WetUitlegPage() {
       localStorage.setItem('wetHelder_wetuitleg_conversation', JSON.stringify(analyses))
     }
   }, [analyses])
+
+  // Load profession from localStorage
+  useEffect(() => {
+    let savedProfession = localStorage.getItem('wetHelder_profession')
+    
+    // Also check for the main screen selected profile for consistency
+    if (!savedProfession) {
+      savedProfession = localStorage.getItem('wetHelder_selected_profile')
+    }
+    
+    if (savedProfession && savedProfession in professionConfig) {
+      console.log('📂 Loading profession from localStorage for wetuitleg:', savedProfession)
+      setProfession(savedProfession as Profession)
+    } else {
+      // Ensure we always have a valid profession set
+      console.log('📂 Setting default profession: algemeen')
+      setProfession('algemeen')
+    }
+  }, [])
+
+  // Save profession to localStorage whenever it changes (both keys for consistency)
+  useEffect(() => {
+    localStorage.setItem('wetHelder_profession', profession)
+    localStorage.setItem('wetHelder_selected_profile', profession)
+  }, [profession])
 
   // Check rate limit status on page load
   useEffect(() => {
@@ -135,7 +317,8 @@ export default function WetUitlegPage() {
       timestamp: new Date(),
       isLoading: true,
       type: 'assistant',
-      fullResponse: ''
+      fullResponse: '',
+      profession: profession // Add profession to analysis
     }
 
     setAnalyses(prev => [...prev, tempAnalysis])
@@ -166,7 +349,8 @@ export default function WetUitlegPage() {
         },
         body: JSON.stringify({ 
           query,
-          history: conversationHistory 
+          history: conversationHistory,
+          profession: profession // Add profession to API call
         }),
       })
 
@@ -343,12 +527,34 @@ export default function WetUitlegPage() {
   const formatText = (text: string): React.ReactElement => {
     if (!text) return <div></div>
 
+    // Handle HTML details blocks first (from API responses that still contain them)
+    const detailsPattern = /<details[^>]*>([\s\S]*?)<\/details>/g
+    let processedText = text
+    const detailsBlocks: Array<{ content: string; summary: string }> = []
+    
+    let match
+    while ((match = detailsPattern.exec(text)) !== null) {
+      const fullMatch = match[0]
+      const content = match[1]
+      
+      // Extract summary
+      const summaryMatch = content.match(/<summary[^>]*>(.*?)<\/summary>([\s\S]*)/)
+      if (summaryMatch) {
+        detailsBlocks.push({
+          summary: summaryMatch[1].trim(),
+          content: summaryMatch[2].trim()
+        })
+        // Remove the details block from processed text
+        processedText = processedText.replace(fullMatch, `\n\n**${summaryMatch[1]}**\n${summaryMatch[2]}\n\n`)
+      }
+    }
+
     // Check if this is a legal text that starts with **WETTEKST:**
-    const wettekstMatch = text.match(/^\*\*WETTEKST:\*\*([\s\S]*?)(?=\*\*[A-Z\s]+:\*\*|$)/i)
+    const wettekstMatch = processedText.match(/^\*\*WETTEKST:\*\*([\s\S]*?)(?=\*\*[A-Z\s]+:\*\*|\n###|$)/i)
     
     if (wettekstMatch) {
       const wettekstContent = wettekstMatch[1].trim()
-      const restOfText = text.replace(wettekstMatch[0], '').trim()
+      const restOfText = processedText.replace(wettekstMatch[0], '').trim()
       
       return (
         <div className="space-y-6">
@@ -368,11 +574,14 @@ export default function WetUitlegPage() {
               </div>
             </div>
             
-            <div className="bg-white/80 backdrop-blur-sm border border-blue-200 rounded-lg p-4 shadow-sm">
-              <div className="font-mono text-gray-900 leading-relaxed whitespace-pre-wrap text-sm">
+            <details className="bg-white/80 backdrop-blur-sm border border-blue-200 rounded-lg shadow-sm">
+              <summary className="p-4 cursor-pointer font-semibold text-blue-900 hover:bg-blue-50 rounded-t-lg">
+                Officiële tekst (klik om te tonen/verbergen)
+              </summary>
+              <div className="p-4 pt-0 font-mono text-gray-900 leading-relaxed whitespace-pre-wrap text-sm border-t border-blue-200">
                 {wettekstContent}
               </div>
-            </div>
+            </details>
             
             <div className="flex items-center gap-2 mt-3 text-xs text-blue-600">
               <ExternalLink className="h-3 w-3" />
@@ -386,7 +595,7 @@ export default function WetUitlegPage() {
       )
     }
     
-    return formatTextContent(text)
+    return formatTextContent(processedText)
   }
 
   const formatTextContent = (text: string): React.ReactElement => {
@@ -395,10 +604,12 @@ export default function WetUitlegPage() {
       // Remove code block markers
       .replace(/```[\w]*\n?/g, '')
       .replace(/```/g, '')
-      // Remove section headers that might appear in content
-      .replace(/\*\*(SAMENVATTING|WETSARTIKEL|LINK|TOELICHTING|PRAKTIJK|JURISPRUDENTIE|VERWANTE ARTIKELEN|BRONNEN|EXACTE WETTEKST|JURIDISCHE ANALYSE):\*\*/g, '') 
-      // Remove any remaining header patterns with **
-      .replace(/\*\*([^*]+):\*\*/g, '$1:')
+      // Clean up common formatting issues
+      .replace(/\*\*\s*\*\*/g, '') // Remove empty ** pairs
+      // Remove section headers that might appear in content (don't make these bold)
+      .replace(/\*\*(SAMENVATTING|WETSARTIKEL|LINK|TOELICHTING|PRAKTIJK|JURISPRUDENTIE|VERWANTE ARTIKELEN|BRONNEN|EXACTE WETTEKST|JURIDISCHE ANALYSE|KERN IN ÉÉN ZIN|WAT BETEKENT DIT|HOE PAS JE DIT TOE|LET OP):\*\*/g, '$1:') 
+      // Remove ** around headers that end with : (but keep the colon)
+      .replace(/\*\*([^*\n]+):\*\*/g, '$1:')
       .trim()
     
     // Split into paragraphs (double newlines)
@@ -409,13 +620,32 @@ export default function WetUitlegPage() {
         {paragraphs.map((paragraph, index) => {
           const trimmedParagraph = paragraph.trim()
           
-          // Check if it's a header (starts with ###)
+          // Check if it's a header (starts with ### or is an all-caps section title)
           if (trimmedParagraph.startsWith('###')) {
-            const headerText = trimmedParagraph.replace(/^###\s*/, '')
+            const headerText = trimmedParagraph.replace(/^###\s*/, '').replace(/\*\*/g, '')
             return (
               <h3 key={index} className="text-xl font-bold text-gray-900 mt-6 mb-4 border-b border-gray-200 pb-2">
                 {headerText}
               </h3>
+            )
+          }
+          
+          // Check for section headers (like "Kern in één zin:", "Wat betekent dit?", etc.)
+          if (trimmedParagraph.match(/^(Kern in één zin|Wat betekent dit|Hoe pas je dit toe|Let op|KERN IN ÉÉN ZIN|WAT BETEKENT DIT|HOE PAS JE DIT TOE|LET OP):/i)) {
+            const headerText = trimmedParagraph.split(':')[0].trim()
+            const contentText = trimmedParagraph.substring(trimmedParagraph.indexOf(':') + 1).trim()
+            
+            return (
+              <div key={index} className="mb-6">
+                <h4 className="text-lg font-bold text-gray-900 mb-3 text-blue-800">
+                  {headerText}
+                </h4>
+                {contentText && (
+                  <div className="text-gray-800 leading-relaxed">
+                    {formatInlineText(contentText)}
+                  </div>
+                )}
+              </div>
             )
           }
           
@@ -499,10 +729,28 @@ export default function WetUitlegPage() {
 
   // Helper function to format inline text (bold, links, article references)
   const formatInlineText = (text: string): React.ReactNode => {
-    // Convert **text** to bold and remove any remaining ** markers
-    let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
+    // First clean up excessive ** markers and malformed bold text
+    let cleaned = text
+      // Remove isolated ** markers
+      .replace(/\*\*\s*\*\*/g, '')
+      // Fix malformed patterns like **text** **more:** 
+      .replace(/\*\*([^*]*?)\*\*\s*\*\*([^*]*?):\*\*/g, '**$1** $2:')
+      // Remove ** around section headers that end with :
+      .replace(/\*\*([A-Z\s]+):\*\*/g, '$1:')
+      // Remove ** from start/end of text
+      .replace(/^\*\*|\*\*$/g, '')
+      .trim()
     
-    // Remove any remaining standalone ** markers
+    // Convert only well-formed **text** to bold (avoid single words in sentences)
+    let formatted = cleaned.replace(/\*\*([^*\n]{2,}?)\*\*/g, (match, content) => {
+      // Only make bold if it's a meaningful phrase (not just punctuation or single chars)
+      if (content.trim().length < 2 || /^[^a-zA-Z]*$/.test(content.trim())) {
+        return content
+      }
+      return `<strong class="font-semibold text-gray-900">${content}</strong>`
+    })
+    
+    // Remove any remaining isolated ** markers
     formatted = formatted.replace(/\*\*/g, '')
     
     // Convert markdown links
@@ -536,49 +784,59 @@ export default function WetUitlegPage() {
             </div>
           </div>
 
-          {/* Disclaimer */}
-          <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <div className="flex items-start gap-3">
-              <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-              <div>
-                <h3 className="text-sm font-semibold text-blue-900 mb-1">Gebruik van Wetuitleg</h3>
-                <p className="text-sm text-blue-800 leading-relaxed">
-                  Deze functie is specifiek ontworpen voor het bevragen van <strong>losse wetsartikelen</strong> (bijv. &quot;Wat zegt artikel 318 Sr?&quot; of &quot;Leg artikel 96b Sv uit&quot;). 
-                  Voor <strong>complexe casussen of situaties</strong> die via meerdere wetten kunnen lopen, raadpleeg een <strong>juridisch professional</strong> voor persoonlijk advies.
-                </p>
+          {/* Disclaimer - aligned with chat bubbles */}
+          <div className="flex items-start gap-3 mb-4">
+            <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
+              {/* Spacer to align with chat icons */}
+            </div>
+            <div className="flex-1 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-start gap-3">
+                <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="text-sm font-semibold text-blue-900 mb-1">Gebruik van Wetuitleg</h3>
+                  <p className="text-sm text-blue-800 leading-relaxed">
+                    Deze functie is specifiek ontworpen voor het bevragen van <strong>losse wetsartikelen</strong> (bijv. &quot;Wat zegt artikel 318 Sr?&quot; of &quot;Leg artikel 96b Sv uit&quot;). 
+                    Voor <strong>complexe casussen of situaties</strong> die via meerdere wetten kunnen lopen, raadpleeg een <strong>juridisch professional</strong> voor persoonlijk advies.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Rate limit info for anonymous users */}
+          {/* Rate limit info for anonymous users - aligned with chat bubbles */}
           {!session && remainingQuestions !== null && (
-            <div className={`mb-4 p-3 border rounded-lg ${
-              remainingQuestions === 0 
-                ? 'bg-red-50 border-red-200' 
-                : 'bg-amber-50 border-amber-200'
-            }`}>
-              <p className={`text-sm ${
-                remainingQuestions === 0 ? 'text-red-800' : 'text-amber-800'
+            <div className="flex items-start gap-3 mb-4">
+              <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
+                {/* Spacer to align with chat icons */}
+              </div>
+              <div className={`flex-1 p-3 border rounded-lg ${
+                remainingQuestions === 0 
+                  ? 'bg-red-50 border-red-200' 
+                  : 'bg-amber-50 border-amber-200'
               }`}>
-                <Info className="h-4 w-4 inline mr-1" />
-                {remainingQuestions === 0 ? (
-                  <>
-                    Je hebt het maximum aantal gratis analyses (4 per dag) bereikt.{' '}
-                    <Link href="/auth/signin" className={`ml-1 underline hover:no-underline ${
-                      remainingQuestions === 0 ? 'text-red-900' : 'text-amber-900'
-                    }`}>
-                      Log in voor onbeperkt gebruik
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    Nog {remainingQuestions} gratis {remainingQuestions === 1 ? 'analyse' : 'analyses'} over.{' '}
-                    <Link href="/auth/signin" className="ml-1 text-amber-900 underline hover:no-underline">
-                      Log in voor onbeperkt gebruik
-                    </Link>
-                  </>
-                )}
-              </p>
+                <p className={`text-sm ${
+                  remainingQuestions === 0 ? 'text-red-800' : 'text-amber-800'
+                }`}>
+                  <Info className="h-4 w-4 inline mr-1" />
+                  {remainingQuestions === 0 ? (
+                    <>
+                      Je hebt het maximum aantal gratis analyses (4 per dag) bereikt.{' '}
+                      <Link href="/auth/signin" className={`ml-1 underline hover:no-underline ${
+                        remainingQuestions === 0 ? 'text-red-900' : 'text-amber-900'
+                      }`}>
+                        Log in voor onbeperkt gebruik
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      Nog {remainingQuestions} gratis {remainingQuestions === 1 ? 'analyse' : 'analyses'} over.{' '}
+                      <Link href="/auth/signin" className="ml-1 text-amber-900 underline hover:no-underline">
+                        Log in voor onbeperkt gebruik
+                      </Link>
+                    </>
+                  )}
+                </p>
+              </div>
             </div>
           )}
         </div>
@@ -595,6 +853,11 @@ export default function WetUitlegPage() {
                 <div className="flex-1 bg-white rounded-lg p-4 shadow-sm border">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="font-medium text-gray-900">Je vraag</span>
+                    {analysis.profession && (
+                      <Badge variant="secondary" className="text-xs">
+                        {professionConfig[analysis.profession as keyof typeof professionConfig]?.label}
+                      </Badge>
+                    )}
                     <Badge variant="secondary" className="text-xs">
                       Wetuitleg
                     </Badge>
@@ -810,48 +1073,102 @@ export default function WetUitlegPage() {
           ))}
         </div>
 
-        {/* Input Form */}
-        <Card className="sticky bottom-6 shadow-lg border-2">
-          <CardContent className="p-4">
-            <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Input Form - Mobile Optimized */}
+        <Card className="sticky bottom-4 md:bottom-6 shadow-lg border-2 bg-white/95 backdrop-blur mx-2 md:mx-0">
+          <CardContent className="p-3 md:p-6">
+            <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
               {/* Question Input */}
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
                 <Input
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Bijvoorbeeld: Wat zegt artikel 318 Sr? Of: Geef uitgebreide juridische uitleg van artikel 96b Sv met praktijkvoorbeelden en jurisprudentie"
-                  className="flex-1"
+                  placeholder="Bijv: Wat zegt artikel 318 Sr?"
+                  className="flex-1 h-12 text-base"
                   disabled={isLoading}
                 />
                 <Button 
                   type="submit" 
                   disabled={isLoading || !input.trim() || (!session && remainingQuestions === 0)}
+                  className="h-12 px-4 md:px-6 w-full sm:w-auto"
+                  size="lg"
                 >
                   {isLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                      <span className="hidden sm:inline">Bezig...</span>
+                    </>
                   ) : (
-                    <Send className="h-4 w-4" />
+                    <>
+                      <Send className="h-5 w-5 mr-2" />
+                      <span className="hidden sm:inline">Analyseer</span>
+                    </>
                   )}
                 </Button>
               </div>
 
-              {/* Clear Button */}
-              {analyses.length > 0 && (
-                <div className="flex justify-end">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={clearAnalyses}
-                    className="h-9 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
-                    title="Wis alle analyses van dit gesprek"
+              {/* Options */}
+              <div className="flex flex-col gap-3 pt-1">
+                {/* Profession Selector */}
+                <div className="w-full">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <div className="flex items-center gap-2">
+                      <UserCheck className="h-4 w-4" />
+                      <span className="hidden sm:inline">Functieprofiel / Beroep</span>
+                      <span className="sm:hidden">Profiel</span>
+                    </div>
+                  </label>
+                  <Select 
+                    value={profession} 
+                    onValueChange={(value) => setProfession(value as Profession)}
+                    defaultValue="algemeen"
                   >
-                    <Scale className="h-4 w-4 mr-1" />
-                    Wis gesprek
-                  </Button>
+                    <SelectTrigger className="w-full h-11 text-base">
+                      <SelectValue placeholder="Selecteer je profiel..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(professionConfig).map(([key, config]) => {
+                        const IconComponent = config.icon
+                        return (
+                          <SelectItem key={key} value={key} className="py-3">
+                            <div className="flex items-center gap-3">
+                              <IconComponent className="h-4 w-4" />
+                              <div>
+                                <div className="font-medium">{config.label}</div>
+                                <div className="text-xs text-muted-foreground max-w-[250px] truncate md:max-w-none md:whitespace-normal">
+                                  {config.description}
+                                </div>
+                              </div>
+                            </div>
+                          </SelectItem>
+                        )
+                      })}
+                    </SelectContent>
+                  </Select>
                 </div>
-              )}
+
+                {/* Clear Button & Mobile tip */}
+                <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between">
+                  {analyses.length > 0 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={clearAnalyses}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 w-full sm:w-auto"
+                      title="Wis alle analyses van dit gesprek"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Wis gesprek
+                    </Button>
+                  )}
+                  
+                  {/* Mobile tip */}
+                  <p className="text-xs text-gray-500 text-center w-full sm:w-auto sm:text-right">
+                    💡 Voor uitgebreide uitleg van specifieke wetsartikelen
+                  </p>
+                </div>
+              </div>
             </form>
           </CardContent>
         </Card>

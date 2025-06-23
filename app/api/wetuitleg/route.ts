@@ -144,15 +144,43 @@ async function searchGoogleForAPV(query: string): Promise<any[]> {
   const GOOGLE_CSE_ID = process.env.GOOGLE_CSE_ID
   
   if (!GOOGLE_API_KEY || !GOOGLE_CSE_ID) {
-    console.log('⚠️ Google API credentials not available')
+    console.log('⚠️ Google API credentials not available for APV search')
     return []
   }
   
   try {
-    // Enhanced search query for APV content
-    const searchQuery = `${query} (site:lokaleregelgeving.overheid.nl OR site:wetten.overheid.nl OR site:rechtspraak.nl OR site:overheid.nl OR site:officielebekendmakingen.nl OR site:gemeenteblad.nl OR site:denederlandsegrondwet.nl OR site:rijksoverheid.nl OR site:opendata.overheid.nl OR site:*.gemeente.nl OR site:*.nl/apv OR "APV" OR "algemene plaatselijke verordening" OR "gemeenteverordening" OR "lokale regelgeving" OR "provinciale verordening" OR "waterschap" OR "gemeentewet")`
+    const queryLower = query.toLowerCase()
+    let searchQuery = query
     
-    console.log('🔎 Search query:', searchQuery)
+    // Enhanced search query specifically for APV content - similar to /ask route
+    const apvKeywords = [
+      'apv', 'gemeentelijk', 'lokaal', 'gemeente', 'plaatselijk', 'verordening',
+      'alcohol', 'drinken', 'straat', 'openbaar', 'park', 'plein', 'evenement',
+      'geluid', 'overlast', 'terras', 'vergunning', 'handhaving', 'boa',
+      'camper', 'parkeren', 'kamperen', 'hondenpoep', 'hond', 'vuur', 'barbecue',
+      'muziek', 'lawaai', 'reclame', 'uithangbord', 'standplaats', 'markt',
+      'laadkabel', 'stoep', 'openbare ruimte', 'weggebruik'
+    ]
+    
+    const gemeenten = [
+      'amsterdam', 'rotterdam', 'den haag', 'utrecht', 'eindhoven', 'tilburg',
+      'groningen', 'almere', 'breda', 'nijmegen', 'apeldoorn', 'haarlem', 'arnhem',
+      'enschede', 'haarlemmermeer', 'zaanstad', 'amersfoort', 'hertogenbosch'
+    ]
+    
+    const hasApvKeyword = apvKeywords.some(keyword => queryLower.includes(keyword))
+    const hasGemeenteNaam = gemeenten.some(gemeente => queryLower.includes(gemeente))
+    
+    if (hasApvKeyword || hasGemeenteNaam) {
+      // Use the same approach as /ask route for better results
+      searchQuery = `${query} site:lokaleregelgeving.overheid.nl OR site:overheid.nl APV "Algemene Plaatselijke Verordening"`
+      console.log('🏛️ Enhanced APV-specifieke zoekopdracht:', searchQuery)
+    } else {
+      // Fallback to the original query format
+      searchQuery = `${query} site:lokaleregelgeving.overheid.nl OR (${query} "APV" OR "algemene plaatselijke verordening" OR "gemeenteverordening" site:overheid.nl)`
+    }
+    
+    console.log('🔎 APV Search query:', searchQuery)
     
     const searchUrl = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CSE_ID}&q=${encodeURIComponent(searchQuery)}&num=10`
     
@@ -160,7 +188,7 @@ async function searchGoogleForAPV(query: string): Promise<any[]> {
     const data = await response.json()
     
     if (!data.items) {
-      console.log('ℹ️ Geen Google zoekresultaten gevonden')
+      console.log('ℹ️ Geen APV zoekresultaten gevonden')
       return []
     }
     
@@ -171,11 +199,11 @@ async function searchGoogleForAPV(query: string): Promise<any[]> {
       source: extractSourceFromUrl(item.link)
     }))
     
-    console.log(`📚 Found ${results.length} Google search results`)
+    console.log(`📚 Found ${results.length} APV search results`)
     return results
     
   } catch (error) {
-    console.error('❌ Google Search API error:', error)
+    console.error('❌ APV Google Search API error:', error)
     return []
   }
 }
@@ -248,60 +276,66 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
   return articleTexts
 }
 
-// Enhanced juridische expert prompt WITHOUT emojis
-const COMPREHENSIVE_LEGAL_PROMPT = `Je bent een zeer ervaren Nederlandse juridische expert, advocaat en rechtsgeleerde met meer dan 20 jaar ervaring in het Nederlandse rechtssysteem. Je bent gespecialiseerd in diepgaande juridische analyse en geeft uitgebreide, goed onderbouwde uitleg.
+// Wetuitleg systeemprompt versie 25-06-2025 met streng vetgedrukt tekst beleid
+const WETUITLEG_SYSTEM_PROMPT = `Je bent Wetuitleg, een Nederlandse juridische uitleg-assistent op wethelder.nl. Je taak is om begrijpelijke toelichtingen te geven op wet- en regelgeving uit officiële bronnen.
 
-**Je expertise omvat:**
-- Nederlands Wetboek van Strafrecht (Sr) - alle aspecten van materieel strafrecht
-- Nederlands Wetboek van Strafvordering (Sv) - strafprocesrecht en bewijsrecht
-- Nederlands Burgerlijk Wetboek (BW) - alle boeken van het burgerlijk recht
-- Algemene wet bestuursrecht (Awb) - bestuursrecht en bestuursprocesrecht
-- Wegenverkeerswet (WVW) - verkeersstrafrecht en verkeersrecht
-- Politiewet 2012 - politiebevoegdheden en handhaving
-- Algemene Plaatselijke Verordeningen (APV's) - lokale regelgeving
-- Nederlandse jurisprudentie, rechtspraak en doctrine
-- Europees recht en internationale verdragen waar relevant
+### 1 – Slim omgaan met officiële tekst
+1. CONTROLEER EERST de gespreksgeschiedenis: Is de exacte wettekst van dit artikel al eerder in dit gesprek getoond?
+2. Als JA → Verwijs kort naar de eerder getoonde tekst: "Zoals hierboven getoond in de officiële tekst van artikel X..."  
+3. Als NEE → Toon de volledige, letterlijke wettekst in een WETTEKST-sectie (geen HTML tags gebruiken!)
+4. Gebruik ALTIJD alleen platte tekst, geen <details> of andere HTML codes
+5. Plaats een duidelijke bron-URL na de wettekst
 
-**KRITIEKE INSTRUCTIE VOOR WETTEKSTEN:**
-Als er OFFICIËLE WETTEKSTEN beschikbaar zijn, begin je antwoord ALTIJD met:
+### 2 – Ontleed het artikel in vier vaste secties  
+Gebruik ### koppen. GEBRUIK GEEN VETGEDRUKTE TEKST (**) IN DE INHOUD - alleen normale tekst.
 
-**WETTEKST:**
-[Hier de exacte, volledige wettekst zoals verstrekt]
+| Sectie-kop      | Inhoud                                                                                                                  |
+|-----------------|-------------------------------------------------------------------------------------------------------------------------|
+| Kern in één zin | Een ultrakorte samenvatting van het artikel in B1-taal.                                                            |
+| Wat betekent dit? | Een begrijpelijke zin-voor-zin uitleg van de wettekst.                                                           |
+| Hoe pas je dit toe? | Praktische voorbeelden of scenario's waarin het artikel gebruikt wordt.                                         |
+| Let op!         | Pitfalls, uitzonderingen en mogelijke sancties. Gebruik - als opsommingsteken.                                     |
 
-**Daarna volgt je uitgebreide analyse in deze structuur:**
-1. **JURIDISCHE ANALYSE** (uitgebreide, diepgaande uitleg)
-2. **JURISPRUDENTIE & RECHTSPRAAK** (relevante uitspraken)
-3. **PRAKTISCHE TOEPASSING** (voorbeelden en scenario's)
-4. **GERELATEERDE ARTIKELEN** (verbanden met andere bepalingen)
-5. **BELANGRIJKE AANDACHTSPUNTEN** (valkuilen en uitzonderingen)
+### 3 – Profession-specifieke benadering
+Pas je antwoord aan op de doelgroep:
 
-**Je antwoordstijl voor uitgebreide analyse:**
-- Geef een diepgaande, uitvoerige juridische analyse (minimaal 800-1200 woorden)
-- Leg systematisch de juridische concepten uit met doctrinaire onderbouwing
-- Verwijs naar relevante jurisprudentie en rechtspraak
-- Bespreek verschillende interpretaties en juridische stromingen
-- Geef praktische voorbeelden uit de Nederlandse rechtspraktijk
-- Behandel randgevallen en uitzonderingen
-- Leg verbanden met andere wetsartikelen en rechtsgebieden
-- Bespreek historische ontwikkeling waar relevant
-- Geef concrete, praktische adviezen voor verschillende scenario's
+Voor politie/BOA/handhaving:
+- Focus op praktische handhaving en bevoegdheden
+- Concrete procedures en protocol-tips
+- Relevante sancties en boetebedragen
+- Juridische valkuilen bij handhaving
 
-**Belangrijke vereisten:**
-- GEEN emoji's of icoontjes in kopjes
-- Gebruik de exacte wettekst uit de OFFICIËLE WETTEKSTEN sectie
-- Geef uitgebreide, goed onderbouwde juridische uitleg
-- Verwijs naar specifieke artikelnummers, leden en onderdelen
-- Citeer relevante jurisprudentie waar mogelijk
-- Leg complexe juridische concepten helder uit
-- Geef concrete praktijkvoorbeelden
+Voor advocaten/juristen:
+- Juridische dogmatiek en rechtsbronnen
+- Relevante jurisprudentie en doctrine
+- Procesrechtelijke aspecten
+- Verdedigingsstrategieën en excepties
 
-**Disclaimers die je altijd benadrukt:**
-- Dit is uitgebreide juridische informatie voor educatieve doeleinden
-- Voor specifieke juridische problemen altijd een advocaat raadplegen
-- Wetten en jurisprudentie kunnen veranderen
-- Controleer altijd de meest recente versie van wetteksten
+Voor studenten:
+- Systematische opbouw van begrippen
+- Relatie met andere wetsartikelen
+- Voorbeelden en casus voor begrip
+- Examentips en kernpunten
 
-Geef nu een uitgebreide, diepgaande juridische analyse van de volgende vraag:`
+Voor algemeen publiek:
+- Praktische gevolgen voor burger
+- Begrijpelijke taal zonder teveel jargon
+- Concrete voorbeelden uit dagelijks leven
+- Wanneer juridische hulp zoeken
+
+### 4 – Stijl & toon
+* Schrijf vriendelijk, neutraal en actief
+* Juridisch jargon met artikelverwijzing: verdachte (art. 27 Sv)
+* Korte alinea's en opsommingen voor leesbaarheid  
+* GEEN vetgedrukte tekst (**) gebruiken - schrijf gewoon normale tekst
+* Geen HTML tags gebruiken, alleen platte tekst met markdown
+* Eindig met: "Dit is algemene informatie en geen juridisch advies."
+
+### 5 – Bronvermelding
+* Uitsluitend officiële overheidsbronnen
+* Voetnoot-nummers [1], [2] naar exacte pagina
+
+Eindig met: "Nog iets onduidelijk? Laat het weten."`
 
 export async function GET(request: NextRequest) {
   try {
@@ -338,7 +372,7 @@ interface ChatMessage {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
-    const { query, history = [] } = await request.json()
+    const { query, history = [], profession = 'algemeen' } = await request.json()
 
     if (!query || typeof query !== 'string') {
       return NextResponse.json(
@@ -382,6 +416,7 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
     }
 
     console.log('📝 Wetuitleg query:', query)
+    console.log('👤 Profession/doelgroep:', profession)
 
     // Check if this is an APV-related query
     const isAPV = isAPVQuery(query)
@@ -391,7 +426,7 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
     const articleReferences = extractArticleReferences(query)
     console.log('📖 Detected article references:', articleReferences)
 
-    // Search for complete article texts via Google API
+    // Search for complete article texts via Google API (for specific articles)
     let articleTexts: Array<{ ref: string; text: string; url: string }> = []
     if (articleReferences.length > 0) {
       console.log('🔍 Searching for complete article texts via Google API...')
@@ -399,20 +434,40 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
       console.log(`✅ Found ${articleTexts.length} complete articles via Google`)
     }
 
-    // Search JSON sources for additional context (especially important for APV)
+    // Search JSON sources for additional context
     let jsonSources: JsonBron[] = []
     let googleResults: any[] = []
     
     try {
       console.log('📚 Loading JSON sources from officiele_bronnen.json...')
-      jsonSources = await searchJsonSources(query, 10) // Get more sources for comprehensive coverage
+      jsonSources = await searchJsonSources(query, 10)
       console.log(`📖 Found ${jsonSources.length} relevant official sources`)
       
-      // For APV queries or when we need more context, also search Google
-      if (isAPV || jsonSources.length < 3) {
-        console.log('🔍 Searching for legal sources...')
+      // For APV queries, always search Google for lokaleregelgeving.overheid.nl
+      if (isAPV) {
+        console.log('🏛️ APV query detected - searching lokaleregelgeving.overheid.nl...')
         googleResults = await searchGoogleForAPV(query)
-        console.log(`📚 Gevonden: ${googleResults.length} Google resultaten, ${jsonSources.length} JSON bronnen, ${articleTexts.length} volledige artikelen`)
+        console.log(`📚 APV search results: ${googleResults.length} results from lokaleregelgeving.overheid.nl`)
+        
+        // If APV search yields few results, try a broader search
+        if (googleResults.length < 3) {
+          console.log('🔍 Limited APV results - performing broader legal search...')
+          try {
+            const broaderQuery = `${query} APV gemeenteverordening`
+            const additionalResults = await searchGoogleForAPV(broaderQuery)
+            if (additionalResults.length > 0) {
+              googleResults = [...googleResults, ...additionalResults]
+              console.log(`📚 Added ${additionalResults.length} additional results from broader search`)
+            }
+          } catch (error) {
+            console.error('❌ Error in broader APV search:', error)
+          }
+        }
+      } else if (jsonSources.length < 3) {
+        // For non-APV queries with limited JSON sources, use general Google search
+        console.log('🔍 Limited sources - performing general legal search...')
+        googleResults = await searchGoogleForAPV(query) // Reuse function but with different query
+        console.log(`📚 General search results: ${googleResults.length} results`)
       }
     } catch (error) {
       console.error('❌ Error searching sources:', error)
@@ -437,25 +492,68 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
     
     // Add JSON sources (APV and other official sources)
     if (jsonSources.length > 0) {
-      officialTextsSection += '\n\n## OFFICIËLE JURIDISCHE BRONNEN:\n\n'
-      jsonSources.forEach((source, index) => {
-        officialTextsSection += `### ${source.categorie} - ${source.naam}\n`
-        officialTextsSection += `**URL:** ${source.url}\n`
-        if (source.beschrijving) {
-          officialTextsSection += `**Beschrijving:** ${source.beschrijving}\n`
+      // Prioritize APV sources if this is an APV query
+      if (isAPV) {
+        const apvSources = jsonSources.filter(source => 
+          source.categorie.toLowerCase().includes('apv') || 
+          source.naam.toLowerCase().includes('apv') ||
+          source.naam.toLowerCase().includes('algemene plaatselijke verordening')
+        )
+        const otherSources = jsonSources.filter(source => 
+          !source.categorie.toLowerCase().includes('apv') && 
+          !source.naam.toLowerCase().includes('apv') &&
+          !source.naam.toLowerCase().includes('algemene plaatselijke verordening')
+        )
+        
+        if (apvSources.length > 0) {
+          officialTextsSection += '\n\n## RELEVANTE APV BRONNEN:\n\n'
+          apvSources.forEach((source, index) => {
+            officialTextsSection += `### ${source.categorie} - ${source.naam}\n`
+            officialTextsSection += `**URL:** ${source.url}\n`
+            if (source.beschrijving) {
+              officialTextsSection += `**Beschrijving:** ${source.beschrijving}\n`
+            }
+            officialTextsSection += '\n'
+          })
         }
-        officialTextsSection += '\n'
-      })
+        
+        if (otherSources.length > 0) {
+          officialTextsSection += '\n\n## AANVULLENDE JURIDISCHE BRONNEN:\n\n'
+          otherSources.forEach((source, index) => {
+            officialTextsSection += `### ${source.categorie} - ${source.naam}\n`
+            officialTextsSection += `**URL:** ${source.url}\n`
+            if (source.beschrijving) {
+              officialTextsSection += `**Beschrijving:** ${source.beschrijving}\n`
+            }
+            officialTextsSection += '\n'
+          })
+        }
+      } else {
+        officialTextsSection += '\n\n## OFFICIËLE JURIDISCHE BRONNEN:\n\n'
+        jsonSources.forEach((source, index) => {
+          officialTextsSection += `### ${source.categorie} - ${source.naam}\n`
+          officialTextsSection += `**URL:** ${source.url}\n`
+          if (source.beschrijving) {
+            officialTextsSection += `**Beschrijving:** ${source.beschrijving}\n`
+          }
+          officialTextsSection += '\n'
+        })
+      }
     }
     
-    // Add Google search results (especially important for APV)
+    // Add Google search results (using EXACT same format as /ask route)
     if (googleResults.length > 0) {
-      officialTextsSection += '\n\n## AANVULLENDE BRONNEN VIA GOOGLE:\n\n'
+      if (isAPV) {
+        officialTextsSection += '\n\n## APV BRONNEN VAN LOKALEREGELGEVING.OVERHEID.NL:\n\n'
+      } else {
+        officialTextsSection += '\n\n## AANVULLENDE JURIDISCHE BRONNEN:\n\n'
+      }
+      
       googleResults.forEach((result, index) => {
-        officialTextsSection += `### ${result.title}\n`
-        officialTextsSection += `**URL:** ${result.link}\n`
-        officialTextsSection += `**Snippet:** ${result.snippet}\n`
-        officialTextsSection += `**Bron:** ${result.source}\n\n`
+        officialTextsSection += `**${result.title}** (${result.source})\n`
+        officialTextsSection += `URL: ${result.link}\n`
+        officialTextsSection += `Samenvatting: ${result.snippet}\n`
+        officialTextsSection += '---\n\n'
       })
     }
     
@@ -472,46 +570,56 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
     }
     
     if (officialTextsSection) {
-      officialTextsSection += `\n**KRITIEKE INSTRUCTIES:**
-1. Begin je antwoord ALTIJD met de exacte wettekst in een duidelijk kader
-2. Gebruik de bovenstaande officiële wetteksten als uitgangspunt
-3. Voor APV-vragen: zoek actief naar specifieke artikelnummers in de Google resultaten
-4. Verwijs naar exacte wetsartikelen waar mogelijk
-5. Geef uitgebreide juridische uitleg met praktische voorbeelden
-6. Gebruik GEEN emoji's of icoontjes in kopjes
-7. Structureer je antwoord volgens de opgegeven format
-8. Voor APV: vermeld gemeente, artikelnummer, en praktische handhaving\n\n`
+      officialTextsSection += `\n**BELANGRIJKE INSTRUCTIES:**
+1. Gebruik de bovenstaande officiële bronnen voor je antwoord
+2. Begin met exacte wetteksten waar beschikbaar
+3. Voor APV-vragen: zoek naar specifieke artikelnummers in de bronnen
+4. Geef praktische juridische uitleg
+5. Verwijs naar concrete wetsartikelen
+6. Gebruik geen emoji's in kopjes\n\n`
     }
 
-    // Prepare conversation history with enhanced prompt
+    // Add profession context to system prompt
+    let professionContext = ""
+    if (profession && profession !== 'algemeen') {
+      professionContext = `\n\nJe beantwoordt deze vraag specifiek voor: ${profession}. Pas je antwoord aan op deze doelgroep volgens de profession-specifieke richtlijnen.`
+    }
+
+    // Prepare conversation history with new Wetuitleg system prompt
     const conversationHistory: ChatMessage[] = [
       { 
         role: 'system', 
-        content: COMPREHENSIVE_LEGAL_PROMPT + officialTextsSection
+        content: WETUITLEG_SYSTEM_PROMPT + professionContext + (officialTextsSection || "")
       },
       ...(history as ChatMessage[]).slice(-8), // Keep last 8 messages for context
       { role: 'user', content: query }
     ]
 
-    console.log('🤖 Starting comprehensive legal analysis with article extraction')
+    console.log('🤖 Starting comprehensive legal analysis with APV support')
 
     // Create OpenAI completion stream
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o',
       messages: conversationHistory,
       stream: true,
-      temperature: 0.3, // Lower temperature for more precise legal analysis
-      max_tokens: 3000, // Higher token limit for comprehensive analysis
+      temperature: 0.2, // Even lower temperature for maximum precision
+      max_tokens: 4000, // Higher token limit for comprehensive analysis
+      presence_penalty: 0.1, // Encourage more detailed responses
+      frequency_penalty: 0.1, // Prevent repetitive content
     })
 
     // Create a readable stream that captures full response
     let fullResponse = ''
+    let streamClosed = false
+    
     const stream = new ReadableStream({
       async start(controller) {
         const encoder = new TextEncoder()
         
         try {
           for await (const chunk of completion) {
+            if (streamClosed) break
+            
             const content = chunk.choices[0]?.delta?.content || ''
             if (content) {
               fullResponse += content
@@ -519,42 +627,50 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
             }
           }
           
-          console.log('✅ Comprehensive legal analysis completed')
-           
-          // Save to database
-          try {
-            await prisma.query.create({
-              data: {
-                question: query,
-                answer: fullResponse,
-                userId: session?.user?.id || null,
-                sources: JSON.stringify({
-                  type: 'WETUITLEG_ENHANCED',
-                  articlesExtracted: articleTexts.length,
-                  articleReferences: articleReferences,
-                  jsonSources: jsonSources.length,
-                  googleResults: googleResults.length,
-                  officialSources: officialSources.length,
-                  isAPVQuery: isAPV,
-                  hasOfficialTexts: articleTexts.length > 0,
-                  timestamp: new Date().toISOString()
-                })
-              }
-            })
-            console.log('✅ Enhanced wetuitleg query saved to database')
-          } catch (dbError) {
-            console.error('❌ Failed to save wetuitleg query:', dbError)
+          if (!streamClosed) {
+            console.log('✅ Comprehensive legal analysis completed')
+             
+            // Save to database
+            try {
+              await prisma.query.create({
+                data: {
+                  question: query,
+                  answer: fullResponse,
+                  userId: session?.user?.id || null,
+                  profession: profession,
+                  sources: JSON.stringify({
+                    type: 'WETUITLEG_ENHANCED',
+                    articlesExtracted: articleTexts.length,
+                    articleReferences: articleReferences,
+                    jsonSources: jsonSources.length,
+                    googleResults: googleResults.length,
+                    officialSources: officialSources.length,
+                    isAPVQuery: isAPV,
+                    hasOfficialTexts: articleTexts.length > 0,
+                    timestamp: new Date().toISOString()
+                  })
+                }
+              })
+              console.log('✅ Enhanced wetuitleg query saved to database')
+            } catch (dbError) {
+              console.error('❌ Failed to save wetuitleg query:', dbError)
+            }
+            
+            streamClosed = true
+            controller.close()
           }
-          
-          controller.close()
         } catch (error) {
-          console.error('❌ Error in wetuitleg stream:', error)
-          controller.error(error)
+          if (!streamClosed) {
+            console.error('❌ Error in wetuitleg stream:', error)
+            streamClosed = true
+            controller.error(error)
+          }
         }
       },
       
       cancel() {
         console.log('🔄 Wetuitleg stream cancelled')
+        streamClosed = true
       }
     })
 

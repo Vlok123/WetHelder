@@ -895,48 +895,58 @@ function AskPageContent() {
               </div>
             </div>
 
-            {/* Rate limit info */}
+            {/* Rate limit info - aligned with chat bubbles */}
             {!session && remainingQuestions !== null && (
-              <div className={`mb-4 p-3 border rounded-lg ${
-                remainingQuestions === 0 
-                  ? 'bg-red-50 border-red-200' 
-                  : 'bg-amber-50 border-amber-200'
-              }`}>
-                <p className={`text-sm ${
-                  remainingQuestions === 0 ? 'text-red-800' : 'text-amber-800'
+              <div className="flex items-start gap-3 mb-4">
+                <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
+                  {/* Spacer to align with chat icons */}
+                </div>
+                <div className={`flex-1 p-3 border rounded-lg ${
+                  remainingQuestions === 0 
+                    ? 'bg-red-50 border-red-200' 
+                    : 'bg-amber-50 border-amber-200'
                 }`}>
-                  <Info className="h-4 w-4 inline mr-1" />
-                  {remainingQuestions === 0 ? (
-                    <>
-                      Je hebt het maximum aantal gratis vragen bereikt.{' '}
-                      <Link href="/auth/signin" className={`ml-1 underline hover:no-underline ${
-                        remainingQuestions === 0 ? 'text-red-900' : 'text-amber-900'
-                      }`}>
-                        Maak een gratis account aan voor onbeperkte vragen
-                      </Link>
-                    </>
-                  ) : (
-                    <>
-                      Je hebt nog {remainingQuestions} gratis vragen over.{' '}
-                      <Link href="/auth/signin" className="ml-1 text-amber-900 underline hover:no-underline">
-                        Log in voor onbeperkte vragen
-                      </Link>
-                    </>
-                  )}
-                </p>
+                  <p className={`text-sm ${
+                    remainingQuestions === 0 ? 'text-red-800' : 'text-amber-800'
+                  }`}>
+                    <Info className="h-4 w-4 inline mr-1" />
+                    {remainingQuestions === 0 ? (
+                      <>
+                        Je hebt het maximum aantal gratis vragen bereikt.{' '}
+                        <Link href="/auth/signin" className={`ml-1 underline hover:no-underline ${
+                          remainingQuestions === 0 ? 'text-red-900' : 'text-amber-900'
+                        }`}>
+                          Maak een gratis account aan voor onbeperkte vragen
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        Je hebt nog {remainingQuestions} gratis vragen over.{' '}
+                        <Link href="/auth/signin" className="ml-1 text-amber-900 underline hover:no-underline">
+                          Log in voor onbeperkte vragen
+                        </Link>
+                      </>
+                    )}
+                  </p>
+                </div>
               </div>
             )}
 
-            {/* Professional advice disclaimer */}
-            <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-              <div className="flex items-start gap-3">
-                <Info className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-sm font-semibold text-amber-900 mb-1">Juridisch Advies</h3>
-                  <p className="text-sm text-amber-800 leading-relaxed">
-                    WetHelder biedt juridische informatie, maar vervangt geen persoonlijk advies van een <strong>juridisch professional</strong>. 
-                    Voor complexe casussen, specifieke situaties of belangrijke juridische beslissingen raadpleeg altijd een advocaat, notaris of andere gekwalificeerde professional.
-                  </p>
+            {/* Professional advice disclaimer - aligned with chat bubbles */}
+            <div className="flex items-start gap-3 mb-4">
+              <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
+                {/* Spacer to align with chat icons */}
+              </div>
+              <div className="flex-1 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <Info className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-sm font-semibold text-amber-900 mb-1">Juridisch Advies</h3>
+                    <p className="text-sm text-amber-800 leading-relaxed">
+                      WetHelder biedt juridische informatie, maar vervangt geen persoonlijk advies van een <strong>juridisch professional</strong>. 
+                      Voor complexe casussen, specifieke situaties of belangrijke juridische beslissingen raadpleeg altijd een advocaat, notaris of andere gekwalificeerde professional.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
