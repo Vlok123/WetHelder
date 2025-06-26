@@ -69,139 +69,139 @@ const professionConfig = {
     icon: Info,
     label: 'Algemeen/Burger',
     color: 'text-gray-700 bg-gray-50 border-gray-200',
-    description: 'Volledig juridisch antwoord zonder specialisatie'
+    description: 'Gericht op begrijpelijke juridische informatie voor iedereen'
   },
   advocaat: {
     icon: Scale,
     label: 'Advocaat',
     color: 'text-purple-700 bg-purple-50 border-purple-200',
-    description: 'Procesrecht, verdedigingsstrategieën, jurisprudentie en ECLI-nummers'
+    description: 'Gericht op procesrecht, verdedigingsstrategieën en jurisprudentie'
   },
   politieagent: {
     icon: Shield,
     label: 'Politieagent',
     color: 'text-indigo-700 bg-indigo-50 border-indigo-200',
-    description: 'Praktische bevoegdheden, dwangmiddelen, aanhoudingsrecht en doorzoekingsprocedures'
+    description: 'Gericht op praktische bevoegdheden en handhavingsprocedures'
   },
   boa: {
     icon: Shield,
     label: 'BOA / Handhaver',
     color: 'text-cyan-700 bg-cyan-50 border-cyan-200',
-    description: 'Domeinspecifieke bevoegdheden, APV-handhaving en verschil met politiebevoegdheden'
+    description: 'Gericht op toezichtsbevoegdheden en APV-handhaving'
   },
   rechter: {
     icon: Gavel,
     label: 'Rechter',
     color: 'text-red-700 bg-red-50 border-red-200',
-    description: 'Procesrecht, bewijsrecht, motiveringsplicht en uitspraakvorming'
+    description: 'Gericht op procesrecht, bewijsrecht en uitspraakvorming'
   },
   notaris: {
     icon: FileText,
     label: 'Notaris',
     color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
-    description: 'Burgerlijk recht en notariële praktijk'
+    description: 'Gericht op burgerlijk recht en notariële praktijk'
   },
   deurwaarder: {
     icon: FileText,
     label: 'Deurwaarder',
     color: 'text-orange-700 bg-orange-50 border-orange-200',
-    description: 'Executierecht en beslagprocedures'
+    description: 'Gericht op executierecht en beslagprocedures'
   },
   bedrijfsjurist: {
     icon: Building,
     label: 'Bedrijfsjurist',
     color: 'text-slate-700 bg-slate-50 border-slate-200',
-    description: 'Ondernemingsrecht en compliance'
+    description: 'Gericht op ondernemingsrecht en compliance-vraagstukken'
   },
   gemeenteambtenaar: {
     icon: MapPin,
     label: 'Gemeenteambtenaar',
     color: 'text-green-700 bg-green-50 border-green-200',
-    description: 'Bestuursrecht en lokale verordeningen'
+    description: 'Gericht op bestuursrecht en lokale verordeningen'
   },
   gemeentejurist: {
     icon: Building,
     label: 'Gemeentejurist',
     color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
-    description: 'APVs, Gemeentewet, Omgevingswet, bestuurlijke sancties'
+    description: 'Gericht op gemeentelijk recht en bestuurlijke sancties'
   },
   belastingadviseur: {
     icon: Calculator,
     label: 'Belastingadviseur',
     color: 'text-yellow-700 bg-yellow-50 border-yellow-200',
-    description: 'Fiscaal recht en belastingwetgeving'
+    description: 'Gericht op fiscaal recht en belastingwetgeving'
   },
   accountant: {
     icon: Calculator,
     label: 'Accountant',
     color: 'text-blue-700 bg-blue-50 border-blue-200',
-    description: 'Financieel recht en verslaggeving'
+    description: 'Gericht op financieel recht en verslaggeving'
   },
   makelaar: {
     icon: Home,
     label: 'Makelaar',
     color: 'text-teal-700 bg-teal-50 border-teal-200',
-    description: 'Vastgoedrecht en makelaarsrecht'
+    description: 'Gericht op vastgoedrecht en makelaarsrecht'
   },
   verzekeringsagent: {
     icon: Shield,
     label: 'Verzekeringsagent',
     color: 'text-purple-700 bg-purple-50 border-purple-200',
-    description: 'Verzekeringsrecht en aansprakelijkheid'
+    description: 'Gericht op verzekeringsrecht en aansprakelijkheid'
   },
   'hr-medewerker': {
     icon: Users,
     label: 'HR-medewerker',
     color: 'text-pink-700 bg-pink-50 border-pink-200',
-    description: 'Arbeidsrecht en personeelsbeleid'
+    description: 'Gericht op arbeidsrecht en personeelsbeleid'
   },
   'compliance-officer': {
     icon: CheckCircle,
     label: 'Compliance Officer',
     color: 'text-indigo-700 bg-indigo-50 border-indigo-200',
-    description: 'Toezichtrecht en compliance'
+    description: 'Gericht op toezichtrecht en compliance-procedures'
   },
   veiligheidsbeambte: {
     icon: Shield,
     label: 'Veiligheidsbeambte',
     color: 'text-red-700 bg-red-50 border-red-200',
-    description: 'Veiligheidsrecht en preventie'
+    description: 'Gericht op veiligheidsrecht en preventieve maatregelen'
   },
   beveiliger: {
     icon: Shield,
     label: 'Beveiliger',
     color: 'text-orange-700 bg-orange-50 border-orange-200',
-    description: 'WPBR, APVs, onderscheid publieke/private bevoegdheden'
+    description: 'Gericht op private beveiliging en eigendomsbescherming'
   },
   trainer: {
     icon: GraduationCap,
     label: 'Trainer / Opleider',
     color: 'text-blue-700 bg-blue-50 border-blue-200',
-    description: 'Volledig gestructureerde antwoorden voor educatief gebruik'
+    description: 'Gericht op educatieve en gestructureerde juridische uitleg'
   },
   vervoersmedewerker: {
     icon: Users,
     label: 'Vervoersmedewerker',
     color: 'text-green-700 bg-green-50 border-green-200',
-    description: 'Wet personenvervoer, Spoorwegwet, OV-bevoegdheden'
+    description: 'Gericht op vervoersrecht en OV-bevoegdheden'
   },
   zorgprofessional: {
     icon: Heart,
     label: 'Zorgprofessional',
     color: 'text-pink-700 bg-pink-50 border-pink-200',
-    description: 'Wvggz, Wzd, AVG/WGBO bij gegevensuitwisseling'
+    description: 'Gericht op zorgrecht en privacy-regelgeving'
   },
   aspirant: {
     icon: UserCheck,
     label: 'Aspirant',
     color: 'text-blue-700 bg-blue-50 border-blue-200',
-    description: 'Uitgebreide uitleg met praktijkvoorbeelden'
+    description: 'Gericht op uitgebreide uitleg met praktijkvoorbeelden'
   },
   student: {
     icon: GraduationCap,
     label: 'Student',
     color: 'text-green-700 bg-green-50 border-green-200',
-    description: 'Stapsgewijze uitleg, structuur voor verslagen en uitgebreide bronvermelding'
+    description: 'Gericht op studiemateriaal met bronvermelding en structuur'
   }
 }
 
@@ -371,7 +371,7 @@ const formatText = (text: string): React.ReactElement => {
       // Enhanced legal text with integrated references
       const formattedText = trimmedSection.replace(
         /\b(De\s+(?:verdachte|politie|rechter|officier|deurwaarder|notaris|gemeente|werkgever|werknemer|huurder|verhuurder|eigenaar|bestuur|minister|burgemeester))\s*\(([^)]+)\)/gi,
-        '<span class="font-semibold text-blue-800">$1 ($2)</span>'
+        '<span class="text-blue-800">$1 ($2)</span>'
       )
       
       elements.push(
@@ -397,7 +397,7 @@ const formatText = (text: string): React.ReactElement => {
         <div key={key++} className="mt-8 mb-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-            <h3 className="text-lg font-bold text-blue-800 uppercase tracking-wide">
+            <h3 className="text-lg font-medium text-blue-800 uppercase tracking-wide">
               {sectionTitle.replace(/:$/, '')}
             </h3>
           </div>
@@ -410,7 +410,7 @@ const formatText = (text: string): React.ReactElement => {
     if (trimmedSection.endsWith(':') && trimmedSection.length < 100 && !trimmedSection.includes('.') && !isMainSection) {
       elements.push(
         <div key={key++} className="mt-6 mb-4">
-          <h4 className="text-base font-semibold text-gray-800 border-b border-gray-200 pb-2">
+          <h4 className="text-base font-medium text-gray-800 border-b border-gray-200 pb-2">
             {processLinksInText(trimmedSection.replace(/:$/, ''))}
           </h4>
         </div>
@@ -495,7 +495,7 @@ const formatText = (text: string): React.ReactElement => {
       
       paragraphs.forEach(para => {
         elements.push(
-          <p key={key++} className="text-gray-800 leading-relaxed text-base mb-4">
+          <p key={key++} className="text-gray-800 leading-relaxed text-sm mb-4">
             {processLinksInText(para)}
           </p>
         )
@@ -503,7 +503,7 @@ const formatText = (text: string): React.ReactElement => {
     } else {
       // Short section - single paragraph with natural spacing
       elements.push(
-        <p key={key++} className="text-gray-800 leading-relaxed text-base mb-4">
+        <p key={key++} className="text-gray-800 leading-relaxed text-sm mb-4">
           {processLinksInText(trimmedSection)}
         </p>
       )
@@ -514,7 +514,7 @@ const formatText = (text: string): React.ReactElement => {
   if (elements.length === 0) {
     return (
       <div className="space-y-4">
-        <p className="text-gray-800 leading-relaxed text-base">
+        <p className="text-gray-800 leading-relaxed text-sm">
           {processLinksInText(processedText)}
         </p>
       </div>
@@ -940,12 +940,23 @@ function AskPageContent() {
               <div className="flex-1 p-4 bg-amber-50 border border-amber-200 rounded-lg">
                 <div className="flex items-start gap-3">
                   <Info className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <div>
+                  <div className="flex-1">
                     <h3 className="text-sm font-semibold text-amber-900 mb-1">Juridisch Advies</h3>
-                    <p className="text-sm text-amber-800 leading-relaxed">
+                    <p className="text-sm text-amber-800 leading-relaxed mb-3">
                       WetHelder biedt juridische informatie, maar vervangt geen persoonlijk advies van een <strong>juridisch professional</strong>. 
                       Voor complexe casussen, specifieke situaties of belangrijke juridische beslissingen raadpleeg altijd een advocaat, notaris of andere gekwalificeerde professional.
                     </p>
+                    <div className="flex items-center gap-3 pt-2 border-t border-amber-200">
+                      <p className="text-sm text-amber-800 flex-1">
+                        <strong>Specifieke wetsartikelen</strong> opzoeken? Gebruik onze uitgebreide analyse:
+                      </p>
+                      <Link href="/wetuitleg">
+                        <Button variant="outline" size="sm" className="text-amber-700 border-amber-300 hover:bg-amber-100">
+                          <Scale className="h-4 w-4 mr-2" />
+                          Wetuitleg
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -988,14 +999,25 @@ function AskPageContent() {
                           size="sm"
                           onClick={() => copyToClipboard(message.answer)}
                           className="h-8 w-8 p-0"
+                          title="Kopieer antwoord"
                         >
                           <Copy className="h-3 w-3" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
+                          onClick={() => window.open(`/contact/fout?vraag=${encodeURIComponent(message.question)}&antwoord=${encodeURIComponent(message.answer.substring(0, 200))}...`, '_blank')}
+                          className="h-auto px-2 py-1 text-xs"
+                          title="Fout antwoord melden"
+                        >
+                          <span className="text-orange-600 hover:text-orange-700">Onjuist?</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => shareResponse(message.question, message.answer)}
                           className="h-8 w-8 p-0"
+                          title="Deel antwoord"
                         >
                           <Share2 className="h-3 w-3" />
                         </Button>
@@ -1016,7 +1038,7 @@ function AskPageContent() {
                         <span>Aan het denken...</span>
                       </div>
                     ) : (
-                      <div className="prose prose-sm max-w-none">
+                      <div className="text-sm max-w-none">
                         {formatText(message.answer)}
                       </div>
                     )}

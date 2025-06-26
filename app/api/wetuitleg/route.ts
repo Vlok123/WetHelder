@@ -80,24 +80,42 @@ function incrementRateLimit(ip: string): void {
   }
 }
 
-// Enhanced article extraction using Google Search
+// Enhanced article extraction using Google Search - now supports RV (Reglement Voertuigen)
 function extractArticleReferences(query: string): string[] {
   const references: string[] = []
   const lowerQuery = query.toLowerCase()
   
   // Pattern 1: "artikel 304 sr" or "art 304 sr"
-  const artikelMatch = lowerQuery.match(/(?:artikel|art\.?)\s+(\d+[a-z]*)\s+(sr|sv|bw|awb|wvw|politiewet)/i)
+  const artikelMatch = lowerQuery.match(/(?:artikel|art\.?)\s+(\d+[a-z]*)\s+(sr|sv|bw|awb|wvw|politiewet|rv)/i)
   if (artikelMatch) {
     references.push(`artikel ${artikelMatch[1]} ${artikelMatch[2].toUpperCase()}`)
   }
   
   // Pattern 2: "304 sr" (short format)
-  const shortMatch = lowerQuery.match(/\b(\d+[a-z]*)\s+(sr|sv|bw|awb|wvw|politiewet)\b/i)
+  const shortMatch = lowerQuery.match(/\b(\d+[a-z]*)\s+(sr|sv|bw|awb|wvw|politiewet|rv)\b/i)
   if (shortMatch) {
     references.push(`artikel ${shortMatch[1]} ${shortMatch[2].toUpperCase()}`)
   }
   
-  // Pattern 3: "304 strafrecht" (infer law code)
+  // Pattern 3: NEW - Vehicle regulation patterns like "5.2.42 RV" or "artikel 5.2.42 RV"
+  const vehicleMatch = lowerQuery.match(/(?:artikel\s+)?(\d+\.\d+\.\d+)\s+(rv|reglement\s+voertuigen)/i)
+  if (vehicleMatch) {
+    references.push(`artikel ${vehicleMatch[1]} RV`)
+  }
+  
+  // Pattern 4: NEW - Extended format like "5.2.42 van het RV" 
+  const extendedVehicleMatch = lowerQuery.match(/(?:artikel\s+)?(\d+\.\d+\.\d+)\s+(?:van\s+het\s+)?(rv|reglement\s+voertuigen)/i)
+  if (extendedVehicleMatch) {
+    references.push(`artikel ${extendedVehicleMatch[1]} RV`)
+  }
+  
+  // Pattern 5: NEW - Questions about specific RV articles like "wat zegt 5.2.42 RV"
+  const questionMatch = lowerQuery.match(/(?:wat\s+zegt|inhoud\s+van|tekst\s+van)?\s*(\d+\.\d+\.\d+)\s+(rv|reglement\s+voertuigen)/i)
+  if (questionMatch) {
+    references.push(`artikel ${questionMatch[1]} RV`)
+  }
+  
+  // Pattern 6: "304 strafrecht" (infer law code)
   const inferMatch = lowerQuery.match(/\b(\d+[a-z]*)\s+(?:wetboek\s+van\s+)?(?:strafrecht|strafvordering|burgerlijk\s+wetboek|awb|wegenverkeerswet|politiewet)/i)
   if (inferMatch) {
     if (lowerQuery.includes('strafrecht')) {
@@ -106,6 +124,8 @@ function extractArticleReferences(query: string): string[] {
       references.push(`artikel ${inferMatch[1]} Sv`)
     }
   }
+  
+  console.log(`🔍 Article extraction from "${query}":`, references)
   
   // Remove duplicates
   return Array.from(new Set(references))
@@ -234,8 +254,14 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
     try {
       console.log(`🔍 Searching Google for: ${ref}`)
       
-      // Search specifically for the article on wetten.overheid.nl
-      const searchQuery = `${ref} site:wetten.overheid.nl`
+      let searchQuery = `${ref} site:wetten.overheid.nl`
+      
+      // Enhanced search for RV (Reglement Voertuigen) articles
+      if (ref.includes('RV')) {
+        searchQuery = `"${ref}" OR "artikel ${ref.replace('artikel ', '').replace(' RV', '')}" site:wetten.overheid.nl "reglement voertuigen" OR "voertuigreglement"`
+        console.log(`🚗 Enhanced RV search query: ${searchQuery}`)
+      }
+      
       const searchResults = await searchVerifiedJuridicalSources(searchQuery)
       
       // Find the most relevant result from wetten.overheid.nl
@@ -267,6 +293,26 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
         }
       } else {
         console.log(`❌ No suitable result found for: ${ref}`)
+        
+        // For RV articles, try alternative search strategy
+        if (ref.includes('RV')) {
+          console.log(`🔄 Trying alternative RV search for: ${ref}`)
+          const altQuery = `"${ref.replace('artikel ', '').replace(' RV', '')}" "voorruit" OR "zijruit" OR "beschadiging" OR "verkleuring" site:wetten.overheid.nl`
+          const altResults = await searchVerifiedJuridicalSources(altQuery)
+          
+          const altResult = altResults.results.find(result => 
+            result.link.includes('wetten.overheid.nl')
+          )
+          
+          if (altResult) {
+            console.log(`✅ Found alternative result for ${ref}`)
+            articleTexts.push({
+              ref,
+              text: altResult.snippet,
+              url: altResult.link
+            })
+          }
+        }
       }
     } catch (error) {
       console.error(`❌ Error searching for article ${ref}:`, error)

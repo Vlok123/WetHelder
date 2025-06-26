@@ -110,11 +110,42 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
   const isHistorical = isHistoricalQuery(query)
   const timestamp = new Date()
   
+  // Special handling for RV (Reglement Voertuigen) articles
+  const isRVQuery = /(\d+\.\d+\.\d+)\s*rv/i.test(query) || query.toLowerCase().includes('reglement voertuigen')
+  if (isRVQuery) {
+    console.log('🚗 Detected RV (Reglement Voertuigen) query - prioritizing vehicle regulations')
+  }
+  
   try {
-    // Parallel search across all site groups
-    const searchPromises = Object.entries(SITE_GROUPS).map(([tag, sites]) =>
-      searchSites(query, tag as SourceTag, sites)
-    )
+    // For RV queries, prioritize WETTEN sources and add specific RV search terms
+    let searchPromises;
+    
+    if (isRVQuery) {
+      // Enhanced RV search strategy
+      const rvEnhancedGroups = {
+        ...SITE_GROUPS,
+        [SourceTag.WETTEN]: [
+          'wetten.overheid.nl',
+          'lokaleregelgeving.overheid.nl',
+          'zoekservice.overheid.nl'
+        ]
+      }
+      
+      searchPromises = Object.entries(rvEnhancedGroups).map(([tag, sites]) => {
+        if (tag === SourceTag.WETTEN) {
+          // Enhanced search query for RV articles
+          const enhancedQuery = `${query} "reglement voertuigen" OR "voertuigreglement" OR "BWBR0025798"`
+          console.log(`🚗 Enhanced RV search: ${enhancedQuery}`)
+          return searchSites(enhancedQuery, tag as SourceTag, sites)
+        }
+        return searchSites(query, tag as SourceTag, sites)
+      })
+    } else {
+      // Standard parallel search across all site groups
+      searchPromises = Object.entries(SITE_GROUPS).map(([tag, sites]) =>
+        searchSites(query, tag as SourceTag, sites)
+      )
+    }
     
     // Execute all searches in parallel
     const allResults = await Promise.all(searchPromises)
@@ -128,6 +159,22 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
       }))
       .filter(result => isHistorical || result.isCurrentYear)
     
+    // For RV queries, boost results from wetten.overheid.nl that contain RV content
+    if (isRVQuery) {
+      flatResults.sort((a, b) => {
+        const aIsWetten = a.link.includes('wetten.overheid.nl')
+        const bIsWetten = b.link.includes('wetten.overheid.nl')
+        const aHasRV = a.snippet.toLowerCase().includes('reglement') || a.snippet.toLowerCase().includes('voertuig')
+        const bHasRV = b.snippet.toLowerCase().includes('reglement') || b.snippet.toLowerCase().includes('voertuig')
+        
+        // Prioritize wetten.overheid.nl results with RV content
+        if (aIsWetten && aHasRV && !(bIsWetten && bHasRV)) return -1
+        if (bIsWetten && bHasRV && !(aIsWetten && aHasRV)) return 1
+        return 0
+      })
+      console.log(`🚗 Sorted ${flatResults.length} results for RV query`)
+    }
+    
     // Calculate metrics in single pass
     const metrics = calculateMetrics(flatResults)
     
@@ -138,7 +185,7 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
        return acc
      }, {} as Partial<Record<SourceTag, GoogleSearchResult[]>>)
     
-    // Search JSON sources (unchanged from original)
+    // Search JSON sources (enhanced for RV articles)
     const jsonSources = await searchJsonSources(query)
     
     const results: VerifiedSearchResults = {
@@ -156,6 +203,9 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
     }
     
     console.log(`✅ Search completed: ${metrics.total} results, ${metrics.currentYear} current year`)
+    if (isRVQuery) {
+      console.log(`🚗 RV-specific results found: ${flatResults.filter(r => r.link.includes('wetten.overheid.nl')).length}`)
+    }
     return results
     
   } catch (error) {

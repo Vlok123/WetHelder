@@ -113,7 +113,7 @@ export default function AdminDashboard() {
   const [showQueryModal, setShowQueryModal] = useState(false)
   const [querySearchTerm, setQuerySearchTerm] = useState('')
   const [queryPage, setQueryPage] = useState(1)
-  const [queryLimit] = useState(20)
+  const [queryLimit] = useState(100)
 
   const fetchAdminData = useCallback(async (showRefreshIndicator = false) => {
     if (showRefreshIndicator) {
@@ -873,7 +873,10 @@ export default function AdminDashboard() {
               {activeTab === 'queries' && (
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold">Alle Vragen & Antwoorden</h3>
+                    <div>
+                      <h3 className="text-lg font-semibold">Alle Vragen & Antwoorden</h3>
+                      <p className="text-sm text-gray-600 mt-1">Toont de laatste 100 vragen (was 20)</p>
+                    </div>
                     <Button
                       variant="outline"
                       onClick={() => fetchQueries()}

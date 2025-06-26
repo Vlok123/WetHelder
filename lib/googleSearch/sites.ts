@@ -3,7 +3,10 @@ import { SourceTag } from './enums'
 export const SITE_GROUPS: Record<SourceTag, string[]> = {
   [SourceTag.WETTEN]: [
     'wetten.overheid.nl',
-    'lokaleregelgeving.overheid.nl'
+    'lokaleregelgeving.overheid.nl',
+    'zoekservice.overheid.nl',
+    'cvdr.nl',
+    'officielebekendmakingen.nl'
   ],
   [SourceTag.RECHTSPRAAK]: [
     'uitspraken.rechtspraak.nl',
@@ -57,7 +60,10 @@ export const SITE_GROUPS: Record<SourceTag, string[]> = {
     'rdw.nl',
     'igj.nl',
     'acm.nl',
-    'afm.nl'
+    'afm.nl',
+    'ienw.nl',
+    'ilent.nl',
+    'minbza.nl'
   ],
   [SourceTag.OFFICIEEL]: [
     'advocatenorde.nl',

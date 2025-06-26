@@ -31,7 +31,8 @@ import {
   Home,
   Users,
   Heart,
-  Trash2
+  Trash2,
+  MessageSquare
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -43,133 +44,133 @@ const professionConfig = {
     icon: Info,
     label: 'Algemeen/Burger',
     color: 'text-gray-700 bg-gray-50 border-gray-200',
-    description: 'Volledig juridisch antwoord zonder specialisatie'
+    description: 'Gericht op begrijpelijke juridische informatie voor iedereen'
   },
   advocaat: {
     icon: Scale,
     label: 'Advocaat',
     color: 'text-purple-700 bg-purple-50 border-purple-200',
-    description: 'Procesrecht, verdedigingsstrategieën, jurisprudentie en ECLI-nummers'
+    description: 'Gericht op procesrecht, verdedigingsstrategieën en jurisprudentie'
   },
   politieagent: {
     icon: Shield,
     label: 'Politieagent',
     color: 'text-indigo-700 bg-indigo-50 border-indigo-200',
-    description: 'Praktische bevoegdheden, dwangmiddelen, aanhoudingsrecht en doorzoekingsprocedures'
+    description: 'Gericht op praktische bevoegdheden en handhavingsprocedures'
   },
   boa: {
     icon: Shield,
     label: 'BOA / Handhaver',
     color: 'text-cyan-700 bg-cyan-50 border-cyan-200',
-    description: 'Domeinspecifieke bevoegdheden, APV-handhaving en verschil met politiebevoegdheden'
+    description: 'Gericht op toezichtsbevoegdheden en APV-handhaving'
   },
   rechter: {
     icon: Gavel,
     label: 'Rechter',
     color: 'text-red-700 bg-red-50 border-red-200',
-    description: 'Procesrecht, bewijsrecht, motiveringsplicht en uitspraakvorming'
+    description: 'Gericht op procesrecht, bewijsrecht en uitspraakvorming'
   },
   notaris: {
     icon: FileText,
     label: 'Notaris',
     color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
-    description: 'Burgerlijk recht en notariële praktijk'
+    description: 'Gericht op burgerlijk recht en notariële praktijk'
   },
   deurwaarder: {
     icon: FileText,
     label: 'Deurwaarder',
     color: 'text-orange-700 bg-orange-50 border-orange-200',
-    description: 'Executierecht en beslagprocedures'
+    description: 'Gericht op executierecht en beslagprocedures'
   },
   bedrijfsjurist: {
     icon: Building,
     label: 'Bedrijfsjurist',
     color: 'text-slate-700 bg-slate-50 border-slate-200',
-    description: 'Ondernemingsrecht en compliance'
+    description: 'Gericht op ondernemingsrecht en compliance-vraagstukken'
   },
   gemeenteambtenaar: {
     icon: MapPin,
     label: 'Gemeenteambtenaar',
     color: 'text-green-700 bg-green-50 border-green-200',
-    description: 'Bestuursrecht en lokale verordeningen'
+    description: 'Gericht op bestuursrecht en lokale verordeningen'
   },
   gemeentejurist: {
     icon: Building,
     label: 'Gemeentejurist',
     color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
-    description: 'APVs, Gemeentewet, Omgevingswet, bestuurlijke sancties'
+    description: 'Gericht op gemeentelijk recht en bestuurlijke sancties'
   },
   belastingadviseur: {
     icon: Calculator,
     label: 'Belastingadviseur',
     color: 'text-yellow-700 bg-yellow-50 border-yellow-200',
-    description: 'Fiscaal recht en belastingwetgeving'
+    description: 'Gericht op fiscaal recht en belastingwetgeving'
   },
   accountant: {
     icon: Calculator,
     label: 'Accountant',
     color: 'text-blue-700 bg-blue-50 border-blue-200',
-    description: 'Financieel recht en verslaggeving'
+    description: 'Gericht op financieel recht en verslaggeving'
   },
   makelaar: {
     icon: Home,
     label: 'Makelaar',
     color: 'text-teal-700 bg-teal-50 border-teal-200',
-    description: 'Vastgoedrecht en makelaarsrecht'
+    description: 'Gericht op vastgoedrecht en makelaarsrecht'
   },
   verzekeringsagent: {
     icon: Shield,
     label: 'Verzekeringsagent',
     color: 'text-purple-700 bg-purple-50 border-purple-200',
-    description: 'Verzekeringsrecht en aansprakelijkheid'
+    description: 'Gericht op verzekeringsrecht en aansprakelijkheid'
   },
   'hr-medewerker': {
     icon: Users,
     label: 'HR-medewerker',
     color: 'text-pink-700 bg-pink-50 border-pink-200',
-    description: 'Arbeidsrecht en personeelsbeleid'
+    description: 'Gericht op arbeidsrecht en personeelsbeleid'
   },
   'compliance-officer': {
     icon: CheckCircle,
     label: 'Compliance Officer',
     color: 'text-indigo-700 bg-indigo-50 border-indigo-200',
-    description: 'Toezichtrecht en compliance'
+    description: 'Gericht op toezichtrecht en compliance-procedures'
   },
   veiligheidsbeambte: {
     icon: Shield,
     label: 'Veiligheidsbeambte',
     color: 'text-red-700 bg-red-50 border-red-200',
-    description: 'Veiligheidsrecht en preventie'
+    description: 'Gericht op veiligheidsrecht en preventieve maatregelen'
   },
   beveiliger: {
     icon: Shield,
     label: 'Beveiliger',
     color: 'text-orange-700 bg-orange-50 border-orange-200',
-    description: 'WPBR, APVs, onderscheid publieke/private bevoegdheden'
+    description: 'Gericht op private beveiliging en eigendomsbescherming'
   },
   trainer: {
     icon: GraduationCap,
     label: 'Trainer / Opleider',
     color: 'text-blue-700 bg-blue-50 border-blue-200',
-    description: 'Volledig gestructureerde antwoorden voor educatief gebruik'
+    description: 'Gericht op educatieve en gestructureerde juridische uitleg'
   },
   vervoersmedewerker: {
     icon: Users,
     label: 'Vervoersmedewerker',
     color: 'text-green-700 bg-green-50 border-green-200',
-    description: 'Wet personenvervoer, Spoorwegwet, OV-bevoegdheden'
+    description: 'Gericht op vervoersrecht en OV-bevoegdheden'
   },
   zorgprofessional: {
     icon: Heart,
     label: 'Zorgprofessional',
     color: 'text-pink-700 bg-pink-50 border-pink-200',
-    description: 'Wvggz, Wzd, AVG/WGBO bij gegevensuitwisseling'
+    description: 'Gericht op zorgrecht en privacy-regelgeving'
   },
   aspirant: {
     icon: UserCheck,
     label: 'Aspirant',
     color: 'text-blue-700 bg-blue-50 border-blue-200',
-    description: 'Uitgebreide uitleg met praktijkvoorbeelden'
+    description: 'Gericht op uitgebreide uitleg met praktijkvoorbeelden'
   },
   student: {
     icon: GraduationCap,
@@ -565,7 +566,7 @@ export default function WetUitlegPage() {
                 <FileText className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-blue-900 mb-1">
+                <h3 className="text-xl font-medium text-blue-900 mb-1">
                   OFFICIËLE WETTEKST
                 </h3>
                 <p className="text-sm text-blue-700">
@@ -575,7 +576,7 @@ export default function WetUitlegPage() {
             </div>
             
             <details className="bg-white/80 backdrop-blur-sm border border-blue-200 rounded-lg shadow-sm">
-              <summary className="p-4 cursor-pointer font-semibold text-blue-900 hover:bg-blue-50 rounded-t-lg">
+              <summary className="p-4 cursor-pointer font-medium text-blue-900 hover:bg-blue-50 rounded-t-lg">
                 Officiële tekst (klik om te tonen/verbergen)
               </summary>
               <div className="p-4 pt-0 font-mono text-gray-900 leading-relaxed whitespace-pre-wrap text-sm border-t border-blue-200">
@@ -616,7 +617,7 @@ export default function WetUitlegPage() {
     const paragraphs = cleanText.split(/\n\s*\n/).filter(p => p.trim())
     
     return (
-      <div className="prose prose-gray max-w-none">
+      <div className="text-sm max-w-none">
         {paragraphs.map((paragraph, index) => {
           const trimmedParagraph = paragraph.trim()
           
@@ -624,7 +625,7 @@ export default function WetUitlegPage() {
           if (trimmedParagraph.startsWith('###')) {
             const headerText = trimmedParagraph.replace(/^###\s*/, '').replace(/\*\*/g, '')
             return (
-              <h3 key={index} className="text-xl font-bold text-gray-900 mt-6 mb-4 border-b border-gray-200 pb-2">
+              <h3 key={index} className="text-base font-medium text-gray-900 mt-6 mb-4 border-b border-gray-200 pb-2">
                 {headerText}
               </h3>
             )
@@ -637,7 +638,7 @@ export default function WetUitlegPage() {
             
             return (
               <div key={index} className="mb-6">
-                <h4 className="text-lg font-bold text-gray-900 mb-3 text-blue-800">
+                <h4 className="text-sm font-medium text-gray-900 mb-3 text-blue-800">
                   {headerText}
                 </h4>
                 {contentText && (
@@ -661,7 +662,7 @@ export default function WetUitlegPage() {
                 // Add any accumulated paragraph before the list
                 if (currentParagraph) {
                   listItems.push(
-                    <p key={`p-${lineIndex}`} className="text-gray-800 leading-relaxed mb-4">
+                    <p key={`p-${lineIndex}`} className="text-gray-800 leading-relaxed mb-4 text-sm">
                       {formatInlineText(currentParagraph)}
                     </p>
                   )
@@ -669,7 +670,7 @@ export default function WetUitlegPage() {
                 }
                 // Add list item
                 listItems.push(
-                  <li key={`li-${lineIndex}`} className="text-gray-800 leading-relaxed mb-2">
+                  <li key={`li-${lineIndex}`} className="text-gray-800 leading-relaxed mb-2 text-sm">
                     {formatInlineText(trimmedLine.substring(2))}
                   </li>
                 )
@@ -677,7 +678,7 @@ export default function WetUitlegPage() {
                 // Add any accumulated paragraph before the list
                 if (currentParagraph) {
                   listItems.push(
-                    <p key={`p-${lineIndex}`} className="text-gray-800 leading-relaxed mb-4">
+                    <p key={`p-${lineIndex}`} className="text-gray-800 leading-relaxed mb-4 text-sm">
                       {formatInlineText(currentParagraph)}
                     </p>
                   )
@@ -685,7 +686,7 @@ export default function WetUitlegPage() {
                 }
                 // Add numbered list item
                 listItems.push(
-                  <li key={`li-${lineIndex}`} className="text-gray-800 leading-relaxed mb-2">
+                  <li key={`li-${lineIndex}`} className="text-gray-800 leading-relaxed mb-2 text-sm">
                     {formatInlineText(trimmedLine.replace(/^\d+\.\s*/, ''))}
                   </li>
                 )
@@ -697,7 +698,7 @@ export default function WetUitlegPage() {
             // Add any remaining paragraph
             if (currentParagraph) {
               listItems.push(
-                <p key={`p-final`} className="text-gray-800 leading-relaxed mb-4">
+                <p key={`p-final`} className="text-gray-800 leading-relaxed mb-4 text-sm">
                   {formatInlineText(currentParagraph)}
                 </p>
               )
@@ -718,7 +719,7 @@ export default function WetUitlegPage() {
           
           // Regular paragraph
           return (
-            <p key={index} className="text-gray-800 leading-relaxed mb-4 text-base">
+            <p key={index} className="text-gray-800 leading-relaxed mb-4 text-sm">
               {formatInlineText(trimmedParagraph)}
             </p>
           )
@@ -747,7 +748,7 @@ export default function WetUitlegPage() {
       if (content.trim().length < 2 || /^[^a-zA-Z]*$/.test(content.trim())) {
         return content
       }
-      return `<strong class="font-semibold text-gray-900">${content}</strong>`
+      return `<strong class="font-medium text-gray-900">${content}</strong>`
     })
     
     // Remove any remaining isolated ** markers
@@ -774,10 +775,10 @@ export default function WetUitlegPage() {
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
-                <Scale className="h-8 w-8 text-blue-600" />
-                Wetuitleg
-              </h1>
+                          <h1 className="text-3xl font-medium text-gray-900 mb-2 flex items-center gap-3">
+              <Scale className="h-8 w-8 text-blue-600" />
+              Wetuitleg
+            </h1>
               <p className="text-gray-600">
                 Uitgebreide juridische uitleg van Nederlandse wetsartikelen
               </p>
@@ -792,12 +793,23 @@ export default function WetUitlegPage() {
             <div className="flex-1 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <div className="flex items-start gap-3">
                 <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-sm font-semibold text-blue-900 mb-1">Gebruik van Wetuitleg</h3>
-                  <p className="text-sm text-blue-800 leading-relaxed">
+                <div className="flex-1">
+                  <h3 className="text-sm font-medium text-blue-900 mb-1">Gebruik van Wetuitleg</h3>
+                  <p className="text-sm text-blue-800 leading-relaxed mb-3">
                     Deze functie is specifiek ontworpen voor het bevragen van <strong>losse wetsartikelen</strong> (bijv. &quot;Wat zegt artikel 318 Sr?&quot; of &quot;Leg artikel 96b Sv uit&quot;). 
                     Voor <strong>complexe casussen of situaties</strong> die via meerdere wetten kunnen lopen, raadpleeg een <strong>juridisch professional</strong> voor persoonlijk advies.
                   </p>
+                  <div className="flex items-center gap-3 pt-2 border-t border-blue-200">
+                    <p className="text-sm text-blue-800 flex-1">
+                      <strong>Algemene vragen</strong> of situaties die om duiding vragen? Gebruik onze AI-chat:
+                    </p>
+                    <Link href="/ask">
+                      <Button variant="outline" size="sm" className="text-blue-700 border-blue-300 hover:bg-blue-100">
+                        <MessageSquare className="h-4 w-4 mr-2" />
+                        Naar Chat
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
@@ -880,14 +892,25 @@ export default function WetUitlegPage() {
                         size="sm"
                         onClick={() => copyToClipboard(analysis.fullResponse || analysis.summary)}
                         className="h-8 w-8 p-0"
+                        title="Kopieer analyse"
                       >
                         <Copy className="h-3 w-3" />
                       </Button>
+                                             <Button
+                         variant="ghost"
+                         size="sm"
+                         onClick={() => window.open(`/contact/fout?vraag=${encodeURIComponent(analysis.query)}&antwoord=${encodeURIComponent((analysis.fullResponse || analysis.summary).substring(0, 200))}...`, '_blank')}
+                         className="h-auto px-2 py-1 text-xs"
+                         title="Fout antwoord melden"
+                       >
+                         <span className="text-orange-600 hover:text-orange-700">Onjuist?</span>
+                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => shareAnalysis(analysis.query, analysis.summary)}
                         className="h-8 w-8 p-0"
+                        title="Deel analyse"
                       >
                         <Share2 className="h-3 w-3" />
                       </Button>
@@ -914,7 +937,7 @@ export default function WetUitlegPage() {
                               <FileText className="h-5 w-5 text-white" />
                             </div>
                             <div className="flex-1">
-                              <h3 className="text-xl font-bold text-blue-900 mb-2 flex items-center gap-2">
+                              <h3 className="text-xl font-medium text-blue-900 mb-2 flex items-center gap-2">
                                 📜 Exacte Wettekst
                               </h3>
                               <p className="text-sm text-blue-700 bg-blue-100/50 px-3 py-1 rounded-full inline-block">
@@ -953,7 +976,7 @@ export default function WetUitlegPage() {
                             <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
                               <ExternalLink className="h-4 w-4 text-white" />
                             </div>
-                            <h3 className="text-lg font-semibold text-gray-900">Officiële Bron</h3>
+                            <h3 className="text-lg font-medium text-gray-900">Officiële Bron</h3>
                           </div>
                           <div className="text-gray-800 leading-relaxed">
                             {formatText(analysis.officialLink)}
@@ -968,9 +991,9 @@ export default function WetUitlegPage() {
                             <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full flex items-center justify-center">
                               <Scale className="h-4 w-4 text-white" />
                             </div>
-                            <h3 className="text-lg font-semibold text-gray-900">Juridische Analyse</h3>
+                            <h3 className="text-lg font-medium text-gray-900">Juridische Analyse</h3>
                           </div>
-                          <div className="prose prose-sm max-w-none">
+                          <div className="text-sm max-w-none">
                             {formatText(analysis.summary)}
                           </div>
                         </div>
@@ -983,9 +1006,9 @@ export default function WetUitlegPage() {
                             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center">
                               <BookOpen className="h-4 w-4 text-white" />
                             </div>
-                            <h3 className="text-lg font-semibold text-gray-900">Toelichting & Bijzonderheden</h3>
+                            <h3 className="text-lg font-medium text-gray-900">Toelichting & Bijzonderheden</h3>
                           </div>
-                          <div className="prose prose-sm max-w-none">
+                          <div className="text-sm max-w-none">
                             {formatText(analysis.explanation)}
                           </div>
                         </div>
@@ -998,9 +1021,9 @@ export default function WetUitlegPage() {
                             <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-600 rounded-full flex items-center justify-center">
                               <AlertCircle className="h-4 w-4 text-white" />
                             </div>
-                            <h3 className="text-lg font-semibold text-gray-900">Toepassing in de Praktijk</h3>
+                            <h3 className="text-lg font-medium text-gray-900">Toepassing in de Praktijk</h3>
                           </div>
-                          <div className="prose prose-sm max-w-none">
+                          <div className="text-sm max-w-none">
                             {formatText(analysis.practicalApplication)}
                           </div>
                         </div>
@@ -1013,9 +1036,9 @@ export default function WetUitlegPage() {
                             <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-violet-600 rounded-full flex items-center justify-center">
                               <Gavel className="h-4 w-4 text-white" />
                             </div>
-                            <h3 className="text-lg font-semibold text-gray-900">Relevante Jurisprudentie</h3>
+                            <h3 className="text-lg font-medium text-gray-900">Relevante Jurisprudentie</h3>
                           </div>
-                          <div className="prose prose-sm max-w-none">
+                          <div className="text-sm max-w-none">
                             {formatText(analysis.jurisprudence)}
                           </div>
                         </div>
@@ -1028,9 +1051,9 @@ export default function WetUitlegPage() {
                             <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-full flex items-center justify-center">
                               <FileText className="h-4 w-4 text-white" />
                             </div>
-                            <h3 className="text-lg font-semibold text-gray-900">Verwante Wetsartikelen</h3>
+                            <h3 className="text-lg font-medium text-gray-900">Verwante Wetsartikelen</h3>
                           </div>
-                          <div className="prose prose-sm max-w-none">
+                          <div className="text-sm max-w-none">
                             {formatText(analysis.relatedArticles)}
                           </div>
                         </div>
@@ -1043,13 +1066,13 @@ export default function WetUitlegPage() {
                             <div className="w-8 h-8 bg-gradient-to-br from-slate-500 to-gray-600 rounded-full flex items-center justify-center">
                               <ExternalLink className="h-4 w-4 text-white" />
                             </div>
-                            <h3 className="text-lg font-semibold text-gray-900">Geraadpleegde Bronnen</h3>
+                            <h3 className="text-lg font-medium text-gray-900">Geraadpleegde Bronnen</h3>
                           </div>
                           <div className="space-y-3">
                             {analysis.sources.map((source, index) => (
                               <div key={index} className="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-lg hover:border-slate-300 transition-colors">
                                 <div className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
-                                  <span className="text-xs font-semibold text-blue-600">{index + 1}</span>
+                                  <span className="text-xs font-medium text-blue-600">{index + 1}</span>
                                 </div>
                                 <ExternalLink className="h-4 w-4 text-slate-400 flex-shrink-0" />
                                 <a 

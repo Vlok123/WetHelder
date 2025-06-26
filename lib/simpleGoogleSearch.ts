@@ -28,8 +28,10 @@ export async function searchOfficialSites(query: string): Promise<SearchBundle> 
     return { query, results: [], totalFound: 0 }
   }
 
-  // Voeg officiële sites toe aan de zoekopdracht
-  const enhancedQuery = `${query} site:belastingdienst.nl OR site:rijksoverheid.nl OR site:wetten.overheid.nl OR site:rechtspraak.nl`
+  // Enhanced search specifically for wetten.overheid.nl comprehensive coverage
+  const enhancedQuery = `${query} (site:wetten.overheid.nl OR site:lokaleregelgeving.overheid.nl) OR (${query} site:belastingdienst.nl OR site:rijksoverheid.nl OR site:rechtspraak.nl)`
+  
+  console.log('🔍 Enhanced search query for comprehensive wetten.overheid.nl coverage:', enhancedQuery)
   
   try {
     const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cseId}&q=${encodeURIComponent(enhancedQuery)}&num=10`

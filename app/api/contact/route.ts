@@ -53,6 +53,7 @@ export async function POST(request: NextRequest) {
       vraag: 'Vraag',
       suggestie: 'Suggestie',
       feedback: 'Feedback',
+      fout: 'Fout antwoord melding',
       bug: 'Bug melding',
       anders: 'Anders'
     }

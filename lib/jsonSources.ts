@@ -148,13 +148,30 @@ export async function searchJsonSources(query: string, limit: number = 10): Prom
   // Belangrijke juridische afkortingen die niet gefilterd moeten worden
   const importantLegalTerms = [
     'apv', 'bw', 'sr', 'sv', 'wvsr', 'wvw', 'awb', 'atw', 'cao', 'eu', 'gdpr', 'avg',
-    'ilo', 'kvk', 'afm', 'dnb', 'acm', 'cbp', 'ap', 'rvs', 'rvd', 'ovj', 'om'
+    'ilo', 'kvk', 'afm', 'dnb', 'acm', 'cbp', 'ap', 'rvs', 'rvd', 'ovj', 'om', 'rv'
   ]
   
-  // Filter zoektermen: behoud termen > 2 karakters OF belangrijke juridische termen
+  // Enhanced vehicle-related terms for RV (Reglement Voertuigen) recognition
+  const vehicleTerms = [
+    'voertuig', 'auto', 'personenauto', 'motor', 'fiets', 'voorruit', 'zijruit',
+    'beschadiging', 'verkleuring', 'constructie', 'carrosserie', 'verlichting',
+    'reglement voertuigen', 'voertuigreglement', 'technische eisen'
+  ]
+  
+  // Filter zoektermen: behoud termen > 2 karakters OF belangrijke juridische termen OF voertuig termen
   const searchTerms = query.toLowerCase().split(' ').filter(term => 
-    term.length > 2 || importantLegalTerms.includes(term.toLowerCase())
+    term.length > 2 || 
+    importantLegalTerms.includes(term.toLowerCase()) ||
+    vehicleTerms.some(vTerm => vTerm.includes(term) || term.includes(vTerm))
   )
+  
+  // Special handling for RV article patterns like "5.2.42"
+  const rvArticleMatch = query.match(/(\d+\.\d+\.\d+)/);
+  if (rvArticleMatch) {
+    searchTerms.push(rvArticleMatch[1]); // Add the article number
+    searchTerms.push('rv', 'reglement', 'voertuigen'); // Add RV-related terms
+    console.log(`🚗 Detected RV article pattern: ${rvArticleMatch[1]}`);
+  }
   
   const scoredSources = sources.map(source => {
     let score = 0

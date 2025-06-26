@@ -4,90 +4,85 @@
 interface CacheEntry {
   data: any
   timestamp: number
-  ttl: number
+  ttl: number // Time to live in milliseconds
 }
 
-class SearchCache {
-  private memoryCache = new Map<string, CacheEntry>()
-  private readonly TTL = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
+const cache = new Map<string, CacheEntry>()
 
-  private generateKey(site: string, query: string): string {
-    return `search:${site}:${Buffer.from(query).toString('base64')}`
+// Enhanced TTL based on source type - wetten.overheid.nl gets longer cache time
+function getTTL(site: string): number {
+  // Legal content from wetten.overheid.nl changes less frequently - 4 hours cache
+  if (site.includes('wetten.overheid.nl') || site.includes('lokaleregelgeving.overheid.nl')) {
+    return 4 * 60 * 60 * 1000 // 4 hours
   }
-
-  private isExpired(entry: CacheEntry): boolean {
-    return Date.now() - entry.timestamp > entry.ttl
+  
+  // News/policy sites change more frequently - 1 hour cache
+  if (site.includes('rijksoverheid.nl') || site.includes('belastingdienst.nl')) {
+    return 60 * 60 * 1000 // 1 hour
   }
+  
+  // Jurisprudence is fairly stable - 2 hours cache
+  if (site.includes('rechtspraak.nl') || site.includes('tuchtrecht.overheid.nl')) {
+    return 2 * 60 * 60 * 1000 // 2 hours
+  }
+  
+  // Default cache time for other sources - 30 minutes
+  return 30 * 60 * 1000 // 30 minutes
+}
 
-  async get(site: string, query: string): Promise<any | null> {
-    const key = this.generateKey(site, query)
+function isExpired(entry: CacheEntry): boolean {
+  return Date.now() - entry.timestamp > entry.ttl
+}
+
+export const searchCache = {
+  async get(site: string, query: string): Promise<any> {
+    const key = `${site}:${query}`
+    const entry = cache.get(key)
     
-    // Try Redis first (if available)
-    if (process.env.REDIS_URL && typeof window === 'undefined') {
-      try {
-        // TODO: Implement Redis client when needed
-        // const redis = new Redis(process.env.REDIS_URL)
-        // const cached = await redis.get(key)
-        // if (cached) return JSON.parse(cached)
-      } catch (error) {
-        console.warn('Redis cache miss:', error)
-      }
+    if (!entry || isExpired(entry)) {
+      cache.delete(key)
+      return null
     }
-
-    // Fallback to memory cache
-    const entry = this.memoryCache.get(key)
-    if (entry && !this.isExpired(entry)) {
-      return entry.data
-    }
-
-    // Clean up expired entry
-    if (entry && this.isExpired(entry)) {
-      this.memoryCache.delete(key)
-    }
-
-    return null
-  }
+    
+    console.log(`📋 Cache hit for ${site}: ${query}`)
+    return entry.data
+  },
 
   async set(site: string, query: string, data: any): Promise<void> {
-    const key = this.generateKey(site, query)
-    const entry: CacheEntry = {
+    const key = `${site}:${query}`
+    const ttl = getTTL(site)
+    
+    cache.set(key, {
       data,
       timestamp: Date.now(),
-      ttl: this.TTL
-    }
-
-    // Try Redis first (if available)
-    if (process.env.REDIS_URL && typeof window === 'undefined') {
-      try {
-        // TODO: Implement Redis client when needed
-        // const redis = new Redis(process.env.REDIS_URL)
-        // await redis.setex(key, Math.floor(this.TTL / 1000), JSON.stringify(data))
-      } catch (error) {
-        console.warn('Redis cache write failed:', error)
-      }
-    }
-
-    // Always store in memory cache as backup
-    this.memoryCache.set(key, entry)
-
-    // Clean up old entries periodically
-    if (this.memoryCache.size > 1000) {
-      this.cleanup()
-    }
-  }
-
-  private cleanup(): void {
-    const now = Date.now()
-    for (const [key, entry] of this.memoryCache.entries()) {
-      if (this.isExpired(entry)) {
-        this.memoryCache.delete(key)
-      }
-    }
-  }
+      ttl
+    })
+    
+    console.log(`💾 Cached results for ${site} (TTL: ${Math.round(ttl / 60000)}min): ${query}`)
+  },
 
   clear(): void {
-    this.memoryCache.clear()
-  }
-}
+    cache.clear()
+    console.log('🧹 Cache cleared')
+  },
 
-export const searchCache = new SearchCache() 
+  // New method to get cache statistics
+  getStats(): { size: number; wettenEntries: number; otherEntries: number } {
+    let wettenEntries = 0
+    let otherEntries = 0
+    
+    for (const [key] of cache) {
+      if (key.includes('wetten.overheid.nl') || key.includes('lokaleregelgeving.overheid.nl')) {
+        wettenEntries++
+      } else {
+        otherEntries++
+      }
+    }
+    
+    return {
+      size: cache.size,
+      wettenEntries,
+      otherEntries
+    }
+  }
+} 
