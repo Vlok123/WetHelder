@@ -800,9 +800,9 @@ export default function WetUitlegPage() {
                     Voor <strong>complexe casussen of situaties</strong> die via meerdere wetten kunnen lopen, raadpleeg een <strong>juridisch professional</strong> voor persoonlijk advies.
                   </p>
                   <div className="flex items-center gap-3 pt-2 border-t border-blue-200">
-                    <p className="text-sm text-blue-800 flex-1">
-                      <strong>Algemene vragen</strong> of situaties die om duiding vragen? Gebruik onze AI-chat:
-                    </p>
+                                         <p className="text-sm text-blue-800 flex-1">
+                       <strong>Algemene vragen</strong> of situaties die om duiding vragen? Gebruik onze chat:
+                     </p>
                     <Link href="/ask">
                       <Button variant="outline" size="sm" className="text-blue-700 border-blue-300 hover:bg-blue-100">
                         <MessageSquare className="h-4 w-4 mr-2" />
