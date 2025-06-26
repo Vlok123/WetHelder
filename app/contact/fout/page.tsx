@@ -155,7 +155,7 @@ export default function FoutMeldenPage() {
                  <h4 className="font-medium mb-2">Gedachte achter de vraag mist</h4>
                  <p className="text-sm">
                    Het antwoord kan technisch correct zijn, maar uw eigenlijke vraag niet beantwoorden. Bijvoorbeeld: 
-                   "Mag je ter aanhouding een woning betreden?" vs "Mag je iemand in een woning aanhouden?" lijken vergelijkbaar, 
+                   &quot;Mag je ter aanhouding een woning betreden?&quot; vs &quot;Mag je iemand in een woning aanhouden?&quot; lijken vergelijkbaar, 
                    maar hebben verschillende antwoorden. Wees specifiek over uw situatie en wat u precies wilt weten.
                  </p>
                </div>
