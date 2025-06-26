@@ -814,7 +814,7 @@ export default function AngifteAssistentPage() {
                     Vanwege AVG/GDPR gevoelige informatie raden wij aan om <strong>dummy gegevens</strong> te gebruiken tijdens het opstellen van uw aangifte. U kunt de gegenereerde aangifte later handmatig invullen met de juiste persoonsgegevens voordat u deze indient bij de politie.
                   </p>
                   <p className="text-amber-800 text-xs sm:text-sm">
-                    Bijvoorbeeld: gebruik "Jan Jansen" in plaats van uw echte naam, "Voorbeeldstraat 1" in plaats van uw echte adres, etc.
+                    Bijvoorbeeld: gebruik &quot;Jan Jansen&quot; in plaats van uw echte naam, &quot;Voorbeeldstraat 1&quot; in plaats van uw echte adres, etc.
                   </p>
                 </div>
               </div>
