@@ -26,6 +26,32 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Get aangifte downloads
+    const totalAangifteDownloads = await prisma.downloadTracking.count({
+      where: { type: 'aangifte' }
+    })
+
+    const aangifteDownloadsToday = await prisma.downloadTracking.count({
+      where: {
+        type: 'aangifte',
+        timestamp: {
+          gte: new Date(new Date().setHours(0, 0, 0, 0))
+        }
+      }
+    })
+
+    const aangifteDownloadsByType = await prisma.downloadTracking.groupBy({
+      by: ['delictType'],
+      where: { type: 'aangifte' },
+      _count: true,
+      orderBy: {
+        _count: {
+          delictType: 'desc'
+        }
+      },
+      take: 10
+    })
+
     // Get total users
     const totalUsers = await prisma.user.count()
 
@@ -149,6 +175,13 @@ export async function GET(request: NextRequest) {
       avgQueriesPerUser,
       anonymousQueriesByProfession: anonymousQueriesByProfession.map(item => ({
         profession: item.profession,
+        count: item._count
+      })),
+      // Aangifte downloads
+      totalAangifteDownloads,
+      aangifteDownloadsToday,
+      aangifteDownloadsByType: aangifteDownloadsByType.map(item => ({
+        delictType: item.delictType,
         count: item._count
       })),
       systemHealth,

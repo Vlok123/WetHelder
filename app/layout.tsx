@@ -23,7 +23,8 @@ export const metadata: Metadata = {
     'wetboek van strafrecht', 'wegenverkeerswet', 'burgerlijk wetboek', 'algemene wet bestuursrecht',
     'juridisch advies', 'rechtshulp', 'advocaat', 'jurist', 'politie', 'handhaving', 'BOA',
     'wetgeving zoeken', 'Nederlandse wet', 'strafrecht', 'verkeersrecht', 'bestuursrecht',
-    'arbeidsrecht', 'huurrecht', 'familierecht', 'ondernemingsrecht', 'belastingrecht'
+    'arbeidsrecht', 'huurrecht', 'familierecht', 'ondernemingsrecht', 'belastingrecht',
+    'aangifte doen', 'politieaangifte', 'aangifte assistent', 'criminaliteit melden', 'slachtofferhulp'
   ],
   authors: [{ name: 'WetHelder', url: 'https://wethelder.nl' }],
   creator: 'WetHelder',
@@ -200,6 +201,14 @@ export default function RootLayout({
                       "name": "Wetgeving Doorzoeken",
                       "description": "Doorzoeken van Nederlandse wetgeving en rechtspraak"
                     }
+                  },
+                  {
+                    "@type": "Offer", 
+                    "itemOffered": {
+                      "@type": "Service",
+                      "name": "Aangifte-Assistent",
+                      "description": "Stap-voor-stap hulp bij het opstellen van juridisch correcte politieaangiftes"
+                    }
                   }
                 ]
               }
@@ -268,7 +277,9 @@ export default function RootLayout({
                     "Juridische vragen stellen",
                     "Rechtspraak en jurisprudentie",
                     "Professionele uitleg",
-                    "Multi-doelgroep ondersteuning"
+                    "Multi-doelgroep ondersteuning",
+                    "Aangifte-assistent met stap-voor-stap begeleiding",
+                    "Juridisch correcte politieaangiftes opstellen"
                   ]
                 },
                 {

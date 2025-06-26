@@ -37,7 +37,8 @@ import {
   Lock,
   Unlock,
   X,
-  User
+  User,
+  FileText
 } from 'lucide-react'
 
 interface AdminStats {
@@ -53,6 +54,9 @@ interface AdminStats {
   todayAnonymousQueries: number
   avgQueriesPerUser: number
   anonymousQueriesByProfession: Array<{ profession: string; count: number }>
+  totalAangifteDownloads: number
+  aangifteDownloadsToday: number
+  aangifteDownloadsByType: Array<{ delictType: string; count: number }>
   systemHealth: 'healthy' | 'warning' | 'error'
   databaseSize: string
   lastBackup: string
@@ -693,6 +697,66 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Aangifte Downloads */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3">
+                  <Download className="h-8 w-8 text-emerald-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Totaal Aangiftes</p>
+                    <p className="text-2xl font-bold">{stats?.totalAangifteDownloads || 0}</p>
+                    <p className="text-xs text-muted-foreground">Vandaag: {stats?.aangifteDownloadsToday || 0}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3">
+                  <FileText className="h-8 w-8 text-blue-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Meest populaire delicten</p>
+                    <div className="text-sm">
+                      {stats?.aangifteDownloadsByType?.slice(0, 3).map((item, index) => (
+                        <div key={index} className="flex justify-between">
+                          <span className="truncate mr-2">{item.delictType || 'Onbekend'}</span>
+                          <span className="font-medium">{item.count}</span>
+                        </div>
+                      )) || <span className="text-muted-foreground">Geen data</span>}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Aangifte Downloads by Type */}
+          {stats?.aangifteDownloadsByType && stats.aangifteDownloadsByType.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Download className="h-5 w-5" />
+                  Aangifte Downloads per Delicttype
+                </CardTitle>
+                <CardDescription>
+                  Overzicht van gedownloade aangiftes per type delict
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {stats.aangifteDownloadsByType.map((item, index) => (
+                    <div key={index} className="text-center p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+                      <p className="text-2xl font-bold text-emerald-600">{item.count}</p>
+                      <p className="text-sm text-muted-foreground">{item.delictType || 'Onbekend'}</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Anonymous Queries by Profession */}
           {stats?.anonymousQueriesByProfession && stats.anonymousQueriesByProfession.length > 0 && (

@@ -312,10 +312,10 @@ export default function HomePage() {
               Aangepast aan uw beroep voor de meest relevante antwoorden.
             </p>
             
-            {/* Two Main Options */}
-            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-8">
+            {/* Three Main Options */}
+            <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-8">
               {/* Chat Option */}
-              <Card className="p-6 hover:shadow-lg transition-all duration-300 border-2 hover:border-blue-200 cursor-pointer" onClick={() => router.push('/ask')}>
+              <Card className="p-6 hover:shadow-lg transition-all duration-300 border-2 hover:border-blue-200 cursor-pointer flex flex-col h-full" onClick={() => router.push('/ask')}>
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
                     <MessageSquare className="h-6 w-6 text-blue-600" />
@@ -326,7 +326,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 
-                <div className="text-left mb-4">
+                <div className="text-left mb-4 flex-grow">
                   <p className="text-gray-700 mb-3">
                     <strong>Wanneer te gebruiken:</strong> Voor praktische juridische vragen, situaties, procedures of algemene uitleg.
                   </p>
@@ -337,7 +337,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 
-                <Button className="w-full" asChild>
+                <Button className="w-full mt-auto" asChild>
                   <Link href="/ask">
                     <MessageSquare className="h-4 w-4 mr-2" />
                     Start Chat
@@ -346,10 +346,10 @@ export default function HomePage() {
               </Card>
 
               {/* Wetuitleg Option */}
-              <Card className="p-6 hover:shadow-lg transition-all duration-300 border-2 hover:border-purple-200 cursor-pointer" onClick={() => router.push('/wetuitleg')}>
+              <Card className="p-6 hover:shadow-lg transition-all duration-300 border-2 hover:border-blue-200 cursor-pointer flex flex-col h-full" onClick={() => router.push('/wetuitleg')}>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
-                    <Scale className="h-6 w-6 text-purple-600" />
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                    <Scale className="h-6 w-6 text-blue-600" />
                   </div>
                   <div className="text-left">
                     <h3 className="text-xl font-bold text-gray-900">Wetuitleg</h3>
@@ -357,7 +357,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 
-                <div className="text-left mb-4">
+                <div className="text-left mb-4 flex-grow">
                   <p className="text-gray-700 mb-3">
                     <strong>Wanneer te gebruiken:</strong> Voor uitgebreide uitleg van specifieke wetsartikelen met volledige tekst en jurisprudentie.
                   </p>
@@ -368,10 +368,41 @@ export default function HomePage() {
                   </div>
                 </div>
                 
-                <Button className="w-full" variant="outline" asChild>
+                <Button className="w-full mt-auto" asChild>
                   <Link href="/wetuitleg">
                     <Scale className="h-4 w-4 mr-2" />
                     Probeer Wetuitleg
+                  </Link>
+                </Button>
+              </Card>
+
+              {/* Aangifte Assistent Option */}
+              <Card className="p-6 hover:shadow-lg transition-all duration-300 border-2 hover:border-blue-200 cursor-pointer flex flex-col h-full" onClick={() => router.push('/aangifte')}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                    <FileText className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-xl font-bold text-gray-900">Aangifte-Assistent</h3>
+                    <p className="text-sm text-gray-600">Voor het opstellen van aangiftes</p>
+                  </div>
+                </div>
+                
+                <div className="text-left mb-4 flex-grow">
+                  <p className="text-gray-700 mb-3">
+                    <strong>Wanneer te gebruiken:</strong> Voor het opstellen van juridisch correcte politieaangiftes met stap-voor-stap begeleiding.
+                  </p>
+                  <div className="space-y-1 text-sm text-gray-600">
+                    <p>• Diefstal, oplichting, vernieling</p>
+                    <p>• Mishandeling en bedreiging</p>
+                    <p>• Overige delicten</p>
+                  </div>
+                </div>
+                
+                <Button className="w-full mt-auto" asChild>
+                  <Link href="/aangifte">
+                    <FileText className="h-4 w-4 mr-2" />
+                    Start Aangifte
                   </Link>
                 </Button>
               </Card>

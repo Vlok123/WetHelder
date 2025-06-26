@@ -24,7 +24,8 @@ import {
   Briefcase,
   Menu,
   ChevronDown,
-  Gavel
+  Gavel,
+  FileText
 } from 'lucide-react'
 
 const professionProfiles = [
@@ -69,6 +70,12 @@ export function Navigation() {
                   Jurisprudentie
                 </Link>
               </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/aangifte" className="text-sm">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Aangifte
+                </Link>
+              </Button>
             </div>
 
             {/* Mobile Navigation */}
@@ -88,6 +95,11 @@ export function Navigation() {
                   <Gavel className="h-4 w-4" />
                 </Link>
               </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/aangifte">
+                  <FileText className="h-4 w-4" />
+                </Link>
+              </Button>
             </div>
           </div>
 
@@ -102,6 +114,13 @@ export function Navigation() {
               <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-muted animate-pulse" />
             ) : session ? (
               <div className="flex items-center space-x-2">
+                <Button variant="ghost" size="sm" asChild className="hidden sm:flex">
+                  <Link href="/aangiftes" className="flex items-center">
+                    <FileText className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                    <span className="hidden md:inline">Mijn Aangiftes</span>
+                  </Link>
+                </Button>
+                
                 <Button variant="ghost" size="sm" asChild className="hidden sm:flex">
                   <Link href="/dashboard" className="flex items-center">
                     <User className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />

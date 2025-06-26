@@ -62,6 +62,7 @@ model User {
   notifications        Notification[]
   notificationSettings NotificationSetting?
   activityLogs        ActivityLog[]
+  savedAangiftes      SavedAangifte[]
   
   // Bestaande relaties
   notes         UserNote[]
@@ -466,4 +467,37 @@ model ActivityLog {
 
   @@index([userId, createdAt])
   @@index([type])
+}
+
+// Download tracking voor aangiftes en andere downloads
+model DownloadTracking {
+  id           String   @id @default(cuid())
+  type         String   // "aangifte", "document", etc.
+  delictType   String?  // Voor aangiftes: type delict
+  isCustomType Boolean  @default(false) // AI-gegenereerd delicttype
+  userAgent    String?  // Browser informatie
+  timestamp    DateTime @default(now())
+  
+  @@index([type, timestamp])
+  @@index([delictType])
+  @@index([timestamp])
+}
+
+// Opgeslagen aangiftes van ingelogde gebruikers
+model SavedAangifte {
+  id                  String   @id @default(cuid())
+  userId              String
+  delictType          String   // Type delict
+  antwoorden          String   // JSON string van antwoorden
+  vrijeTekst          String   // Vrije tekst van gebruiker
+  gegenereerdeAangifte String  // De volledige gegenereerde aangifte
+  isCustomType        Boolean  @default(false) // AI-gegenereerd delicttype
+  zoekopdracht        String?  // Originele zoekopdracht bij "anders"
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, createdAt])
+  @@index([delictType])
 } 
