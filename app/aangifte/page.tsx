@@ -375,7 +375,10 @@ SPECIFIEKE AANDACHTSPUNTEN PER DELICTTYPE:
 - Bij oplichting: exacte misleiding, betalingsmethode, communicatiekanalen
 - Bij bedreiging: exacte bewoordingen, context, ernst van dreiging
 
-Beoordeel de juridische kwaliteit realistisch: "goed" als alle essentiële elementen aanwezig zijn.`
+Beoordeel de juridische kwaliteit realistisch: 
+- "goed" alleen als alle essentiële elementen aanwezig zijn EN geen verdere verbeteringen nodig
+- "voldoende" als essentiële elementen aanwezig maar er nog verbeteringen mogelijk zijn
+- "onvoldoende" als belangrijke juridische elementen ontbreken`
         }),
       })
 
@@ -478,13 +481,40 @@ Beoordeel de juridische kwaliteit realistisch: "goed" als alle essentiële eleme
         break
     }
     
-    // Algemene controles
+    // Algemene controles en specifieke aanbevelingen
     if (gegevens.vrijeTekst.length < 200) {
-      aanbevelingen.push('Uw verhaal kan uitgebreider - meer details helpen de politie beter')
+      const effectiefDelict = gegevens.aangepastDelict || gegevens.delictType
+      let specifiekAdvies = 'Uw verhaal kan uitgebreider. Meer details helpen de politie bij het onderzoek.'
+      
+      // Geef delict-specifieke suggesties
+      if (effectiefDelict) {
+        switch (effectiefDelict.id) {
+          case 'diefstal':
+            specifiekAdvies = 'Uw verhaal kan uitgebreider. Voeg toe: hoe u de diefstal ontdekte, waar precies de spullen lagen, of er beveiligingsmaatregelen waren, en of u verdachte personen heeft opgemerkt.'
+            break
+          case 'mishandeling':
+            specifiekAdvies = 'Uw verhaal kan uitgebreider. Beschrijf meer details over: wat er precies werd gezegd, hoe de mishandeling plaatsvond, of er getuigen waren, en hoe u zich daarna voelde.'
+            break
+          case 'vernieling':
+            specifiekAdvies = 'Uw verhaal kan uitgebreider. Voeg toe: hoe u de schade ontdekte, of u de dader heeft gezien, of er getuigen waren, en of het eerder is gebeurd.'
+            break
+          case 'oplichting':
+            specifiekAdvies = 'Uw verhaal kan uitgebreider. Beschrijf meer over: hoe het contact tot stand kwam, wat er precies werd beloofd, wanneer u doorhad dat het oplichting was, en welke bewijzen u heeft.'
+            break
+          case 'bedreiging':
+            specifiekAdvies = 'Uw verhaal kan uitgebreider. Voeg toe: in welke context de bedreiging werd geuit, of er eerder bedreigingen waren, of er getuigen waren, en hoe serieus u de dreiging inschat.'
+            break
+          default:
+            specifiekAdvies = 'Uw verhaal kan uitgebreider. Beschrijf meer over: de exacte toedracht, tijdlijn van gebeurtenissen, betrokken personen, en impact op u.'
+        }
+      }
+      
+      aanbevelingen.push(specifiekAdvies)
     }
     
+    // Aangepaste kwaliteitsbeoordeling: als er aanbevelingen zijn, kan het niet "goed" zijn
     const kwaliteit = ontbrekendeElementen.length > 2 ? 'onvoldoende' : 
-                     ontbrekendeElementen.length > 0 ? 'voldoende' : 'goed'
+                     ontbrekendeElementen.length > 0 || aanbevelingen.length > 0 ? 'voldoende' : 'goed'
     
     return {
       ontbrekendeElementen,
