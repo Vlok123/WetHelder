@@ -34,7 +34,7 @@ export const politieWetData = {
       description: 'Welke handelingen mag de politie verrichten?',
       icon: 'Shield',
       color: 'bg-blue-100 text-blue-800',
-      articleCount: 1
+      articleCount: 0
     },
     {
       slug: 'id-fouilleren',
@@ -42,7 +42,7 @@ export const politieWetData = {
       description: 'Alles over ID-plicht, fouilleren, veiligheidsfouillering',
       icon: 'Users',
       color: 'bg-green-100 text-green-800',
-      articleCount: 1
+      articleCount: 2
     },
     {
       slug: 'verkeer',
@@ -79,106 +79,6 @@ export const politieWetData = {
   ] as PolitieWetCategory[],
 
   articles: [
-    {
-      slug: 'nieuw-toegevoegde-onderwerpen',
-      title: 'Overzicht: Nieuw toegevoegde onderwerpen bij Politie & Wet',
-      description: 'Complete overzicht van alle recent toegevoegde artikelen over politiebevoegdheden en burgerrechten.',
-      category: 'Algemene Bevoegdheden',
-      categorySlug: 'bevoegdheden',
-      seoTitle: 'Nieuw toegevoegde onderwerpen Politie & Wet - WetHelder',
-      seoDescription: 'Overzicht van alle recent toegevoegde artikelen over politiebevoegdheden, burgerrechten en wetgeving op WetHelder.nl',
-      readTime: '5 min lezen',
-      lastUpdated: '2025-01-11',
-      views: 0,
-      tags: ['overzicht', 'nieuw', 'politiebevoegdheden', 'burgerrechten', 'wetgeving'],
-      featured: true,
-      content: `## Recent toegevoegde onderwerpen
-
-WetHelder.nl is uitgebreid met nieuwe praktische artikelen over politiebevoegdheden en burgerrechten. Hieronder vind je een overzicht van alle recent toegevoegde onderwerpen.
-
----
-
-## 🆔 Identificatie & Fouilleren
-
-### [Mag de politie mijn identiteit controleren?](/politie-wet/artikel/id-controle-politie)
-- **Wanneer:** Verdenking strafbaar feit, ordeverstoring voorkomen, verkeerscontroles
-- **Wettelijke basis:** artikel 8 Politiewet 2012, artikel 2 Wet op de identificatieplicht
-- **Belangrijkste punt:** Je bent verplicht mee te werken, politie hoeft geen uitgebreide uitleg te geven
-
----
-
-## 🚗 Verkeer
-
-### [Moet ik meewerken aan een algemene verkeerscontrole?](/politie-wet/artikel/algemene-verkeerscontrole)
-- **Wat mag de politie controleren:** Rijbewijs, kentekenbewijs, ID, technische staat voertuig, alcohol/drugs
-- **Wettelijke basis:** artikel 160 Wegenverkeerswet 1994
-- **Belangrijkste punt:** Verplichte medewerking, geen verdenking nodig voor controle
-
-### [Mag de politie door rood licht rijden zonder zwaailicht en sirene?](/politie-wet/artikel/door-rood-licht-zonder-sirene)
-- **Wanneer toegestaan:** artikel 29 RVV 1990, alleen bij dringende taken
-- **Voorwaarden:** Geen gevaar, spoedeisende hulpverlening
-- **Belangrijkste punt:** Blauw zwaailicht + sirene normaal verplicht, uitzonderingen zeer beperkt
-
----
-
-## 🏠 Opsporing & Aanhouding
-
-### [Mag een agent zonder machtiging een tuin betreden voor onderzoek of inbeslagname?](/politie-wet/artikel/betreden-tuin-zonder-machtiging)
-- **Wat mag wel:** Niet-woningen zoals open tuinen, schuren, bedrijfsruimten
-- **Wat mag niet:** Besloten erven die als woning fungeren (zonder machtiging)
-- **Wettelijke basis:** artikel 96b/96c Wetboek van Strafvordering, Algemene wet op het binnentreden
-- **Belangrijkste punt:** Woningbegrip wordt breed geïnterpreteerd
-
----
-
-## 🔧 Technische verbeteringen
-
-### Wetuitleg functionaliteit
-- **Artikel 29 RVV validatie:** Correcte tekst over hulpdiensten met blauw zwaailicht
-- **Verbeterde hyperlinks:** Betere herkenning van decimale artikelnummers en lange wet namen
-- **Letterlijke wetteksten:** AI geeft nu exacte artikelteksten i.p.v. samenvattingen
-
-### Hyperlink verbeteringen
-- **Volledige combinaties:** "artikel 5.2.60 Reglement voertuigen" wordt nu volledig gelinkt
-- **Decimale nummers:** Ondersteuning voor artikelen zoals 5.2.60, 8.1.2 etc.
-- **Lange wet namen:** "Algemene wet op het binnentreden (Awbi)" wordt volledig herkend
-
----
-
-## 📈 Statistieken
-
-**Totaal nieuwe artikelen:** 4  
-**Nieuwe categorieën:** Opsporing & Aanhouding  
-**Verbeterde functionaliteiten:** Wetuitleg, Hyperlinks, Artikel validatie  
-**Laatst bijgewerkt:** 11 januari 2025
-
----
-
-## 🔍 Zoektips
-
-- Gebruik de **/wetuitleg** pagina voor specifieke wetsartikelen
-- Zoek op trefwoorden zoals "fouilleren", "ID-controle", "verkeerscontrole"
-- Klik op de blauwe artikel-links voor uitgebreide wetsinformatie
-- Gebruik de categorieën om gerelateerde onderwerpen te vinden
-
----
-
-## 📚 Komende uitbreidingen
-
-We werken aan meer artikelen over:
-- **Privacy & Informatie:** Camerabeelden, persoonsgegevens, inzagerecht
-- **Klacht & Bezwaar:** Procedure voor klachten tegen politie
-- **Algemene Bevoegdheden:** Surveillance, preventief fouilleren, geweldsbevoegdheden
-
----
-
-Blijf op de hoogte van nieuwe artikelen door onze website regelmatig te bezoeken!
-
----
-
-Laatst gecheckt: 11 januari 2025  
-Disclaimer: Dit overzicht wordt regelmatig bijgewerkt met nieuwe onderwerpen en verbeteringen.`
-    },
     {
       slug: 'id-controle-politie',
       title: 'Mag de politie mijn identiteit controleren?',
@@ -645,6 +545,151 @@ Als de politie weigert jouw aangifte op te nemen:
 1. **Kamerbrief over aangifteweigering (2019)** – Minister van Justitie bevestigt: *aangifte mag niet geweigerd worden zonder juridische reden.*
 2. **Inspectie Justitie en Veiligheid (2015)** – signaleert dat sommige politie-eenheden onterecht aangiftes weigeren.
 3. **Rapport Nationale Ombudsman "Geen aangifte doen is geen optie" (2020)** – bekritiseert het weren van burgers met een legitieme klacht.
+
+---
+
+Laatst gecheckt: 11 januari 2025  
+Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'fouilleren-transport-insluiting',
+      title: 'Wanneer mag de politie mij fouilleren – inclusief bij transport en insluiting?',
+      description: 'Uitgebreide uitleg over alle soorten fouilleringen: veiligheidsfouillering, aanhouding, transport, insluiting en lichamelijk onderzoek.',
+      category: 'Identificatie & Fouilleren',
+      categorySlug: 'id-fouilleren',
+      seoTitle: 'Wanneer mag de politie mij fouilleren bij transport en insluiting?',
+      seoDescription: 'Complete uitleg over alle soorten fouilleringen door de politie: wanneer het mag, wettelijke basis en je rechten bij transport en insluiting.',
+      readTime: '8 min lezen',
+      lastUpdated: '2025-01-11',
+      views: 0,
+      tags: ['fouilleren', 'veiligheidsfouillering', 'transport', 'insluiting', 'lichamelijk onderzoek', 'politiewet', 'strafvordering'],
+      featured: true,
+      content: `## Kort antwoord
+
+De politie mag je fouilleren als je wordt aangehouden, vervoerd of ingesloten, maar dit moet wel passen binnen de wet. Er zijn verschillende soorten fouilleringen met elk hun eigen regels en voorwaarden.
+
+---
+
+## Uitgebreide uitleg: soorten fouillering en wanneer het mag
+
+Fouilleren is een inbreuk op jouw privacy en lichamelijke integriteit, dus mag alleen als de wet het toestaat. Er zijn verschillende vormen van fouillering, afhankelijk van de situatie. Hieronder leggen we ze uit, inclusief wat geldt bij vervoer (transport) en insluiting op het politiebureau.
+
+---
+
+### 1. **Veiligheidsfouillering – bij dreiging van gevaar**
+
+De politie mag je fouilleren als zij denken dat je een wapen of gevaarlijk voorwerp bij je hebt.
+
+* Dit mag zonder dat je bent aangehouden.
+* Alleen bij een **concrete aanleiding**, bijvoorbeeld als je dreigend gedrag vertoont.
+* **Alleen over de kleding heen**, tenzij er meer aanleiding is.
+
+📘 *artikel 7 lid 3 Politiewet 2012*
+
+---
+
+### 2. **Fouillering na aanhouding – op zoek naar bewijs of gevaarlijke voorwerpen**
+
+Ben je aangehouden? Dan mag de politie je fouilleren om:
+
+* **bewijsmateriaal** te vinden,
+* te voorkomen dat je **iets wegmaakt**,
+* of om **gevaarlijke spullen** weg te nemen.
+
+Let op: dit is uitgebreider dan een veiligheidsfouillering.
+
+* Je kleding mag worden doorzocht.
+* Soms wordt ook je lichaam onderzocht (zie punt 5).
+
+📘 *artikel 56 lid 4 Wetboek van Strafvordering*
+
+---
+
+### 3. **Insluitingsfouillering – bij opsluiting op het bureau**
+
+Word je ingesloten op het politiebureau (in een cel)? Dan volgt vaak een **insluitingsfouillering**.
+
+* Deze mag **standaard** worden uitgevoerd bij insluiting.
+* Doel: veiligheid van jou, agenten en anderen in de cel.
+* Hierbij mogen ook persoonlijke spullen worden ingenomen (zoals riemen, veters, sieraden).
+
+Er is meestal geen aparte toestemming voor nodig als de fouillering beperkt blijft tot kleding.
+Bij verder onderzoek gelden zwaardere regels (zie punt 5).
+
+📘 *Gebaseerd op praktijk en interne richtlijnen politie, steunend op artikel 9 lid 1 Politiewet 2012*
+
+---
+
+### 4. **Transportfouillering – vóór vervoer naar cel of rechtbank**
+
+Word je vervoerd door de politie (bijvoorbeeld van bureau naar rechtbank of cellencomplex)? Dan mag een **transportfouillering** worden uitgevoerd.
+
+* Dit is bedoeld om te voorkomen dat je wapens, drugs of andere verboden voorwerpen meeneemt.
+* Deze mag **voor en na transport** worden gedaan.
+
+De wet noemt dit niet letterlijk, maar de bevoegdheid komt voort uit het belang van veiligheid tijdens vervoer.
+
+📘 *Afgeleid van artikel 9 lid 1 Politiewet 2012 (taakuitvoering) en jurisprudentie*
+
+---
+
+### 5. **Lichamelijk onderzoek – verder dan kleding, zoals lichaamsholtes**
+
+Soms is er aanleiding om dieper te fouilleren: ondergoed, lichaamsholtes of medische onderzoeken.
+
+* Hiervoor is **altijd toestemming nodig** van een **officier van justitie** of **rechter-commissaris**.
+* Dit gebeurt vaak in het bijzijn van een arts of medisch deskundige.
+* Het mag **alleen als het echt nodig is** voor bewijs of veiligheid.
+
+📘 *artikel 61a en 62 Wetboek van Strafvordering*
+
+---
+
+## Praktijkvoorbeeld
+
+Een persoon wordt aangehouden wegens het dragen van een mes. De agenten doen een veiligheidsfouillering op straat. Daarna volgt bij aankomst op het bureau een **insluitingsfouillering** om te controleren of de persoon geen andere wapens bij zich draagt. Voor het transport naar de rechtbank gebeurt een korte **transportfouillering**, opnieuw om de veiligheid te waarborgen. Als er een vermoeden is dat de persoon drugs heeft ingeslikt, moet de politie eerst toestemming vragen voor een **lichamelijk onderzoek** door een arts.
+
+---
+
+## Rechten & plichten van de burger
+
+**Bron:** Politiewet 2012, Wetboek van Strafvordering
+
+* ✅ Je **moet meewerken** aan een rechtmatige fouillering.
+* ✅ Je mag **vragen naar de reden** van de fouillering.
+* ❌ Je mag je **niet verzetten**, ook niet als je het er niet mee eens bent.
+* ✅ Je mag **een klacht indienen** als je vindt dat het onterecht of onzorgvuldig is gedaan.
+* ✅ Je hebt recht op een **behoorlijke behandeling**, zeker bij lichamelijk onderzoek.
+
+---
+
+## Wat kun je doen?
+
+* Vraag **waarom** je gefouilleerd wordt en **op basis van welke wet**.
+* Noteer indien mogelijk de **naam of het nummer van de agent**.
+* Word je dieper onderzocht? Vraag dan wie de toestemming heeft gegeven.
+* Klacht indienen:
+  * bij de **politie** zelf,
+  * of bij de **Nationale Ombudsman**.
+* Overweeg advies van het **Juridisch Loket** of een advocaat.
+
+---
+
+## Gerelateerde regelgeving
+
+* **artikel 7 lid 3 Politiewet 2012** – Veiligheidsfouillering bij dreiging
+* **artikel 9 lid 1 Politiewet 2012** – Bevoegdheid uitvoering politietaak (o.a. transport)
+* **artikel 151b Gemeentewet** – Preventief fouilleren in risicogebied
+* **artikel 56 lid 4 Wetboek van Strafvordering** – Fouillering na aanhouding
+* **artikel 61a en 62 Wetboek van Strafvordering** – Lichamelijk onderzoek
+
+---
+
+## Belangrijke rechtspraak en documenten
+
+* **ECLI:NL:HR:2008:BC7947** – Hoge Raad stelt: er moet altijd sprake zijn van concrete aanleiding bij veiligheidsfouillering.
+* **Richtlijn Insluiting Politie (Landelijke Politie)** – Interne procedure voor fouillering bij insluiting.
+* **Handleiding Strafvordering 2024** – Geeft richtlijnen voor fouilleren bij vervoer en insluiting.
 
 ---
 

@@ -32,8 +32,10 @@ export default function PolitieWetPage() {
     return icons[iconName] || Shield
   }
 
-  // Filter featured articles (only show articles that actually exist)
-  const featuredArticles = politieWetData.articles.filter(article => article.featured)
+  // Get the latest 6 articles (newest first)
+  const latestArticles = politieWetData.articles
+    .sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime())
+    .slice(0, 6)
 
   return (
     <div className="min-h-screen bg-background">
@@ -162,12 +164,12 @@ export default function PolitieWetPage() {
           </div>
         </section>
 
-        {/* Featured Articles */}
-        {featuredArticles.length > 0 && (
+        {/* Latest Articles */}
+        {latestArticles.length > 0 && (
           <section className="mb-16">
-            <h2 className="text-3xl font-bold mb-8 text-center">Beschikbare artikelen</h2>
+            <h2 className="text-3xl font-bold mb-8 text-center">Nieuwe toegevoegde artikelen</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {featuredArticles.map((article) => (
+              {latestArticles.map((article) => (
                 <Card key={article.slug} className="hover:shadow-lg transition-shadow">
                   <Link href={`/politie-wet/artikel/${article.slug}`}>
                     <CardHeader>
@@ -185,7 +187,7 @@ export default function PolitieWetPage() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-sm text-gray-600">{article.readTime}</p>
+                      <p className="text-sm text-gray-600">Laatst bijgewerkt: {article.lastUpdated}</p>
                     </CardContent>
                   </Link>
                 </Card>
