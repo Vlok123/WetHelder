@@ -34,7 +34,7 @@ export const politieWetData = {
       description: 'Welke handelingen mag de politie verrichten?',
       icon: 'Shield',
       color: 'bg-blue-100 text-blue-800',
-      articleCount: 0
+      articleCount: 1
     },
     {
       slug: 'id-fouilleren',
@@ -79,6 +79,106 @@ export const politieWetData = {
   ] as PolitieWetCategory[],
 
   articles: [
+    {
+      slug: 'nieuw-toegevoegde-onderwerpen',
+      title: 'Overzicht: Nieuw toegevoegde onderwerpen bij Politie & Wet',
+      description: 'Complete overzicht van alle recent toegevoegde artikelen over politiebevoegdheden en burgerrechten.',
+      category: 'Algemene Bevoegdheden',
+      categorySlug: 'bevoegdheden',
+      seoTitle: 'Nieuw toegevoegde onderwerpen Politie & Wet - WetHelder',
+      seoDescription: 'Overzicht van alle recent toegevoegde artikelen over politiebevoegdheden, burgerrechten en wetgeving op WetHelder.nl',
+      readTime: '5 min lezen',
+      lastUpdated: '2025-01-11',
+      views: 0,
+      tags: ['overzicht', 'nieuw', 'politiebevoegdheden', 'burgerrechten', 'wetgeving'],
+      featured: true,
+      content: `## Recent toegevoegde onderwerpen
+
+WetHelder.nl is uitgebreid met nieuwe praktische artikelen over politiebevoegdheden en burgerrechten. Hieronder vind je een overzicht van alle recent toegevoegde onderwerpen.
+
+---
+
+## 🆔 Identificatie & Fouilleren
+
+### [Mag de politie mijn identiteit controleren?](/politie-wet/artikel/id-controle-politie)
+- **Wanneer:** Verdenking strafbaar feit, ordeverstoring voorkomen, verkeerscontroles
+- **Wettelijke basis:** artikel 8 Politiewet 2012, artikel 2 Wet op de identificatieplicht
+- **Belangrijkste punt:** Je bent verplicht mee te werken, politie hoeft geen uitgebreide uitleg te geven
+
+---
+
+## 🚗 Verkeer
+
+### [Moet ik meewerken aan een algemene verkeerscontrole?](/politie-wet/artikel/algemene-verkeerscontrole)
+- **Wat mag de politie controleren:** Rijbewijs, kentekenbewijs, ID, technische staat voertuig, alcohol/drugs
+- **Wettelijke basis:** artikel 160 Wegenverkeerswet 1994
+- **Belangrijkste punt:** Verplichte medewerking, geen verdenking nodig voor controle
+
+### [Mag de politie door rood licht rijden zonder zwaailicht en sirene?](/politie-wet/artikel/door-rood-licht-zonder-sirene)
+- **Wanneer toegestaan:** artikel 29 RVV 1990, alleen bij dringende taken
+- **Voorwaarden:** Geen gevaar, spoedeisende hulpverlening
+- **Belangrijkste punt:** Blauw zwaailicht + sirene normaal verplicht, uitzonderingen zeer beperkt
+
+---
+
+## 🏠 Opsporing & Aanhouding
+
+### [Mag een agent zonder machtiging een tuin betreden voor onderzoek of inbeslagname?](/politie-wet/artikel/betreden-tuin-zonder-machtiging)
+- **Wat mag wel:** Niet-woningen zoals open tuinen, schuren, bedrijfsruimten
+- **Wat mag niet:** Besloten erven die als woning fungeren (zonder machtiging)
+- **Wettelijke basis:** artikel 96b/96c Wetboek van Strafvordering, Algemene wet op het binnentreden
+- **Belangrijkste punt:** Woningbegrip wordt breed geïnterpreteerd
+
+---
+
+## 🔧 Technische verbeteringen
+
+### Wetuitleg functionaliteit
+- **Artikel 29 RVV validatie:** Correcte tekst over hulpdiensten met blauw zwaailicht
+- **Verbeterde hyperlinks:** Betere herkenning van decimale artikelnummers en lange wet namen
+- **Letterlijke wetteksten:** AI geeft nu exacte artikelteksten i.p.v. samenvattingen
+
+### Hyperlink verbeteringen
+- **Volledige combinaties:** "artikel 5.2.60 Reglement voertuigen" wordt nu volledig gelinkt
+- **Decimale nummers:** Ondersteuning voor artikelen zoals 5.2.60, 8.1.2 etc.
+- **Lange wet namen:** "Algemene wet op het binnentreden (Awbi)" wordt volledig herkend
+
+---
+
+## 📈 Statistieken
+
+**Totaal nieuwe artikelen:** 4  
+**Nieuwe categorieën:** Opsporing & Aanhouding  
+**Verbeterde functionaliteiten:** Wetuitleg, Hyperlinks, Artikel validatie  
+**Laatst bijgewerkt:** 11 januari 2025
+
+---
+
+## 🔍 Zoektips
+
+- Gebruik de **/wetuitleg** pagina voor specifieke wetsartikelen
+- Zoek op trefwoorden zoals "fouilleren", "ID-controle", "verkeerscontrole"
+- Klik op de blauwe artikel-links voor uitgebreide wetsinformatie
+- Gebruik de categorieën om gerelateerde onderwerpen te vinden
+
+---
+
+## 📚 Komende uitbreidingen
+
+We werken aan meer artikelen over:
+- **Privacy & Informatie:** Camerabeelden, persoonsgegevens, inzagerecht
+- **Klacht & Bezwaar:** Procedure voor klachten tegen politie
+- **Algemene Bevoegdheden:** Surveillance, preventief fouilleren, geweldsbevoegdheden
+
+---
+
+Blijf op de hoogte van nieuwe artikelen door onze website regelmatig te bezoeken!
+
+---
+
+Laatst gecheckt: 11 januari 2025  
+Disclaimer: Dit overzicht wordt regelmatig bijgewerkt met nieuwe onderwerpen en verbeteringen.`
+    },
     {
       slug: 'id-controle-politie',
       title: 'Mag de politie mijn identiteit controleren?',

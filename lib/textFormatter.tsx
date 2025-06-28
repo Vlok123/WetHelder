@@ -176,9 +176,9 @@ export const formatPolitieWetContent = (text: string): string => {
   const articleLawReplacements: Array<{placeholder: string, text: string, type: string}> = []
   let counter = 1000
   
-  // Verbeterde regex voor artikel + wet/reglement combinaties (inclusief RVV, jaartallen en haakjes)
+  // Verbeterde regex voor artikel + wet/reglement combinaties (inclusief lange wet namen met voorzetsels en volledige afkortingen)
   processedText = processedText.replace(
-    /(artikel|art\.)\s+(\d+(?:\.\d+)*[a-z]*(?::\d+)?(?:\s+lid\s+\d+[a-z]*)?)\s+((?:[A-Z][\w\s&-]*?(?:wet|wetboek|reglement|code|verdrag|richtlijn)[\w\s\d]*?(?:\([A-Z\s\d]+\))?)|(?:Sr|Sv|BW|Awb|WVW|RVV|Politiewet|Wegenverkeerswet|Reglement\s+voertuigen)(?:\s+\d{4})?)/gi,
+    /(artikel|art\.)\s+(\d+(?:\.\d+)*[a-z]*(?::\d+)?(?:\s+lid\s+\d+[a-z]*)?(?:\s+sub\s+[a-z])?)\s+((?:[A-Z][\w\s&-]*?(?:wet|wetboek|reglement|code|verdrag|richtlijn)[\w\s\d\(\)]*?(?:op\s+het\s+\w+)?(?:\s*\([A-Z\w\s\d]+\))?)|(?:Sr|Sv|BW|Awbi?|WVW|RVV|Politiewet|Wegenverkeerswet|Reglement\s+voertuigen)(?:\s+\d{4})?)/gi,
     (match) => {
       const cleanMatch = match.replace(/[).,;]*$/, '').trim()
       const placeholder = `__PLACEHOLDER_${counter}__`
