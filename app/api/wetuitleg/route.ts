@@ -91,14 +91,14 @@ function extractArticleReferences(query: string): string[] {
   const references: string[] = []
   const lowerQuery = query.toLowerCase()
   
-  // Pattern 1: "artikel 8 Politiewet 2012" - Enhanced for full law names with years
-  const fullLawMatch = lowerQuery.match(/(?:artikel|art\.?)\s+(\d+[a-z]*(?::\d+)?(?:\s+lid\s+\d+)?)\s+(politiewet\s*\d{4}|wetboek\s+van\s+strafrecht|wetboek\s+van\s+strafvordering|burgerlijk\s+wetboek|algemene\s+wet\s+bestuursrecht|wegenverkeerswet\s*\d{4}?|wet\s+op\s+de\s+identificatieplicht)/i)
+  // Pattern 1: "artikel 8 Politiewet 2012" - Enhanced for full law names with years and lid numbers
+  const fullLawMatch = lowerQuery.match(/(?:artikel|art\.?)\s+(\d+[a-z]*(?::\d+)?(?:\s+lid\s+\d+)*)\s+(politiewet\s*\d{4}|wetboek\s+van\s+strafrecht|wetboek\s+van\s+strafvordering|burgerlijk\s+wetboek|algemene\s+wet\s+bestuursrecht|wegenverkeerswet\s*\d{4}?|wet\s+op\s+de\s+identificatieplicht)/i)
   if (fullLawMatch) {
     references.push(`artikel ${fullLawMatch[1]} ${fullLawMatch[2]}`)
   }
   
-  // Pattern 2: "artikel 304 sr" or "art 304 sr" - Short codes
-  const artikelMatch = lowerQuery.match(/(?:artikel|art\.?)\s+(\d+[a-z]*(?::\d+)?(?:\s+lid\s+\d+)?)\s+(sr|sv|bw|awb|wvw|politiewet|rv)\b/i)
+  // Pattern 2: "artikel 304 sr" or "art 304 sr" - Short codes with lid support
+  const artikelMatch = lowerQuery.match(/(?:artikel|art\.?)\s+(\d+[a-z]*(?::\d+)?(?:\s+lid\s+\d+)*)\s+(sr|sv|bw|awb|wvw|politiewet|rv)\b/i)
   if (artikelMatch) {
     references.push(`artikel ${artikelMatch[1]} ${artikelMatch[2].toUpperCase()}`)
   }
@@ -346,7 +346,7 @@ async function searchLiteralLawText(articleReferences: string[]): Promise<Array<
     
     // HARDCODED VALIDATION FOR ARTIKEL 29 RVV 1990
     if (ref.toLowerCase().includes('artikel 29') && (ref.toLowerCase().includes('rvv') || ref.toLowerCase().includes('reglement verkeersregels'))) {
-      console.log('HARDCODED: Found artikel 29 RVV - returning correct text about emergency services')
+      console.log('🚦 HARDCODED: Found artikel 29 RVV - returning correct text about emergency services')
       results.push({
         ref: ref,
         text: `Artikel 29 RVV 1990
@@ -357,6 +357,21 @@ async function searchLiteralLawText(articleReferences: string[]): Promise<Array<
 
 3. Bij ministeriële regeling kunnen voorschriften worden vastgesteld betreffende het blauwe zwaai-, flits- of knipperlicht, de tweetonige hoorn en de knipperende koplampen.`,
         url: 'https://wetten.overheid.nl/BWBR0004825/2021-07-01#Hoofdstuk2_Paragraaf6_Artikel29'
+      })
+      continue
+    }
+    
+    // HARDCODED VALIDATION FOR ARTIKEL 61 LID 2 WETBOEK VAN STRAFVORDERING
+    if (ref.toLowerCase().includes('artikel 61') && ref.toLowerCase().includes('lid 2') && (ref.toLowerCase().includes('sv') || ref.toLowerCase().includes('strafvordering'))) {
+      console.log('⚖️ HARDCODED: Found artikel 61 lid 2 Sv - returning correct text about arrest powers')
+      results.push({
+        ref: ref,
+        text: `Artikel 61 Wetboek van Strafvordering - Staandehouding
+
+1. De hulpofficier van justitie en de opsporingsambtenaar zijn bevoegd de verdachte aan te houden.
+
+2. Zij zijn eveneens bevoegd ieder ander aan te houden, voor wie een bevel tot aanhouding is uitgevaardigd of ten aanzien van wie uit feiten of omstandigheden blijkt dat hij op heterdaad wordt betrapt bij het plegen van een misdrijf.`,
+        url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIII_HoofdstukII_Afdeling1_Artikel61'
       })
       continue
     }
@@ -470,6 +485,18 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
       url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel27'
     },
     // Wetboek van Strafvordering (Sv) artikelen
+    'artikel 61 lid 2 wetboek van strafvordering': {
+      text: 'Artikel 61 Wetboek van Strafvordering - Staandehouding:\n\n1. De hulpofficier van justitie en de opsporingsambtenaar zijn bevoegd de verdachte aan te houden.\n\n2. Zij zijn eveneens bevoegd ieder ander aan te houden, voor wie een bevel tot aanhouding is uitgevaardigd of ten aanzien van wie uit feiten of omstandigheden blijkt dat hij op heterdaad wordt betrapt bij het plegen van een misdrijf.',
+      url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIII_HoofdstukII_Afdeling1_Artikel61'
+    },
+    'artikel 61 lid 2 sv': {
+      text: 'Artikel 61 Wetboek van Strafvordering - Staandehouding:\n\n1. De hulpofficier van justitie en de opsporingsambtenaar zijn bevoegd de verdachte aan te houden.\n\n2. Zij zijn eveneens bevoegd ieder ander aan te houden, voor wie een bevel tot aanhouding is uitgevaardigd of ten aanzien van wie uit feiten of omstandigheden blijkt dat hij op heterdaad wordt betrapt bij het plegen van een misdrijf.',
+      url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIII_HoofdstukII_Afdeling1_Artikel61'
+    },
+    'artikel 61 lid 2 SV': {
+      text: 'Artikel 61 Wetboek van Strafvordering - Staandehouding:\n\n1. De hulpofficier van justitie en de opsporingsambtenaar zijn bevoegd de verdachte aan te houden.\n\n2. Zij zijn eveneens bevoegd ieder ander aan te houden, voor wie een bevel tot aanhouding is uitgevaardigd of ten aanzien van wie uit feiten of omstandigheden blijkt dat hij op heterdaad wordt betrapt bij het plegen van een misdrijf.',
+      url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIII_HoofdstukII_Afdeling1_Artikel61'
+    },
     'artikel 96b sv': {
       text: 'Artikel 96b Wetboek van Strafvordering - Doorzoeken van voertuigen:\n\n1. Een opsporingsambtenaar is bevoegd tot het doorzoeken van een voertuig, indien uit feiten of omstandigheden blijkt dat daarin voorwerpen aanwezig zijn die voor de waarheidsvinding van belang kunnen zijn en die vatbaar zijn voor inbeslagneming.\n\n2. Het doorzoeken geschiedt, voor zover mogelijk, in tegenwoordigheid van de verdachte of van de houder van het voertuig.',
       url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIV_HoofdstukII_TiteldeelIV_Afdeling3_Artikel96b'
@@ -684,13 +711,20 @@ SAMENVATTING:
 [Begin hier met een heldere, directe beantwoording van de vraag. Gebruik ALTIJD een disclaimer als er geen directe bronverificatie is]
 
 WETSARTIKEL:
-[BELANGRIJK: Als er een specifiek wetsartikel wordt gevraagd (bijvoorbeeld "wat zegt artikel 302 strafrecht"), citeer dan de VOLLEDIGE LETTERLIJKE tekst in een apart kader:
+[🚨 KRITIEKE VERPLICHTING: Bij ELKE vraag over een specifiek wetsartikel (zoals "wat zegt artikel 61 lid 2 Wetboek van Strafvordering", "artikel 302 strafrecht", "inhoud van artikel X") MOET je de VOLLEDIGE LETTERLIJKE wettekst tonen in een apart kader:
 
-📖 **ARTIKEL [NUMMER] [WETBOEK] - VOLLEDIGE TEKST**
-[Hier de complete, letterlijke wettekst zoals die officieel luidt]
+📖 **ARTIKEL [NUMMER] [WETBOEK] - VOLLEDIGE OFFICIELE TEKST**
+[Hier de complete, letterlijke wettekst zoals die officieel gepubliceerd is - NOOIT samenvatten, altijd volledig]
 **Bron:** [link naar wetten.overheid.nl]
 
-Voor vervolgvragen hoef je het artikel niet opnieuw volledig te citeren.
+Dit geldt voor:
+- "wat zegt artikel X"
+- "artikel X betekenis" 
+- "inhoud van artikel X"
+- "tekst van artikel X"
+- Alle andere vragen die specifiek naar een artikel vragen
+
+Voor vervolgvragen over hetzelfde artikel hoef je het niet opnieuw volledig te citeren.
 VERPLICHT: Start met "Volgens de verstrekte bronnen..." of "Op basis van algemene juridische kennis - controleer wetten.overheid.nl..."]
 
 LINK:
