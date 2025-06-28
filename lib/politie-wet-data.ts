@@ -96,8 +96,6 @@ export const politieWetData = {
 
 Ja, een agent mag jouw identiteit controleren als dit nodig is voor zijn werk. Je bent verplicht om mee te werken en je ID-bewijs te tonen, maar de politie hoeft je niet te overtuigen waarom precies.
 
----
-
 ## Uitgebreide uitleg
 
 ### Wanneer mag de politie je identiteit controleren?
@@ -119,8 +117,6 @@ Je loopt rond middernacht door een woonwijk. De politie krijgt een melding dat e
 
 Als je geen identiteitsbewijs bij je hebt wanneer een agent hierom vraagt, riskeer je een boete. Dit is strafbaar volgens artikel 447e Wetboek van Strafrecht. Weiger je mee te werken, dan kun je zelfs worden aangehouden en meegenomen naar het politiebureau.
 
----
-
 ## Rechten & plichten van de burger
 
 * Rechten:
@@ -130,17 +126,13 @@ Als je geen identiteitsbewijs bij je hebt wanneer een agent hierom vraagt, riske
   * Je bent verplicht om een geldig identiteitsbewijs te laten zien als hierom gevraagd wordt.
   * Je moet meewerken aan de controle.
 
----
-
 ## Wat kun je doen?
 
 Als je twijfelt aan de reden van de controle of je voelt je onjuist behandeld, kun je:
 
 * De agent ter plekke vragen waarom je gecontroleerd wordt (vriendelijk en rustig).
-* Klacht indienen via [www.politie.nl](http://www.politie.nl).
+* Klacht indienen via www.politie.nl.
 * Advies vragen bij het Juridisch Loket.
-
----
 
 ## Gerelateerde regelgeving
 
@@ -149,16 +141,12 @@ Als je twijfelt aan de reden van de controle of je voelt je onjuist behandeld, k
 * Wegenverkeerswet 1994 – Identificatie bij verkeerscontroles.
 * Drank- en Horecawet – Identificatie bij alcoholcontroles.
 
----
-
 ## Belangrijke rechtspraak en beleid
 
 * Hoge Raad, ECLI:NL:HR:2004:AO6092 – Identificatieplicht bij verdenking vereist duidelijke aanleiding.
 * Raad van State, ECLI:NL:RVS:2016:2188 – Identiteitscontroles moeten redelijk en zorgvuldig zijn.
 
----
-
-Laatst gecheckt: 28 juni 2025  
+Laatst gecheckt: 28 juni 2025
 Disclaimer: Je mag vragen waarom je identiteit wordt gecontroleerd, maar de politie hoeft je niet te overtuigen van hun redenen. Dit is algemene informatie; uitzonderingen zijn mogelijk – vraag deskundig advies voor je eigen situatie.`
     },
     {
@@ -178,7 +166,6 @@ Disclaimer: Je mag vragen waarom je identiteit wordt gecontroleerd, maar de poli
 
 Ja, je bent verplicht mee te werken aan een algemene verkeerscontrole. De politie mag je rijbewijs, kentekenbewijs, identiteitsbewijs en de technische staat van je voertuig controleren, net als alcohol- of drugsgebruik.
 
----
 
 ## Uitgebreide uitleg
 
@@ -224,7 +211,6 @@ Als één van deze zaken niet in orde is, kan de politie een waarschuwing geven 
 
 Je rijdt op een vrijdagmiddag richting huis en ziet een politiecontrole bij een afrit. Je wordt naar een controleplek geleid. Een agent vraagt je rijbewijs, kentekenbewijs en ID-kaart. Daarna controleert hij je banden, verlichting en vraagt of je claxon werkt. Hij kijkt naar de gordels, de spiegels en merkt op dat het rubber op je rempedaal glad is. Tot slot moet je een blaastest doen. Alles wat hier gebeurt is wettelijk toegestaan – je bent verplicht om hieraan mee te werken.
 
----
 
 ## Rechten & plichten van de burger
 
@@ -237,7 +223,6 @@ Je rijdt op een vrijdagmiddag richting huis en ziet een politiecontrole bij een 
   * Je mag vragen waarom je wordt gecontroleerd, maar de politie hoeft geen specifieke verdenking te hebben.
   * Je mag achteraf een klacht indienen als je vindt dat de controle niet correct is verlopen.
 
----
 
 ## Wat kun je doen?
 
@@ -247,7 +232,6 @@ Als je twijfelt aan de controle of je voelt je onjuist behandeld, kun je:
 * Juridisch advies inwinnen via het Juridisch Loket, een advocaat of je rechtsbijstand.
 * Bezwaar maken tegen een boete bij de officier van justitie (zie instructies op de boetebrief).
 
----
 
 ## Gerelateerde regelgeving
 
@@ -256,13 +240,11 @@ Als je twijfelt aan de controle of je voelt je onjuist behandeld, kun je:
 * Besluit alcohol, drugs en geneesmiddelen in het verkeer – Regels voor testmethodes.
 * Besluit administratieve bepalingen inzake het wegverkeer (BABW) – Inrichting van verkeerscontroles.
 
----
 
 ## Belangrijke rechtspraak en beleid
 
 * Hoge Raad 19 december 1995, NJ 1996, 249 (verkeerscontrole-arrest) – De Hoge Raad oordeelde dat verkeerscontroles zonder verdenking zijn toegestaan, mits duidelijk herkenbaar en binnen de wettelijke kaders.
 
----
 
 Laatst gecheckt: 28 juni 2025  
 Disclaimer: Dit is algemene informatie; uitzonderingen zijn mogelijk – vraag deskundig advies voor je eigen situatie.`
@@ -284,7 +266,6 @@ Disclaimer: Dit is algemene informatie; uitzonderingen zijn mogelijk – vraag d
 
 Ja, dat mag. De wet staat het toe dat de politie zonder zwaailicht en sirene van verkeersregels afwijkt als dat noodzakelijk is voor het uitvoeren van hun taak.
 
----
 
 ## Uitgebreide uitleg
 
@@ -320,7 +301,6 @@ Een politiebusje rijdt zonder zwaailicht of sirene door rood. In het voertuig zi
 
 In deze situatie mogen zij door rood rijden zonder signalen, omdat de inzet spoedeisend is en onopvallend moet blijven.
 
----
 
 ## Rechten & plichten van de burger
 
@@ -330,7 +310,6 @@ In deze situatie mogen zij door rood rijden zonder signalen, omdat de inzet spoe
 * Plichten:
   * Je hebt de plicht om geen hinder te veroorzaken bij het uitvoeren van een politie-inzet, ook als die onopvallend is (gebaseerd op artikel 5 Wegenverkeerswet 1994).
 
----
 
 ## Wat kun je doen?
 
@@ -342,7 +321,6 @@ Dien een klacht in via politie.nl > 'Klacht indienen'.
 
 Je kunt het ook melden bij de Nationale Ombudsman als je klacht niet serieus genomen wordt.
 
----
 
 ## Gerelateerde regelgeving
 
@@ -350,13 +328,11 @@ Je kunt het ook melden bij de Nationale Ombudsman als je klacht niet serieus gen
 * Artikel 29 RVV 1990 – Regelt de algemene plicht voor zwaailicht en sirene bij hulpdiensten (maar artikel 91 gaat hier dus boven).
 * Besluit optische en geluidssignalen 2009 – Geeft aan welke voertuigen signalen mogen gebruiken en wanneer.
 
----
 
 ## Belangrijke rechtspraak
 
 * ECLI:NL:HR:2009:BH4266 – Bevestigt dat politie onder voorwaarden verkeersregels mag negeren, mits noodzakelijk en met zorgvuldigheid.
 
----
 
 Laatst gecheckt: 28 juni 2025  
 Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
@@ -376,90 +352,76 @@ Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig adv
       featured: true,
       content: `## Kort antwoord
 
-Ja, een agent mag **zonder machtiging** een terrein betreden dat **geen woning is**, bijvoorbeeld een tuin, schuur of garage, **om bewijs veilig te stellen of onderzoek te doen**. Gaat het echter om een **besloten erf dat als woning geldt**, dan is **wél een machtiging tot binnentreden nodig**, behalve bij spoed of heterdaad.
-
----
+Ja, een agent mag zonder machtiging een terrein betreden dat geen woning is, bijvoorbeeld een tuin, schuur of garage, om bewijs veilig te stellen of onderzoek te doen. Gaat het echter om een besloten erf dat als woning geldt, dan is wél een machtiging tot binnentreden nodig, behalve bij spoed of heterdaad.
 
 ## Uitgebreide uitleg
 
 ### Wat zegt de wet?
 
-Een **woning** is extra beschermd in de wet. Maar veel andere plekken – zoals een tuin, schuurtje, bedrijfshal of auto – **vallen daar niet standaard onder**. Voor het betreden van die plekken geldt dus **een lagere drempel**.
+Een woning is extra beschermd in de wet. Maar veel andere plekken – zoals een tuin, schuurtje, bedrijfshal of auto – vallen daar niet standaard onder. Voor het betreden van die plekken geldt dus een lagere drempel.
 
 De politie mag deze plekken betreden in het kader van hun taken, zoals:
 
-* **Aanhouding van een verdachte**
-* **Inbeslagname van voorwerpen**
-* **Doorzoeking in het belang van een onderzoek**
+* Aanhouding van een verdachte
+* Inbeslagname van voorwerpen
+* Doorzoeking in het belang van een onderzoek
 
 ### Maar let op: "woning" wordt breed geïnterpreteerd
 
-Volgens de **Algemene wet op het binnentreden (Awbi)** kan een **besloten erf of bijgebouw** óók een 'woning' zijn, als het gebruikt wordt als privéruimte. Denk aan:
+Volgens de Algemene wet op het binnentreden (Awbi) kan een besloten erf of bijgebouw óók een 'woning' zijn, als het gebruikt wordt als privéruimte. Denk aan:
 
-* Een **ommuurde achtertuin** waar mensen vaak zitten
-* Een **tuinhuisje** dat als logeerkamer wordt gebruikt
-* Een **garage** die direct toegang geeft tot een huis
+* Een ommuurde achtertuin waar mensen vaak zitten
+* Een tuinhuisje dat als logeerkamer wordt gebruikt
+* Een garage die direct toegang geeft tot een huis
 
-Daarvoor is dan **toch een machtiging nodig**.
+Daarvoor is dan toch een machtiging nodig.
 
 ### Wettelijke basis
 
-* **Artikel 1 lid 1 sub b Algemene wet op het binnentreden (Awbi)** – definitie van woning, inclusief besloten erven die als woonruimte fungeren.
-* **Artikel 2 Awbi** – machtiging verplicht voor binnentreden van woning.
-* **Artikel 96b Wetboek van Strafvordering (Sv)** – politie mag zonder machtiging plaatsen betreden **die geen woning zijn**, bij ontdekking op heterdaad of verdenking van een strafbaar feit.
-* **Artikel 96c Sv** – doorzoeking ter inbeslagneming in niet-woning mag ook zonder machtiging.
-* **Artikel 55 Sv** – bevoegdheid om voorwerpen in beslag te nemen die voor het onderzoek van belang zijn.
-
----
+* Artikel 1 lid 1 sub b Algemene wet op het binnentreden (Awbi) – definitie van woning, inclusief besloten erven die als woonruimte fungeren.
+* Artikel 2 Awbi – machtiging verplicht voor binnentreden van woning.
+* Artikel 96b Wetboek van Strafvordering (Sv) – politie mag zonder machtiging plaatsen betreden die geen woning zijn, bij ontdekking op heterdaad of verdenking van een strafbaar feit.
+* Artikel 96c Sv – doorzoeking ter inbeslagneming in niet-woning mag ook zonder machtiging.
+* Artikel 55 Sv – bevoegdheid om voorwerpen in beslag te nemen die voor het onderzoek van belang zijn.
 
 ## Praktijkvoorbeeld
 
 Stel: de politie verdenkt iemand van hennepteelt. Ze ruiken vanaf de straat een sterke geur.
 
-De **voortuin is open**, dus daar mogen ze gewoon in.
+De voortuin is open, dus daar mogen ze gewoon in.
 
-In de **achtertuin staat een afgesloten schuur**.
+In de achtertuin staat een afgesloten schuur.
 
-Als die schuur niet als woning wordt gebruikt, mogen ze daar zonder machtiging in – **mits er sprake is van verdenking**.
+Als die schuur niet als woning wordt gebruikt, mogen ze daar zonder machtiging in – mits er sprake is van verdenking.
 
-Is die schuur echter ingericht als slaapkamer of woonkamer? Dan **is het een woning** en is er **een machtiging tot binnentreden nodig**.
-
----
+Is die schuur echter ingericht als slaapkamer of woonkamer? Dan is het een woning en is er een machtiging tot binnentreden nodig.
 
 ## Rechten & plichten van de burger
 
-* **Je mag vragen op basis waarvan de politie binnentreedt** (Artikel 9 Awbi).
-* **Je hebt geen toestemming nodig te geven** als er een geldige reden is voor binnentreden zonder machtiging (Artikel 96b Sv).
-* **Je bent verplicht toegang te geven** bij een geldige machtiging of wettige bevoegdheid.
-* **Je hebt recht op een bewijs van binnentreden** (bijvoorbeeld een formulier of uitleg achteraf).
-
----
+* Je mag vragen op basis waarvan de politie binnentreedt (Artikel 9 Awbi).
+* Je hebt geen toestemming nodig te geven als er een geldige reden is voor binnentreden zonder machtiging (Artikel 96b Sv).
+* Je bent verplicht toegang te geven bij een geldige machtiging of wettige bevoegdheid.
+* Je hebt recht op een bewijs van binnentreden (bijvoorbeeld een formulier of uitleg achteraf).
 
 ## Wat kun je doen?
 
-* **Vraag altijd** of je met een woning of niet-woning te maken hebt.
-* Twijfel je of binnentreden rechtmatig was? Dien dan een **klacht in bij de politie** of de **Nationale Ombudsman**.
-* Bij schade of onrechtmatige inbeslagname kun je naar een **advocaat of het Juridisch Loket** stappen.
-* Vraag eventueel om **inzage in het proces-verbaal van binnentreden**.
-
----
+* Vraag altijd of je met een woning of niet-woning te maken hebt.
+* Twijfel je of binnentreden rechtmatig was? Dien dan een klacht in bij de politie of de Nationale Ombudsman.
+* Bij schade of onrechtmatige inbeslagname kun je naar een advocaat of het Juridisch Loket stappen.
+* Vraag eventueel om inzage in het proces-verbaal van binnentreden.
 
 ## Gerelateerde regelgeving
 
-* **Algemene wet op het binnentreden (Awbi)** – regels over machtigingen en woningbegrip.
-* **Wetboek van Strafvordering artikelen 96b t/m 96g** – bevoegdheden voor inbeslagname en betreden niet-woningen.
-* **Politiewet 2012 artikel 3** – taakomschrijving politie (waaronder opsporing en handhaving).
-
----
+* Algemene wet op het binnentreden (Awbi) – regels over machtigingen en woningbegrip.
+* Wetboek van Strafvordering artikelen 96b t/m 96g – bevoegdheden voor inbeslagname en betreden niet-woningen.
+* Politiewet 2012 artikel 3 – taakomschrijving politie (waaronder opsporing en handhaving).
 
 ## Belangrijke rechtspraak
 
-* **HR 10-11-2009, ECLI:NL:HR:2009:BI7099** – schuur op erf werd aangemerkt als woning, binnentreden zonder machtiging was onrechtmatig.
-* **HR 27-10-2015, ECLI:NL:HR:2015:3122** – doorzoeking bedrijfspand zonder machtiging was toegestaan.
+* HR 10-11-2009, ECLI:NL:HR:2009:BI7099 – schuur op erf werd aangemerkt als woning, binnentreden zonder machtiging was onrechtmatig.
+* HR 27-10-2015, ECLI:NL:HR:2015:3122 – doorzoeking bedrijfspand zonder machtiging was toegestaan.
 
----
-
-Laatst gecheckt: 28 juni 2025  
+Laatst gecheckt: 28 juni 2025
 Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
     },
     {
@@ -479,26 +441,23 @@ Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig adv
 
 Ja, de politie is verplicht om jouw aangifte op te nemen als je slachtoffer of getuige bent van een strafbaar feit. Dat staat in artikel 163 lid 1 van het Wetboek van Strafvordering.
 
----
 
 ## Uitgebreide uitleg
 
 ### Wat zegt de wet?
 
-Volgens **artikel 163 lid 1 Wetboek van Strafvordering** is de politie verplicht om proces-verbaal op te maken als iemand melding doet van een strafbaar feit. Dit betekent dat zij jouw aangifte niet zomaar mogen weigeren.
+Volgens artikel 163 lid 1 Wetboek van Strafvordering is de politie verplicht om proces-verbaal op te maken als iemand melding doet van een strafbaar feit. Dit betekent dat zij jouw aangifte niet zomaar mogen weigeren.
 
-> **Artikel 163 lid 1 Wetboek van Strafvordering:**
+> Artikel 163 lid 1 Wetboek van Strafvordering:
 > "Iedereen die kennis draagt van een strafbaar feit kan daarvan aangifte doen. Ambtenaren van politie zijn verplicht tot het opmaken van proces-verbaal."
 
-Let op: dit geldt voor **strafbare feiten**. Bij civiele zaken (zoals burenruzies of contractproblemen) is dit niet van toepassing.
+Let op: dit geldt voor strafbare feiten. Bij civiele zaken (zoals burenruzies of contractproblemen) is dit niet van toepassing.
 
----
 
 ### Wat betekent dit in de praktijk?
 
-Als jij naar het politiebureau gaat, of via internet aangifte wilt doen, moet de politie jouw aangifte aannemen als je iets strafbaars meldt. Ze mogen jou niet wegsturen met de mededeling "dit is geen prioriteit" of "we doen er toch niks mee". De beoordeling of het strafbaar is, mag pas **na** de aangifte volgen, niet ervoor.
+Als jij naar het politiebureau gaat, of via internet aangifte wilt doen, moet de politie jouw aangifte aannemen als je iets strafbaars meldt. Ze mogen jou niet wegsturen met de mededeling "dit is geen prioriteit" of "we doen er toch niks mee". De beoordeling of het strafbaar is, mag pas na de aangifte volgen, niet ervoor.
 
----
 
 ### Praktijkvoorbeeld
 
@@ -506,47 +465,42 @@ Je fiets wordt gestolen bij het station. Je loopt naar het politiebureau om aang
 
 Dat mag dus niet. Jij hebt recht op het doen van aangifte, en de politie is verplicht dit op te nemen – óók als ze er op dat moment weinig mee kunnen.
 
----
 
 ## Rechten & plichten van de burger
 
-**Bron:** Wetboek van Strafvordering artikel 163
+Bron: Wetboek van Strafvordering artikel 163
 
-* ✅ Je hebt **het recht om aangifte te doen** van een strafbaar feit.
-* ✅ De politie heeft **de plicht om je aangifte op te nemen**.
-* ❌ De politie mag **niet weigeren** omdat iets "te klein" of "geen prioriteit" zou zijn.
-* ✅ Je mag vragen om een **afschrift van je aangifte** (artikel 163 lid 5 Wetboek van Strafvordering).
+* ✅ Je hebt het recht om aangifte te doen van een strafbaar feit.
+* ✅ De politie heeft de plicht om je aangifte op te nemen.
+* ❌ De politie mag niet weigeren omdat iets "te klein" of "geen prioriteit" zou zijn.
+* ✅ Je mag vragen om een afschrift van je aangifte (artikel 163 lid 5 Wetboek van Strafvordering).
 
----
 
 ## Wat kun je doen?
 
 Als de politie weigert jouw aangifte op te nemen:
 
-1. **Vraag beleefd om de reden** van weigering – leg uit dat jij recht hebt op het doen van aangifte.
-2. **Noteer naam en nummer** van de agent en meld het bij een leidinggevende.
-3. **Dien een klacht in** via [www.politie.nl/klacht](https://www.politie.nl/klacht).
-4. **Neem contact op met het Juridisch Loket** voor advies.
-5. Je kunt ook **aangifte doen via internet** bij eenvoudige zaken: [www.politie.nl/aangifte](https://www.politie.nl/aangifte)
+1. Vraag beleefd om de reden van weigering – leg uit dat jij recht hebt op het doen van aangifte.
+2. Noteer naam en nummer van de agent en meld het bij een leidinggevende.
+3. Dien een klacht in via www.politie.nl/klacht.
+4. Neem contact op met het Juridisch Loket voor advies.
+5. Je kunt ook aangifte doen via internet bij eenvoudige zaken: www.politie.nl/aangifte
 
----
 
 ## Gerelateerde regelgeving
 
-* **Artikel 163 Wetboek van Strafvordering** – aangifteplicht politie
-* **Artikel 164 Wetboek van Strafvordering** – opmaken proces-verbaal
-* **Politiewet 2012 artikel 3** – taak van de politie (waaronder opsporing)
-* **Wet politiegegevens artikel 8** – registratie van aangiften en klachten
+* Artikel 163 Wetboek van Strafvordering – aangifteplicht politie
+* Artikel 164 Wetboek van Strafvordering – opmaken proces-verbaal
+* Politiewet 2012 artikel 3 – taak van de politie (waaronder opsporing)
+* Wet politiegegevens artikel 8 – registratie van aangiften en klachten
 
----
 
 ## Belangrijke rechtspraak of beleidsdocumenten
 
-1. **Kamerbrief over aangifteweigering (2019)** – Minister van Justitie bevestigt: *aangifte mag niet geweigerd worden zonder juridische reden.*
-2. **Inspectie Justitie en Veiligheid (2015)** – signaleert dat sommige politie-eenheden onterecht aangiftes weigeren.
-3. **Rapport Nationale Ombudsman "Geen aangifte doen is geen optie" (2020)** – bekritiseert het weren van burgers met een legitieme klacht.
+1. Kamerbrief over aangifteweigering (2019) – Minister van Justitie bevestigt: aangifte mag niet geweigerd worden zonder juridische reden.
+2. Inspectie Justitie en Veiligheid (2015) – signaleert dat sommige politie-eenheden onterecht aangiftes weigeren.
+3. Rapport Nationale Ombudsman "Geen aangifte doen is geen optie" (2020) – bekritiseert het weren van burgers met een legitieme klacht.
 
----
 
 Laatst gecheckt: 11 januari 2025  
 Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
@@ -568,33 +522,30 @@ Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig adv
 
 De politie mag je fouilleren als je wordt aangehouden, vervoerd of ingesloten, maar dit moet wel passen binnen de wet. Er zijn verschillende soorten fouilleringen met elk hun eigen regels en voorwaarden.
 
----
 
 ## Uitgebreide uitleg: soorten fouillering en wanneer het mag
 
 Fouilleren is een inbreuk op jouw privacy en lichamelijke integriteit, dus mag alleen als de wet het toestaat. Er zijn verschillende vormen van fouillering, afhankelijk van de situatie. Hieronder leggen we ze uit, inclusief wat geldt bij vervoer (transport) en insluiting op het politiebureau.
 
----
 
-### 1. **Veiligheidsfouillering – bij dreiging van gevaar**
+### 1. Veiligheidsfouillering – bij dreiging van gevaar
 
 De politie mag je fouilleren als zij denken dat je een wapen of gevaarlijk voorwerp bij je hebt.
 
 * Dit mag zonder dat je bent aangehouden.
-* Alleen bij een **concrete aanleiding**, bijvoorbeeld als je dreigend gedrag vertoont.
-* **Alleen over de kleding heen**, tenzij er meer aanleiding is.
+* Alleen bij een concrete aanleiding, bijvoorbeeld als je dreigend gedrag vertoont.
+* Alleen over de kleding heen, tenzij er meer aanleiding is.
 
 📘 *artikel 7 lid 3 Politiewet 2012*
 
----
 
-### 2. **Fouillering na aanhouding – op zoek naar bewijs of gevaarlijke voorwerpen**
+### 2. Fouillering na aanhouding – op zoek naar bewijs of gevaarlijke voorwerpen
 
 Ben je aangehouden? Dan mag de politie je fouilleren om:
 
-* **bewijsmateriaal** te vinden,
-* te voorkomen dat je **iets wegmaakt**,
-* of om **gevaarlijke spullen** weg te nemen.
+* bewijsmateriaal te vinden,
+* te voorkomen dat je iets wegmaakt,
+* of om gevaarlijke spullen weg te nemen.
 
 Let op: dit is uitgebreider dan een veiligheidsfouillering.
 
@@ -603,13 +554,12 @@ Let op: dit is uitgebreider dan een veiligheidsfouillering.
 
 📘 *artikel 56 lid 4 Wetboek van Strafvordering*
 
----
 
-### 3. **Insluitingsfouillering – bij opsluiting op het bureau**
+### 3. Insluitingsfouillering – bij opsluiting op het bureau
 
-Word je ingesloten op het politiebureau (in een cel)? Dan volgt vaak een **insluitingsfouillering**.
+Word je ingesloten op het politiebureau (in een cel)? Dan volgt vaak een insluitingsfouillering.
 
-* Deze mag **standaard** worden uitgevoerd bij insluiting.
+* Deze mag standaard worden uitgevoerd bij insluiting.
 * Doel: veiligheid van jou, agenten en anderen in de cel.
 * Hierbij mogen ook persoonlijke spullen worden ingenomen (zoals riemen, veters, sieraden).
 
@@ -618,80 +568,72 @@ Bij verder onderzoek gelden zwaardere regels (zie punt 5).
 
 📘 *Gebaseerd op praktijk en interne richtlijnen politie, steunend op artikel 9 lid 1 Politiewet 2012*
 
----
 
-### 4. **Transportfouillering – vóór vervoer naar cel of rechtbank**
+### 4. Transportfouillering – vóór vervoer naar cel of rechtbank
 
-Word je vervoerd door de politie (bijvoorbeeld van bureau naar rechtbank of cellencomplex)? Dan mag een **transportfouillering** worden uitgevoerd.
+Word je vervoerd door de politie (bijvoorbeeld van bureau naar rechtbank of cellencomplex)? Dan mag een transportfouillering worden uitgevoerd.
 
 * Dit is bedoeld om te voorkomen dat je wapens, drugs of andere verboden voorwerpen meeneemt.
-* Deze mag **voor en na transport** worden gedaan.
+* Deze mag voor en na transport worden gedaan.
 
 De wet noemt dit niet letterlijk, maar de bevoegdheid komt voort uit het belang van veiligheid tijdens vervoer.
 
 📘 *Afgeleid van artikel 9 lid 1 Politiewet 2012 (taakuitvoering) en jurisprudentie*
 
----
 
-### 5. **Lichamelijk onderzoek – verder dan kleding, zoals lichaamsholtes**
+### 5. Lichamelijk onderzoek – verder dan kleding, zoals lichaamsholtes
 
 Soms is er aanleiding om dieper te fouilleren: ondergoed, lichaamsholtes of medische onderzoeken.
 
-* Hiervoor is **altijd toestemming nodig** van een **officier van justitie** of **rechter-commissaris**.
+* Hiervoor is altijd toestemming nodig van een officier van justitie of rechter-commissaris.
 * Dit gebeurt vaak in het bijzijn van een arts of medisch deskundige.
-* Het mag **alleen als het echt nodig is** voor bewijs of veiligheid.
+* Het mag alleen als het echt nodig is voor bewijs of veiligheid.
 
 📘 *artikel 61a en 62 Wetboek van Strafvordering*
 
----
 
 ## Praktijkvoorbeeld
 
-Een persoon wordt aangehouden wegens het dragen van een mes. De agenten doen een veiligheidsfouillering op straat. Daarna volgt bij aankomst op het bureau een **insluitingsfouillering** om te controleren of de persoon geen andere wapens bij zich draagt. Voor het transport naar de rechtbank gebeurt een korte **transportfouillering**, opnieuw om de veiligheid te waarborgen. Als er een vermoeden is dat de persoon drugs heeft ingeslikt, moet de politie eerst toestemming vragen voor een **lichamelijk onderzoek** door een arts.
+Een persoon wordt aangehouden wegens het dragen van een mes. De agenten doen een veiligheidsfouillering op straat. Daarna volgt bij aankomst op het bureau een insluitingsfouillering om te controleren of de persoon geen andere wapens bij zich draagt. Voor het transport naar de rechtbank gebeurt een korte transportfouillering, opnieuw om de veiligheid te waarborgen. Als er een vermoeden is dat de persoon drugs heeft ingeslikt, moet de politie eerst toestemming vragen voor een lichamelijk onderzoek door een arts.
 
----
 
 ## Rechten & plichten van de burger
 
-**Bron:** Politiewet 2012, Wetboek van Strafvordering
+Bron: Politiewet 2012, Wetboek van Strafvordering
 
-* ✅ Je **moet meewerken** aan een rechtmatige fouillering.
-* ✅ Je mag **vragen naar de reden** van de fouillering.
-* ❌ Je mag je **niet verzetten**, ook niet als je het er niet mee eens bent.
-* ✅ Je mag **een klacht indienen** als je vindt dat het onterecht of onzorgvuldig is gedaan.
-* ✅ Je hebt recht op een **behoorlijke behandeling**, zeker bij lichamelijk onderzoek.
+* ✅ Je moet meewerken aan een rechtmatige fouillering.
+* ✅ Je mag vragen naar de reden van de fouillering.
+* ❌ Je mag je niet verzetten, ook niet als je het er niet mee eens bent.
+* ✅ Je mag een klacht indienen als je vindt dat het onterecht of onzorgvuldig is gedaan.
+* ✅ Je hebt recht op een behoorlijke behandeling, zeker bij lichamelijk onderzoek.
 
----
 
 ## Wat kun je doen?
 
-* Vraag **waarom** je gefouilleerd wordt en **op basis van welke wet**.
-* Noteer indien mogelijk de **naam of het nummer van de agent**.
+* Vraag waarom je gefouilleerd wordt en op basis van welke wet.
+* Noteer indien mogelijk de naam of het nummer van de agent.
 * Word je dieper onderzocht? Vraag dan wie de toestemming heeft gegeven.
 * Klacht indienen:
-  * bij de **politie** zelf,
-  * of bij de **Nationale Ombudsman**.
-* Overweeg advies van het **Juridisch Loket** of een advocaat.
+  * bij de politie zelf,
+  * of bij de Nationale Ombudsman.
+* Overweeg advies van het Juridisch Loket of een advocaat.
 
----
 
 ## Gerelateerde regelgeving
 
-* **artikel 7 lid 3 Politiewet 2012** – Veiligheidsfouillering bij dreiging
-* **artikel 9 lid 1 Politiewet 2012** – Bevoegdheid uitvoering politietaak (o.a. transport)
-* **artikel 151b Gemeentewet** – Preventief fouilleren in risicogebied
-* **artikel 56 lid 4 Wetboek van Strafvordering** – Fouillering na aanhouding
-* **artikel 61a en 62 Wetboek van Strafvordering** – Lichamelijk onderzoek
+* artikel 7 lid 3 Politiewet 2012 – Veiligheidsfouillering bij dreiging
+* artikel 9 lid 1 Politiewet 2012 – Bevoegdheid uitvoering politietaak (o.a. transport)
+* artikel 151b Gemeentewet – Preventief fouilleren in risicogebied
+* artikel 56 lid 4 Wetboek van Strafvordering – Fouillering na aanhouding
+* artikel 61a en 62 Wetboek van Strafvordering – Lichamelijk onderzoek
 
----
 
 ## Belangrijke rechtspraak en documenten
 
-* **ECLI:NL:HR:2008:BC7947** – Hoge Raad stelt: er moet altijd sprake zijn van concrete aanleiding bij veiligheidsfouillering.
-* **Richtlijn Insluiting Politie (Landelijke Politie)** – Interne procedure voor fouillering bij insluiting.
-* **Handleiding Strafvordering 2024** – Geeft richtlijnen voor fouilleren bij vervoer en insluiting.
+* ECLI:NL:HR:2008:BC7947 – Hoge Raad stelt: er moet altijd sprake zijn van concrete aanleiding bij veiligheidsfouillering.
+* Richtlijn Insluiting Politie (Landelijke Politie) – Interne procedure voor fouillering bij insluiting.
+* Handleiding Strafvordering 2024 – Geeft richtlijnen voor fouilleren bij vervoer en insluiting.
 
----
 
 Laatst gecheckt: 11 januari 2025  
 Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
@@ -713,7 +655,6 @@ Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig adv
 
 De politie mag jouw auto alleen doorzoeken als daar een wettelijke reden voor is, zoals een verdenking van een strafbaar feit, direct gevaar of binnen een veiligheidsrisicogebied. Je mag toestemming weigeren, maar dat betekent niet dat de politie dan moet stoppen – in veel gevallen mogen ze tóch zoeken, ook zonder jouw instemming.
 
----
 
 ## Uitgebreide uitleg
 
@@ -721,7 +662,6 @@ De politie mag jouw auto alleen doorzoeken als daar een wettelijke reden voor is
 
 Een auto valt onder jouw persoonlijke levenssfeer, dus daar mag de politie niet zomaar in zoeken. Toch zijn er situaties waarin dat wél mag. Soms is jouw toestemming nodig, soms juist niet. Hieronder zie je de 5 belangrijkste situaties waarin de politie je auto mag doorzoeken.
 
----
 
 ### 1. Bij verdenking van een strafbaar feit
 
@@ -757,7 +697,6 @@ Als er sprake is van acuut gevaar – bijvoorbeeld een melding over een vuurwape
 
 👉 Ze mogen de auto dan zonder toestemming doorzoeken, om dreigend gevaar weg te nemen. Dit valt onder hun algemene taak tot handhaving van de veiligheid.
 
----
 
 ## Exacte wetsartikelen
 
@@ -768,13 +707,11 @@ Als er sprake is van acuut gevaar – bijvoorbeeld een melding over een vuurwape
 * artikel 160 Wegenverkeerswet 1994 – Verkeerscontrole
 * artikel 3 Politiewet 2012 – Optreden bij acuut gevaar of dreiging
 
----
 
 ## Praktijkvoorbeeld
 
 Je rijdt op de snelweg en wordt aangehouden voor een verkeerscontrole. Terwijl je je rijbewijs geeft, ruikt de agent een sterke wietlucht. Je weigert toestemming voor doorzoeking. Omdat er sprake is van een concreet vermoeden van een strafbaar feit, mag de politie tóch zoeken op basis van artikel 96b Sv – jouw weigering verandert daar niets aan. Fysiek verzet is dan strafbaar.
 
----
 
 ## Rechten & plichten van de burger
 
@@ -787,7 +724,6 @@ Je rijdt op de snelweg en wordt aangehouden voor een verkeerscontrole. Terwijl j
 * Plichten:
   * Je mag je niet fysiek verzetten als de politie wél bevoegd is
 
----
 
 ## Wat kun je doen?
 
@@ -797,7 +733,6 @@ Je rijdt op de snelweg en wordt aangehouden voor een verkeerscontrole. Terwijl j
 * Dien eventueel een klacht in bij de politie of Nationale Ombudsman
 * Neem contact op met een advocaat als er spullen in beslag zijn genomen
 
----
 
 ## Gerelateerde regelgeving
 
@@ -808,7 +743,6 @@ Je rijdt op de snelweg en wordt aangehouden voor een verkeerscontrole. Terwijl j
 * Wet op de economische delicten – Bijvoorbeeld bij illegaal vuurwerk of verboden handel
 * Vuurwerkbesluit – Doorzoeking bij verdenking van verboden vuurwerk
 
----
 
 ## Belangrijke rechtspraak en beleid
 
@@ -816,7 +750,6 @@ Je rijdt op de snelweg en wordt aangehouden voor een verkeerscontrole. Terwijl j
 * HR 18-02-2020, ECLI:NL:HR:2020:276 – Alleen bij concrete aanwijzingen mag auto worden onderzocht
 * Aanwijzing Opsporingsbevoegdheden (OM) – Interne richtlijnen over inzet bevoegdheden zoals doorzoeking
 
----
 
 Laatst gecheckt: 28 juni 2025  
 Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
@@ -838,7 +771,6 @@ Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig adv
 
 Ja, je bent verplicht om direct te stoppen als een politieagent jou een stopteken geeft. Negeer je dit, dan pleeg je een strafbaar feit en kan dit leiden tot vervolging of gevaarlijke situaties.
 
----
 
 ## Uitgebreide uitleg
 
@@ -854,7 +786,6 @@ Je moet altijd stoppen als:
 
 Let op: je moet ook altijd stoppen als een verkeersregelaar of ander bevoegd persoon je een stopteken geeft. Dit is wettelijk gelijkgesteld aan een politiebevel.
 
----
 
 ### Wettelijke basis
 
@@ -864,13 +795,11 @@ De verplichting om te stoppen staat in:
 * artikel 160 lid 5 Wegenverkeerswet 1994 – je moet aanwijzingen van een politieambtenaar opvolgen.
 * artikel 82 Reglement verkeersregels en verkeerstekens 1990 (RVV 1990) – regelt dat een bevoegd persoon (zoals politie of verkeersregelaar) een stopteken mag geven.
 
----
 
 ### Praktijkvoorbeeld
 
 Een agent in uniform staat langs de weg en steekt zijn arm op naar een automobilist om hem te laten stoppen voor een verkeerscontrole. De bestuurder ziet het teken, maar rijdt door. De agent noteert het kenteken en houdt de bestuurder later alsnog staande. De automobilist heeft zich in deze situatie schuldig gemaakt aan het negeren van een wettelijk bevel.
 
----
 
 ## Plichten van de burger
 
@@ -883,7 +812,6 @@ Je bent wettelijk verplicht om:
 * Medewerking te verlenen aan controle, bijvoorbeeld het tonen van rijbewijs of kentekenbewijs  
   *(Artikel 160 lid 1 Wegenverkeerswet 1994)*
 
----
 
 ## Wat kun je doen?
 
@@ -895,7 +823,6 @@ Je bent wettelijk verplicht om:
   * Een melding doen bij de Nationale Ombudsman
   * Juridisch advies vragen via een advocaat, vooral als je een proces-verbaal hebt ontvangen.
 
----
 
 ## Gerelateerde regelgeving
 
@@ -903,14 +830,12 @@ Je bent wettelijk verplicht om:
 * artikel 84 RVV 1990 – regels over opvolgen van aanwijzingen van bevoegde personen.
 * Reglement voertuigen – technische eisen die kunnen worden gecontroleerd bij staandehouding.
 
----
 
 ## Belangrijke rechtspraak of beleid
 
 * HR 13-06-2000, ECLI:NL:HR:2000:AA6086 – bevestigt dat het negeren van een stopteken strafbaar is.
 * Landelijk verkeershandhavingsbeleid – benadrukt dat het opvolgen van politieaanwijzingen actief wordt gecontroleerd.
 
----
 
 Laatst gecheckt: 28 juni 2025  
 Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`

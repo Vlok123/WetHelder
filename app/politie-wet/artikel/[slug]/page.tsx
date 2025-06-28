@@ -28,7 +28,8 @@ const legacySampleArticles = {
     lastUpdated: '2025-01-15',
     views: 2847,
     tags: ['fouilleren', 'veiligheidsfouillering', 'preventief'],
-    content: `**Kort antwoord**  
+    content: `## Kort antwoord
+
 Nee, fouilleren op straat mag alleen onder specifieke voorwaarden. De politie heeft een wettelijke grondslag nodig en moet kunnen uitleggen waarom zij jou willen fouilleren.
 
 ## Wanneer is fouilleren toegestaan?
@@ -61,16 +62,16 @@ De politie moet je vertellen:
 - Wat zij zoeken
 
 ### Jouw wettelijke rechten
-- **Vraag naar de reden:** Je mag altijd vragen waarom je gefouilleerd wordt
-- **Vraag om identificatie:** De agent moet zich legitimeren als je daarom vraagt  
-- **Recht op respect:** De fouillering moet respectvol gebeuren
-- **Geslacht:** Zo mogelijk door agent van hetzelfde geslacht (behalve bij spoed)
-- **Locatie:** Bij voorkeur niet in het openbaar, tenzij dit niet anders kan
+- Vraag naar de reden: Je mag altijd vragen waarom je gefouilleerd wordt
+- Vraag om identificatie: De agent moet zich legitimeren als je daarom vraagt  
+- Recht op respect: De fouillering moet respectvol gebeuren
+- Geslacht: Zo mogelijk door agent van hetzelfde geslacht (behalve bij spoed)
+- Locatie: Bij voorkeur niet in het openbaar, tenzij dit niet anders kan
 
 ### Mag je weigeren?
-- **Veiligheidsfouillering:** Nee, als er een wettelijke grondslag is
-- **Preventief fouilleren:** Nee, in aangewezen gebieden
-- **Zonder grondslag:** Ja, je mag vragen naar de wettelijke basis
+- Veiligheidsfouillering: Nee, als er een wettelijke grondslag is
+- Preventief fouilleren: Nee, in aangewezen gebieden
+- Zonder grondslag: Ja, je mag vragen naar de wettelijke basis
 
 ## Wat mag de politie tijdens fouillering?
 
@@ -95,23 +96,19 @@ De politie moet je vertellen:
 - Protesteer niet fysiek, dit kan leiden tot aanhouding
 
 ### Na de fouillering
-- **Klacht indienen:** Bij de politie zelf of bij de Nationale ombudsman
-- **Advocaat:** Bij ernstige problemen kun je juridische bijstand zoeken
-- **Getuigen:** Vraag contactgegevens van eventuele getuigen
-
----
+- Klacht indienen: Bij de politie zelf of bij de Nationale ombudsman
+- Advocaat: Bij ernstige problemen kun je juridische bijstand zoeken
+- Getuigen: Vraag contactgegevens van eventuele getuigen
 
 ## Samenvatting
 
-- **Politie moet duidelijke reden hebben** voor fouillering
-- **Burger mag vragen naar grondslag** en uitleg
-- **Respectvolle behandeling** is verplicht
-- **Klachtrecht** bestaat altijd bij onrechtmatige fouillering
+- Politie moet duidelijke reden hebben voor fouillering
+- Burger mag vragen naar grondslag en uitleg
+- Respectvolle behandeling is verplicht
+- Klachtrecht bestaat altijd bij onrechtmatige fouillering
 
----
-
-**Heb je een andere situatie?**  
-Iedere situatie is anders. Voor specifiek juridisch advies over jouw situatie kun je contact opnemen via ons [contactformulier](/contact).`
+Heb je een andere situatie?
+Iedere situatie is anders. Voor specifiek juridisch advies over jouw situatie kun je contact opnemen via ons contactformulier.`
   },
   'verkeerscontrole-bevoegdheden': {
     title: 'Wat mag de politie bij een verkeerscontrole?',
@@ -123,27 +120,28 @@ Iedere situatie is anders. Voor specifiek juridisch advies over jouw situatie ku
     lastUpdated: '2025-01-12',
     views: 1654,
     tags: ['verkeerscontrole', 'stopteken', 'doorzoeken'],
-    content: `**Kort antwoord**  
+    content: `## Kort antwoord
+
 De politie heeft uitgebreide bevoegdheden bij verkeerscontroles, maar deze moeten wel proportioneel zijn en er moet een wettelijke grondslag zijn voor elke handeling.
 
 ## Stopteken geven
 
 ### Wanneer mag de politie je laten stoppen?
-- **Algemene verkeerscontrole:** Altijd toegestaan voor controle rijbewijs, kentekenbewijs en verzekering
-- **Verkeersovertreding:** Bij observatie van verkeersovertredingen
-- **Verdachte situaties:** Bij redelijke vermoedens van strafbare feiten
-- **Grootschalige controles:** Bij verkeersacties en alcohol/drugscontroles
+- Algemene verkeerscontrole: Altijd toegestaan voor controle rijbewijs, kentekenbewijs en verzekering
+- Verkeersovertreding: Bij observatie van verkeersovertredingen
+- Verdachte situaties: Bij redelijke vermoedens van strafbare feiten
+- Grootschalige controles: Bij verkeersacties en alcohol/drugscontroles
 
 ### Moet je altijd stoppen?
-**Ja, altijd.** Het negeren van een stopteken is een strafbaar feit (art. 179 Wegenverkeerswet).
+Ja, altijd. Het negeren van een stopteken is een strafbaar feit (art. 179 Wegenverkeerswet).
 
 ## Documenten controleren
 
 ### Welke documenten mag de politie vragen?
-- **Rijbewijs:** Verplicht bij besturen van motorvoertuigen
-- **Kentekenbewijs:** Moet in het voertuig aanwezig zijn
-- **Verzekeringsbewijs:** Bewijs van WA-verzekering
-- **Identiteitsbewijs:** In bepaalde situaties (identificatieplicht)
+- Rijbewijs: Verplicht bij besturen van motorvoertuigen
+- Kentekenbewijs: Moet in het voertuig aanwezig zijn
+- Verzekeringsbewijs: Bewijs van WA-verzekering
+- Identiteitsbewijs: In bepaalde situaties (identificatieplicht)
 
 ### Wat als je documenten vergeten bent?
 - Je kunt een boete krijgen
@@ -153,14 +151,14 @@ De politie heeft uitgebreide bevoegdheden bij verkeerscontroles, maar deze moete
 ## Alcohol- en drugscontroles
 
 ### Blaastest
-- **Verplichte medewerking:** Je moet meewerken aan een blaastest
-- **Weigering:** Is strafbaar en leidt tot rijontzegging
-- **Positieve uitslag:** Kan leiden tot bloedonderzoek
+- Verplichte medewerking: Je moet meewerken aan een blaastest
+- Weigering: Is strafbaar en leidt tot rijontzegging
+- Positieve uitslag: Kan leiden tot bloedonderzoek
 
 ### Drugstest
-- **Speekseltest:** Politie mag drugstest afnemen
-- **Verplichte medewerking:** Ook hier geldt medewerkingsplicht
-- **Weigering:** Is strafbaar`
+- Speekseltest: Politie mag drugstest afnemen
+- Verplichte medewerking: Ook hier geldt medewerkingsplicht
+- Weigering: Is strafbaar`
   }
 }
 
