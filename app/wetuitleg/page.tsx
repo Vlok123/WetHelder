@@ -791,11 +791,15 @@ function WetUitlegPage() {
     formatted = formatted.replace(/\*\*/g, '')
     
     // Convert markdown links - enhanced to handle various URL formats better
-    formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline hover:no-underline transition-colors">$1</a>')
+    formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">$1</a>')
     
-    // Convert plain URLs to clickable links (http, https, www)
-    formatted = formatted.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline hover:no-underline transition-colors">$1</a>')
-    formatted = formatted.replace(/(www\.[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}[^\s]*)/g, '<a href="https://$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline hover:no-underline transition-colors">$1</a>')
+    // Convert plain URLs to clickable links (http, https, www) - simplified classes
+    formatted = formatted.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">$1</a>')
+    formatted = formatted.replace(/(www\.[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}[^\s]*)/g, '<a href="https://$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">$1</a>')
+    
+    // Fix malformed link text that shows HTML as text
+    formatted = formatted.replace(/LINK:\s*Raadpleeg de officiële tekst van ([^"]+)"\s*target="_blank"\s*rel="noopener noreferrer"\s*class="[^"]*">([^<]+)/g, 
+      'LINK: <a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">Raadpleeg de officiële tekst van $1</a>')
     
     // Convert email addresses to clickable links
     formatted = formatted.replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, '<a href="mailto:$1" class="text-blue-600 hover:text-blue-800 underline hover:no-underline transition-colors">$1</a>')

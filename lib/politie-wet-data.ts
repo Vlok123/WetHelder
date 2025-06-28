@@ -50,7 +50,7 @@ export const politieWetData = {
       description: 'Politiebevoegdheden op de weg, blaastest, stopteken',
       icon: 'Car',
       color: 'bg-orange-100 text-orange-800',
-      articleCount: 2
+      articleCount: 3
     },
     {
       slug: 'opsporing',
@@ -694,6 +694,131 @@ Een persoon wordt aangehouden wegens het dragen van een mes. De agenten doen een
 ---
 
 Laatst gecheckt: 11 januari 2025  
+Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'auto-doorzoeken',
+      title: 'Mag de politie mijn auto doorzoeken?',
+      description: 'Wanneer mag de politie jouw auto doorzoeken en wat zijn je rechten en plichten als automobilist?',
+      category: 'Verkeer',
+      categorySlug: 'verkeer',
+      seoTitle: 'Mag de politie mijn auto doorzoeken?',
+      seoDescription: 'Uitleg over wanneer de politie jouw auto mag doorzoeken: wettelijke basis, situaties, rechten en plichten bij autodoorzoeken.',
+      readTime: '8 min lezen',
+      lastUpdated: '2025-01-11',
+      views: 0,
+      tags: ['autodoorzoeken', 'voertuigdoorzoeking', 'verkeerscontrole', 'strafvordering', 'rechten'],
+      featured: false,
+      content: `## Kort antwoord
+
+De politie mag jouw auto alleen doorzoeken als daar een wettelijke reden voor is, zoals een verdenking van een strafbaar feit, direct gevaar of binnen een veiligheidsrisicogebied. Je mag toestemming weigeren, maar dat betekent niet dat de politie dan moet stoppen – in veel gevallen mogen ze tóch zoeken, ook zonder jouw instemming.
+
+---
+
+## Uitgebreide uitleg
+
+### Mag de politie zomaar je auto doorzoeken?
+
+Een auto valt onder jouw persoonlijke levenssfeer, dus daar mag de politie niet zomaar in zoeken. Toch zijn er situaties waarin dat wél mag. Soms is jouw toestemming nodig, soms juist niet. Hieronder zie je de 5 belangrijkste situaties waarin de politie je auto mag doorzoeken.
+
+---
+
+### 1. Bij verdenking van een strafbaar feit
+
+Als je verdacht wordt van een strafbaar feit, mag de politie je auto onderzoeken op spullen die belangrijk kunnen zijn voor het onderzoek, zoals drugs, wapens of gestolen goederen.
+
+👉 Meestal is hiervoor een bevel van de officier van justitie nodig. Alleen bij spoed mag een hulpofficier van justitie dit zelfstandig beslissen.
+
+💡 Let op: Je mag weigeren toestemming te geven, maar als de politie een geldige wettelijke basis heeft, mogen ze toch doorzoeken. Je mag je hier niet fysiek tegen verzetten.
+
+### 2. Bij preventief fouilleren in een veiligheidsrisicogebied
+
+De burgemeester kan een gebied aanwijzen als veiligheidsrisicogebied als er risico is op geweld of wapenbezit. Dit gebeurt bijvoorbeeld bij voetbalwedstrijden, demonstraties of na geweldsincidenten.
+
+👉 In zo'n gebied mag de politie – op bevel van een (hulp)officier van justitie – mensen preventief fouilleren én voertuigen doorzoeken op wapens. Je hoeft dan geen verdachte te zijn. De bevoegdheid geldt tijdelijk en alleen binnen het aangewezen gebied.
+
+### 3. Bij verkeerscontroles
+
+De politie mag je staande houden voor een reguliere verkeerscontrole. Ze mogen je rijbewijs, kentekenbewijs, verzekering en technische staat van het voertuig controleren.
+
+👉 Ze mogen echter niet zomaar je auto doorzoeken. Daarvoor moet sprake zijn van een concreet vermoeden van een strafbaar feit, zoals de geur van drugs of zichtbare wapens.
+
+### 4. Als jij vrijwillig toestemming geeft
+
+Als er geen wettelijke grond is om te doorzoeken, mag de politie je vragen of ze tóch mogen kijken.
+
+👉 Jij hebt dan het recht om ja of nee te zeggen. Die toestemming moet vrijwillig zijn en mag je op elk moment intrekken.
+
+⚠️ Maar: als er wél een wettelijke bevoegdheid bestaat (zoals bij verdenking of gevaar), dan is jouw toestemming niet nodig. Je mag je dan ook niet fysiek verzetten tegen de doorzoeking.
+
+### 5. Bij direct gevaar voor de veiligheid
+
+Als er sprake is van acuut gevaar – bijvoorbeeld een melding over een vuurwapen of explosieven in een voertuig – mag de politie direct optreden.
+
+👉 Ze mogen de auto dan zonder toestemming doorzoeken, om dreigend gevaar weg te nemen. Dit valt onder hun algemene taak tot handhaving van de veiligheid.
+
+---
+
+## Exacte wetsartikelen
+
+* artikel 96b Wetboek van Strafvordering – Onderzoek in voertuigen bij verdenking
+* artikel 151b lid 1 Gemeentewet – Aanwijzen veiligheidsrisicogebied
+* artikel 174b lid 1 Gemeentewet – Aanwijzing bij spoedeisende situaties
+* artikelen 50 lid 3, 51 lid 3 en 52 lid 3 Wet wapens en munitie – Bevoegdheid tot voertuigonderzoek bij preventief fouilleren
+* artikel 160 Wegenverkeerswet 1994 – Verkeerscontrole
+* artikel 3 Politiewet 2012 – Optreden bij acuut gevaar of dreiging
+
+---
+
+## Praktijkvoorbeeld
+
+Je rijdt op de snelweg en wordt aangehouden voor een verkeerscontrole. Terwijl je je rijbewijs geeft, ruikt de agent een sterke wietlucht. Je weigert toestemming voor doorzoeking. Omdat er sprake is van een concreet vermoeden van een strafbaar feit, mag de politie tóch zoeken op basis van artikel 96b Sv – jouw weigering verandert daar niets aan. Fysiek verzet is dan strafbaar.
+
+---
+
+## Rechten & plichten van de burger
+
+* Rechten:
+  * Je mag vragen op basis van welk wetsartikel de politie wil doorzoeken
+  * Je mag toestemming weigeren als er geen wettelijke grond is
+  * Je hebt recht op uitleg van wat er gebeurt
+  * Je mag achteraf een klacht indienen of juridische hulp inschakelen
+
+* Plichten:
+  * Je mag je niet fysiek verzetten als de politie wél bevoegd is
+
+---
+
+## Wat kun je doen?
+
+* Vraag: "Op basis van welk artikel wilt u mijn auto doorzoeken?"
+* Geef alleen toestemming als je dat echt wil
+* Verzet je nooit fysiek – dat kan strafbaar zijn
+* Dien eventueel een klacht in bij de politie of Nationale Ombudsman
+* Neem contact op met een advocaat als er spullen in beslag zijn genomen
+
+---
+
+## Gerelateerde regelgeving
+
+* Wet wapens en munitie – Verbod op wapens en regeling doorzoeking
+* Opiumwet – Grondslag voor optreden bij drugsbezit
+* Wet politiegegevens – Regels over wat de politie mag bewaren na doorzoeking
+* Reglement verkeersregels en verkeerstekens 1990 – Verkeersregels en controlebevoegdheden
+* Wet op de economische delicten – Bijvoorbeeld bij illegaal vuurwerk of verboden handel
+* Vuurwerkbesluit – Doorzoeking bij verdenking van verboden vuurwerk
+
+---
+
+## Belangrijke rechtspraak en beleid
+
+* HR 22-03-2011, ECLI:NL:HR:2011:BO8067 – Onrechtmatige doorzoeking auto is schending van privacy
+* HR 18-02-2020, ECLI:NL:HR:2020:276 – Alleen bij concrete aanwijzingen mag auto worden onderzocht
+* Aanwijzing Opsporingsbevoegdheden (OM) – Interne richtlijnen over inzet bevoegdheden zoals doorzoeking
+
+---
+
+Laatst gecheckt: 28 juni 2025
 Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
     }
   ] as PolitieWetArticle[]
