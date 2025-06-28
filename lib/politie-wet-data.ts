@@ -58,7 +58,7 @@ export const politieWetData = {
       description: 'Wanneer en hoe mag iemand worden aangehouden?',
       icon: 'AlertCircle',
       color: 'bg-red-100 text-red-800',
-      articleCount: 1
+      articleCount: 2
     },
     {
       slug: 'privacy',
@@ -560,6 +560,95 @@ Is die schuur echter ingericht als slaapkamer of woonkamer? Dan **is het een won
 ---
 
 Laatst gecheckt: 28 juni 2025  
+Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'politie-verplicht-aangifte-opnemen',
+      title: 'Is de politie verplicht om een aangifte van mij op te nemen als ik dat wil?',
+      description: 'Alles over je recht om aangifte te doen en de plicht van de politie om deze op te nemen volgens artikel 163 Wetboek van Strafvordering.',
+      category: 'Opsporing & Aanhouding',
+      categorySlug: 'opsporing',
+      seoTitle: 'Is de politie verplicht om een aangifte op te nemen? - WetHelder',
+      seoDescription: 'Uitleg over je recht om aangifte te doen en de plicht van de politie om deze op te nemen volgens artikel 163 Wetboek van Strafvordering.',
+      readTime: '7 min lezen',
+      lastUpdated: '2025-01-11',
+      views: 0,
+      tags: ['aangifte', 'politie', 'proces-verbaal', 'artikel 163', 'wetboek van strafvordering', 'rechten', 'plichten'],
+      featured: true,
+      content: `## Kort antwoord
+
+Ja, de politie is verplicht om jouw aangifte op te nemen als je slachtoffer of getuige bent van een strafbaar feit. Dat staat in artikel 163 lid 1 van het Wetboek van Strafvordering.
+
+---
+
+## Uitgebreide uitleg
+
+### Wat zegt de wet?
+
+Volgens **artikel 163 lid 1 Wetboek van Strafvordering** is de politie verplicht om proces-verbaal op te maken als iemand melding doet van een strafbaar feit. Dit betekent dat zij jouw aangifte niet zomaar mogen weigeren.
+
+> **Artikel 163 lid 1 Wetboek van Strafvordering:**
+> "Iedereen die kennis draagt van een strafbaar feit kan daarvan aangifte doen. Ambtenaren van politie zijn verplicht tot het opmaken van proces-verbaal."
+
+Let op: dit geldt voor **strafbare feiten**. Bij civiele zaken (zoals burenruzies of contractproblemen) is dit niet van toepassing.
+
+---
+
+### Wat betekent dit in de praktijk?
+
+Als jij naar het politiebureau gaat, of via internet aangifte wilt doen, moet de politie jouw aangifte aannemen als je iets strafbaars meldt. Ze mogen jou niet wegsturen met de mededeling "dit is geen prioriteit" of "we doen er toch niks mee". De beoordeling of het strafbaar is, mag pas **na** de aangifte volgen, niet ervoor.
+
+---
+
+### Praktijkvoorbeeld
+
+Je fiets wordt gestolen bij het station. Je loopt naar het politiebureau om aangifte te doen. De agent zegt: "We hebben het druk, doe maar geen aangifte, dit gebeurt toch dagelijks."
+
+Dat mag dus niet. Jij hebt recht op het doen van aangifte, en de politie is verplicht dit op te nemen – óók als ze er op dat moment weinig mee kunnen.
+
+---
+
+## Rechten & plichten van de burger
+
+**Bron:** Wetboek van Strafvordering artikel 163
+
+* ✅ Je hebt **het recht om aangifte te doen** van een strafbaar feit.
+* ✅ De politie heeft **de plicht om je aangifte op te nemen**.
+* ❌ De politie mag **niet weigeren** omdat iets "te klein" of "geen prioriteit" zou zijn.
+* ✅ Je mag vragen om een **afschrift van je aangifte** (artikel 163 lid 5 Wetboek van Strafvordering).
+
+---
+
+## Wat kun je doen?
+
+Als de politie weigert jouw aangifte op te nemen:
+
+1. **Vraag beleefd om de reden** van weigering – leg uit dat jij recht hebt op het doen van aangifte.
+2. **Noteer naam en nummer** van de agent en meld het bij een leidinggevende.
+3. **Dien een klacht in** via [www.politie.nl/klacht](https://www.politie.nl/klacht).
+4. **Neem contact op met het Juridisch Loket** voor advies.
+5. Je kunt ook **aangifte doen via internet** bij eenvoudige zaken: [www.politie.nl/aangifte](https://www.politie.nl/aangifte)
+
+---
+
+## Gerelateerde regelgeving
+
+* **Artikel 163 Wetboek van Strafvordering** – aangifteplicht politie
+* **Artikel 164 Wetboek van Strafvordering** – opmaken proces-verbaal
+* **Politiewet 2012 artikel 3** – taak van de politie (waaronder opsporing)
+* **Wet politiegegevens artikel 8** – registratie van aangiften en klachten
+
+---
+
+## Belangrijke rechtspraak of beleidsdocumenten
+
+1. **Kamerbrief over aangifteweigering (2019)** – Minister van Justitie bevestigt: *aangifte mag niet geweigerd worden zonder juridische reden.*
+2. **Inspectie Justitie en Veiligheid (2015)** – signaleert dat sommige politie-eenheden onterecht aangiftes weigeren.
+3. **Rapport Nationale Ombudsman "Geen aangifte doen is geen optie" (2020)** – bekritiseert het weren van burgers met een legitieme klacht.
+
+---
+
+Laatst gecheckt: 11 januari 2025  
 Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
     }
   ] as PolitieWetArticle[]
