@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { politieWetData } from '@/lib/politie-wet-data'
+import { politieWetData, PolitieWetArticle } from '@/lib/politie-wet-data'
 
 // Icon mapping
 const iconMap = {
@@ -138,10 +138,10 @@ export default function CategoryPage() {
   }
 
   const IconComponent = category.icon
-  const filteredArticles = articles.filter(article =>
+  const filteredArticles = articles.filter((article: PolitieWetArticle) =>
     article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     article.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    article.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+    article.tags.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
   )
 
   return (
@@ -193,7 +193,7 @@ export default function CategoryPage() {
         <div className="max-w-4xl mx-auto">
           {filteredArticles.length > 0 ? (
             <div className="space-y-6">
-              {filteredArticles.map((article) => (
+              {filteredArticles.map((article: PolitieWetArticle) => (
                 <Card key={article.slug} className="hover:shadow-lg transition-shadow">
                   <Link href={`/politie-wet/artikel/${article.slug}`}>
                     <CardHeader>
@@ -219,7 +219,7 @@ export default function CategoryPage() {
                       </div>
                       
                       <div className="flex flex-wrap gap-2 mt-3">
-                        {article.tags.map((tag) => (
+                        {article.tags.map((tag: string) => (
                           <Badge key={tag} variant="secondary" className="text-xs">
                             {tag}
                           </Badge>

@@ -14,7 +14,7 @@ import { formatPolitieWetContent } from '@/lib/textFormatter'
 const articlesLookup = politieWetData.articles.reduce((acc, article) => {
   acc[article.slug] = article
   return acc
-}, {} as Record<string, any>)
+}, {} as Record<string, typeof politieWetData.articles[0]>)
 
 // Legacy sample articles for fallback
 const legacySampleArticles = {

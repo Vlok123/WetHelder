@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, Suspense } from 'react'
 import { useSession } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
 import { Navigation } from '@/components/navigation'
@@ -199,7 +199,7 @@ interface LegalAnalysis {
   profession?: string // Add profession to interface
 }
 
-export default function WetUitlegPage() {
+function WetUitlegPage() {
   const { data: session } = useSession()
   const searchParams = useSearchParams()
   const [analyses, setAnalyses] = useState<LegalAnalysis[]>([])
@@ -319,6 +319,7 @@ export default function WetUitlegPage() {
       
       return () => clearTimeout(timer)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, hasProcessedUrlQuery, isLoading])
 
   const submitQuery = async (query: string) => {
@@ -1234,5 +1235,20 @@ export default function WetUitlegPage() {
         <div ref={messagesEndRef} />
       </div>
     </div>
+  )
+}
+
+export default function WetUitlegPageWithSuspense() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="text-center">
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
+          <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+        </div>
+        <p className="mt-4 text-gray-600">WetUitleg wordt geladen...</p>
+      </div>
+    </div>}>
+      <WetUitlegPage />
+    </Suspense>
   )
 } 

@@ -50,7 +50,7 @@ export const politieWetData = {
       description: 'Politiebevoegdheden op de weg, blaastest, stopteken',
       icon: 'Car',
       color: 'bg-orange-100 text-orange-800',
-      articleCount: 0
+      articleCount: 1
     },
     {
       slug: 'opsporing',
@@ -160,6 +160,107 @@ Als je twijfelt aan de reden van de controle of je voelt je onjuist behandeld, k
 
 Laatst gecheckt: 28 juni 2025  
 Disclaimer: Je mag vragen waarom je identiteit wordt gecontroleerd, maar de politie hoeft je niet te overtuigen van hun redenen. Dit is algemene informatie; uitzonderingen zijn mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'algemene-verkeerscontrole',
+      title: 'Moet ik meewerken aan een algemene verkeerscontrole en wat kan er allemaal onderdeel van zijn?',
+      description: 'Alles over je rechten en plichten bij algemene verkeerscontroles door de politie.',
+      category: 'Verkeer',
+      categorySlug: 'verkeer',
+      seoTitle: 'Moet ik meewerken aan een algemene verkeerscontrole?',
+      seoDescription: 'Uitleg over verplichtingen bij verkeerscontroles, wat er gecontroleerd kan worden en je rechten als bestuurder.',
+      readTime: '6 min lezen',
+      lastUpdated: '2025-06-28',
+      views: 1247,
+      tags: ['verkeerscontrole', 'meewerken', 'rijbewijs', 'alcohol', 'drugs'],
+      featured: true,
+      content: `## Vraag:
+
+**Moet ik meewerken aan een algemene verkeerscontrole en wat kan er allemaal onderdeel van zijn?**
+
+---
+
+## Kort antwoord
+
+Ja, je bent verplicht mee te werken aan een algemene verkeerscontrole. De politie kan hierbij onder andere je rijbewijs, kentekenbewijs, voertuigconditie en zaken **in** je voertuig controleren, evenals controles uitvoeren op alcohol en drugs.
+
+---
+
+## Uitgebreide uitleg
+
+### Wanneer moet je meewerken?
+
+Als bestuurder ben je wettelijk verplicht mee te werken aan een algemene verkeerscontrole. De politie mag deze controles uitvoeren zonder dat daarvoor een specifieke reden of verdenking nodig is. Dit gebeurt om de verkeersveiligheid te verbeteren en overtredingen op te sporen. De wettelijke basis hiervoor is **artikel 160 lid 1 en lid 5 van de Wegenverkeerswet 1994**.
+
+### Wat kan worden gecontroleerd?
+
+Bij een algemene verkeerscontrole kan de politie het volgende controleren:
+
+* **Identiteit** (identiteitsbewijs)
+* **Rijbewijs**
+* **Kentekenbewijs** (deel IA, IB, deel II of kentekencard)
+* **Technische staat van het voertuig** (zoals banden, verlichting, remmen, spiegels)
+* **Verplichte uitrusting in je voertuig** (zoals gordels, gevarendriehoek, verbanddoos en brandblusser volgens het **Reglement voertuigen**)
+* **Alcoholgebruik** (blaastest)
+* **Drugsgebruik** (speekseltest)
+
+Deze bevoegdheden helpen de politie om de verkeersveiligheid te bewaken en mogelijke overtredingen te ontdekken en voorkomen.
+
+### Controle van zaken ín het voertuig
+
+Op grond van het **Reglement voertuigen** mag de politie ook controleren of zaken binnen jouw voertuig aanwezig en in goede staat zijn. Denk hierbij aan:
+
+* Veiligheidsgordels en kinderzitjes (**Reglement voertuigen, hoofdstuk 5, afdeling 1**)
+* Gevarendriehoek en eventueel veiligheidsvest (**Reglement voertuigen, art. 5.18.42 en 5.18.43**)
+* Verbanddoos (voor bedrijfsvoertuigen verplicht, zie **Reglement voertuigen art. 5.18.45**)
+* Brandblusser (voor bepaalde voertuigen verplicht, zie **Reglement voertuigen art. 5.18.47**)
+
+---
+
+## Praktijkvoorbeeld
+
+Stel: je rijdt terug van je werk en ziet een bord "algemene verkeerscontrole". Een agent geeft aan dat je moet stoppen. Hij vraagt je rijbewijs, kentekenbewijs en identiteitsbewijs te tonen en controleert vervolgens de banden en verlichting van je auto. Daarna kijkt hij in de auto of de veiligheidsgordels goed werken en of je een gevarendriehoek bij je hebt. Tot slot moet je meewerken aan een blaastest. Al deze controles zijn wettelijk toegestaan en verplicht om aan mee te werken.
+
+---
+
+## Rechten & plichten van de burger
+
+**Plichten**:
+
+* Meewerken aan aanwijzingen van de politie tijdens de controle (**Wegenverkeerswet 1994, art. 160 lid 5**).
+* Rijbewijs, identiteitsbewijs en kentekenbewijs tonen wanneer hierom wordt gevraagd (**Wegenverkeerswet 1994, art. 160 lid 1**).
+* Verplichte veiligheidsmiddelen en uitrusting in goede staat in je auto hebben (**Reglement voertuigen, art. 5.18.42 t/m 5.18.47**).
+
+**Rechten**:
+
+* Je mag vragen waarom je bent aangehouden, maar een uitgebreide reden hoeft niet per se gegeven te worden.
+* Als je vindt dat er onrechtmatig gehandeld is, heb je achteraf het recht om een klacht in te dienen.
+
+---
+
+## Wat kun je doen?
+
+* Heb je klachten over de uitvoering van de controle? Dan kun je een klacht indienen bij de politie via [politie.nl](https://www.politie.nl/klachten).
+* Heb je twijfels over de rechtmatigheid van de controle of wil je juridisch advies? Neem contact op met het Juridisch Loket, een advocaat, of je rechtsbijstandverzekeraar.
+
+---
+
+## Gerelateerde regelgeving
+
+* **Regeling voertuigen**: technische voorschriften voor voertuigen, bijvoorbeeld eisen aan verlichting, banden en remmen.
+* **Besluit alcohol, drugs en geneesmiddelen in het verkeer**: regels voor het testen van alcohol- en drugsgebruik bij bestuurders.
+* **Besluit administratieve bepalingen inzake het wegverkeer (BABW)**: voorwaarden waaronder verkeerscontroles worden uitgevoerd, zoals plaatsing van verkeersborden bij controles.
+
+---
+
+## Belangrijke rechtspraak of beleidsdocumenten
+
+* **Hoge Raad 19 december 1995, NJ 1996, 249 (verkeerscontrole-arrest)**: bevestigt dat algemene, willekeurige verkeerscontroles zonder verdenking toegestaan zijn, mits duidelijk herkenbaar als controle.
+
+---
+
+**Laatst gecheckt:** 28 juni 2025
+*Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.*`
     }
   ] as PolitieWetArticle[]
 } 

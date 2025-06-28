@@ -810,7 +810,6 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
 
     // Create a stream that captures the response for database storage
     let fullResponse = ''
-    let streamEnded = false
 
     const responseStream = await streamingCompletion(
       question, 
