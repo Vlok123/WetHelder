@@ -44,7 +44,7 @@ function toGoogleResult(raw: RawGoogleResult, tag: SourceTag): GoogleSearchResul
  * Enhanced Google Custom Search with comprehensive wetten.overheid.nl coverage
  */
 async function googleCSEEnhanced(query: string, site?: string): Promise<RawGoogleResult[]> {
-  const apiKey = process.env.GOOGLE_CSE_API_KEY
+  const apiKey = process.env.GOOGLE_API_KEY
   const searchEngineId = process.env.GOOGLE_CSE_ID
 
   if (!apiKey || !searchEngineId) {

@@ -1,86 +1,67 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://wethelder.nl'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://wethelder.nl'
   
+  // Static routes
+  const staticRoutes = [
+    '',
+    '/ask',
+    '/wetuitleg', 
+    '/jurisprudentie',
+    '/aangifte',
+    '/politie-wet',
+    '/contact',
+    '/auth/signin',
+    '/auth/signup',
+  ]
+
+  // Politie-wet categories
+  const politieWetCategories = [
+    'bevoegdheden',
+    'id-fouilleren', 
+    'verkeer',
+    'opsporing',
+    'privacy',
+    'klacht'
+  ]
+
+  // Sample articles for sitemap
+  const politieWetArticles = [
+    'id-controle-politie',
+    'id-fouillering-op-straat',
+    'verkeerscontrole-bevoegdheden',
+    'id-plicht-nederland',
+    'blaastest-rechten',
+    'politie-aanhouding-rechten',
+    'politie-klacht-indienen'
+  ]
+
+  const currentDate = new Date()
+
   return [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/ask`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/jurisprudentie`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/wetuitleg`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/aangifte`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/search`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
+    // Static routes
+    ...staticRoutes.map((route) => ({
+      url: `${baseUrl}${route}`,
+      lastModified: currentDate,
+      changeFrequency: route === '' ? 'daily' as const : 'weekly' as const,
+      priority: route === '' ? 1 : 0.8,
+    })),
+    
+    // Politie-wet category pages
+    ...politieWetCategories.map((category) => ({
+      url: `${baseUrl}/politie-wet/${category}`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly' as const,
       priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/chat`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
+    })),
+
+    // Politie-wet article pages
+    ...politieWetArticles.map((article) => ({
+      url: `${baseUrl}/politie-wet/artikel/${article}`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly' as const,
       priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/dashboard`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.4,
-    },
-    {
-      url: `${baseUrl}/auth/signin`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/auth/signup`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/privacy`,
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/terms`,
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
+    })),
   ]
 } 

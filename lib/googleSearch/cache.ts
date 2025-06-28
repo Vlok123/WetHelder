@@ -41,8 +41,8 @@ export const searchCache = {
     
     if (!entry || isExpired(entry)) {
       cache.delete(key)
-      return null
-    }
+    return null
+  }
     
     console.log(`📋 Cache hit for ${site}: ${query}`)
     return entry.data
@@ -76,9 +76,9 @@ export const searchCache = {
         wettenEntries++
       } else {
         otherEntries++
-      }
-    }
-    
+  }
+}
+
     return {
       size: cache.size,
       wettenEntries,

@@ -71,6 +71,12 @@ export function Navigation() {
                 </Link>
               </Button>
               <Button variant="ghost" size="sm" asChild>
+                <Link href="/politie-wet" className="text-sm">
+                  <Shield className="h-4 w-4 mr-2" />
+                  Politie & Wet
+                </Link>
+              </Button>
+              <Button variant="ghost" size="sm" asChild>
                 <Link href="/aangifte" className="text-sm">
                   <FileText className="h-4 w-4 mr-2" />
                   Aangifte
@@ -93,6 +99,11 @@ export function Navigation() {
               <Button variant="ghost" size="sm" asChild>
                 <Link href="/jurisprudentie">
                   <Gavel className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/politie-wet">
+                  <Shield className="h-4 w-4" />
                 </Link>
               </Button>
               <Button variant="ghost" size="sm" asChild>

@@ -311,32 +311,32 @@ export async function fetchBasiswettenbestand(): Promise<WetgevingDocument[]> {
     const searchStrategies = [
       // Strategy 1: Try the official Basiswettenbestand
       async () => {
-        const response = await fetch('https://wetten.overheid.nl/BWB/Basiswettenbestand.zip')
+    const response = await fetch('https://wetten.overheid.nl/BWB/Basiswettenbestand.zip')
         if (response.ok) {
           console.log('✅ Basiswettenbestand ZIP available')
           // In production, you would extract and parse the ZIP file
-          return []
-        }
+      return []
+    }
         throw new Error('Basiswettenbestand not available')
       },
-      
+    
       // Strategy 2: Search via wetten.overheid.nl search API
       async () => {
         const searchResponse = await fetch('https://wetten.overheid.nl/zoeken?type=wet&format=json&limit=100')
         if (searchResponse.ok) {
-          const data = await searchResponse.json()
+    const data = await searchResponse.json()
           console.log('✅ Wetten.overheid.nl search API available')
-          
-          return data.results?.map((item: any) => ({
-            id: item.identifier || item.uri,
-            titel: item.title || item.naam,
-            tekst: item.content || item.tekst || '',
-            uri: item.uri || item.url,
-            datum: item.datum ? new Date(item.datum) : undefined,
-            artikelNr: extractArtikelNummer(item.title),
-            wetboek: extractWetboek(item.title),
-            status: 'ACTIVE' as const
-          })) || []
+    
+    return data.results?.map((item: any) => ({
+      id: item.identifier || item.uri,
+      titel: item.title || item.naam,
+      tekst: item.content || item.tekst || '',
+      uri: item.uri || item.url,
+      datum: item.datum ? new Date(item.datum) : undefined,
+      artikelNr: extractArtikelNummer(item.title),
+      wetboek: extractWetboek(item.title),
+      status: 'ACTIVE' as const
+    })) || []
         }
         throw new Error('Search API not available')
       },
@@ -430,7 +430,7 @@ export async function fetchBasiswettenbestand(): Promise<WetgevingDocument[]> {
           console.log(`✅ Successfully fetched ${results.length} wetgeving documents`)
           return results
         }
-      } catch (error) {
+  } catch (error) {
         console.log(`❌ Strategy failed, trying next: ${error}`)
         continue
       }

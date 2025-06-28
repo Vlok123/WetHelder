@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Navigation } from '@/components/navigation'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -288,7 +288,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      <Navigation />
       
       {/* Hero Section */}
       <section className="py-8 md:py-16">
@@ -312,8 +311,8 @@ export default function HomePage() {
               Aangepast aan uw beroep voor de meest relevante antwoorden.
             </p>
             
-            {/* Three Main Options */}
-            <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-8">
+            {/* Four Main Options - 2x2 Grid */}
+            <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto mb-8">
               {/* Chat Option */}
               <Card className="p-6 hover:shadow-lg transition-all duration-300 border-2 hover:border-blue-200 cursor-pointer flex flex-col h-full" onClick={() => router.push('/ask')}>
                 <div className="flex items-center gap-3 mb-4">
@@ -403,6 +402,37 @@ export default function HomePage() {
                   <Link href="/aangifte">
                     <FileText className="h-4 w-4 mr-2" />
                     Start Aangifte
+                  </Link>
+                </Button>
+              </Card>
+
+              {/* Politie & Wet Option */}
+              <Card className="p-6 hover:shadow-lg transition-all duration-300 border-2 hover:border-blue-200 cursor-pointer flex flex-col h-full" onClick={() => router.push('/politie-wet')}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center">
+                    <Shield className="h-6 w-6 text-indigo-600" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-xl font-bold text-gray-900">Politie & Wet</h3>
+                    <p className="text-sm text-gray-600">Voor politie en handhavingswetgeving</p>
+                  </div>
+                </div>
+                
+                <div className="text-left mb-4 flex-grow">
+                  <p className="text-gray-700 mb-3">
+                    <strong>Wanneer te gebruiken:</strong> Voor specifieke politie- en handhavingswetgeving. Content wordt steeds meer gevuld in de loop der tijd.
+                  </p>
+                  <div className="space-y-1 text-sm text-gray-600">
+                    <p>• Politiewet artikelen en bevoegdheden</p>
+                    <p>• BOA en handhavingsrecht</p>
+                    <p>• Dwangmiddelen en procedures</p>
+                  </div>
+                </div>
+                
+                <Button className="w-full mt-auto" asChild>
+                  <Link href="/politie-wet">
+                    <Shield className="h-4 w-4 mr-2" />
+                    Bekijk Politiewet
                   </Link>
                 </Button>
               </Card>
@@ -588,7 +618,7 @@ export default function HomePage() {
       {/* Additional Links Section */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {/* Jurisprudentie Card */}
             <Card className="p-6 hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => router.push('/jurisprudentie')}>
               <div className="flex items-center gap-3 mb-4">
@@ -604,6 +634,25 @@ export default function HomePage() {
                 <Link href="/jurisprudentie">
                   <Gavel className="h-4 w-4 mr-2" />
                   Zoek Rechtspraak
+                </Link>
+              </Button>
+            </Card>
+
+            {/* Politie & Wet Card */}
+            <Card className="p-6 hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => router.push('/politie-wet')}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                  <Shield className="h-5 w-5 text-indigo-600" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900">Politie & Wet</h3>
+              </div>
+              <p className="text-sm text-gray-600 mb-4">
+                Specifieke wetgeving voor politie en handhaving. Content wordt steeds meer gevuld in de loop der tijd.
+              </p>
+              <Button variant="outline" className="w-full" asChild>
+                <Link href="/politie-wet">
+                  <Shield className="h-4 w-4 mr-2" />
+                  Bekijk Politiewet
                 </Link>
               </Button>
             </Card>

@@ -152,4 +152,116 @@ export function formatSourcesWithLinks(sources: string[], darkMode: boolean = fa
       })}
     </div>
   )
+}
+
+// Herbruikbare functie voor alle politie-wet content formatting
+export const formatPolitieWetContent = (text: string): string => {
+  // Eerst alle ** markers verwijderen en content opruimen
+  let processedText = text
+    // Verwijder alle ** markers (dit was de oude manier van formatteren)
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    // Verwijder overmatige witregels en normaliseer spacing
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+  
+  // Process markdown links first to preserve them
+  processedText = processedText.replace(
+    /\[([^\]]+)\]\(([^)]+)\)/g, 
+    '|||MARKDOWN_LINK|||$1|||$2|||'
+  )
+  
+    // ULTRA SIMPLE: Use unique placeholders then replace
+  
+  // 1. Replace complete article + law combinations with unique placeholders
+  const articleLawReplacements: Array<{placeholder: string, text: string, type: string}> = []
+  let counter = 1000
+  
+  processedText = processedText.replace(
+    /(artikel|art\.)\s+(\d+[a-z]*(?::\d+)?(?:\s+lid\s+\d+)?)\s+([A-Z][\w\s&-]*?(?:wet|wetboek)(?:[^a-z][\w\s\d]*?)?(?=\s|$|[.!?;,)]|en\s+artikel|artikel))/gi,
+    (match) => {
+      const cleanMatch = match.replace(/[).,;]*$/, '').trim()
+      const placeholder = `__PLACEHOLDER_${counter}__`
+      articleLawReplacements.push({
+        placeholder,
+        text: cleanMatch,
+        type: 'FULL_ARTICLE_LINK'
+      })
+      counter++
+      return placeholder
+    }
+  )
+  
+  // 2. Replace standalone articles (improved pattern for letters after numbers)
+  processedText = processedText.replace(
+    /\b(artikel\s+\d+[a-z]*(?::\d+[a-z]*)?(?:\s+lid\s+\d+[a-z]*)?)\b/gi,
+    (match) => {
+      const cleanMatch = match.replace(/[).,;]*$/, '').trim()
+      const placeholder = `__PLACEHOLDER_${counter}__`
+      articleLawReplacements.push({
+        placeholder,
+        text: cleanMatch,
+        type: 'ARTICLE_LINK'
+      })
+      counter++
+      return placeholder
+    }
+  )
+  
+  processedText = processedText.replace(
+    /\b(art\.\s+\d+[a-z]*(?::\d+[a-z]*)?(?:\s+lid\s+\d+[a-z]*)?)\b/gi,
+    (match) => {
+      const cleanMatch = match.replace(/[).,;]*$/, '').trim()
+      const placeholder = `__PLACEHOLDER_${counter}__`
+      articleLawReplacements.push({
+        placeholder,
+        text: cleanMatch,
+        type: 'ARTICLE_LINK'
+      })
+      counter++
+      return placeholder
+    }
+  )
+  
+  // 3. Replace standalone laws
+  processedText = processedText.replace(
+    /\b([A-Z][\w\s&-]*(?:wet|wetboek)[\w\s\d]*)\b/g,
+    (match) => {
+      if (match.length < 6) return match
+      const cleanMatch = match.replace(/[).,;]*$/, '').trim()
+      const placeholder = `__PLACEHOLDER_${counter}__`
+      articleLawReplacements.push({
+        placeholder,
+        text: cleanMatch,
+        type: 'LAW_LINK'
+      })
+      counter++
+      return placeholder
+    }
+  )
+  
+  // 4. Convert all placeholders to actual links
+  articleLawReplacements.forEach(replacement => {
+    const encodedQuery = encodeURIComponent(replacement.text)
+    const linkHtml = replacement.type === 'FULL_ARTICLE_LINK' || replacement.type === 'ARTICLE_LINK'
+      ? `<a href="/wetuitleg?q=${encodedQuery}" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:border-blue-300 cursor-pointer transition-colors">${replacement.text}</a>`
+      : `<a href="/wetuitleg?q=${encodedQuery}" class="font-semibold text-indigo-700 bg-indigo-50 px-1 rounded hover:bg-indigo-100 cursor-pointer transition-colors">${replacement.text}</a>`
+    
+         processedText = processedText.replace(replacement.placeholder, linkHtml)
+   })
+   
+   // Convert markdown links to actual HTML links
+   processedText = processedText
+     .replace(/\|\|\|MARKDOWN_LINK\|\|\|(.*?)\|\|\|(.*?)\|\|\|/g, 
+       '<a href="$2" class="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener noreferrer">$1</a>')
+  
+  // Apply other legal formatting
+  return processedText
+    // ECLI codes
+    .replace(/(ECLI:[A-Z]{2}:[A-Z]+:\d{4}:[A-Z0-9]+)/g, '<span class="font-mono text-xs px-1.5 py-0.5 bg-gray-100 text-gray-700 border rounded">$1</span>')
+    
+    // Juridische termen tussen haakjes
+    .replace(/\(([^)]*(?:art\.|artikel|wet|wetboek|ECLI)[^)]*)\)/g, '<span class="text-sm text-gray-600 italic">($1)</span>')
+    
+    // Belangrijke concepten (Rechten, Plichten, NIET, etc.)
+    .replace(/\b(Rechten|Plichten|NIET|Veiligheidsfouillering|Preventief fouilleren|Fouillering bij aanhouding|Algemene verkeerscontrole|Laatst gecheckt|Disclaimer):/g, '<span class="font-semibold text-gray-900">$1:</span>')
 } 

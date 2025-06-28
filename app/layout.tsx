@@ -5,6 +5,7 @@ import Providers from './providers'
 import { Analytics } from '@vercel/analytics/next'
 import LegalDisclaimer from '@/components/legal-disclaimer'
 import CookieBanner from '@/components/cookie-banner'
+import { Navigation } from '@/components/navigation'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -220,6 +221,7 @@ export default function RootLayout({
         <Providers>
           <div className="min-h-screen bg-background text-foreground">
             <LegalDisclaimer />
+            <Navigation />
             <main className="relative">
               {children}
             </main>

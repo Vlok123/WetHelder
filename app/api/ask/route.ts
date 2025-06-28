@@ -21,6 +21,111 @@ import { streamingCompletion } from '@/lib/openai'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { 
+  validateLegalInformation, 
+  generateValidationDisclaimer, 
+  getReliabilityIndicator,
+  type LegalQuery 
+} from '@/lib/validation'
+
+// Import article extraction functions from wetuitleg (for consistency)
+function extractArticleReferences(query: string): string[] {
+  const references: string[] = []
+  const lowerQuery = query.toLowerCase()
+  
+  // Pattern 1: "artikel 8 Politiewet 2012" - Enhanced for full law names with years
+  const fullLawMatch = lowerQuery.match(/(?:artikel|art\.?)\s+(\d+[a-z]*(?::\d+)?(?:\s+lid\s+\d+)?)\s+(politiewet\s*\d{4}|wetboek\s+van\s+strafrecht|wetboek\s+van\s+strafvordering|burgerlijk\s+wetboek|algemene\s+wet\s+bestuursrecht|wegenverkeerswet\s*\d{4}?|wet\s+op\s+de\s+identificatieplicht)/i)
+  if (fullLawMatch) {
+    references.push(`artikel ${fullLawMatch[1]} ${fullLawMatch[2]}`)
+  }
+  
+  // Pattern 2: "artikel 304 sr" or "art 304 sr" - Short codes
+  const artikelMatch = lowerQuery.match(/(?:artikel|art\.?)\s+(\d+[a-z]*(?::\d+)?(?:\s+lid\s+\d+)?)\s+(sr|sv|bw|awb|wvw|politiewet|rv)\b/i)
+  if (artikelMatch) {
+    references.push(`artikel ${artikelMatch[1]} ${artikelMatch[2].toUpperCase()}`)
+  }
+  
+  // Pattern 3: "304 sr" (short format)
+  const shortMatch = lowerQuery.match(/\b(\d+[a-z]*)\s+(sr|sv|bw|awb|wvw|politiewet|rv)\b/i)
+  if (shortMatch) {
+    references.push(`artikel ${shortMatch[1]} ${shortMatch[2].toUpperCase()}`)
+  }
+  
+  // Pattern 4: "447e strafrecht" (infer law code)
+  const inferMatch = lowerQuery.match(/\b(\d+[a-z]*)\s+(?:wetboek\s+van\s+)?(?:strafrecht|strafvordering|burgerlijk\s+wetboek|awb|wegenverkeerswet|politiewet)/i)
+  if (inferMatch) {
+    if (lowerQuery.includes('strafrecht')) {
+      references.push(`artikel ${inferMatch[1]} Sr`)
+    } else if (lowerQuery.includes('strafvordering')) {
+      references.push(`artikel ${inferMatch[1]} Sv`)
+    }
+  }
+  
+  // Pattern 5: Special handling for "wat zegt 447e strafrecht" type questions
+  const whatSaysMatch = lowerQuery.match(/(?:wat\s+zegt|inhoud\s+van|tekst\s+van)?\s*(\d+[a-z]*)\s+(?:wetboek\s+van\s+)?strafrecht/i)
+  if (whatSaysMatch) {
+    references.push(`artikel ${whatSaysMatch[1]} Sr`)
+  }
+  
+  console.log(`🔍 Article extraction from "${query}":`, references)
+  
+  // Remove duplicates
+  return Array.from(new Set(references))
+}
+
+async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise<Array<{ ref: string; text: string; url: string }>> {
+  const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY
+  const GOOGLE_CSE_ID = process.env.GOOGLE_CSE_ID
+  
+  if (!GOOGLE_API_KEY || !GOOGLE_CSE_ID) {
+    console.log('⚠️ Google API credentials niet geconfigureerd voor artikel zoeken')
+    return []
+  }
+
+  const foundArticles: Array<{ ref: string; text: string; url: string }> = []
+  
+  for (const articleRef of articleReferences) {
+    try {
+      console.log(`🔍 Searching for: ${articleRef}`)
+      
+      // Clean up article reference for search
+      const cleanRef = articleRef.replace('artikel ', '').trim()
+      const searchQuery = `"${cleanRef}" site:wetten.overheid.nl`
+      
+      const response = await fetch(
+        `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CSE_ID}&q=${encodeURIComponent(searchQuery)}&num=3`
+      )
+      
+      if (!response.ok) {
+        console.log(`❌ Google API error for ${articleRef}: ${response.status}`)
+        continue
+      }
+      
+      const data = await response.json()
+      
+      if (data.items && data.items.length > 0) {
+        // Look for actual article text in snippets
+        for (const item of data.items) {
+          if (item.snippet && item.snippet.length > 50) {
+            console.log(`✅ Found article text via Google: ${articleRef} (${item.snippet.length} chars)`)
+            foundArticles.push({
+              ref: articleRef,
+              text: item.snippet,
+              url: item.link
+            })
+            break // Use first substantial result
+          }
+        }
+      } else {
+        console.log(`ℹ️ No Google results for: ${articleRef}`)
+      }
+    } catch (error) {
+      console.error(`❌ Error searching for ${articleRef}:`, error)
+    }
+  }
+  
+  return foundArticles
+}
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -621,35 +726,12 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
         }
       }
     } else {
-      // NIEUWE VRAAG: Normale Google evaluatie
+      // NIEUWE VRAAG: Gebruik geavanceerde needsGoogleSearch functie (zoals /wetuitleg)
       console.log('🔍 STAP 2: Evaluatie Google API noodzaak')
       
-      // Check if query needs Google API
-      const queryLower = question.toLowerCase()
-      const needsGoogleKeywords = [
-        'apv', 'gemeentelijk', 'lokaal', 'gemeente', 'plaatselijk', 'verordening',
-        'alcohol', 'drinken', 'straat', 'openbaar', 'park', 'plein', 'evenement',
-        'geluid', 'overlast', 'terras', 'vergunning', 'handhaving', 'boa',
-        'camper', 'parkeren', 'kamperen', 'hondenpoep', 'hond', 'vuur', 'barbecue',
-        'muziek', 'lawaai', 'reclame', 'uithangbord', 'standplaats', 'markt',
-        'amsterdam', 'rotterdam', 'den haag', 'utrecht', 'eindhoven', 'groningen',
-        'tilburg', 'almere', 'breda', 'nijmegen', 'apeldoorn', 'haarlem', 'arnhem',
-        'enschede', 'haarlemmermeer', 'zaanstad', 'amersfoort', 'hertogenbosch',
-        'zoetermeer', 'zwolle', 'ede', 'dordrecht', 'leiden', 'emmen', 'maastricht',
-        'delft', 'venlo', 'leeuwarden', 'alkmaar', 'helmond', 'deventer',
-        'ijsselstreek', 'oude ijssel', 'ijssel',
-        'nieuw beleid', 'recent', 'actueel', 'jurisprudentie', 'uitspraak', 'vonnis', 'arrest'
-      ]
-      
-      const needsGoogle = needsGoogleKeywords.some(keyword => queryLower.includes(keyword)) || jsonSources.length < 3
+      const needsGoogle = needsGoogleSearch(jsonSources, question)
       
       if (needsGoogle) {
-        if (needsGoogleKeywords.some(keyword => queryLower.includes(keyword))) {
-          console.log('🔍 Query bevat keywords die Google API vereisen (APV/lokaal/actueel)')
-        } else {
-          console.log('🔍 Beperkte JSON dekking - Google API wordt geraadpleegd')
-        }
-        
         console.log('🌐 STAP 3: Google Custom Search API wordt geraadpleegd')
         console.log('🌐 Searching Google Custom Search API for:', question)
         
@@ -675,6 +757,51 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
     console.log('🤖 STAP 4: Input samenstelling voor ChatGPT')
     console.log(`🤖 Starting OpenAI request met ${jsonSources.length} JSON bronnen en ${googleResults ? 'Google resultaten' : 'geen Google resultaten'}`)
     
+    // Extract article references for specialized ask handling (COPIED FROM WETUITLEG)
+    const articleReferences = extractArticleReferences(question)
+    console.log('📖 Detected article references:', articleReferences)
+
+    // Search for complete article texts via Google API (for specific articles)
+    let articleTexts: Array<{ ref: string; text: string; url: string }> = []
+    if (articleReferences.length > 0) {
+      console.log('🔍 Searching for complete article texts via Google API...')
+      articleTexts = await searchArticleTextsViaGoogle(articleReferences)
+      console.log(`✅ Found ${articleTexts.length} complete articles via Google`)
+    }
+
+    // Validate information reliability for ask endpoint as well
+    const validationInput: LegalQuery = {
+      query: question,
+      foundSources: jsonSources,
+      googleResults,
+      articleReferences: articleReferences // Now we properly extract articles
+    }
+    
+    const validation = validateLegalInformation(validationInput)
+    console.log('🛡️ Ask validation result:', {
+      reliable: validation.isReliable,
+      confidence: validation.confidence,
+      warnings: validation.warnings.length
+    })
+
+    // Include validation info in the response context
+    const validationNote = validation.confidence === 'low' ? 
+      "\n\n🔍 BELANGRIJK: Deze informatie kon niet volledig worden geverifieerd tegen officiële bronnen. Controleer altijd via wetten.overheid.nl voor definitieve zekerheid." : ""
+
+    // Prepare enhanced Google results including article texts (COPIED FROM WETUITLEG LOGIC)
+    let enhancedGoogleResults = googleResults
+    
+    // Add extracted article texts to context (most important for accuracy)
+    if (articleTexts.length > 0) {
+      let articleSection = '\n\n## VOLLEDIGE WETTEKSTEN:\n\n'
+      articleTexts.forEach((article, index) => {
+        articleSection += `### ARTIKEL ${article.ref}\n`
+        articleSection += `**Volledige tekst:** ${article.text}\n`
+        articleSection += `**Bron:** ${article.url}\n\n`
+      })
+      enhancedGoogleResults = articleSection + (enhancedGoogleResults || '')
+    }
+
     // Voeg conversatie context toe voor betere vervolgvragen
     const conversationHistory = isFollowUp && existingContext ? [{
       role: 'user' as const,
@@ -683,19 +810,22 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
 
     // Create a stream that captures the response for database storage
     let fullResponse = ''
-    const originalStream = await streamingCompletion(
-      question,
-      jsonSources,
-      googleResults ? [{ title: "Google Results", content: googleResults }] : [],
+    let streamEnded = false
+
+    const responseStream = await streamingCompletion(
+      question, 
+      jsonSources, 
+      enhancedGoogleResults ? [{ title: "Enhanced Google Results with Article Texts", content: enhancedGoogleResults }] : [],
       profession,
-      wetUitleg,
-      conversationHistory
+      false, // wetUitleg = false for ask endpoint
+      conversationHistory,
+      validationNote
     )
 
     const transformedStream = new ReadableStream({
       async start(controller) {
         try {
-          for await (const chunk of originalStream) {
+          for await (const chunk of responseStream) {
             if (chunk.choices[0]?.delta?.content) {
               const content = chunk.choices[0].delta.content
               fullResponse += content
@@ -709,7 +839,7 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
           // Save query to database with full response
           const clientIp = !session?.user ? (request.headers.get('x-forwarded-for') || 
                            request.headers.get('x-real-ip') || 'unknown') : null
-          saveQueryToDatabase(question, fullResponse, profession, userId, jsonSources, googleResults, clientIp)
+          saveQueryToDatabase(question, fullResponse, profession, userId, jsonSources, enhancedGoogleResults, clientIp)
             .catch(error => console.error('❌ Error saving query to database:', error))
           
           // Update conversation context for future follow-up questions
@@ -717,7 +847,7 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
           const newContext: ConversationContext = {
             lastQuery: question,
             lastSources: jsonSources,
-            lastGoogleResults: googleResults,
+            lastGoogleResults: enhancedGoogleResults,
             lastTopics: currentTopics,
             timestamp: Date.now(),
             questionCount: existingContext ? existingContext.questionCount + 1 : 1

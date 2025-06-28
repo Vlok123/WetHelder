@@ -17,14 +17,14 @@ export async function POST(request: NextRequest) {
     }
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o",
       messages: messages,
       max_tokens: 2000,
-      temperature: 0.3,
+      temperature: 0.1,
     })
-
+    
     const content = response.choices[0]?.message?.content || 'Er ging iets mis bij het genereren van de aangifte.'
-
+    
     return NextResponse.json({ 
       response: content
     })

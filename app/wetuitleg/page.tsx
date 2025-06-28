@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
+import { useSearchParams } from 'next/navigation'
 import { Navigation } from '@/components/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -200,11 +201,13 @@ interface LegalAnalysis {
 
 export default function WetUitlegPage() {
   const { data: session } = useSession()
+  const searchParams = useSearchParams()
   const [analyses, setAnalyses] = useState<LegalAnalysis[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [profession, setProfession] = useState<Profession>('algemeen') // Add profession state
   const [remainingQuestions, setRemainingQuestions] = useState<number | null>(null)
+  const [hasProcessedUrlQuery, setHasProcessedUrlQuery] = useState(false) // Track if we've processed URL query
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -292,11 +295,36 @@ export default function WetUitlegPage() {
     checkRateLimit()
   }, [session])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!input.trim() || isLoading) return
+  // Handle URL query parameter for automatic question submission
+  useEffect(() => {
+    const urlQuery = searchParams.get('q')
+    
+    if (urlQuery && !hasProcessedUrlQuery && !isLoading) {
+      console.log('🔍 Processing URL query:', urlQuery)
+      
+      // Set the input field value
+      setInput(urlQuery)
+      if (inputRef.current) {
+        inputRef.current.value = urlQuery
+      }
+      
+      // Automatically submit the query after a brief delay to ensure everything is loaded
+      const timer = setTimeout(() => {
+        if (!isLoading) {
+          submitQuery(urlQuery)
+        }
+      }, 500)
+      
+      setHasProcessedUrlQuery(true)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [searchParams, hasProcessedUrlQuery, isLoading])
 
-    const query = input.trim()
+  const submitQuery = async (query: string) => {
+    if (!query.trim() || isLoading) return
+
+    const trimmedQuery = query.trim()
     setInput('')
     if (inputRef.current) {
       inputRef.current.value = ''
@@ -306,7 +334,7 @@ export default function WetUitlegPage() {
     // Create temporary analysis with loading state
     const tempAnalysis: LegalAnalysis = {
       id: Date.now().toString(),
-      query,
+      query: trimmedQuery,
       articleText: '',
       officialLink: '',
       summary: '',
@@ -349,7 +377,7 @@ export default function WetUitlegPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          query,
+          query: trimmedQuery,
           history: conversationHistory,
           profession: profession // Add profession to API call
         }),
@@ -439,6 +467,13 @@ export default function WetUitlegPage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // Ensure handleSubmit is properly defined
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!input.trim() || isLoading) return
+    await submitQuery(input)
   }
 
   const parseAnalysisContent = (content: string) => {

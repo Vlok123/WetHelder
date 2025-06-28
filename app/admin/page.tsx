@@ -938,7 +938,7 @@ export default function AdminDashboard() {
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h3 className="text-lg font-semibold">Alle Vragen & Antwoorden</h3>
+                    <h3 className="text-lg font-semibold">Alle Vragen & Antwoorden</h3>
                       <p className="text-sm text-gray-600 mt-1">Toont de laatste 100 vragen (was 20)</p>
                     </div>
                     <Button

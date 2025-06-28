@@ -143,8 +143,8 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
     } else {
       // Standard parallel search across all site groups
       searchPromises = Object.entries(SITE_GROUPS).map(([tag, sites]) =>
-        searchSites(query, tag as SourceTag, sites)
-      )
+      searchSites(query, tag as SourceTag, sites)
+    )
     }
     
     // Execute all searches in parallel
