@@ -102,7 +102,77 @@ function formatCombinedSnippets(results: GoogleSearchResult[], jsonSources: Json
 }
 
 /**
- * Main search pipeline - replaces multiple specific search functions
+ * Enhanced search for RVV (Reglement verkeersregels en verkeerstekens) articles
+ * Specifically validates against wetten.overheid.nl for accurate law text
+ */
+async function searchSpecificRVVArticle(query: string): Promise<GoogleSearchResult[]> {
+  console.log(`🚦 Enhanced RVV article search for: "${query}"`)
+  
+  // Extract RVV article number from query
+  const rvvMatch = query.match(/(?:artikel\s+)?(\d+)\s+(?:rvv|reglement\s+verkeersregels)/i)
+  if (!rvvMatch) {
+    return []
+  }
+  
+  const articleNumber = rvvMatch[1]
+  console.log(`🚦 Searching for RVV artikel ${articleNumber}`)
+  
+  // Direct searches for RVV 1990 on wetten.overheid.nl
+  const searchQueries = [
+    `"artikel ${articleNumber}" site:wetten.overheid.nl "RVV 1990" "verkeersregels"`,
+    `"artikel ${articleNumber}" site:wetten.overheid.nl "BWBR0004825" RVV`,
+    `"artikel ${articleNumber}" site:wetten.overheid.nl "Reglement verkeersregels en verkeerstekens"`,
+    `"artikel ${articleNumber} RVV 1990" site:wetten.overheid.nl`,
+    `"artikel ${articleNumber}" "RVV" "verkeersregels" site:wetten.overheid.nl`
+  ]
+  
+  const results: GoogleSearchResult[] = []
+  
+  for (const searchQuery of searchQueries) {
+    try {
+      console.log(`🔍 RVV search query: ${searchQuery}`)
+      const searchResults = await searchSites(searchQuery, SourceTag.WETTEN, ['wetten.overheid.nl'])
+      
+      // Filter for results that specifically mention the article and RVV
+      const relevantResults = searchResults.filter(result => {
+        const snippet = result.snippet.toLowerCase()
+        const title = result.title.toLowerCase()
+        return (
+          (snippet.includes(`artikel ${articleNumber}`) || title.includes(`artikel ${articleNumber}`)) &&
+          (snippet.includes('rvv') || snippet.includes('verkeersregels') || title.includes('rvv'))
+        )
+      })
+      
+      if (relevantResults.length > 0) {
+        console.log(`✅ Found ${relevantResults.length} relevant RVV results for artikel ${articleNumber}`)
+        results.push(...relevantResults)
+        break // Stop at first successful search
+      }
+    } catch (error) {
+      console.warn(`⚠️ RVV search failed for query: ${searchQuery}`, error)
+    }
+  }
+  
+  // If no specific results found, try a broader search
+  if (results.length === 0) {
+    console.log(`🔍 Broadening RVV search for artikel ${articleNumber}`)
+    try {
+      const broadResults = await searchSites(
+        `artikel ${articleNumber} RVV verkeersregels site:wetten.overheid.nl`,
+        SourceTag.WETTEN,
+        ['wetten.overheid.nl']
+      )
+      results.push(...broadResults)
+    } catch (error) {
+      console.warn('⚠️ Broad RVV search failed', error)
+    }
+  }
+  
+  return results
+}
+
+/**
+ * Enhanced main search pipeline with specific RVV validation
  */
 export async function searchVerifiedJuridicalSources(query: string): Promise<VerifiedSearchResults> {
   console.log(`🔍 Starting refactored search pipeline for: "${query}"`)
@@ -110,11 +180,43 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
   const isHistorical = isHistoricalQuery(query)
   const timestamp = new Date()
   
-  // Special handling for RV (Reglement Voertuigen) articles
-  const isRVQuery = /(\d+\.\d+\.\d+)\s*rv/i.test(query) || query.toLowerCase().includes('reglement voertuigen')
-  if (isRVQuery) {
-    console.log('🚗 Detected RV (Reglement Voertuigen) query - prioritizing vehicle regulations')
+  // Special handling for RVV (Reglement verkeersregels en verkeerstekens) articles
+  const isRVVQuery = /(?:artikel\s+)?\d+\s+(?:rvv|reglement\s+verkeersregels)/i.test(query) || 
+                    query.toLowerCase().includes('rvv') || 
+                    query.toLowerCase().includes('verkeersregels en verkeerstekens')
+  
+  if (isRVVQuery) {
+    console.log('🚦 Detected RVV (Reglement verkeersregels en verkeerstekens) query - using enhanced search')
+    
+    // First try specific RVV article search
+    const rvvResults = await searchSpecificRVVArticle(query)
+    if (rvvResults.length > 0) {
+      console.log(`✅ Found ${rvvResults.length} specific RVV results, prioritizing these`)
+      
+      // Calculate metrics
+      const metrics = calculateMetrics(rvvResults)
+      
+      // Search JSON sources
+      const jsonSources = await searchJsonSources(query)
+      
+      return {
+        results: rvvResults,
+        combinedSnippets: formatCombinedSnippets(rvvResults, jsonSources),
+        totalResults: metrics.total,
+        currentYearResults: metrics.currentYear,
+        outdatedResults: metrics.outdated,
+        jsonResults: jsonSources.length,
+        internetResults: rvvResults.length,
+        isHistoricalQuery: isHistorical,
+        searchTerms: [query],
+        timestamp,
+        sources: { [SourceTag.WETTEN]: rvvResults }
+      }
+    }
   }
+  
+  // Special handling for RV (Reglement voertuigen) articles  
+  const isRVQuery = /(\d+\.\d+\.\d+)\s*rv/i.test(query) || query.toLowerCase().includes('reglement voertuigen')
   
   try {
     // For RV queries, prioritize WETTEN sources and add specific RV search terms

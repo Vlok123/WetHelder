@@ -58,7 +58,7 @@ export const politieWetData = {
       description: 'Wanneer en hoe mag iemand worden aangehouden?',
       icon: 'AlertCircle',
       color: 'bg-red-100 text-red-800',
-      articleCount: 0
+      articleCount: 1
     },
     {
       slug: 'privacy',
@@ -355,6 +355,107 @@ Je kunt het ook melden bij de Nationale Ombudsman als je klacht niet serieus gen
 ## Belangrijke rechtspraak
 
 * ECLI:NL:HR:2009:BH4266 – Bevestigt dat politie onder voorwaarden verkeersregels mag negeren, mits noodzakelijk en met zorgvuldigheid.
+
+---
+
+Laatst gecheckt: 28 juni 2025  
+Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'betreden-tuin-zonder-machtiging',
+      title: 'Mag een agent zonder machtiging een tuin betreden voor onderzoek of inbeslagname?',
+      description: 'Wanneer mag de politie tuinen, schuren en andere niet-woningen betreden zonder machtiging voor onderzoek of inbeslagname.',
+      category: 'Opsporing & Aanhouding',
+      categorySlug: 'opsporing',
+      seoTitle: 'Mag politie zonder machtiging een tuin betreden voor onderzoek?',
+      seoDescription: 'Uitleg over wanneer de politie tuinen, schuren en bijgebouwen mag betreden zonder machtiging, wettelijke basis en je rechten.',
+      readTime: '6 min lezen',
+      lastUpdated: '2025-06-28',
+      views: 0,
+      tags: ['binnentreden', 'woning', 'tuin', 'onderzoek', 'inbeslagname', 'awbi', 'machtiging'],
+      featured: true,
+      content: `## Kort antwoord
+
+Ja, een agent mag **zonder machtiging** een terrein betreden dat **geen woning is**, bijvoorbeeld een tuin, schuur of garage, **om bewijs veilig te stellen of onderzoek te doen**. Gaat het echter om een **besloten erf dat als woning geldt**, dan is **wél een machtiging tot binnentreden nodig**, behalve bij spoed of heterdaad.
+
+---
+
+## Uitgebreide uitleg
+
+### Wat zegt de wet?
+
+Een **woning** is extra beschermd in de wet. Maar veel andere plekken – zoals een tuin, schuurtje, bedrijfshal of auto – **vallen daar niet standaard onder**. Voor het betreden van die plekken geldt dus **een lagere drempel**.
+
+De politie mag deze plekken betreden in het kader van hun taken, zoals:
+
+* **Aanhouding van een verdachte**
+* **Inbeslagname van voorwerpen**
+* **Doorzoeking in het belang van een onderzoek**
+
+### Maar let op: "woning" wordt breed geïnterpreteerd
+
+Volgens de **Algemene wet op het binnentreden (Awbi)** kan een **besloten erf of bijgebouw** óók een 'woning' zijn, als het gebruikt wordt als privéruimte. Denk aan:
+
+* Een **ommuurde achtertuin** waar mensen vaak zitten
+* Een **tuinhuisje** dat als logeerkamer wordt gebruikt
+* Een **garage** die direct toegang geeft tot een huis
+
+Daarvoor is dan **toch een machtiging nodig**.
+
+### Wettelijke basis
+
+* **Artikel 1 lid 1 sub b Algemene wet op het binnentreden (Awbi)** – definitie van woning, inclusief besloten erven die als woonruimte fungeren.
+* **Artikel 2 Awbi** – machtiging verplicht voor binnentreden van woning.
+* **Artikel 96b Wetboek van Strafvordering (Sv)** – politie mag zonder machtiging plaatsen betreden **die geen woning zijn**, bij ontdekking op heterdaad of verdenking van een strafbaar feit.
+* **Artikel 96c Sv** – doorzoeking ter inbeslagneming in niet-woning mag ook zonder machtiging.
+* **Artikel 55 Sv** – bevoegdheid om voorwerpen in beslag te nemen die voor het onderzoek van belang zijn.
+
+---
+
+## Praktijkvoorbeeld
+
+Stel: de politie verdenkt iemand van hennepteelt. Ze ruiken vanaf de straat een sterke geur.
+
+De **voortuin is open**, dus daar mogen ze gewoon in.
+
+In de **achtertuin staat een afgesloten schuur**.
+
+Als die schuur niet als woning wordt gebruikt, mogen ze daar zonder machtiging in – **mits er sprake is van verdenking**.
+
+Is die schuur echter ingericht als slaapkamer of woonkamer? Dan **is het een woning** en is er **een machtiging tot binnentreden nodig**.
+
+---
+
+## Rechten & plichten van de burger
+
+* **Je mag vragen op basis waarvan de politie binnentreedt** (Artikel 9 Awbi).
+* **Je hebt geen toestemming nodig te geven** als er een geldige reden is voor binnentreden zonder machtiging (Artikel 96b Sv).
+* **Je bent verplicht toegang te geven** bij een geldige machtiging of wettige bevoegdheid.
+* **Je hebt recht op een bewijs van binnentreden** (bijvoorbeeld een formulier of uitleg achteraf).
+
+---
+
+## Wat kun je doen?
+
+* **Vraag altijd** of je met een woning of niet-woning te maken hebt.
+* Twijfel je of binnentreden rechtmatig was? Dien dan een **klacht in bij de politie** of de **Nationale Ombudsman**.
+* Bij schade of onrechtmatige inbeslagname kun je naar een **advocaat of het Juridisch Loket** stappen.
+* Vraag eventueel om **inzage in het proces-verbaal van binnentreden**.
+
+---
+
+## Gerelateerde regelgeving
+
+* **Algemene wet op het binnentreden (Awbi)** – regels over machtigingen en woningbegrip.
+* **Wetboek van Strafvordering artikelen 96b t/m 96g** – bevoegdheden voor inbeslagname en betreden niet-woningen.
+* **Politiewet 2012 artikel 3** – taakomschrijving politie (waaronder opsporing en handhaving).
+
+---
+
+## Belangrijke rechtspraak
+
+* **HR 10-11-2009, ECLI:NL:HR:2009:BI7099** – schuur op erf werd aangemerkt als woning, binnentreden zonder machtiging was onrechtmatig.
+* **HR 27-10-2015, ECLI:NL:HR:2015:3122** – doorzoeking bedrijfspand zonder machtiging was toegestaan.
 
 ---
 

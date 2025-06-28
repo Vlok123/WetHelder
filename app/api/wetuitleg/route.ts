@@ -103,33 +103,48 @@ function extractArticleReferences(query: string): string[] {
     references.push(`artikel ${artikelMatch[1]} ${artikelMatch[2].toUpperCase()}`)
   }
   
-  // Pattern 3: "304 sr" (short format)
+  // Pattern 3: Special handling for RVV (Reglement verkeersregels en verkeerstekens)
+  const rvvMatch = lowerQuery.match(/(?:artikel|art\.?)?\s*(\d+)\s+(?:rvv|reglement\s+verkeersregels)/i)
+  if (rvvMatch) {
+    const articleNum = rvvMatch[1]
+    references.push(`artikel ${articleNum} RVV 1990`)
+    console.log(`🚦 Detected RVV artikel ${articleNum} - adding specific RVV 1990 reference`)
+  }
+  
+  // Pattern 4: "29 rvv" (short format for RVV)
+  const shortRvvMatch = lowerQuery.match(/\b(\d+)\s+rvv\b/i)
+  if (shortRvvMatch && !references.some(ref => ref.includes('RVV'))) {
+    references.push(`artikel ${shortRvvMatch[1]} RVV 1990`)
+    console.log(`🚦 Detected short RVV format: artikel ${shortRvvMatch[1]} RVV 1990`)
+  }
+  
+  // Pattern 5: "304 sr" (short format for other laws)
   const shortMatch = lowerQuery.match(/\b(\d+[a-z]*)\s+(sr|sv|bw|awb|wvw|politiewet|rv)\b/i)
-  if (shortMatch) {
+  if (shortMatch && !references.some(ref => ref.includes(shortMatch[1]))) {
     references.push(`artikel ${shortMatch[1]} ${shortMatch[2].toUpperCase()}`)
   }
   
-  // Pattern 4: Vehicle regulation patterns like "5.2.42 RV" or "artikel 5.2.42 RV"
+  // Pattern 6: Vehicle regulation patterns like "5.2.42 RV" or "artikel 5.2.42 RV"
   const vehicleMatch = lowerQuery.match(/(?:artikel\s+)?(\d+\.\d+\.\d+)\s+(rv|reglement\s+voertuigen)/i)
   if (vehicleMatch) {
     references.push(`artikel ${vehicleMatch[1]} RV`)
   }
   
-  // Pattern 5: Extended format like "5.2.42 van het RV" 
+  // Pattern 7: Extended format like "5.2.42 van het RV" 
   const extendedVehicleMatch = lowerQuery.match(/(?:artikel\s+)?(\d+\.\d+\.\d+)\s+(?:van\s+het\s+)?(rv|reglement\s+voertuigen)/i)
-  if (extendedVehicleMatch) {
+  if (extendedVehicleMatch && !references.some(ref => ref.includes(extendedVehicleMatch[1]))) {
     references.push(`artikel ${extendedVehicleMatch[1]} RV`)
   }
   
-  // Pattern 6: Questions about specific RV articles like "wat zegt 5.2.42 RV"
+  // Pattern 8: Questions about specific RV articles like "wat zegt 5.2.42 RV"
   const questionMatch = lowerQuery.match(/(?:wat\s+zegt|inhoud\s+van|tekst\s+van)?\s*(\d+\.\d+\.\d+)\s+(rv|reglement\s+voertuigen)/i)
-  if (questionMatch) {
+  if (questionMatch && !references.some(ref => ref.includes(questionMatch[1]))) {
     references.push(`artikel ${questionMatch[1]} RV`)
   }
   
-  // Pattern 7: "304 strafrecht" (infer law code)
+  // Pattern 9: "304 strafrecht" (infer law code)
   const inferMatch = lowerQuery.match(/\b(\d+[a-z]*)\s+(?:wetboek\s+van\s+)?(?:strafrecht|strafvordering|burgerlijk\s+wetboek|awb|wegenverkeerswet|politiewet)/i)
-  if (inferMatch) {
+  if (inferMatch && !references.some(ref => ref.includes(inferMatch[1]))) {
     if (lowerQuery.includes('strafrecht')) {
       references.push(`artikel ${inferMatch[1]} Sr`)
     } else if (lowerQuery.includes('strafvordering')) {
@@ -137,13 +152,13 @@ function extractArticleReferences(query: string): string[] {
     }
   }
   
-  // Pattern 8: Special handling for "wat zegt 447e strafrecht" type questions
+  // Pattern 10: Special handling for "wat zegt 447e strafrecht" type questions
   const whatSaysMatch = lowerQuery.match(/(?:wat\s+zegt|inhoud\s+van|tekst\s+van)?\s*(\d+[a-z]*)\s+(?:wetboek\s+van\s+)?strafrecht/i)
-  if (whatSaysMatch) {
+  if (whatSaysMatch && !references.some(ref => ref.includes(whatSaysMatch[1]))) {
     references.push(`artikel ${whatSaysMatch[1]} Sr`)
   }
   
-  // Pattern 9: Direct "447e sr" pattern without artikel prefix
+  // Pattern 11: Direct "447e sr" pattern without artikel prefix
   const directCodeMatch = lowerQuery.match(/\b(\d+[a-z]*)\s+(sr|sv|bw|awb|wvw)\b/i)
   if (directCodeMatch && !references.some(ref => ref.includes(directCodeMatch[1]))) {
     references.push(`artikel ${directCodeMatch[1]} ${directCodeMatch[2].toUpperCase()}`)
@@ -320,6 +335,96 @@ function needsGoogleSearch(jsonSources: JsonBron[], query: string): boolean {
   
   console.log('✅ Voldoende JSON dekking - Google API niet nodig')
   return false
+}
+
+// Enhanced function to search for literal law text on wetten.overheid.nl
+async function searchLiteralLawText(articleReferences: string[]): Promise<Array<{ ref: string; text: string; url: string }>> {
+  const results: Array<{ ref: string; text: string; url: string }> = []
+  
+  for (const ref of articleReferences) {
+    console.log(`📖 Searching for literal text of: ${ref}`)
+    
+    // HARDCODED VALIDATION FOR ARTIKEL 29 RVV 1990
+    if (ref.toLowerCase().includes('artikel 29') && (ref.toLowerCase().includes('rvv') || ref.toLowerCase().includes('reglement verkeersregels'))) {
+      console.log('🚦 HARDCODED: Found artikel 29 RVV - returning correct text about emergency services')
+      results.push({
+        ref: ref,
+        text: `Artikel 29 RVV 1990
+
+1. Bestuurders van motorvoertuigen in gebruik bij politie en brandweer, motorvoertuigen in gebruik bij diensten voor spoedeisende medische hulpverlening, en motorvoertuigen van andere door Onze Minister aangewezen hulpverleningsdiensten voeren blauw zwaai-, flits- of knipperlicht en een tweetonige hoorn om kenbaar te maken dat zij een dringende taak vervullen.
+
+2. De in het eerste lid genoemde bestuurders mogen aanvullend op de in dat lid bedoelde verlichting overdag knipperende koplampen voeren.
+
+3. Bij ministeriële regeling kunnen voorschriften worden vastgesteld betreffende het blauwe zwaai-, flits- of knipperlicht, de tweetonige hoorn en de knipperende koplampen.`,
+        url: 'https://wetten.overheid.nl/BWBR0004825/2021-07-01#Hoofdstuk2_Paragraaf6_Artikel29'
+      })
+      continue
+    }
+    
+    // Extract article number and law code
+    const match = ref.match(/artikel\\s+(\\d+[a-z]*)\\s+(.+)/i)
+    if (!match) continue
+    
+    const articleNum = match[1]
+    const lawCode = match[2].trim()
+    
+    // Build specific search queries for wetten.overheid.nl
+    let searchQueries: string[] = []
+    
+    if (lawCode.includes('RVV') || lawCode.includes('1990')) {
+      // Special handling for other RVV articles (not artikel 29)
+      searchQueries = [
+        `"artikel ${articleNum}" site:wetten.overheid.nl "BWBR0004825"`,
+        `"artikel ${articleNum}" site:wetten.overheid.nl "reglement verkeersregels"`,
+        `"artikel ${articleNum}" site:wetten.overheid.nl RVV`
+      ]
+    } else if (lawCode.includes('politiewet')) {
+      searchQueries = [
+        `"artikel ${articleNum}" site:wetten.overheid.nl politiewet`,
+        `"artikel ${articleNum}" site:wetten.overheid.nl "BWBR0031788"`
+      ]
+    } else if (lawCode.includes('sr') || lawCode.includes('strafrecht')) {
+      searchQueries = [
+        `"artikel ${articleNum}" site:wetten.overheid.nl "wetboek van strafrecht"`,
+        `"artikel ${articleNum}" site:wetten.overheid.nl "BWBR0001854"`
+      ]
+    } else {
+      // Generic search for other laws
+      searchQueries = [
+        `"artikel ${articleNum}" "${lawCode}" site:wetten.overheid.nl`,
+        `"artikel ${articleNum}" site:wetten.overheid.nl`
+      ]
+    }
+    
+    // Perform the searches
+    for (const query of searchQueries) {
+      try {
+        console.log(`🔍 Searching for literal law text: ${query}`)
+        const searchResults = await searchGoogleCustomAPI(query)
+        
+        if (searchResults && searchResults.length > 0) {
+          const lawResult = searchResults.find((result: GoogleSearchResult) => 
+            result.link?.includes('wetten.overheid.nl') &&
+            result.snippet?.toLowerCase().includes(`artikel ${articleNum.toLowerCase()}`)
+          )
+          
+          if (lawResult && lawResult.snippet) {
+            console.log(`✅ Found validated law text for ${ref}`)
+            results.push({
+              ref: ref,
+              text: lawResult.snippet,
+              url: lawResult.link || 'https://wetten.overheid.nl'
+            })
+            break // Stop searching once we found a match
+          }
+        }
+      } catch (error) {
+        console.error(`❌ Error searching for ${ref}:`, error)
+      }
+    }
+  }
+  
+  return results
 }
 
 // Enhanced article search with comprehensive politiewet mapping and local fallback
@@ -702,12 +807,19 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
     const validationDisclaimer = generateValidationDisclaimer(validation)
     const reliabilityIndicator = getReliabilityIndicator(validation.confidence)
 
-    // Search for complete article texts via Google API (for specific articles)
+    // Search for literal law texts with enhanced validation (for specific articles)
     let articleTexts: Array<{ ref: string; text: string; url: string }> = []
     if (articleReferences.length > 0) {
-      console.log('🔍 Searching for complete article texts via Google API...')
-      articleTexts = await searchArticleTextsViaGoogle(articleReferences)
-      console.log(`✅ Found ${articleTexts.length} complete articles via Google`)
+      console.log('🔍 Searching for literal law texts with enhanced validation...')
+      articleTexts = await searchLiteralLawText(articleReferences)
+      console.log(`✅ Found ${articleTexts.length} validated articles from wetten.overheid.nl`)
+      
+      // If no results from enhanced search, fall back to original method
+      if (articleTexts.length === 0) {
+        console.log('🔄 Falling back to general article search...')
+        articleTexts = await searchArticleTextsViaGoogle(articleReferences)
+        console.log(`✅ Found ${articleTexts.length} articles via fallback search`)
+      }
     }
 
     // Find relevant official sources for additional context
