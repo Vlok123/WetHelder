@@ -376,6 +376,23 @@ async function searchLiteralLawText(articleReferences: string[]): Promise<Array<
       continue
     }
     
+    // HARDCODED VALIDATION FOR ARTIKEL 96B WETBOEK VAN STRAFVORDERING - DOORZOEKEN VERVOERMIDDELEN
+    if (ref.toLowerCase().includes('artikel 96b') && (ref.toLowerCase().includes('sv') || ref.toLowerCase().includes('strafvordering'))) {
+      console.log('🚗 HARDCODED: Found artikel 96b Sv - returning correct text about vehicle searches')
+      results.push({
+        ref: ref,
+        text: `Artikel 96b Wetboek van Strafvordering
+
+1. In geval van ontdekking op heterdaad van een strafbaar feit of in geval van verdenking van een misdrijf als omschreven in artikel 67, eerste lid, is de opsporingsambtenaar bevoegd ter inbeslagneming een vervoermiddel, met uitzondering van het woongedeelte zonder toestemming van de bewoner, te doorzoeken en zich daartoe de toegang tot dit vervoermiddel te verschaffen.
+
+2. Indien zulks met het oog op de uitoefening van de in het eerste lid verleende bevoegdheid noodzakelijk is, kan de opsporingsambtenaar:
+a. van de bestuurder van het vervoermiddel vorderen dat hij het vervoermiddel tot stilstand brengt, en
+b. het vervoermiddel vervolgens naar een daartoe door hem aangewezen plaats overbrengen of door de bestuurder laten overbrengen.`,
+        url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIV_HoofdstukII_TiteldeelIV_Afdeling3_Artikel96b'
+      })
+      continue
+    }
+    
     // Extract article number and law code
     const match = ref.match(/artikel\\s+(\\d+[a-z]*)\\s+(.+)/i)
     if (!match) continue
@@ -498,15 +515,15 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
       url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIII_HoofdstukII_Afdeling1_Artikel61'
     },
     'artikel 96b sv': {
-      text: 'Artikel 96b Wetboek van Strafvordering - Doorzoeken van voertuigen:\n\n1. Een opsporingsambtenaar is bevoegd tot het doorzoeken van een voertuig, indien uit feiten of omstandigheden blijkt dat daarin voorwerpen aanwezig zijn die voor de waarheidsvinding van belang kunnen zijn en die vatbaar zijn voor inbeslagneming.\n\n2. Het doorzoeken geschiedt, voor zover mogelijk, in tegenwoordigheid van de verdachte of van de houder van het voertuig.',
+      text: 'Artikel 96b Wetboek van Strafvordering\n\n1. In geval van ontdekking op heterdaad van een strafbaar feit of in geval van verdenking van een misdrijf als omschreven in artikel 67, eerste lid, is de opsporingsambtenaar bevoegd ter inbeslagneming een vervoermiddel, met uitzondering van het woongedeelte zonder toestemming van de bewoner, te doorzoeken en zich daartoe de toegang tot dit vervoermiddel te verschaffen.\n\n2. Indien zulks met het oog op de uitoefening van de in het eerste lid verleende bevoegdheid noodzakelijk is, kan de opsporingsambtenaar:\na. van de bestuurder van het vervoermiddel vorderen dat hij het vervoermiddel tot stilstand brengt, en\nb. het vervoermiddel vervolgens naar een daartoe door hem aangewezen plaats overbrengen of door de bestuurder laten overbrengen.',
       url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIV_HoofdstukII_TiteldeelIV_Afdeling3_Artikel96b'
     },
     'artikel 96b SV': {
-      text: 'Artikel 96b Wetboek van Strafvordering - Doorzoeken van voertuigen:\n\n1. Een opsporingsambtenaar is bevoegd tot het doorzoeken van een voertuig, indien uit feiten of omstandigheden blijkt dat daarin voorwerpen aanwezig zijn die voor de waarheidsvinding van belang kunnen zijn en die vatbaar zijn voor inbeslagneming.\n\n2. Het doorzoeken geschiedt, voor zover mogelijk, in tegenwoordigheid van de verdachte of van de houder van het voertuig.',
+      text: 'Artikel 96b Wetboek van Strafvordering\n\n1. In geval van ontdekking op heterdaad van een strafbaar feit of in geval van verdenking van een misdrijf als omschreven in artikel 67, eerste lid, is de opsporingsambtenaar bevoegd ter inbeslagneming een vervoermiddel, met uitzondering van het woongedeelte zonder toestemming van de bewoner, te doorzoeken en zich daartoe de toegang tot dit vervoermiddel te verschaffen.\n\n2. Indien zulks met het oog op de uitoefening van de in het eerste lid verleende bevoegdheid noodzakelijk is, kan de opsporingsambtenaar:\na. van de bestuurder van het vervoermiddel vorderen dat hij het vervoermiddel tot stilstand brengt, en\nb. het vervoermiddel vervolgens naar een daartoe door hem aangewezen plaats overbrengen of door de bestuurder laten overbrengen.',
       url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIV_HoofdstukII_TiteldeelIV_Afdeling3_Artikel96b'
     },
     'artikel 96b Sv': {
-      text: 'Artikel 96b Wetboek van Strafvordering - Doorzoeken van voertuigen:\n\n1. Een opsporingsambtenaar is bevoegd tot het doorzoeken van een voertuig, indien uit feiten of omstandigheden blijkt dat daarin voorwerpen aanwezig zijn die voor de waarheidsvinding van belang kunnen zijn en die vatbaar zijn voor inbeslagneming.\n\n2. Het doorzoeken geschiedt, voor zover mogelijk, in tegenwoordigheid van de verdachte of van de houder van het voertuig.',
+      text: 'Artikel 96b Wetboek van Strafvordering\n\n1. In geval van ontdekking op heterdaad van een strafbaar feit of in geval van verdenking van een misdrijf als omschreven in artikel 67, eerste lid, is de opsporingsambtenaar bevoegd ter inbeslagneming een vervoermiddel, met uitzondering van het woongedeelte zonder toestemming van de bewoner, te doorzoeken en zich daartoe de toegang tot dit vervoermiddel te verschaffen.\n\n2. Indien zulks met het oog op de uitoefening van de in het eerste lid verleende bevoegdheid noodzakelijk is, kan de opsporingsambtenaar:\na. van de bestuurder van het vervoermiddel vorderen dat hij het vervoermiddel tot stilstand brengt, en\nb. het vervoermiddel vervolgens naar een daartoe door hem aangewezen plaats overbrengen of door de bestuurder laten overbrengen.',
       url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIV_HoofdstukII_TiteldeelIV_Afdeling3_Artikel96b'
     },
     

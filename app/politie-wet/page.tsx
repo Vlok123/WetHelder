@@ -167,30 +167,30 @@ export default function PolitieWetPage() {
 
         {/* Latest Articles */}
         {latestArticles.length > 0 && (
-          <section className="mb-16">
+        <section className="mb-16">
             <h2 className="text-3xl font-bold mb-8 text-center">Nieuwe toegevoegde artikelen</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {latestArticles.map((article) => (
-                <Card key={article.slug} className="hover:shadow-lg transition-shadow">
-                  <Link href={`/politie-wet/artikel/${article.slug}`}>
-                    <CardHeader>
-                      <div className="flex items-center justify-between mb-2">
-                        <Badge variant="outline" className="text-xs">
-                          {article.category}
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-lg hover:text-blue-600 transition-colors">
-                        {article.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
+              <Card key={article.slug} className="hover:shadow-lg transition-shadow">
+                <Link href={`/politie-wet/artikel/${article.slug}`}>
+                  <CardHeader>
+                    <div className="flex items-center justify-between mb-2">
+                      <Badge variant="outline" className="text-xs">
+                        {article.category}
+                      </Badge>
+                    </div>
+                    <CardTitle className="text-lg hover:text-blue-600 transition-colors">
+                      {article.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
                       <p className="text-sm text-gray-600">Laatst bijgewerkt: {article.lastUpdated}</p>
-                    </CardContent>
-                  </Link>
-                </Card>
-              ))}
-            </div>
-          </section>
+                  </CardContent>
+                </Link>
+              </Card>
+            ))}
+          </div>
+        </section>
         )}
 
         {/* Call to Action */}
