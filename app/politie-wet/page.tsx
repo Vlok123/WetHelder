@@ -87,8 +87,9 @@ export default function PolitieWetPage() {
           </CardHeader>
           <CardContent>
             <p className="text-blue-700 leading-relaxed">
-              Er wordt hard gewerkt aan het uitbreiden van de Politie & Wet sectie met meer artikelen en onderwerpen. 
-              Nieuwe content komt snel online! Heb je een specifieke vraag? Stel deze via ons{' '}
+              De Politie & Wet sectie wordt voortdurend uitgebreid met nieuwe artikelen over politiebevoegdheden en burgerrechten. 
+              Regelmatig worden actuele onderwerpen toegevoegd aan de kennisbank. Heeft u een specifieke vraag? 
+              Deze kunt u stellen via ons{' '}
               <Link href="/contact" className="text-blue-800 underline hover:text-blue-900">
                 contactformulier
               </Link>
@@ -177,10 +178,6 @@ export default function PolitieWetPage() {
                         <Badge variant="outline" className="text-xs">
                           {article.category}
                         </Badge>
-                        <div className="flex items-center text-sm text-gray-500">
-                          <Eye className="h-4 w-4 mr-1" />
-                          {article.views.toLocaleString()}
-                        </div>
                       </div>
                       <CardTitle className="text-lg hover:text-blue-600 transition-colors">
                         {article.title}

@@ -170,15 +170,13 @@ export const formatPolitieWetContent = (text: string): string => {
     '|||MARKDOWN_LINK|||$1|||$2|||'
   )
   
-    // ULTRA SIMPLE: Use unique placeholders then replace
-  
-  // 1. Replace ALLEEN complete article + law combinations (NIET standalone artikelen)
+  // Use unique placeholders for all replacements
   const articleLawReplacements: Array<{placeholder: string, text: string, type: string}> = []
   let counter = 1000
   
-  // Verbeterde regex voor artikel + wet/reglement combinaties (inclusief lange wet namen met voorzetsels en volledige afkortingen)
+  // 1. Uitgebreide regex voor artikel + wet/reglement combinaties met betere ondersteuning voor complete namen
   processedText = processedText.replace(
-    /(artikel|art\.)\s+(\d+(?:\.\d+)*[a-z]*(?::\d+)?(?:\s+lid\s+\d+[a-z]*)?(?:\s+sub\s+[a-z])?)\s+((?:[A-Z][\w\s&-]*?(?:wet|wetboek|reglement|code|verdrag|richtlijn)[\w\s\d\(\)]*?(?:op\s+het\s+\w+)?(?:\s*\([A-Z\w\s\d]+\))?)|(?:Sr|Sv|BW|Awbi?|WVW|RVV|Politiewet|Wegenverkeerswet|Reglement\s+voertuigen)(?:\s+\d{4})?)/gi,
+    /(artikel|art\.)\s+(\d+(?:\.\d+)*[a-z]*(?::\d+)?(?:\s+lid\s+\d+[a-z]*)?(?:\s+(?:onder\s+)?sub\s+[a-z])?)\s+((?:[A-Z][\w\s&-]*?(?:wet|wetboek|reglement|code|verdrag|richtlijn|besluit)[\w\s\d\(\)]*?(?:op\s+het\s+[\w\s]+|van\s+de\s+[\w\s]+|voor\s+de\s+[\w\s]+)?(?:\s*\([A-Z][\w\s\d]+\))?)|(?:Sr|Sv|BW|Awbi|WVW|RVV\s+\d{4}|Politiewet\s+\d{4}|Wegenverkeerswet\s+\d{4}|Reglement\s+voertuigen|Wetboek\s+van\s+Strafvordering|Wetboek\s+van\s+Strafrecht|Algemene\s+wet\s+op\s+het\s+binnentreden))/gi,
     (match) => {
       const cleanMatch = match.replace(/[).,;]*$/, '').trim()
       const placeholder = `__PLACEHOLDER_${counter}__`
@@ -192,11 +190,9 @@ export const formatPolitieWetContent = (text: string): string => {
     }
   )
   
-  // GEEN standalone artikel links meer - alleen volledige combinaties!
-  
-  // 3. Replace standalone laws
+  // 2. Standalone law names (zonder artikel nummer)
   processedText = processedText.replace(
-    /\b([A-Z][\w\s&-]*(?:wet|wetboek)[\w\s\d]*)\b/g,
+    /\b((?:[A-Z][\w\s&-]*?(?:wet|wetboek|reglement|code|verdrag|richtlijn|besluit)[\w\s\d\(\)]*?(?:op\s+het\s+[\w\s]+|van\s+de\s+[\w\s]+|voor\s+de\s+[\w\s]+)?(?:\s*\([A-Z][\w\s\d]+\))?)|(?:Politiewet\s+\d{4}|Wegenverkeerswet\s+\d{4}|Wetboek\s+van\s+Strafvordering|Wetboek\s+van\s+Strafrecht|Algemene\s+wet\s+op\s+het\s+binnentreden))\b/g,
     (match) => {
       if (match.length < 6) return match
       const cleanMatch = match.replace(/[).,;]*$/, '').trim()
@@ -211,20 +207,20 @@ export const formatPolitieWetContent = (text: string): string => {
     }
   )
   
-  // 4. Convert all placeholders to actual links
+  // 3. Convert all placeholders to actual links
   articleLawReplacements.forEach(replacement => {
     const encodedQuery = encodeURIComponent(replacement.text)
     const linkHtml = replacement.type === 'FULL_ARTICLE_LINK'
       ? `<a href="/wetuitleg?q=${encodedQuery}" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:border-blue-300 cursor-pointer transition-colors">${replacement.text}</a>`
       : `<a href="/wetuitleg?q=${encodedQuery}" class="font-semibold text-indigo-700 bg-indigo-50 px-1 rounded hover:bg-indigo-100 cursor-pointer transition-colors">${replacement.text}</a>`
     
-         processedText = processedText.replace(replacement.placeholder, linkHtml)
-   })
+    processedText = processedText.replace(replacement.placeholder, linkHtml)
+  })
    
-   // Convert markdown links to actual HTML links
-   processedText = processedText
-     .replace(/\|\|\|MARKDOWN_LINK\|\|\|(.*?)\|\|\|(.*?)\|\|\|/g, 
-       '<a href="$2" class="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener noreferrer">$1</a>')
+  // Convert markdown links to actual HTML links
+  processedText = processedText
+    .replace(/\|\|\|MARKDOWN_LINK\|\|\|(.*?)\|\|\|(.*?)\|\|\|/g, 
+      '<a href="$2" class="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener noreferrer">$1</a>')
   
   // Apply other legal formatting
   return processedText

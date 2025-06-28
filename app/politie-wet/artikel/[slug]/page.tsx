@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { ArrowLeft, Clock, Calendar, Tags, Share2, BookOpen, MessageSquare, FileText, Eye, ThumbsUp } from 'lucide-react'
+import { ArrowLeft, Clock, Calendar, Tags, Share2, BookOpen, MessageSquare, FileText, Eye, ThumbsUp, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -287,10 +287,7 @@ export default function ArticlePage() {
                   <Calendar className="h-4 w-4 mr-1" />
                   Bijgewerkt: {new Date(article.lastUpdated).toLocaleDateString('nl-NL')}
                 </div>
-                <div className="flex items-center">
-                  <Eye className="h-4 w-4 mr-1" />
-                  {article.views.toLocaleString()} weergaven
-                </div>
+
               </div>
             </div>
 
@@ -339,6 +336,21 @@ export default function ArticlePage() {
           </article>
 
           <hr className="my-12 border-gray-200" />
+
+          {/* Fout gevonden knop */}
+          <div className="flex justify-end mb-8">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              asChild
+              className="text-gray-600 hover:text-gray-800"
+            >
+              <Link href="/contact">
+                <AlertTriangle className="h-4 w-4 mr-1" />
+                Fout gevonden?
+              </Link>
+            </Button>
+          </div>
 
           {/* Call to Actions */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">

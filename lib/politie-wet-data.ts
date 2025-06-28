@@ -818,7 +818,7 @@ Je rijdt op de snelweg en wordt aangehouden voor een verkeerscontrole. Terwijl j
 
 ---
 
-Laatst gecheckt: 28 juni 2025
+Laatst gecheckt: 28 juni 2025  
 Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
     }
   ] as PolitieWetArticle[]
