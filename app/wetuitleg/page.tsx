@@ -300,7 +300,7 @@ function WetUitlegPage() {
     const urlQuery = searchParams.get('q')
     
     if (urlQuery && !hasProcessedUrlQuery && !isLoading) {
-      console.log('🔍 Processing URL query:', urlQuery)
+      console.log(' Processing URL query:', urlQuery)
       
       // Set the input field value
       setInput(urlQuery)
@@ -411,7 +411,7 @@ function WetUitlegPage() {
           const { done, value } = await Promise.race([readPromise, timeoutPromise]) as any
           
           if (done) {
-            console.log('✅ Stream completed, total time:', Date.now() - startTime, 'ms')
+            console.log(' Stream completed, total time:', Date.now() - startTime, 'ms')
             break
           }
 
@@ -440,7 +440,7 @@ function WetUitlegPage() {
             ))
           }
         } catch (timeoutError) {
-          console.error('❌ Stream timeout:', timeoutError)
+          console.error(' Stream timeout:', timeoutError)
           if (accumulatedContent.length === 0) {
             throw new Error('No response received - request timed out')
           }
@@ -481,8 +481,8 @@ function WetUitlegPage() {
     // Extract exact legal text from markdown code blocks, emoji sections or specific markers
     const exactTextPatterns = [
       /```[\s\S]*?```/g,
-      /📜[\s\S]*?(?=🔍|⚖️|💡|🔗|⚠️|$)/g,
-      /\*\*📜 EXACTE WETTEKST\*\*[\s\S]*?(?=\*\*🔍|$)/g,
+      /📜[\s\S]*?(?=||💡|🔗||$)/g,
+      /\*\*📜 EXACTE WETTEKST\*\*[\s\S]*?(?=\*\*|$)/g,
       /EXACTE WETTEKST[\s\S]*?(?=JURIDISCHE ANALYSE|$)/g
     ]
     
@@ -496,12 +496,12 @@ function WetUitlegPage() {
     }
     
     const sections = {
-      articleText: exactText || extractSection(content, '📜', '🔍') || extractSection(content, 'EXACTE WETTEKST', 'JURIDISCHE ANALYSE'),
-      summary: extractSection(content, '🔍', '⚖️') || extractSection(content, 'JURIDISCHE ANALYSE', 'JURISPRUDENTIE') || content, // Fallback to full content
+      articleText: exactText || extractSection(content, '📜', '') || extractSection(content, 'EXACTE WETTEKST', 'JURIDISCHE ANALYSE'),
+      summary: extractSection(content, '', '') || extractSection(content, 'JURIDISCHE ANALYSE', 'JURISPRUDENTIE') || content, // Fallback to full content
       explanation: extractSection(content, '💡', '🔗') || extractSection(content, 'PRAKTISCHE TOEPASSING', 'GERELATEERDE ARTIKELEN'),
       practicalApplication: extractSection(content, '💡', '🔗') || extractSection(content, 'PRAKTISCHE TOEPASSING', 'GERELATEERDE ARTIKELEN'),
-      jurisprudence: extractSection(content, '⚖️', '💡') || extractSection(content, 'JURISPRUDENTIE', 'PRAKTISCHE TOEPASSING'),
-      relatedArticles: extractSection(content, '🔗', '⚠️') || extractSection(content, 'GERELATEERDE ARTIKELEN', 'BELANGRIJKE AANDACHTSPUNTEN'),
+      jurisprudence: extractSection(content, '', '💡') || extractSection(content, 'JURISPRUDENTIE', 'PRAKTISCHE TOEPASSING'),
+      relatedArticles: extractSection(content, '🔗', '') || extractSection(content, 'GERELATEERDE ARTIKELEN', 'BELANGRIJKE AANDACHTSPUNTEN'),
       officialLink: extractSection(content, 'LINK:', '') || extractSection(content, 'URL:', '') || extractSection(content, 'Bron:', ''),
       sources: extractSources(content)
     }

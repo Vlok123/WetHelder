@@ -67,7 +67,7 @@ function extractArticleReferences(query: string): string[] {
     references.push(`artikel ${whatSaysMatch[1]} Sr`)
   }
   
-  console.log(`🔍 Article extraction from "${query}":`, references)
+  console.log(` Article extraction from "${query}":`, references)
   
   // Remove duplicates
   return Array.from(new Set(references))
@@ -78,7 +78,7 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
   const GOOGLE_CSE_ID = process.env.GOOGLE_CSE_ID
   
   if (!GOOGLE_API_KEY || !GOOGLE_CSE_ID) {
-    console.log('⚠️ Google API credentials niet geconfigureerd voor artikel zoeken')
+    console.log(' Google API credentials niet geconfigureerd voor artikel zoeken')
     return []
   }
 
@@ -86,7 +86,7 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
   
   for (const articleRef of articleReferences) {
     try {
-      console.log(`🔍 Searching for: ${articleRef}`)
+      console.log(` Searching for: ${articleRef}`)
       
       // Clean up article reference for search
       const cleanRef = articleRef.replace('artikel ', '').trim()
@@ -97,7 +97,7 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
       )
       
       if (!response.ok) {
-        console.log(`❌ Google API error for ${articleRef}: ${response.status}`)
+        console.log(` Google API error for ${articleRef}: ${response.status}`)
         continue
       }
       
@@ -107,7 +107,7 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
         // Look for actual article text in snippets
         for (const item of data.items) {
           if (item.snippet && item.snippet.length > 50) {
-            console.log(`✅ Found article text via Google: ${articleRef} (${item.snippet.length} chars)`)
+            console.log(` Found article text via Google: ${articleRef} (${item.snippet.length} chars)`)
             foundArticles.push({
               ref: articleRef,
               text: item.snippet,
@@ -117,10 +117,10 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
           }
         }
       } else {
-        console.log(`ℹ️ No Google results for: ${articleRef}`)
+        console.log(` No Google results for: ${articleRef}`)
       }
     } catch (error) {
-      console.error(`❌ Error searching for ${articleRef}:`, error)
+      console.error(` Error searching for ${articleRef}:`, error)
     }
   }
   
@@ -224,11 +224,11 @@ function isFollowUpQuestion(currentQuery: string, context: ConversationContext |
     (hasContinuation && context.questionCount < 5) // Continuation woorden binnen 5 vragen
   )
 
-  console.log(`🔍 Follow-up detectie: ${isFollowUp ? 'JA' : 'NEE'}`)
+  console.log(` Follow-up detectie: ${isFollowUp ? 'JA' : 'NEE'}`)
   if (isFollowUp) {
-    console.log(`📚 Topic overlap: ${topicOverlap.join(', ')}`)
+    console.log(` Topic overlap: ${topicOverlap.join(', ')}`)
     console.log(`🔗 Follow-up pattern: ${hasFollowUpPattern}`)
-    console.log(`➡️ Hergebruik van ${context.lastSources.length} bronnen`)
+    console.log(`➡ Hergebruik van ${context.lastSources.length} bronnen`)
   }
 
   return isFollowUp
@@ -329,12 +329,12 @@ async function searchGoogleCustomAPI(query: string): Promise<GoogleSearchResult[
   const GOOGLE_CSE_ID = process.env.GOOGLE_CSE_ID
   
   if (!GOOGLE_API_KEY || !GOOGLE_CSE_ID) {
-    console.log('⚠️ Google API credentials niet geconfigureerd')
+    console.log(' Google API credentials niet geconfigureerd')
     return []
   }
   
   try {
-    console.log('🌐 Searching Google Custom Search API for:', query)
+    console.log(' Searching Google Custom Search API for:', query)
     
     // Verbeter zoekterm voor APV vragen
     let searchQuery = query
@@ -369,7 +369,7 @@ async function searchGoogleCustomAPI(query: string): Promise<GoogleSearchResult[
     if (hasApvKeyword || hasGemeenteNaam) {
       // Voor APV vragen: voeg specifieke zoektermen toe
       searchQuery = `${query} site:lokaleregelgeving.overheid.nl OR site:overheid.nl APV "Algemene Plaatselijke Verordening"`
-      console.log('🏛️ APV-specifieke zoekopdracht:', searchQuery)
+      console.log(' APV-specifieke zoekopdracht:', searchQuery)
     }
     
     const searchUrl = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CSE_ID}&q=${encodeURIComponent(searchQuery)}&num=10`
@@ -378,7 +378,7 @@ async function searchGoogleCustomAPI(query: string): Promise<GoogleSearchResult[
     const data = await response.json()
     
     if (!data.items) {
-      console.log('ℹ️ Geen Google zoekresultaten gevonden')
+      console.log(' Geen Google zoekresultaten gevonden')
       return []
     }
     
@@ -389,11 +389,11 @@ async function searchGoogleCustomAPI(query: string): Promise<GoogleSearchResult[
       source: extractSourceFromUrl(item.link)
     }))
     
-    console.log(`✅ ${results.length} Google zoekresultaten gevonden`)
+    console.log(` ${results.length} Google zoekresultaten gevonden`)
     return results
     
   } catch (error) {
-    console.error('❌ Google Custom Search API error:', error)
+    console.error(' Google Custom Search API error:', error)
     return []
   }
 }
@@ -446,13 +446,13 @@ Samenvatting: ${result.snippet}
 function needsGoogleSearch(jsonSources: JsonBron[], query: string): boolean {
   // Als er geen directe match is in JSON bronnen
   if (jsonSources.length === 0) {
-    console.log('🔍 Geen JSON matches - Google API wordt geraadpleegd')
+    console.log(' Geen JSON matches - Google API wordt geraadpleegd')
     return true
   }
   
   // Als de dekking twijfelachtig is (minder dan 3 relevante bronnen)
   if (jsonSources.length < 3) {
-    console.log('🔍 Beperkte JSON dekking - Google API wordt geraadpleegd voor aanvulling')
+    console.log(' Beperkte JSON dekking - Google API wordt geraadpleegd voor aanvulling')
     return true
   }
   
@@ -475,11 +475,11 @@ function needsGoogleSearch(jsonSources: JsonBron[], query: string): boolean {
   
   const needsGoogle = needsGoogleKeywords.some(keyword => queryLower.includes(keyword))
   if (needsGoogle) {
-    console.log('🔍 Query bevat keywords die Google API vereisen')
+    console.log(' Query bevat keywords die Google API vereisen')
     return true
   }
   
-  console.log('✅ Voldoende JSON dekking - Google API niet nodig')
+  console.log(' Voldoende JSON dekking - Google API niet nodig')
   return false
 }
 
@@ -491,7 +491,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Vraag is verplicht' }, { status: 400 })
     }
 
-    console.log('🚀 WetHelder.nl Routing gestart voor vraag:', question)
+    console.log(' WetHelder.nl Routing gestart voor vraag:', question)
 
     // Get user session (optional for anonymous users)
     const session = await getServerSession(authOptions)
@@ -504,8 +504,8 @@ export async function POST(request: NextRequest) {
 
     if (isFollowUp && existingContext) {
       console.log('🔗 VERVOLGVRAAG GEDETECTEERD - Hergebruik bestaande bronnen')
-      console.log(`📚 Hergebruik: ${existingContext.lastSources.length} JSON bronnen`)
-      console.log(`🌐 Hergebruik: ${existingContext.lastGoogleResults ? 'Google resultaten' : 'Geen Google resultaten'}`)
+      console.log(` Hergebruik: ${existingContext.lastSources.length} JSON bronnen`)
+      console.log(` Hergebruik: ${existingContext.lastGoogleResults ? 'Google resultaten' : 'Geen Google resultaten'}`)
     }
 
     // Rate limit check for anonymous users
@@ -536,7 +536,7 @@ export async function POST(request: NextRequest) {
         }
       })
 
-      console.log(`🔍 Anonymous user (IP: ${clientIp}) has asked ${recentQuestions} questions in last 24h`)
+      console.log(` Anonymous user (IP: ${clientIp}) has asked ${recentQuestions} questions in last 24h`)
       
       // Debug: Show what queries were found for this IP
       if (process.env.NODE_ENV === 'development') {
@@ -549,7 +549,7 @@ export async function POST(request: NextRequest) {
           select: { question: true, answer: true, createdAt: true },
           take: 5
         })
-        console.log('🔍 Recent queries for this IP:', debugQueries.map(q => ({
+        console.log(' Recent queries for this IP:', debugQueries.map(q => ({
           question: q.question.substring(0, 50) + '...',
           isRateLimit: q.answer.includes('Dagelijkse limiet bereikt'),
           createdAt: q.createdAt
@@ -557,7 +557,7 @@ export async function POST(request: NextRequest) {
       }
 
       if (recentQuestions >= 4) {
-        console.log('❌ Rate limit exceeded for anonymous user')
+        console.log(' Rate limit exceeded for anonymous user')
         
         // Instead of returning an error, return a friendly rate limit message as a stream
         const rateLimitMessage = `🚨 **Dagelijkse limiet bereikt!**
@@ -566,13 +566,13 @@ Je hebt vandaag al **4 gratis vragen** gesteld zonder account.
 
 ## 🎯 Maak een gratis account aan voor:
 
-✅ **Onbeperkt vragen stellen** - Geen limiet meer!  
-✅ **Vraaggeschiedenis bewaren** - Bekijk eerdere gesprekken  
-✅ **Snellere antwoorden** - Prioriteit in de wachtrij  
-✅ **Uitgebreide analyses** - Meer gedetailleerde juridische adviezen  
-✅ **Persoonlijke instellingen** - Stel je profiel in (advocaat, BOA, etc.)
+ **Onbeperkt vragen stellen** - Geen limiet meer!  
+ **Vraaggeschiedenis bewaren** - Bekijk eerdere gesprekken  
+ **Snellere antwoorden** - Prioriteit in de wachtrij  
+ **Uitgebreide analyses** - Meer gedetailleerde juridische adviezen  
+ **Persoonlijke instellingen** - Stel je profiel in (advocaat, BOA, etc.)
 
-## 🚀 Snel registreren:
+##  Snel registreren:
 
 **[→ Account aanmaken - 100% Gratis](/auth/signup)**
 
@@ -580,7 +580,7 @@ Je hebt vandaag al **4 gratis vragen** gesteld zonder account.
 
 ---
 
-### 💡 Waarom een account?
+Waarom een account?
 WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account aan om misbruik te voorkomen en om je de best mogelijke juridische ondersteuning te bieden.
 
 **Registreren duurt slechts 30 seconden en je kunt direct weer vragen stellen!**`
@@ -614,11 +614,11 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
     
     if (isFollowUp && existingContext) {
       // HERVOLGVRAAG: Hergebruik bestaande bronnen
-      console.log('📋 STAP 1: Hergebruik bestaande JSON bronnen voor vervolgvraag')
+      console.log(' STAP 1: Hergebruik bestaande JSON bronnen voor vervolgvraag')
       jsonSources = existingContext.lastSources
       if (jsonSources.length > 0) {
         jsonContext = formatJsonSourcesForContext(jsonSources)
-        console.log(`✅ ${jsonSources.length} JSON bronnen hergebruikt uit vorige vraag`)
+        console.log(` ${jsonSources.length} JSON bronnen hergebruikt uit vorige vraag`)
       }
       
       // Voeg eventueel extra bronnen toe als nieuwe onderwerpen worden gedetecteerd
@@ -627,7 +627,7 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
       const newTopics = currentTopics.filter(topic => !lastTopics.includes(topic))
       
       if (newTopics.length > 0) {
-        console.log(`🔍 Nieuwe onderwerpen gedetecteerd: ${newTopics.join(', ')} - Zoek aanvullende bronnen`)
+        console.log(` Nieuwe onderwerpen gedetecteerd: ${newTopics.join(', ')} - Zoek aanvullende bronnen`)
         try {
           const additionalSources = await searchJsonSources(question, 5)
           const uniqueAdditionalSources = additionalSources.filter(newSource => 
@@ -637,30 +637,30 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
           if (uniqueAdditionalSources.length > 0) {
             jsonSources = [...jsonSources, ...uniqueAdditionalSources]
             jsonContext = formatJsonSourcesForContext(jsonSources)
-            console.log(`✅ ${uniqueAdditionalSources.length} aanvullende JSON bronnen toegevoegd`)
+            console.log(` ${uniqueAdditionalSources.length} aanvullende JSON bronnen toegevoegd`)
           }
         } catch (error) {
-          console.error('❌ Fout bij zoeken aanvullende bronnen:', error)
+          console.error(' Fout bij zoeken aanvullende bronnen:', error)
         }
       }
     } else {
       // NIEUWE VRAAG: Normale bronnen zoeken
-      console.log('📋 STAP 1: Controle officiele_bronnen.json')
+      console.log(' STAP 1: Controle officiele_bronnen.json')
       try {
         jsonSources = await searchJsonSources(question, 10)
         if (jsonSources.length > 0) {
           jsonContext = formatJsonSourcesForContext(jsonSources)
-          console.log(`✅ ${jsonSources.length} relevante JSON bronnen gevonden`)
+          console.log(` ${jsonSources.length} relevante JSON bronnen gevonden`)
         } else {
-          console.log('ℹ️ Geen relevante JSON bronnen gevonden')
+          console.log(' Geen relevante JSON bronnen gevonden')
         }
       } catch (error) {
-        console.error('❌ Fout bij JSON bronnen zoeken:', error)
+        console.error(' Fout bij JSON bronnen zoeken:', error)
       }
     }
 
     // STAP 1.5: Actualiteitscontrole
-    console.log('🔍 STAP 1.5: Actualiteitscontrole')
+    console.log(' STAP 1.5: Actualiteitscontrole')
     let actualiteitsWaarschuwingen: ActualiteitsWaarschuwing[] = []
     let wetUpdates: WetUpdate[] = []
     
@@ -669,9 +669,9 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
       wetUpdates = await checkActueleWetgeving(question)
       
       if (actualiteitsWaarschuwingen.length > 0) {
-        console.log(`⚠️ ${actualiteitsWaarschuwingen.length} actualiteitswaarschuwingen gevonden`)
+        console.log(` ${actualiteitsWaarschuwingen.length} actualiteitswaarschuwingen gevonden`)
         actualiteitsWaarschuwingen.forEach(waarschuwing => {
-          console.log(`⚠️ ${waarschuwing.urgentie}: ${waarschuwing.onderwerp}`)
+          console.log(` ${waarschuwing.urgentie}: ${waarschuwing.onderwerp}`)
         })
       }
       
@@ -682,7 +682,7 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
         })
       }
     } catch (error) {
-      console.error('❌ Fout bij actualiteitscontrole:', error)
+      console.error(' Fout bij actualiteitscontrole:', error)
     }
 
     // STAP 2: Google API bepalen (hergebruik bij vervolgvragen)
@@ -690,13 +690,13 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
     
     if (isFollowUp && existingContext) {
       // VERVOLGVRAAG: Hergebruik Google resultaten
-      console.log('🔍 STAP 2: Hergebruik Google resultaten voor vervolgvraag')
+      console.log(' STAP 2: Hergebruik Google resultaten voor vervolgvraag')
       googleResults = existingContext.lastGoogleResults
       if (googleResults) {
-        console.log('✅ Google resultaten hergebruikt uit vorige vraag')
-        console.log('⏭️ STAP 3: Google API overgeslagen - hergebruik bestaande resultaten')
+        console.log(' Google resultaten hergebruikt uit vorige vraag')
+        console.log(' STAP 3: Google API overgeslagen - hergebruik bestaande resultaten')
       } else {
-        console.log('ℹ️ Geen Google resultaten om te hergebruiken')
+        console.log(' Geen Google resultaten om te hergebruiken')
       }
       
       // Check of nieuwe vraag nieuwe Google zoeking vereist
@@ -712,61 +712,61 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
       const needsNewGoogleSearch = needsNewGoogleKeywords.some(keyword => queryLower.includes(keyword))
       
       if (hasNewLegalTopics || needsNewGoogleSearch) {
-        console.log('🔍 Nieuwe context vereist aanvullende Google zoeking')
+        console.log(' Nieuwe context vereist aanvullende Google zoeking')
         try {
           const results = await searchGoogleCustomAPI(question)
           if (results.length > 0) {
             const newGoogleResults = formatGoogleResultsForContext(results)
             // Combineer met bestaande resultaten (vermijd duplicaten)
             googleResults = googleResults ? `${googleResults}\n\n=== AANVULLENDE BRONNEN ===\n\n${newGoogleResults}` : newGoogleResults
-            console.log(`✅ ${results.length} aanvullende Google zoekresultaten toegevoegd`)
+            console.log(` ${results.length} aanvullende Google zoekresultaten toegevoegd`)
           }
         } catch (error) {
-          console.error('❌ Fout bij aanvullende Google zoeken:', error)
+          console.error(' Fout bij aanvullende Google zoeken:', error)
         }
       }
     } else {
       // NIEUWE VRAAG: Gebruik geavanceerde needsGoogleSearch functie (zoals /wetuitleg)
-      console.log('🔍 STAP 2: Evaluatie Google API noodzaak')
+      console.log(' STAP 2: Evaluatie Google API noodzaak')
       
       const needsGoogle = needsGoogleSearch(jsonSources, question)
       
       if (needsGoogle) {
-        console.log('🌐 STAP 3: Google Custom Search API wordt geraadpleegd')
-        console.log('🌐 Searching Google Custom Search API for:', question)
+        console.log(' STAP 3: Google Custom Search API wordt geraadpleegd')
+        console.log(' Searching Google Custom Search API for:', question)
         
         try {
           const results = await searchGoogleCustomAPI(question)
           if (results.length > 0) {
             googleResults = formatGoogleResultsForContext(results)
-            console.log(`✅ ${results.length} Google zoekresultaten gevonden`)
-            console.log(`✅ ${results.length} Google resultaten toegevoegd`)
+            console.log(` ${results.length} Google zoekresultaten gevonden`)
+            console.log(` ${results.length} Google resultaten toegevoegd`)
           } else {
-            console.log('ℹ️ Geen Google zoekresultaten gevonden')
+            console.log(' Geen Google zoekresultaten gevonden')
           }
         } catch (error) {
-          console.error('❌ Fout bij Google zoeken:', error)
+          console.error(' Fout bij Google zoeken:', error)
         }
       } else {
-        console.log('✅ Voldoende JSON dekking - Google API niet nodig')
-        console.log('⏭️ STAP 3: Google API overgeslagen - voldoende JSON dekking')
+        console.log(' Voldoende JSON dekking - Google API niet nodig')
+        console.log(' STAP 3: Google API overgeslagen - voldoende JSON dekking')
       }
     }
 
     // STAP 4: Samenstellen input voor ChatGPT (met conversatie context)
-    console.log('🤖 STAP 4: Input samenstelling voor ChatGPT')
-    console.log(`🤖 Starting OpenAI request met ${jsonSources.length} JSON bronnen en ${googleResults ? 'Google resultaten' : 'geen Google resultaten'}`)
+    console.log(' STAP 4: Input samenstelling voor ChatGPT')
+    console.log(` Starting OpenAI request met ${jsonSources.length} JSON bronnen en ${googleResults ? 'Google resultaten' : 'geen Google resultaten'}`)
     
     // Extract article references for specialized ask handling (COPIED FROM WETUITLEG)
     const articleReferences = extractArticleReferences(question)
-    console.log('📖 Detected article references:', articleReferences)
+    console.log(' Detected article references:', articleReferences)
 
     // Search for complete article texts via Google API (for specific articles)
     let articleTexts: Array<{ ref: string; text: string; url: string }> = []
     if (articleReferences.length > 0) {
-      console.log('🔍 Searching for complete article texts via Google API...')
+      console.log(' Searching for complete article texts via Google API...')
       articleTexts = await searchArticleTextsViaGoogle(articleReferences)
-      console.log(`✅ Found ${articleTexts.length} complete articles via Google`)
+      console.log(` Found ${articleTexts.length} complete articles via Google`)
     }
 
     // Validate information reliability for ask endpoint as well
@@ -778,7 +778,7 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
     }
     
     const validation = validateLegalInformation(validationInput)
-    console.log('🛡️ Ask validation result:', {
+    console.log(' Ask validation result:', {
       reliable: validation.isReliable,
       confidence: validation.confidence,
       warnings: validation.warnings.length
@@ -786,7 +786,7 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
 
     // Include validation info in the response context
     const validationNote = validation.confidence === 'low' ? 
-      "\n\n🔍 BELANGRIJK: Deze informatie kon niet volledig worden geverifieerd tegen officiële bronnen. Controleer altijd via wetten.overheid.nl voor definitieve zekerheid." : ""
+      "\n\n BELANGRIJK: Deze informatie kon niet volledig worden geverifieerd tegen officiële bronnen. Controleer altijd via wetten.overheid.nl voor definitieve zekerheid." : ""
 
     // Prepare enhanced Google results including article texts (COPIED FROM WETUITLEG LOGIC)
     let enhancedGoogleResults = googleResults
@@ -795,7 +795,7 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
     if (articleTexts.length > 0) {
       let articleSection = '\n\n## VOLLEDIGE WETTEKSTEN:\n\n'
       articleTexts.forEach((article, index) => {
-        articleSection += `### ARTIKEL ${article.ref}\n`
+        articleSection += `ARTIKEL ${article.ref}\n`
         articleSection += `**Volledige tekst:** ${article.text}\n`
         articleSection += `**Bron:** ${article.url}\n\n`
       })
@@ -839,7 +839,7 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
           const clientIp = !session?.user ? (request.headers.get('x-forwarded-for') || 
                            request.headers.get('x-real-ip') || 'unknown') : null
           saveQueryToDatabase(question, fullResponse, profession, userId, jsonSources, enhancedGoogleResults, clientIp)
-            .catch(error => console.error('❌ Error saving query to database:', error))
+            .catch(error => console.error(' Error saving query to database:', error))
           
           // Update conversation context for future follow-up questions
           const currentTopics = extractLegalTopics(question)
@@ -852,22 +852,22 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
             questionCount: existingContext ? existingContext.questionCount + 1 : 1
           }
           conversationCache.set(sessionId, newContext)
-          console.log(`💾 Conversatie context opgeslagen voor sessie: ${sessionId}`)
+          console.log(` Conversatie context opgeslagen voor sessie: ${sessionId}`)
           
           controller.close()
         } catch (error) {
-          console.error('❌ Stream error:', error)
+          console.error(' Stream error:', error)
           controller.error(error)
         }
       }
     })
 
-    console.log('✅ OpenAI response streaming started')
+    console.log(' OpenAI response streaming started')
 
     return new NextResponse(transformedStream)
 
   } catch (error) {
-    console.error('❌ API Error:', error)
+    console.error(' API Error:', error)
     return NextResponse.json({ 
       error: 'Er is een fout opgetreden bij het verwerken van je vraag. Probeer het opnieuw.' 
     }, { status: 500 })
@@ -903,9 +903,9 @@ async function saveQueryToDatabase(
       }
     })
 
-    console.log('✅ Query saved to database')
+    console.log(' Query saved to database')
   } catch (error) {
-    console.error('❌ Error saving query to database:', error)
+    console.error(' Error saving query to database:', error)
   }
 }
 
@@ -955,7 +955,7 @@ export async function GET(request: NextRequest) {
       questionsUsed: recentQuestions
     })
   } catch (error) {
-    console.error('❌ GET Error:', error)
+    console.error(' GET Error:', error)
     return NextResponse.json({ 
       error: 'Er is een fout opgetreden' 
     }, { status: 500 })

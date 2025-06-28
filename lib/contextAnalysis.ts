@@ -216,7 +216,7 @@ const SECTOR_KNOWLEDGE: Record<string, SectorKnowledge> = {
 }
 
 /**
- * 🔍 Phase 1: Context Detection and Analysis
+ *  Phase 1: Context Detection and Analysis
  */
 export function detectContexts(question: string): string[] {
   const questionLower = question.toLowerCase()
@@ -311,7 +311,7 @@ ${sector.considerations.map(consideration => `• ${consideration}`).join('\n')}
 }
 
 /**
- * 🔄 Multi-Step Reasoning Engine
+ *  Multi-Step Reasoning Engine
  */
 export function buildEnhancedPrompt(
   basePrompt: string, 
@@ -362,7 +362,7 @@ Structureer je antwoord als volgt:
 4. **Praktische toepassing** (hoe werkt dit in de praktijk?)
 5. **Conclusie** (volledig juridisch advies)
 
-⚠️ KRITIEK: Geef GEEN antwoord dat alleen de algemene regels behandelt. Je MOET alle sector-specifieke aspecten meenemen.
+ KRITIEK: Geef GEEN antwoord dat alleen de algemene regels behandelt. Je MOET alle sector-specifieke aspecten meenemen.
 `
 
   return enhancedPrompt

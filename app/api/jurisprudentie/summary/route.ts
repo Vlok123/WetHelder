@@ -15,7 +15,7 @@ async function generateJurisprudentieSummary(fullText: string): Promise<string> 
 - Gebruik **"Ja, mits..."** formuleringen waar mogelijk in plaats van **"Nee, tenzij..."**
 - Focus op de toegekende rechten en bevoegdheden, gevolgd door voorwaarden
 
-📋 **INSTRUCTIES**: 
+ **INSTRUCTIES**: 
 Maak een samenvatting van deze juridische uitspraak volgens de opgegeven structuur.
 Gebruik alleen informatie uit de uitspraak zelf.
 Maak het helder en begrijpelijk voor niet-juristen.
@@ -58,7 +58,7 @@ ${fullText}`
     return summary
 
   } catch (error) {
-    console.error('❌ Error generating summary:', error)
+    console.error(' Error generating summary:', error)
     throw error
   }
 }
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
   try {
     const { fullText, ecli, link } = await request.json()
 
-    console.log('🔍 Generating summary for ECLI:', ecli)
+    console.log(' Generating summary for ECLI:', ecli)
     
     let textToSummarize = fullText
 
@@ -86,12 +86,12 @@ export async function POST(request: NextRequest) {
         
         if (scrapedContent.success && scrapedContent.fullText.length > 100) {
           textToSummarize = scrapedContent.fullText
-          console.log('✅ Successfully scraped content:', textToSummarize.length, 'characters')
+          console.log(' Successfully scraped content:', textToSummarize.length, 'characters')
         } else {
           throw new Error(scrapedContent.error || 'Scraping failed - insufficient content')
         }
       } catch (scrapingError) {
-        console.error('❌ Scraping error:', scrapingError)
+        console.error(' Scraping error:', scrapingError)
         return NextResponse.json({ 
           error: `Kon geen volledige tekst ophalen van de website: ${scrapingError instanceof Error ? scrapingError.message : 'Unknown scraping error'}`,
           suggestion: 'Probeer de volledige uitspraak direct te bekijken via de officiële link.'
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
     // Genereer de samenvatting
     const summary = await generateJurisprudentieSummary(textToSummarize)
     
-    console.log('✅ Summary generated successfully')
+    console.log(' Summary generated successfully')
     
     return NextResponse.json({
       success: true,
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
     })
     
   } catch (error) {
-    console.error('❌ Summary generation error:', error)
+    console.error(' Summary generation error:', error)
     return NextResponse.json({ 
       error: 'Internal server error',
       message: error instanceof Error ? error.message : 'Unknown error'

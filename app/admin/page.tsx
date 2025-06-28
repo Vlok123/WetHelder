@@ -223,7 +223,7 @@ export default function AdminDashboard() {
     
     if (autoRefresh && !isLoading) {
       interval = setInterval(() => {
-        console.log('🔄 Auto-refreshing admin data...')
+        console.log(' Auto-refreshing admin data...')
         fetchAdminData(false) // Silent refresh
       }, 15000) // Refresh every 15 seconds (more frequent)
     }
@@ -241,7 +241,7 @@ export default function AdminDashboard() {
       if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
         event.preventDefault()
         if (!isRefreshing) {
-          console.log('⌨️ Keyboard shortcut refresh triggered')
+          console.log('⌨ Keyboard shortcut refresh triggered')
           fetchAdminData(true)
         }
       }
@@ -249,7 +249,7 @@ export default function AdminDashboard() {
       if (event.key === 'F5') {
         event.preventDefault()
         if (!isRefreshing) {
-          console.log('⌨️ F5 refresh triggered')
+          console.log('⌨ F5 refresh triggered')
           fetchAdminData(true)
         }
       }
@@ -488,7 +488,7 @@ export default function AdminDashboard() {
               <Button
                 variant="outline"
                 onClick={() => {
-                  console.log('🔄 Manual refresh triggered')
+                  console.log(' Manual refresh triggered')
                   fetchAdminData(true)
                 }}
                 disabled={isRefreshing}

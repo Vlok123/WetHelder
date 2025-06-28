@@ -1080,7 +1080,7 @@ export default function AngifteAssistentPage() {
                       </span>
                       {angifteGegevens.zoekopdracht && (angifteGegevens.zoekopdracht?.length || 0) >= 20 && !angifteGegevens.aangepastDelict && (
                         <span className="text-blue-600 text-xs">
-                          ⏱️ Analyse duurt ca. 20 seconden
+                          ⏱ Analyse duurt ca. 20 seconden
                         </span>
                       )}
                     </div>

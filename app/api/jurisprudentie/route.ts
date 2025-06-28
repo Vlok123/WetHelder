@@ -30,12 +30,12 @@ async function searchJurisprudentieGoogle(query: string): Promise<GoogleJurispru
   const GOOGLE_CSE_ID = process.env.GOOGLE_CSE_ID
   
   if (!GOOGLE_API_KEY || !GOOGLE_CSE_ID) {
-    console.log('⚠️ Google API credentials niet geconfigureerd')
+    console.log(' Google API credentials niet geconfigureerd')
     return []
   }
   
   try {
-    console.log('🔍 Searching jurisprudentie via Google API for:', query)
+    console.log(' Searching jurisprudentie via Google API for:', query)
     
     // Zoek specifiek op rechtspraak.nl en gerelateerde jurisprudentie sites
     const searchQuery = `${query} site:rechtspraak.nl OR site:uitspraken.rechtspraak.nl OR site:tuchtrecht.overheid.nl ecli uitspraak vonnis arrest`
@@ -56,7 +56,7 @@ async function searchJurisprudentieGoogle(query: string): Promise<GoogleJurispru
     const data = await response.json()
     
     if (!data.items || data.items.length === 0) {
-      console.log('ℹ️ Geen Google jurisprudentie resultaten gevonden')
+      console.log(' Geen Google jurisprudentie resultaten gevonden')
       return []
     }
     
@@ -67,11 +67,11 @@ async function searchJurisprudentieGoogle(query: string): Promise<GoogleJurispru
       displayLink: item.displayLink
     }))
     
-    console.log(`✅ ${results.length} Google jurisprudentie resultaten gevonden`)
+    console.log(` ${results.length} Google jurisprudentie resultaten gevonden`)
     return results
     
   } catch (error) {
-    console.error('❌ Google jurisprudentie search error:', error)
+    console.error(' Google jurisprudentie search error:', error)
     return []
   }
 }
@@ -180,23 +180,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Query is required' }, { status: 400 })
     }
     
-    console.log('🔍 Jurisprudentie search request:', { query, filters })
+    console.log(' Jurisprudentie search request:', { query, filters })
     
     const results: JurisprudentieSearchResult[] = []
     
     // STAP 1: Zoek via Google Custom Search API
-    console.log('🌐 Stap 1: Google Custom Search API')
+    console.log(' Stap 1: Google Custom Search API')
     try {
       const googleResults = await searchJurisprudentieGoogle(query)
       const convertedGoogleResults = googleResults.map(convertGoogleToJurisprudentieResult)
       results.push(...convertedGoogleResults)
-      console.log(`✅ ${convertedGoogleResults.length} Google resultaten toegevoegd`)
+      console.log(` ${convertedGoogleResults.length} Google resultaten toegevoegd`)
     } catch (error) {
       console.error('Error in Google search:', error)
     }
     
     // STAP 2: Zoek via rechtspraak.nl API als backup/aanvulling
-    console.log('⚖️ Stap 2: Rechtspraak.nl API')
+    console.log(' Stap 2: Rechtspraak.nl API')
     try {
       const rechtspraakResults = await fetchRechtspraak(20, query)
       const relevantResults = rechtspraakResults.filter(doc => {
@@ -207,18 +207,18 @@ export async function POST(request: NextRequest) {
       
       const convertedRechtspraakResults = relevantResults.map(convertRechtspraakToResult)
       results.push(...convertedRechtspraakResults)
-      console.log(`✅ ${convertedRechtspraakResults.length} Rechtspraak.nl resultaten toegevoegd`)
+      console.log(` ${convertedRechtspraakResults.length} Rechtspraak.nl resultaten toegevoegd`)
     } catch (error) {
       console.error('Error in rechtspraak.nl search:', error)
     }
     
     // STAP 3: Zoek via OpenRechtspraak.nl als aanvulling
-    console.log('📖 Stap 3: OpenRechtspraak.nl API')
+    console.log(' Stap 3: OpenRechtspraak.nl API')
     try {
       const openRechtspraakResults = await fetchOpenRechtspraak(query, 10)
       const convertedOpenResults = openRechtspraakResults.map(convertRechtspraakToResult)
       results.push(...convertedOpenResults)
-      console.log(`✅ ${convertedOpenResults.length} OpenRechtspraak.nl resultaten toegevoegd`)
+      console.log(` ${convertedOpenResults.length} OpenRechtspraak.nl resultaten toegevoegd`)
     } catch (error) {
       console.error('Error in OpenRechtspraak search:', error)
     }
@@ -262,7 +262,7 @@ export async function POST(request: NextRequest) {
     // Limiteer tot 50 resultaten voor performance
     const limitedResults = filteredResults.slice(0, 50)
     
-    console.log(`✅ Jurisprudentie search completed: ${limitedResults.length} final results`)
+    console.log(` Jurisprudentie search completed: ${limitedResults.length} final results`)
     
     return NextResponse.json({
       success: true,
@@ -277,7 +277,7 @@ export async function POST(request: NextRequest) {
     })
     
   } catch (error) {
-    console.error('❌ Jurisprudentie search error:', error)
+    console.error(' Jurisprudentie search error:', error)
     return NextResponse.json({ 
       error: 'Internal server error',
       message: error instanceof Error ? error.message : 'Unknown error'

@@ -176,7 +176,7 @@ export default function DebugAuthPage() {
           {session && (
             <Card>
               <CardHeader>
-                <CardTitle>🔍 Raw Session Data</CardTitle>
+                <CardTitle> Raw Session Data</CardTitle>
                 <CardDescription>
                   Complete session object voor debugging
                 </CardDescription>

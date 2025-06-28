@@ -37,21 +37,21 @@ export function testContextAnalysis() {
   ]
 
   testCases.forEach((testCase, index) => {
-    console.log(`\n📋 Test ${index + 1}: ${testCase.name}`)
+    console.log(`\n Test ${index + 1}: ${testCase.name}`)
     console.log(`❓ Vraag: "${testCase.question}"`)
     
     const result = performContextAnalysis(testCase.question)
     
     console.log(`🎯 Gedetecteerde contexten: [${result.contexts.join(', ')}]`)
-    console.log(`📊 Verwachte contexten: [${testCase.expectedContexts.join(', ')}]`)
+    console.log(` Verwachte contexten: [${testCase.expectedContexts.join(', ')}]`)
     
     const isCorrect = JSON.stringify(result.contexts.sort()) === JSON.stringify(testCase.expectedContexts.sort())
-    console.log(`✅ Correct: ${isCorrect ? 'JA' : 'NEE'}`)
+    console.log(` Correct: ${isCorrect ? 'JA' : 'NEE'}`)
     
     if (result.contexts.length > 0) {
-      console.log(`📋 Speciale regels: ${result.analysis.specialRules.length}`)
-      console.log(`⚖️ Juridische principes: ${result.analysis.legalPrinciples.length}`)
-      console.log(`🔍 Verplichte overwegingen: ${result.analysis.requiredConsiderations.length}`)
+      console.log(` Speciale regels: ${result.analysis.specialRules.length}`)
+      console.log(` Juridische principes: ${result.analysis.legalPrinciples.length}`)
+      console.log(` Verplichte overwegingen: ${result.analysis.requiredConsiderations.length}`)
       
       // Show high priority rules
       const highPriorityRules = result.analysis.specialRules.filter(rule => rule.priority === 'high')
@@ -70,7 +70,7 @@ export function testContextAnalysis() {
 }
 
 /**
- * 🔍 Detailed Analysis Demo
+ *  Detailed Analysis Demo
  */
 export function demoDetailedAnalysis(question: string) {
   console.log('\n🔬 DETAILED CONTEXT ANALYSIS DEMO')
@@ -89,7 +89,7 @@ export function demoDetailedAnalysis(question: string) {
     console.log(`Legal Principles: ${result.analysis.legalPrinciples.length}`)
     console.log(`Required Considerations: ${result.analysis.requiredConsiderations.length}`)
 
-    console.log('\n📋 SPECIAL RULES:')
+    console.log('\n SPECIAL RULES:')
     result.analysis.specialRules.forEach((rule, index) => {
       const priority = rule.priority === 'high' ? '🔴' : rule.priority === 'medium' ? '🟡' : '🟢'
       console.log(`${index + 1}. ${priority} ${rule.rule}`)
@@ -97,17 +97,17 @@ export function demoDetailedAnalysis(question: string) {
       console.log(`   Description: ${rule.description}`)
     })
 
-    console.log('\n⚖️ LEGAL PRINCIPLES:')
+    console.log('\n LEGAL PRINCIPLES:')
     result.analysis.legalPrinciples.forEach((principle, index) => {
       console.log(`${index + 1}. ${principle}`)
     })
 
-    console.log('\n🔍 REQUIRED CONSIDERATIONS:')
+    console.log('\n REQUIRED CONSIDERATIONS:')
     result.analysis.requiredConsiderations.forEach((consideration, index) => {
       console.log(`${index + 1}. ${consideration}`)
     })
 
-    console.log('\n🚀 PHASE 3: ENHANCED PROMPT PREVIEW')
+    console.log('\n PHASE 3: ENHANCED PROMPT PREVIEW')
     const sampleBasePrompt = "Je bent een Nederlandse juridische expert."
     const enhancedPrompt = result.enhancedPrompt(sampleBasePrompt)
     
@@ -116,7 +116,7 @@ export function demoDetailedAnalysis(question: string) {
     console.log('Enhanced Prompt Preview:')
     console.log(preview)
   } else {
-    console.log('\n✅ No specialized context detected - standard processing will be used')
+    console.log('\n No specialized context detected - standard processing will be used')
   }
 
   console.log('\n═'.repeat(80))

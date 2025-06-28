@@ -69,11 +69,11 @@ function extractOrganization(bronNaam: string): string | undefined {
 export async function loadJsonSources(): Promise<JsonBron[]> {
   try {
     if (!fs.existsSync(JSON_SOURCES_PATH)) {
-      console.warn(`⚠️ JSON bestand niet gevonden: ${JSON_SOURCES_PATH}`)
+      console.warn(` JSON bestand niet gevonden: ${JSON_SOURCES_PATH}`)
       return []
     }
 
-    console.log('📊 Loading JSON sources...')
+    console.log(' Loading JSON sources...')
     
     // Lees het JSON bestand
     const rawData = fs.readFileSync(JSON_SOURCES_PATH, 'utf-8')
@@ -83,11 +83,11 @@ export async function loadJsonSources(): Promise<JsonBron[]> {
     const sourceData = jsonData.Sheet1 || []
     
     if (sourceData.length === 0) {
-      console.warn('⚠️ JSON bestand bevat geen data')
+      console.warn(' JSON bestand bevat geen data')
       return []
     }
     
-    console.log(`📋 ${sourceData.length} rijen gevonden in JSON`)
+    console.log(` ${sourceData.length} rijen gevonden in JSON`)
     
     // Map de data naar onze interface
     const sources: JsonBron[] = sourceData
@@ -115,13 +115,13 @@ export async function loadJsonSources(): Promise<JsonBron[]> {
           
           return source
         } catch (error) {
-          console.warn(`⚠️ Fout bij verwerken rij ${index + 1}:`, error)
+          console.warn(` Fout bij verwerken rij ${index + 1}:`, error)
           return null
         }
       })
       .filter((source: JsonBron | null): source is JsonBron => source !== null)
     
-    console.log(`✅ ${sources.length} bronnen geladen uit JSON bestand`)
+    console.log(` ${sources.length} bronnen geladen uit JSON bestand`)
     
     // Log categorieën
     const categories = [...new Set(sources.map(s => s.categorie))]
@@ -130,7 +130,7 @@ export async function loadJsonSources(): Promise<JsonBron[]> {
     return sources
     
   } catch (error) {
-    console.error('❌ Fout bij laden JSON bronnen:', error)
+    console.error(' Fout bij laden JSON bronnen:', error)
     return []
   }
 }
@@ -278,25 +278,25 @@ export async function testJsonIntegration(): Promise<void> {
   console.log('🧪 Testing JSON integration...')
   
   const sources = await loadJsonSources()
-  console.log(`📊 Totaal bronnen: ${sources.length}`)
+  console.log(` Totaal bronnen: ${sources.length}`)
   
   const categories = await getAvailableCategories()
   console.log(`📂 Categorieën: ${categories.join(', ')}`)
   
   const types = await getAvailableTypes()
-  console.log(`🏷️ Types: ${types.join(', ')}`)
+  console.log(` Types: ${types.join(', ')}`)
   
   // Test zoeken
   const searchResults = await searchJsonSources('politie', 5)
-  console.log(`🔍 Zoekresultaten voor 'politie': ${searchResults.length}`)
+  console.log(` Zoekresultaten voor 'politie': ${searchResults.length}`)
   
   if (searchResults.length > 0) {
-    console.log('📋 Eerste resultaat:')
+    console.log(' Eerste resultaat:')
     console.log(`   Naam: ${searchResults[0].naam}`)
     console.log(`   URL: ${searchResults[0].url}`)
     console.log(`   Categorie: ${searchResults[0].categorie}`)
     console.log(`   Topic: ${searchResults[0].topic}`)
   }
   
-  console.log('✅ JSON integration test completed')
+  console.log(' JSON integration test completed')
 } 

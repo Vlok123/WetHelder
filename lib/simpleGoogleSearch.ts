@@ -31,12 +31,12 @@ export async function searchOfficialSites(query: string): Promise<SearchBundle> 
   // Enhanced search specifically for wetten.overheid.nl comprehensive coverage
   const enhancedQuery = `${query} (site:wetten.overheid.nl OR site:lokaleregelgeving.overheid.nl) OR (${query} site:belastingdienst.nl OR site:rijksoverheid.nl OR site:rechtspraak.nl)`
   
-  console.log('🔍 Enhanced search query for comprehensive wetten.overheid.nl coverage:', enhancedQuery)
+  console.log(' Enhanced search query for comprehensive wetten.overheid.nl coverage:', enhancedQuery)
   
   try {
     const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cseId}&q=${encodeURIComponent(enhancedQuery)}&num=10`
     
-    console.log(`🔍 Google zoeken: "${enhancedQuery}"`)
+    console.log(` Google zoeken: "${enhancedQuery}"`)
     
     const response = await fetch(url)
     const data = await response.json()
@@ -53,7 +53,7 @@ export async function searchOfficialSites(query: string): Promise<SearchBundle> 
       source: extractSourceName(item.link || '')
     }))
 
-    console.log(`✅ ${results.length} resultaten gevonden`)
+    console.log(` ${results.length} resultaten gevonden`)
     
     return {
       query,
@@ -75,7 +75,7 @@ export function createTextBundle(searchBundle: SearchBundle): string {
     return 'Geen relevante informatie gevonden in officiële bronnen.'
   }
 
-  let bundle = `📚 Beschikbare informatie uit officiële bronnen:\n\n`
+  let bundle = ` Beschikbare informatie uit officiële bronnen:\n\n`
   
   searchBundle.results.forEach((result, index) => {
     bundle += `${index + 1}. [${result.source}]\n`
@@ -96,16 +96,16 @@ export function createChatGPTPrompt(originalQuery: string, textBundle: string): 
 
 📌 **JURIDISCH ANTWOORDMODEL - POSITIEVE BENADERING**
 KRITISCH: Vooral bij bevoegdheidsvragen:
-- ✅ Begin met wat juridisch gezien **wel mag** op basis van wetgeving
-- ✅ Gebruik **"Ja, mits..."** of **"Dit mag op basis van... onder voorwaarden..."**
-- ❌ Gebruik GEEN **"Nee, tenzij..."** formuleringen
+-  Begin met wat juridisch gezien **wel mag** op basis van wetgeving
+-  Gebruik **"Ja, mits..."** of **"Dit mag op basis van... onder voorwaarden..."**
+-  Gebruik GEEN **"Nee, tenzij..."** formuleringen
 
 ❓ Vraag:
 ${originalQuery}
 
 ${textBundle}
 
-✅ Strikte richtlijnen:
+ Strikte richtlijnen:
 - Gebruik UITSLUITEND bovenstaande tekstfragmenten
 - Noem altijd de exacte bron bij het antwoord
 - Zeg het eerlijk als de informatie niet actueel is voor ${currentYear}
@@ -169,7 +169,7 @@ export async function getAnswerFromChatGPT(prompt: string): Promise<string> {
  * Hoofdfunctie: Volledige 6-stappen workflow
  */
 export async function executeSimpleSearchWorkflow(userQuery: string): Promise<string> {
-  console.log('🚀 Start eenvoudige zoekworkflow')
+  console.log(' Start eenvoudige zoekworkflow')
   console.log(`📝 Gebruikersvraag: "${userQuery}"`)
   
   try {
@@ -177,7 +177,7 @@ export async function executeSimpleSearchWorkflow(userQuery: string): Promise<st
     const searchBundle = await searchOfficialSites(userQuery)
     
     if (searchBundle.results.length === 0) {
-      return `❌ **Geen informatie gevonden**
+      return ` **Geen informatie gevonden**
 
 Ik kon geen relevante informatie vinden in de officiële bronnen (belastingdienst.nl, rijksoverheid.nl, wetten.overheid.nl, rechtspraak.nl) voor uw vraag: "${userQuery}"
 
@@ -192,15 +192,15 @@ Ik kon geen relevante informatie vinden in de officiële bronnen (belastingdiens
     const chatGPTPrompt = createChatGPTPrompt(userQuery, textBundle)
     
     // STAP 6: Krijg antwoord van ChatGPT
-    console.log('🤖 Versturen naar ChatGPT...')
+    console.log(' Versturen naar ChatGPT...')
     const answer = await getAnswerFromChatGPT(chatGPTPrompt)
     
-    console.log('✅ Antwoord ontvangen van ChatGPT')
+    console.log(' Antwoord ontvangen van ChatGPT')
     return answer
     
   } catch (error) {
     console.error('Fout in zoekworkflow:', error)
-    return `❌ **Fout opgetreden**
+    return ` **Fout opgetreden**
 
 Er is een fout opgetreden bij het zoeken naar informatie voor uw vraag: "${userQuery}"
 

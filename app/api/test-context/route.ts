@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('❌ Context Analysis Test Error:', error)
+    console.error(' Context Analysis Test Error:', error)
     return NextResponse.json({ 
       error: 'Er is een fout opgetreden bij de context analyse test' 
     }, { status: 500 })

@@ -73,7 +73,7 @@ async function googleCSEEnhanced(query: string, site?: string): Promise<RawGoogl
     const finalQuery = site ? `site:${site} ${searchQuery}` : searchQuery
     const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${searchEngineId}&q=${encodeURIComponent(finalQuery)}&num=10`
     
-    console.log(`🔍 Enhanced search query: ${finalQuery}`)
+    console.log(` Enhanced search query: ${finalQuery}`)
     
     const response = await fetch(url)
     if (!response.ok) {
@@ -83,7 +83,7 @@ async function googleCSEEnhanced(query: string, site?: string): Promise<RawGoogl
     const data = await response.json()
     
     if (!data.items) {
-      console.log(`ℹ️ No results for: ${finalQuery}`)
+      console.log(` No results for: ${finalQuery}`)
       return []
     }
 
@@ -95,7 +95,7 @@ async function googleCSEEnhanced(query: string, site?: string): Promise<RawGoogl
       formattedUrl: item.formattedUrl
     }))
     
-    console.log(`✅ Found ${results.length} results for: ${finalQuery}`)
+    console.log(` Found ${results.length} results for: ${finalQuery}`)
     return results
   } catch (error) {
     console.error('Google CSE search failed:', error)
@@ -129,7 +129,7 @@ export async function searchSites(
 
       // For wetten.overheid.nl, perform multiple search strategies
       if (site === 'wetten.overheid.nl') {
-        console.log(`🏛️ Enhanced wetten.overheid.nl search for: "${query}"`)
+        console.log(` Enhanced wetten.overheid.nl search for: "${query}"`)
         
         // Strategy 1: Enhanced search with legal terms
         const enhancedResults = await googleCSEEnhanced(query, site)
@@ -137,7 +137,7 @@ export async function searchSites(
         // Strategy 2: If few results, try broader search
         let allResults = enhancedResults
         if (enhancedResults.length < 3) {
-          console.log('🔍 Limited results, trying broader search...')
+          console.log(' Limited results, trying broader search...')
           const broaderQuery = `${query} wetgeving regelgeving`
           const broaderResults = await googleCSEEnhanced(broaderQuery, site)
           allResults = [...enhancedResults, ...broaderResults]
@@ -160,7 +160,7 @@ export async function searchSites(
         // Cache the combined results
         await searchCache.set(site, query, uniqueResults)
         
-        console.log(`✅ Total unique results for wetten.overheid.nl: ${uniqueResults.length}`)
+        console.log(` Total unique results for wetten.overheid.nl: ${uniqueResults.length}`)
         return uniqueResults.map(result => toGoogleResult(result, tag))
       }
 

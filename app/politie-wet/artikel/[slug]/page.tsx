@@ -34,20 +34,20 @@ Nee, fouilleren op straat mag alleen onder specifieke voorwaarden. De politie he
 
 ## Wanneer is fouilleren toegestaan?
 
-### 1. Veiligheidsfouillering (art. 8 Politiewet 2012)
+1. Veiligheidsfouillering (art. 8 Politiewet 2012)
 De politie mag een veiligheidsfouillering uitvoeren wanneer:
 - Er een redelijk vermoeden bestaat dat je gevaarlijke voorwerpen bij je draagt
 - Dit nodig is ter bescherming van de veiligheid van de politieambtenaar of anderen
 - Bijvoorbeeld voorafgaand aan een aanhouding of bij het betreden van een politiebureau
 
-### 2. Preventief fouilleren (art. 8a Politiewet 2012)
+2. Preventief fouilleren (art. 8a Politiewet 2012)
 Preventief fouilleren is toegestaan:
 - In aangewezen veiligheidsrisicogebieden
 - Wanneer de burgemeester hiervoor een besluit heeft genomen
 - Ook zonder concreet vermoeden tegen een specifiek persoon
 - Dit moet wel proportioneel zijn en mag niet discriminerend plaatsvinden
 
-### 3. Fouillering bij aanhouding
+3. Fouillering bij aanhouding
 Bij een rechtmatige aanhouding mag de politie altijd fouilleren om:
 - Gevaarlijke voorwerpen weg te nemen
 - Bewijsmateriaal veilig te stellen
@@ -55,33 +55,33 @@ Bij een rechtmatige aanhouding mag de politie altijd fouilleren om:
 
 ## Wat zijn jouw rechten?
 
-### Informatieplicht politie
+Informatieplicht politie
 De politie moet je vertellen:
 - Waarom zij je fouilleren
 - Op welke wettelijke grondslag
 - Wat zij zoeken
 
-### Jouw wettelijke rechten
+Jouw wettelijke rechten
 - Vraag naar de reden: Je mag altijd vragen waarom je gefouilleerd wordt
 - Vraag om identificatie: De agent moet zich legitimeren als je daarom vraagt  
 - Recht op respect: De fouillering moet respectvol gebeuren
 - Geslacht: Zo mogelijk door agent van hetzelfde geslacht (behalve bij spoed)
 - Locatie: Bij voorkeur niet in het openbaar, tenzij dit niet anders kan
 
-### Mag je weigeren?
+Mag je weigeren?
 - Veiligheidsfouillering: Nee, als er een wettelijke grondslag is
 - Preventief fouilleren: Nee, in aangewezen gebieden
 - Zonder grondslag: Ja, je mag vragen naar de wettelijke basis
 
 ## Wat mag de politie tijdens fouillering?
 
-### Toegestaan
+Toegestaan
 - Aftasten van kleding en lichaam
 - Legen van zakken
 - Onderzoek van tassen en voorwerpen die je bij je draagt
 - Tijdelijk wegnemen van gevaarlijke voorwerpen
 
-### Niet toegestaan zonder extra bevoegdheid
+Niet toegestaan zonder extra bevoegdheid
 - Uitkleden (daarvoor zijn strengere regels)
 - Inwendig onderzoek
 - Onderzoek van lichaamsopeningen
@@ -89,13 +89,13 @@ De politie moet je vertellen:
 
 ## Wat te doen bij problemen?
 
-### Tijdens de fouillering
+Tijdens de fouillering
 - Blijf kalm en werk mee
 - Stel je vragen op respectvolle wijze
 - Onthoud details: naam agent, tijdstip, locatie
 - Protesteer niet fysiek, dit kan leiden tot aanhouding
 
-### Na de fouillering
+Na de fouillering
 - Klacht indienen: Bij de politie zelf of bij de Nationale ombudsman
 - Advocaat: Bij ernstige problemen kun je juridische bijstand zoeken
 - Getuigen: Vraag contactgegevens van eventuele getuigen
@@ -126,36 +126,36 @@ De politie heeft uitgebreide bevoegdheden bij verkeerscontroles, maar deze moete
 
 ## Stopteken geven
 
-### Wanneer mag de politie je laten stoppen?
+Wanneer mag de politie je laten stoppen?
 - Algemene verkeerscontrole: Altijd toegestaan voor controle rijbewijs, kentekenbewijs en verzekering
 - Verkeersovertreding: Bij observatie van verkeersovertredingen
 - Verdachte situaties: Bij redelijke vermoedens van strafbare feiten
 - Grootschalige controles: Bij verkeersacties en alcohol/drugscontroles
 
-### Moet je altijd stoppen?
+Moet je altijd stoppen?
 Ja, altijd. Het negeren van een stopteken is een strafbaar feit (art. 179 Wegenverkeerswet).
 
 ## Documenten controleren
 
-### Welke documenten mag de politie vragen?
+Welke documenten mag de politie vragen?
 - Rijbewijs: Verplicht bij besturen van motorvoertuigen
 - Kentekenbewijs: Moet in het voertuig aanwezig zijn
 - Verzekeringsbewijs: Bewijs van WA-verzekering
 - Identiteitsbewijs: In bepaalde situaties (identificatieplicht)
 
-### Wat als je documenten vergeten bent?
+Wat als je documenten vergeten bent?
 - Je kunt een boete krijgen
 - De politie kan het voertuig stilzetten
 - Soms krijg je de kans documenten binnen 24 uur te tonen
 
 ## Alcohol- en drugscontroles
 
-### Blaastest
+Blaastest
 - Verplichte medewerking: Je moet meewerken aan een blaastest
 - Weigering: Is strafbaar en leidt tot rijontzegging
 - Positieve uitslag: Kan leiden tot bloedonderzoek
 
-### Drugstest
+Drugstest
 - Speekseltest: Politie mag drugstest afnemen
 - Verplichte medewerking: Ook hier geldt medewerkingsplicht
 - Weigering: Is strafbaar`

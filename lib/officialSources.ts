@@ -75,7 +75,7 @@ export function loadOfficialSources(): OfficialSourceItem[] {
     
     const sources = data.Sheet1 || []
     officialSourcesCache = sources
-    console.log(`📚 Loaded ${sources.length} official sources from officiele_bronnen.json`)
+    console.log(` Loaded ${sources.length} official sources from officiele_bronnen.json`)
     return sources
   } catch (error) {
     console.error('Error loading officiele_bronnen.json:', error)
@@ -304,7 +304,7 @@ export function generateOfficialBronnenList(sources: OfficialSourceItem[]): stri
 // === 1. WETTENBANK (Basiswettenbestand) ===
 
 export async function fetchBasiswettenbestand(): Promise<WetgevingDocument[]> {
-  console.log('🏛️ Fetching Basiswettenbestand...')
+  console.log(' Fetching Basiswettenbestand...')
   
   try {
     // Enhanced search strategies for comprehensive coverage
@@ -313,7 +313,7 @@ export async function fetchBasiswettenbestand(): Promise<WetgevingDocument[]> {
       async () => {
     const response = await fetch('https://wetten.overheid.nl/BWB/Basiswettenbestand.zip')
         if (response.ok) {
-          console.log('✅ Basiswettenbestand ZIP available')
+          console.log(' Basiswettenbestand ZIP available')
           // In production, you would extract and parse the ZIP file
       return []
     }
@@ -325,7 +325,7 @@ export async function fetchBasiswettenbestand(): Promise<WetgevingDocument[]> {
         const searchResponse = await fetch('https://wetten.overheid.nl/zoeken?type=wet&format=json&limit=100')
         if (searchResponse.ok) {
     const data = await searchResponse.json()
-          console.log('✅ Wetten.overheid.nl search API available')
+          console.log(' Wetten.overheid.nl search API available')
     
     return data.results?.map((item: any) => ({
       id: item.identifier || item.uri,
@@ -427,21 +427,21 @@ export async function fetchBasiswettenbestand(): Promise<WetgevingDocument[]> {
       try {
         const results = await strategy()
         if (results.length > 0) {
-          console.log(`✅ Successfully fetched ${results.length} wetgeving documents`)
+          console.log(` Successfully fetched ${results.length} wetgeving documents`)
           return results
         }
   } catch (error) {
-        console.log(`❌ Strategy failed, trying next: ${error}`)
+        console.log(` Strategy failed, trying next: ${error}`)
         continue
       }
     }
     
     // If all strategies fail, return at least the fallback regulations
-    console.warn('⚠️ All primary strategies failed, using comprehensive fallback')
+    console.warn(' All primary strategies failed, using comprehensive fallback')
     return searchStrategies[2]() // Return the comprehensive vehicle regulations
     
   } catch (error) {
-    console.error('❌ Error fetching Basiswettenbestand:', error)
+    console.error(' Error fetching Basiswettenbestand:', error)
     
     // Always provide some basic legal framework even on complete failure
     return [{
@@ -498,7 +498,7 @@ export async function fetchKOOPDocuments(query: string = '', limit: number = 50)
 // === 3. RECHTSPRAAK (ECLI Feed) ===
 
 export async function fetchRechtspraak(limit: number = 100, query?: string): Promise<JurisprudentieDocument[]> {
-  console.log('⚖️ Fetching Rechtspraak...')
+  console.log(' Fetching Rechtspraak...')
   
   try {
     // Bouw de URL met query parameters
@@ -513,7 +513,7 @@ export async function fetchRechtspraak(limit: number = 100, query?: string): Pro
     }
     
     const url = `https://data.rechtspraak.nl/uitspraken/search?${params.toString()}`
-    console.log('🔍 Rechtspraak API URL:', url)
+    console.log(' Rechtspraak API URL:', url)
     
     const response = await fetch(url, {
       headers: {
@@ -535,7 +535,7 @@ export async function fetchRechtspraak(limit: number = 100, query?: string): Pro
     // Extraheer de uitspraken uit de XML structuur
     const uitspraken = extractUitsprakenFromXML(result)
     
-    console.log(`✅ ${uitspraken.length} uitspraken gevonden via Rechtspraak Open Data API`)
+    console.log(` ${uitspraken.length} uitspraken gevonden via Rechtspraak Open Data API`)
     return uitspraken
     
   } catch (error) {
@@ -565,7 +565,7 @@ function extractUitsprakenFromXML(xmlResult: any): JurisprudentieDocument[] {
     }
     
     if (docs.length === 0) {
-      console.log('⚠️ Geen uitspraken gevonden in XML structuur')
+      console.log(' Geen uitspraken gevonden in XML structuur')
       return []
     }
     
@@ -674,7 +674,7 @@ function parseDate(dateString: string): Date | null {
 async function fetchRechtspraakAPI(limit: number): Promise<JurisprudentieDocument[]> {
   try {
     // Dit endpoint bestaat niet meer - verwijderd
-    console.warn('❌ Oude Rechtspraak API endpoint niet meer beschikbaar')
+    console.warn(' Oude Rechtspraak API endpoint niet meer beschikbaar')
     return []
     
   } catch (error) {
@@ -706,7 +706,7 @@ export async function fetchBoetebase(): Promise<BoeteDocument[]> {
 // === 5. TWEEDE KAMER GRAPHQL ===
 
 export async function fetchTweedeKamer(limit: number = 50): Promise<any[]> {
-  console.log('🏛️ Fetching Tweede Kamer data...')
+  console.log(' Fetching Tweede Kamer data...')
   
   try {
     const query = `
@@ -818,7 +818,7 @@ export async function fetchAutoriteitPersoonsgegevens(query: string = ''): Promi
 // === 9. ACM (AUTORITEIT CONSUMENT & MARKT) ===
 
 export async function fetchACM(query: string = ''): Promise<WetgevingDocument[]> {
-  console.log('⚖️ Fetching ACM documents...')
+  console.log(' Fetching ACM documents...')
   
   try {
     // ACM heeft geen publieke API voor zoeken
@@ -918,7 +918,7 @@ export async function fetchPolitie(query: string = ''): Promise<WetgevingDocumen
 // === 14. RIJKSOVERHEID.NL (BELEID) ===
 
 export async function fetchRijksoverheid(query: string = ''): Promise<WetgevingDocument[]> {
-  console.log('🏛️ Fetching Rijksoverheid.nl documents...')
+  console.log(' Fetching Rijksoverheid.nl documents...')
   
   try {
     // Rijksoverheid heeft wel een zoek-API
@@ -958,7 +958,7 @@ export async function fetchRijksoverheid(query: string = ''): Promise<WetgevingD
 // === 15. JURIDISCH LOKET (JURIDISCHE HULP) ===
 
 export async function fetchJuridischLoket(query: string = ''): Promise<WetgevingDocument[]> {
-  console.log('⚖️ Fetching Juridisch Loket documents...')
+  console.log(' Fetching Juridisch Loket documents...')
   
   try {
     // Juridisch Loket heeft geen publieke API, maar we kunnen de inhoud structureel benaderen
@@ -1007,7 +1007,7 @@ export async function fetchJuridischLoket(query: string = ''): Promise<Wetgeving
 // === 16. KOOP SRU - CVDR (DECENTRALE REGELGEVING) ===
 
 export async function fetchCVDR(query: string = '', limit: number = 50): Promise<WetgevingDocument[]> {
-  console.log('🏛️ Fetching CVDR (gemeentelijke/provinciale verordeningen)...')
+  console.log(' Fetching CVDR (gemeentelijke/provinciale verordeningen)...')
   
   try {
     const encodedQuery = encodeURIComponent(query)
@@ -1050,7 +1050,7 @@ export async function fetchCVDR(query: string = '', limit: number = 50): Promise
 // === 17. DATA.OVERHEID.NL CKAN API ===
 
 export async function fetchDataOverheid(query: string = '', limit: number = 10): Promise<WetgevingDocument[]> {
-  console.log('📊 Fetching Data.overheid.nl datasets...')
+  console.log(' Fetching Data.overheid.nl datasets...')
   
   try {
     const encodedQuery = encodeURIComponent(query)
@@ -1093,7 +1093,7 @@ export async function fetchDataOverheid(query: string = '', limit: number = 10):
 // === 18. OPENRECHTSPRAAK.NL API ===
 
 export async function fetchOpenRechtspraak(query: string = '', limit: number = 20): Promise<JurisprudentieDocument[]> {
-  console.log('📖 Fetching OpenRechtspraak.nl...')
+  console.log(' Fetching OpenRechtspraak.nl...')
   
   try {
     // Gebruik de werkende OpenRechtspraak.nl API
@@ -1119,7 +1119,7 @@ export async function fetchOpenRechtspraak(query: string = '', limit: number = 2
     const data = await response.json()
     
     if (!data.data || data.data.length === 0) {
-      console.log('ℹ️ Geen OpenRechtspraak resultaten gevonden')
+      console.log(' Geen OpenRechtspraak resultaten gevonden')
       return []
     }
     
@@ -1167,7 +1167,7 @@ export async function fetchOpenRechtspraak(query: string = '', limit: number = 2
       }
     }
     
-    console.log(`✅ ${allVerdicts.length} OpenRechtspraak uitspraken gevonden`)
+    console.log(` ${allVerdicts.length} OpenRechtspraak uitspraken gevonden`)
     return allVerdicts
     
   } catch (error) {
@@ -1292,7 +1292,7 @@ export async function fetchPolitieOpenData(query: string = '', limit: number = 1
 // === 21. OPEN RAADSINFORMATIE ===
 
 export async function fetchOpenRaadsinformatie(query: string = '', gemeente: string = 'amsterdam'): Promise<WetgevingDocument[]> {
-  console.log('🏛️ Fetching Open Raadsinformatie...')
+  console.log(' Fetching Open Raadsinformatie...')
   
   try {
     const encodedQuery = encodeURIComponent(query)
@@ -1361,7 +1361,7 @@ export async function fetchBAGAPI(query: string = ''): Promise<WetgevingDocument
 // === 23. CBS STATLINE ODATA ===
 
 export async function fetchCBSStatLine(query: string = ''): Promise<WetgevingDocument[]> {
-  console.log('📊 Fetching CBS StatLine...')
+  console.log(' Fetching CBS StatLine...')
   
   try {
     // CBS StatLine heeft een OData interface
@@ -1848,7 +1848,7 @@ export function searchOfficialSourcesEnhanced(query: string): {
   if (gemeente) {
     const gemeenteAPV = generateAPVSource(gemeente)
     categoryResults.push(gemeenteAPV)
-    console.log(`🏛️ Generated APV source for gemeente: ${gemeente}`)
+    console.log(` Generated APV source for gemeente: ${gemeente}`)
   }
   
   // APV bronnen als relevant (algemeen)
@@ -1891,7 +1891,7 @@ export function searchOfficialSourcesEnhanced(query: string): {
 // === BULK IMPORT FUNCTIES ===
 
 export async function runFullDataSync(): Promise<void> {
-  console.log('🔄 Starting full data sync...')
+  console.log(' Starting full data sync...')
   
   const logEntry = await prisma.dataIngestLog.create({
     data: {
@@ -1906,7 +1906,7 @@ export async function runFullDataSync(): Promise<void> {
     let totalAdded = 0
     
     // 1. Wettenbank
-    console.log('📚 Syncing Wettenbank...')
+    console.log(' Syncing Wettenbank...')
     const wetgeving = await fetchBasiswettenbestand()
     for (const doc of wetgeving) {
       await saveDocumentToDatabase(doc)
@@ -1915,7 +1915,7 @@ export async function runFullDataSync(): Promise<void> {
     }
     
     // 2. Rechtspraak
-    console.log('⚖️ Syncing Rechtspraak...')
+    console.log(' Syncing Rechtspraak...')
     const rechtspraak = await fetchRechtspraak(100)
     for (const doc of rechtspraak) {
       await saveJurisprudentieToDatabase(doc)
@@ -1933,7 +1933,7 @@ export async function runFullDataSync(): Promise<void> {
     }
     
     // 4. Juridisch Loket
-    console.log('⚖️ Syncing Juridisch Loket...')
+    console.log(' Syncing Juridisch Loket...')
     const juridischLoket = await fetchJuridischLoket('')
     for (const doc of juridischLoket) {
       await saveDocumentToDatabase(doc)
@@ -1942,7 +1942,7 @@ export async function runFullDataSync(): Promise<void> {
     }
     
     // 5. CVDR
-    console.log('🏛️ Syncing CVDR...')
+    console.log(' Syncing CVDR...')
     const cvdr = await fetchCVDR('')
     for (const doc of cvdr) {
       await saveDocumentToDatabase(doc)
@@ -1951,7 +1951,7 @@ export async function runFullDataSync(): Promise<void> {
     }
     
     // 6. Data.overheid.nl
-    console.log('📊 Syncing Data.overheid.nl...')
+    console.log(' Syncing Data.overheid.nl...')
     const dataOverheid = await fetchDataOverheid('')
     for (const doc of dataOverheid) {
       await saveDocumentToDatabase(doc)
@@ -1960,7 +1960,7 @@ export async function runFullDataSync(): Promise<void> {
     }
     
     // 7. OpenRechtspraak.nl
-    console.log('⚖️ Syncing OpenRechtspraak.nl...')
+    console.log(' Syncing OpenRechtspraak.nl...')
     const openRechtspraak = await fetchOpenRechtspraak('')
     for (const doc of openRechtspraak) {
       await saveJurisprudentieToDatabase(doc)
@@ -1978,7 +1978,7 @@ export async function runFullDataSync(): Promise<void> {
     }
     
     // 9. CBS StatLine
-    console.log('📊 Syncing CBS StatLine...')
+    console.log(' Syncing CBS StatLine...')
     const cbsStatLine = await fetchCBSStatLine('')
     for (const doc of cbsStatLine) {
       await saveDocumentToDatabase(doc)
@@ -2025,10 +2025,10 @@ export async function runFullDataSync(): Promise<void> {
       }
     })
     
-    console.log(`✅ Full sync completed: ${totalProcessed} documents processed, ${totalAdded} added`)
+    console.log(` Full sync completed: ${totalProcessed} documents processed, ${totalAdded} added`)
     
   } catch (error) {
-    console.error('❌ Full sync failed:', error)
+    console.error(' Full sync failed:', error)
     
     await prisma.dataIngestLog.update({
       where: { id: logEntry.id },

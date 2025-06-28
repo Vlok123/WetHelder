@@ -32,10 +32,10 @@ export async function loadCustomSources(): Promise<CustomSource[]> {
     if (fs.existsSync(SOURCES_JSON_PATH)) {
       const jsonContent = fs.readFileSync(SOURCES_JSON_PATH, 'utf-8')
       const sources = JSON.parse(jsonContent) as CustomSource[]
-      console.log(`📚 Loaded ${sources.length} custom sources`)
+      console.log(` Loaded ${sources.length} custom sources`)
       return sources
     } else {
-      console.warn('⚠️ Custom sources JSON file not found. Please convert your Word document.')
+      console.warn(' Custom sources JSON file not found. Please convert your Word document.')
       return getDefaultSources()
     }
   } catch (error) {
@@ -52,7 +52,7 @@ export async function searchCustomSources(query: string, limit: number = 5): Pro
   const queryLower = query.toLowerCase()
   const currentYear = new Date().getFullYear()
   
-  console.log(`🔍 Zoeken in custom sources voor: "${query}" met strikte ${currentYear} validatie`)
+  console.log(` Zoeken in custom sources voor: "${query}" met strikte ${currentYear} validatie`)
   
   // Verbeterde zoekfunctie: zoek ook op losse woorden
   const queryWords = queryLower.split(' ').filter(word => word.length > 2)
@@ -85,7 +85,7 @@ export async function searchCustomSources(query: string, limit: number = 5): Pro
   const validatedSources = relevantSources.filter(source => {
     // Check of de bron recent is gecontroleerd (binnen 1 jaar)
     if (!source.laatstGecontroleerd) {
-      console.log(`⚠️ Custom source zonder controle datum: ${source.naam} - wordt uitgesloten`)
+      console.log(` Custom source zonder controle datum: ${source.naam} - wordt uitgesloten`)
       return false
     }
     
@@ -93,7 +93,7 @@ export async function searchCustomSources(query: string, limit: number = 5): Pro
     const isRecent = (Date.now() - lastChecked.getTime()) < (365 * 24 * 60 * 60 * 1000)
     
     if (!isRecent) {
-      console.log(`⚠️ Custom source verouderd: ${source.naam} (laatst gecontroleerd: ${source.laatstGecontroleerd})`)
+      console.log(` Custom source verouderd: ${source.naam} (laatst gecontroleerd: ${source.laatstGecontroleerd})`)
       return false // Strikte regel: verouderde bronnen worden uitgesloten
     }
     
@@ -107,17 +107,17 @@ export async function searchCustomSources(query: string, limit: number = 5): Pro
   })
   
   // Log voor debugging
-  console.log(`📊 Zoekresultaat: ${relevantSources.length} relevante bronnen, ${validatedSources.length} actueel voor ${currentYear}`)
+  console.log(` Zoekresultaat: ${relevantSources.length} relevante bronnen, ${validatedSources.length} actueel voor ${currentYear}`)
   
   if (sorted.length > 0) {
-    console.log(`✅ Gevalideerde aangepaste bronnen voor query: "${query}"`)
+    console.log(` Gevalideerde aangepaste bronnen voor query: "${query}"`)
     sorted.slice(0, limit).forEach(source => {
-      console.log(`   📚 ${source.naam} (${source.betrouwbaarheid}) - Gecontroleerd: ${source.laatstGecontroleerd}`)
+      console.log(`    ${source.naam} (${source.betrouwbaarheid}) - Gecontroleerd: ${source.laatstGecontroleerd}`)
     })
   } else if (relevantSources.length > 0) {
-    console.log(`❌ Alle ${relevantSources.length} relevante bronnen zijn verouderd voor ${currentYear}`)
+    console.log(` Alle ${relevantSources.length} relevante bronnen zijn verouderd voor ${currentYear}`)
   } else {
-    console.log(`🔍 Geen aangepaste bronnen gevonden voor query: "${query}"`)
+    console.log(` Geen aangepaste bronnen gevonden voor query: "${query}"`)
   }
   
   return sorted.slice(0, limit)
@@ -130,7 +130,7 @@ export async function getSourcesForQuery(query: string): Promise<string[]> {
   const customSources = await searchCustomSources(query)
   
   if (customSources.length > 0) {
-    console.log(`📋 Aangepaste bronnen toegevoegd aan zoekresultaten:`)
+    console.log(` Aangepaste bronnen toegevoegd aan zoekresultaten:`)
     customSources.forEach(source => {
       console.log(`   ${source.betrouwbaarheid === 'hoog' ? '🟢' : source.betrouwbaarheid === 'middel' ? '🟡' : '🔴'} ${source.naam}`)
     })
@@ -139,7 +139,7 @@ export async function getSourcesForQuery(query: string): Promise<string[]> {
   return customSources.map(source => {
     const betrouwbaarheidIcon = source.betrouwbaarheid === 'hoog' ? '🟢' : 
                                source.betrouwbaarheid === 'middel' ? '🟡' : '🔴'
-    return `📚 AANGEPASTE BRON: ${betrouwbaarheidIcon} ${source.naam}: ${source.url} - ${source.beschrijving} (Categorie: ${source.categorie})`
+    return ` AANGEPASTE BRON: ${betrouwbaarheidIcon} ${source.naam}: ${source.url} - ${source.beschrijving} (Categorie: ${source.categorie})`
   })
 }
 
@@ -178,7 +178,7 @@ export async function convertWordDocumentToJSON(): Promise<void> {
   
   // Check of Word document bestaat
   if (!fs.existsSync(SOURCES_DOCUMENT_PATH)) {
-    console.error(`❌ Word document not found at: ${SOURCES_DOCUMENT_PATH}`)
+    console.error(` Word document not found at: ${SOURCES_DOCUMENT_PATH}`)
     console.log('📝 Please place your "bronnen-document.docx" file in the /data directory')
     return
   }
@@ -200,7 +200,7 @@ export async function convertWordDocumentToJSON(): Promise<void> {
   
   // Schrijf naar JSON bestand
   fs.writeFileSync(SOURCES_JSON_PATH, JSON.stringify(exampleSources, null, 2))
-  console.log(`✅ Custom sources saved to: ${SOURCES_JSON_PATH}`)
+  console.log(` Custom sources saved to: ${SOURCES_JSON_PATH}`)
 }
 
 /**
@@ -209,19 +209,19 @@ export async function convertWordDocumentToJSON(): Promise<void> {
 export async function validateCustomSources(): Promise<void> {
   const sources = await loadCustomSources()
   
-  console.log('🔍 Validating custom sources...')
+  console.log(' Validating custom sources...')
   
   for (const source of sources) {
     try {
       // Test of URL bereikbaar is
       const response = await fetch(source.url, { method: 'HEAD' })
       if (!response.ok) {
-        console.warn(`⚠️ Source "${source.naam}" may be unreachable: ${source.url}`)
+        console.warn(` Source "${source.naam}" may be unreachable: ${source.url}`)
       }
     } catch (error) {
-      console.warn(`⚠️ Could not validate source "${source.naam}": ${source.url}`)
+      console.warn(` Could not validate source "${source.naam}": ${source.url}`)
     }
   }
   
-  console.log('✅ Source validation completed')
+  console.log(' Source validation completed')
 } 

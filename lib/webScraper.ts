@@ -16,7 +16,7 @@ interface ScrapedContent {
  */
 export async function scrapeRechtspraakNl(url: string): Promise<ScrapedContent> {
   try {
-    console.log('🔍 Scraping rechtspraak.nl URL:', url)
+    console.log(' Scraping rechtspraak.nl URL:', url)
 
     // Haal de HTML op
     const response = await fetch(url, {
@@ -37,12 +37,12 @@ export async function scrapeRechtspraakNl(url: string): Promise<ScrapedContent> 
     // Parse de HTML voor rechtspraak.nl specifieke structuur
     const result = parseRechtspraakHtml(html, url)
     
-    console.log('✅ Successfully scraped content:', result.fullText.length, 'characters')
+    console.log(' Successfully scraped content:', result.fullText.length, 'characters')
     
     return result
 
   } catch (error) {
-    console.error('❌ Error scraping rechtspraak.nl:', error)
+    console.error(' Error scraping rechtspraak.nl:', error)
     return {
       success: false,
       fullText: '',

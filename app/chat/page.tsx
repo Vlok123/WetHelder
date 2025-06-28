@@ -127,7 +127,7 @@ const formatLegalText = (text: string) => {
           return (
             <div key={index} className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-xl">⚖️</span>
+                <span className="text-xl"></span>
                 <span className="font-semibold text-yellow-800">Wettelijke Bepaling</span>
               </div>
               <p className="text-gray-800 leading-relaxed">{section}</p>
@@ -457,7 +457,7 @@ function ChatPageContent() {
                 {userRole !== 'ANONYMOUS' && (
                   <div className="p-3 rounded-lg border bg-gradient-to-r from-green-50 to-emerald-50">
                     <div className="flex items-center gap-2">
-                      <span className="text-lg">✅</span>
+                      <span className="text-lg"></span>
                       <span className="font-semibold text-sm text-green-800">Account gebruiker</span>
                     </div>
                     <div className="text-xs text-green-700 mt-1">
@@ -494,7 +494,7 @@ function ChatPageContent() {
               <CardHeader className="border-b">
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2">
-                    <span className="text-2xl">⚖️</span>
+                    <span className="text-2xl"></span>
                     WetHelder Chat
                     {messages.length > 0 && (
                       <Badge variant="outline" className="ml-2">
@@ -525,7 +525,7 @@ function ChatPageContent() {
               <div className="flex-1 overflow-y-auto p-6 space-y-6">
                 {messages.length === 0 ? (
                   <div className="text-center text-gray-500 py-12">
-                    <div className="text-6xl mb-4">⚖️</div>
+                    <div className="text-6xl mb-4"></div>
                     <h3 className="text-xl font-semibold mb-2">Welkom bij WetHelder Chat</h3>
                     <p className="text-gray-600 max-w-md mx-auto">
                       Stel uw juridische vraag en krijg direct professioneel antwoord gebaseerd op Nederlandse wetgeving.

@@ -38,7 +38,7 @@ const rateLimitMap = new Map<string, RateLimitEntry>()
 // Internal function to reset rate limits (for admin use)
 function resetRateLimits(): void {
   rateLimitMap.clear()
-  console.log('🔄 Wetuitleg rate limits cleared')
+  console.log('Wetuitleg rate limits cleared')
 }
 
 // Make reset function available globally for admin route
@@ -164,7 +164,7 @@ function extractArticleReferences(query: string): string[] {
     references.push(`artikel ${directCodeMatch[1]} ${directCodeMatch[2].toUpperCase()}`)
   }
   
-  console.log(`🔍 Article extraction from "${query}":`, references)
+      console.log(`Article extraction from "${query}":`, references)
   
   // Remove duplicates
   return Array.from(new Set(references))
@@ -183,12 +183,12 @@ async function searchGoogleCustomAPI(query: string): Promise<GoogleSearchResult[
   const GOOGLE_CSE_ID = process.env.GOOGLE_CSE_ID
   
   if (!GOOGLE_API_KEY || !GOOGLE_CSE_ID) {
-    console.log('⚠️ Google API credentials niet geconfigureerd')
+    console.log('')
     return []
   }
   
   try {
-    console.log('🌐 Searching Google Custom Search API for:', query)
+    console.log('', query)
     
     // Verbeter zoekterm voor APV vragen
     let searchQuery = query
@@ -223,7 +223,7 @@ async function searchGoogleCustomAPI(query: string): Promise<GoogleSearchResult[
     if (hasApvKeyword || hasGemeenteNaam) {
       // Voor APV vragen: voeg specifieke zoektermen toe
       searchQuery = `${query} site:lokaleregelgeving.overheid.nl OR site:overheid.nl APV "Algemene Plaatselijke Verordening"`
-      console.log('🏛️ APV-specifieke zoekopdracht:', searchQuery)
+      console.log('', searchQuery)
     }
     
     const searchUrl = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CSE_ID}&q=${encodeURIComponent(searchQuery)}&num=10`
@@ -232,7 +232,7 @@ async function searchGoogleCustomAPI(query: string): Promise<GoogleSearchResult[
     const data = await response.json()
     
     if (!data.items) {
-      console.log('ℹ️ Geen Google zoekresultaten gevonden')
+      console.log('')
       return []
     }
     
@@ -243,11 +243,11 @@ async function searchGoogleCustomAPI(query: string): Promise<GoogleSearchResult[
       source: extractSourceFromUrl(item.link)
     }))
     
-    console.log(`✅ ${results.length} Google zoekresultaten gevonden`)
+    console.log(` ${results.length} Google zoekresultaten gevonden`)
     return results
     
   } catch (error) {
-    console.error('❌ Google Custom Search API error:', error)
+    console.error(' Google Custom Search API error:', error)
     return []
   }
 }
@@ -300,13 +300,13 @@ Samenvatting: ${result.snippet}
 function needsGoogleSearch(jsonSources: JsonBron[], query: string): boolean {
   // Als er geen directe match is in JSON bronnen
   if (jsonSources.length === 0) {
-    console.log('🔍 Geen JSON matches - Google API wordt geraadpleegd')
+    console.log('')
     return true
   }
   
   // Als de dekking twijfelachtig is (minder dan 3 relevante bronnen)
   if (jsonSources.length < 3) {
-    console.log('🔍 Beperkte JSON dekking - Google API wordt geraadpleegd voor aanvulling')
+    console.log('')
     return true
   }
   
@@ -329,11 +329,11 @@ function needsGoogleSearch(jsonSources: JsonBron[], query: string): boolean {
   
   const needsGoogle = needsGoogleKeywords.some(keyword => queryLower.includes(keyword))
   if (needsGoogle) {
-    console.log('🔍 Query bevat keywords die Google API vereisen')
+    console.log('')
     return true
   }
   
-  console.log('✅ Voldoende JSON dekking - Google API niet nodig')
+  console.log('')
   return false
 }
 
@@ -342,7 +342,7 @@ async function searchLiteralLawText(articleReferences: string[]): Promise<Array<
   const results: Array<{ ref: string; text: string; url: string }> = []
   
   for (const ref of articleReferences) {
-    console.log(`📖 Searching for literal text of: ${ref}`)
+    console.log(` Searching for literal text of: ${ref}`)
     
     // HARDCODED VALIDATION FOR ARTIKEL 29 RVV 1990
     if (ref.toLowerCase().includes('artikel 29') && (ref.toLowerCase().includes('rvv') || ref.toLowerCase().includes('reglement verkeersregels'))) {
@@ -399,7 +399,7 @@ async function searchLiteralLawText(articleReferences: string[]): Promise<Array<
     // Perform the searches
     for (const query of searchQueries) {
       try {
-        console.log(`🔍 Searching for literal law text: ${query}`)
+        console.log(` Searching for literal law text: ${query}`)
         const searchResults = await searchGoogleCustomAPI(query)
         
         if (searchResults && searchResults.length > 0) {
@@ -409,7 +409,7 @@ async function searchLiteralLawText(articleReferences: string[]): Promise<Array<
           )
           
           if (lawResult && lawResult.snippet) {
-            console.log(`✅ Found validated law text for ${ref}`)
+            console.log(` Found validated law text for ${ref}`)
             results.push({
               ref: ref,
               text: lawResult.snippet,
@@ -419,7 +419,7 @@ async function searchLiteralLawText(articleReferences: string[]): Promise<Array<
           }
         }
       } catch (error) {
-        console.error(`❌ Error searching for ${ref}:`, error)
+        console.error(` Error searching for ${ref}:`, error)
       }
     }
   }
@@ -561,12 +561,12 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
   
   for (const ref of articleReferences.slice(0, 3)) { // Limit to 3 articles
     try {
-      console.log(`🔍 Searching for: ${ref}`)
+      console.log(` Searching for: ${ref}`)
       
       // First try: Check direct politiewet mapping for exact texts
       const normalizedRef = ref.toLowerCase().trim()
       if (politiewetArticleTexts[normalizedRef]) {
-        console.log(`✅ Found direct politiewet text for: ${ref}`)
+        console.log(` Found direct politiewet text for: ${ref}`)
         articleTexts.push({
           ref,
           text: politiewetArticleTexts[normalizedRef].text,
@@ -579,7 +579,7 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
       if (ref.toLowerCase().includes('politiewet') && !ref.includes('2012')) {
         const alternativeRef = ref.toLowerCase().replace('politiewet', 'politiewet 2012')
         if (politiewetArticleTexts[alternativeRef]) {
-          console.log(`✅ Found direct politiewet text (alt form) for: ${ref}`)
+          console.log(` Found direct politiewet text (alt form) for: ${ref}`)
           articleTexts.push({
             ref,
             text: politiewetArticleTexts[alternativeRef].text,
@@ -630,7 +630,7 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
           .trim()
         
         if (articleText.length > 50) {
-          console.log(`✅ Found article text via Google: ${ref} (${articleText.length} chars)`)
+          console.log(` Found article text via Google: ${ref} (${articleText.length} chars)`)
           articleTexts.push({
             ref,
             text: articleText,
@@ -638,10 +638,10 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
           })
         }
       } else {
-        console.log(`❌ No suitable Google result found for: ${ref}`)
+        console.log(` No suitable Google result found for: ${ref}`)
       }
     } catch (error) {
-      console.error(`❌ Error searching for article ${ref}:`, error)
+      console.error(` Error searching for article ${ref}:`, error)
     }
   }
   
@@ -652,19 +652,19 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
 const WETUITLEG_SYSTEM_PROMPT = `🎯 ROL & EXPERTISE
 Je bent Lexi, een gespecialiseerde Nederlandse juridische AI-assistent van WetHelder.nl die UITSLUITEND betrouwbare, gevalideerde juridische informatie verstrekt.
 
-🛡️ BETROUWBAARHEIDSGARANTIE - ABSOLUTE PRIORITEIT
-⚠️ KRITIEKE REGEL: Bij het citeren van wetteksten ALTIJD een van deze opties:
+BETROUWBAARHEIDSGARANTIE - ABSOLUTE PRIORITEIT
+ KRITIEKE REGEL: Bij het citeren van wetteksten ALTIJD een van deze opties:
 1. "Volgens de verstrekte officiële bronnen..." (bij bronbevestiging)
 2. "Op basis van algemene juridische kennis - controleer altijd wetten.overheid.nl voor de actuele versie" (zonder bronbevestiging)
 3. "Raadpleeg wetten.overheid.nl voor de exacte en meest actuele tekst van dit artikel"
 
-🔍 VALIDATIEVERPLICHTINGEN
+ VALIDATIEVERPLICHTINGEN
 - Citeer NOOIT een artikel als definitief zonder bronverificatie
 - Bij twijfel: gebruik disclaimers en verwijs naar officiële bronnen
 - Prioriteer Google resultaten van overheid.nl boven eigen kennis
 - Vermeld altijd onzekerheid over actualiteit van informatie
 
-📋 VERPLICHTE STRUCTUUR - Gebruik EXACT deze markers voor elke vraag:
+ VERPLICHTE STRUCTUUR - Gebruik EXACT deze markers voor elke vraag:
 
 SAMENVATTING:
 [Begin hier met een heldere, directe beantwoording van de vraag. Gebruik ALTIJD een disclaimer als er geen directe bronverificatie is]
@@ -691,12 +691,12 @@ BRONNEN:
 [Lijst gebruikte bronnen + ALTIJD: "Controleer altijd de meest actuele versie op wetten.overheid.nl"]
 
 🚫 ABSOLUTE VERBODEN
-❌ Definitieve uitspraken over wetteksten zonder bronverificatie
-❌ "Dit artikel luidt..." zonder disclaimer
-❌ Presenteren van mogelijk verouderde informatie als actueel
-❌ Weglatingen van onzekerheidsvermeldingen
+ Definitieve uitspraken over wetteksten zonder bronverificatie
+ "Dit artikel luidt..." zonder disclaimer
+ Presenteren van mogelijk verouderde informatie als actueel
+ Weglatingen van onzekerheidsvermeldingen
 
-✅ FAIL-SAFE PRINCIPE
+ FAIL-SAFE PRINCIPE
 - Transparantie over bronnen en beperkingen
 - Stimuleer verificatie via officiële kanalen
 - Erken onzekerheid waar van toepassing
@@ -780,57 +780,57 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
       incrementRateLimit(ip)
     }
 
-    console.log('🚀 WetHelder.nl Routing gestart voor vraag:', query)
+    console.log('', query)
 
     // STAP 1: Bronnen bepalen 
     let jsonSources: JsonBron[] = []
     let googleResults: string = ''
     
-    console.log('📋 STAP 1: Controle officiele_bronnen.json')
+    console.log('')
     try {
       jsonSources = await searchJsonSources(query, 10)
       if (jsonSources.length > 0) {
-        console.log(`✅ ${jsonSources.length} relevante JSON bronnen gevonden`)
+        console.log(` ${jsonSources.length} relevante JSON bronnen gevonden`)
       } else {
-        console.log('ℹ️ Geen relevante JSON bronnen gevonden')
+        console.log('')
       }
     } catch (error) {
-      console.error('❌ Fout bij JSON bronnen zoeken:', error)
+      console.error(' Fout bij JSON bronnen zoeken:', error)
     }
 
     // STAP 2: Evaluatie Google API noodzaak 
-    console.log('🔍 STAP 2: Evaluatie Google API noodzaak')
+    console.log('')
     
     const needsGoogle = needsGoogleSearch(jsonSources, query)
     
     if (needsGoogle) {
-      console.log('🌐 STAP 3: Google Custom Search API wordt geraadpleegd')
-      console.log('🌐 Searching Google Custom Search API for:', query)
+      console.log('')
+      console.log('Searching Google Custom Search API for:', query)
       
       try {
         const results = await searchGoogleCustomAPI(query)
         if (results.length > 0) {
           googleResults = formatGoogleResultsForContext(results)
-          console.log(`✅ ${results.length} Google zoekresultaten gevonden`)
-          console.log(`✅ ${results.length} Google resultaten toegevoegd`)
+          console.log(`${results.length} Google zoekresultaten gevonden`)
+                      console.log(`${results.length} Google resultaten toegevoegd`)
         } else {
-          console.log('ℹ️ Geen Google zoekresultaten gevonden')
+          console.log('')
         }
       } catch (error) {
-        console.error('❌ Fout bij Google zoeken:', error)
+        console.error('Fout bij Google zoeken:', error)
       }
     } else {
-      console.log('✅ Voldoende JSON dekking - Google API niet nodig')
-      console.log('⏭️ STAP 3: Google API overgeslagen - voldoende JSON dekking')
+      console.log('Voldoende JSON dekking - Google API niet nodig')
+      console.log('STAP 3: Google API overgeslagen - voldoende JSON dekking')
     }
 
     // STAP 4: Samenstellen input voor ChatGPT
-    console.log('🤖 STAP 4: Input samenstelling voor ChatGPT')
-    console.log(`🤖 Starting OpenAI request met ${jsonSources.length} JSON bronnen en ${googleResults ? 'Google resultaten' : 'geen Google resultaten'}`)
+    console.log('STAP 4: Input samenstelling voor ChatGPT')
+          console.log(`Starting OpenAI request met ${jsonSources.length} JSON bronnen en ${googleResults ? 'Google resultaten' : 'geen Google resultaten'}`)
 
     // Extract article references for specialized wetuitleg handling
     const articleReferences = extractArticleReferences(query)
-    console.log('📖 Detected article references:', articleReferences)
+          console.log('Detected article references:', articleReferences)
 
     // Validate information reliability
     const validationInput: LegalQuery = {
@@ -841,7 +841,7 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
     }
     
     const validation = validateLegalInformation(validationInput)
-    console.log('🛡️ Validation result:', {
+    console.log('', {
       reliable: validation.isReliable,
       confidence: validation.confidence,
       warnings: validation.warnings.length,
@@ -855,21 +855,21 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
     // Search for literal law texts with enhanced validation (for specific articles)
     let articleTexts: Array<{ ref: string; text: string; url: string }> = []
     if (articleReferences.length > 0) {
-      console.log('🔍 Searching for literal law texts with enhanced validation...')
+      console.log('')
       articleTexts = await searchLiteralLawText(articleReferences)
-      console.log(`✅ Found ${articleTexts.length} validated articles from wetten.overheid.nl`)
+      console.log(` Found ${articleTexts.length} validated articles from wetten.overheid.nl`)
       
       // If no results from enhanced search, fall back to original method
       if (articleTexts.length === 0) {
-        console.log('🔄 Falling back to general article search...')
+        console.log('')
         articleTexts = await searchArticleTextsViaGoogle(articleReferences)
-        console.log(`✅ Found ${articleTexts.length} articles via fallback search`)
+        console.log(` Found ${articleTexts.length} articles via fallback search`)
       }
     }
 
     // Find relevant official sources for additional context
     const officialSources = findRelevantOfficialSources(query, 3)
-    console.log(`📖 Found ${officialSources.length} additional official sources`)
+    console.log(` Found ${officialSources.length} additional official sources`)
 
     // Prepare official legal texts section - WETUITLEG SPECIFIC FORMAT
     let officialTextsSection = ''
@@ -878,7 +878,7 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
     if (articleTexts.length > 0) {
       officialTextsSection += '\n\n## OFFICIËLE WETTEKSTEN:\n\n'
       articleTexts.forEach((article, index) => {
-        officialTextsSection += `### ARTIKEL ${article.ref}\n`
+        officialTextsSection += `ARTIKEL ${article.ref}\n`
         officialTextsSection += `**Volledige tekst:** ${article.text}\n`
         officialTextsSection += `**Bron:** ${article.url}\n\n`
       })
@@ -888,7 +888,7 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
     if (jsonSources.length > 0) {
       officialTextsSection += '\n\n## OFFICIËLE JURIDISCHE BRONNEN:\n\n'
       jsonSources.forEach((source, index) => {
-        officialTextsSection += `### ${source.categorie} - ${source.naam}\n`
+        officialTextsSection += `${source.categorie} - ${source.naam}\n`
         officialTextsSection += `**URL:** ${source.url}\n`
         if (source.beschrijving) {
           officialTextsSection += `**Beschrijving:** ${source.beschrijving}\n`
@@ -907,7 +907,7 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
     if (officialSources.length > 0) {
       officialTextsSection += '\n\n## EXTRA JURIDISCHE CONTEXT:\n\n'
       officialSources.forEach((source, index) => {
-        officialTextsSection += `### ${source.Topic}\n`
+        officialTextsSection += `${source.Topic}\n`
         officialTextsSection += `**Categorie:** ${source.Categorie}\n`
         officialTextsSection += `**Bron:** ${source["Bron (naam)"]}\n`
         officialTextsSection += `**Omschrijving:** ${source.Omschrijving}\n`
@@ -932,14 +932,14 @@ Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
     }
 
     // Add validation information to prompt
-    const validationSection = `\n\n🛡️ BETROUWBAARHEIDSSTATUS VOOR DEZE VRAAG:
+    const validationSection = `\n\nBETROUWBAAREIDSSTATUS VOOR DEZE VRAAG:
 ${reliabilityIndicator}
 
 Gedetecteerde validatiepunten:
-${validation.warnings.length > 0 ? validation.warnings.map(w => `⚠️ ${w}`).join('\n') : '✅ Geen specifieke waarschuwingen'}
+${validation.warnings.length > 0 ? validation.warnings.map(w => ` ${w}`).join('\n') : ' Geen specifieke waarschuwingen'}
 
 ${validation.recommendations.length > 0 ? `\nAanbevelingen:
-${validation.recommendations.map(r => `💡 ${r}`).join('\n')}` : ''}
+      ${validation.recommendations.map(r => `${r}`).join('\n')}` : ''}
 
 VERPLICHTE DISCLAIMER VOOR JE ANTWOORD:
 ${validationDisclaimer}
@@ -956,7 +956,7 @@ INSTRUCTIE: Integreer deze betrouwbaarheidsinformatie natuurlijk in je antwoord.
       { role: 'user', content: query }
     ]
 
-    console.log('🤖 Starting comprehensive legal analysis with APV support')
+    console.log('')
 
     // Create OpenAI completion stream with GPT-4o for better juridical accuracy
     const completion = await openai.chat.completions.create({
@@ -989,7 +989,7 @@ INSTRUCTIE: Integreer deze betrouwbaarheidsinformatie natuurlijk in je antwoord.
           }
           
           if (!streamClosed) {
-            console.log('✅ Comprehensive legal analysis completed')
+            console.log('')
              
             // Save to database
             try {
@@ -1011,9 +1011,9 @@ INSTRUCTIE: Integreer deze betrouwbaarheidsinformatie natuurlijk in je antwoord.
                   })
                 }
               })
-              console.log('✅ Enhanced wetuitleg query saved to database')
+              console.log('')
             } catch (dbError) {
-              console.error('❌ Failed to save wetuitleg query:', dbError)
+              console.error(' Failed to save wetuitleg query:', dbError)
             }
             
             streamClosed = true
@@ -1021,7 +1021,7 @@ INSTRUCTIE: Integreer deze betrouwbaarheidsinformatie natuurlijk in je antwoord.
           }
         } catch (error) {
           if (!streamClosed) {
-            console.error('❌ Error in wetuitleg stream:', error)
+            console.error(' Error in wetuitleg stream:', error)
             streamClosed = true
             controller.error(error)
           }
@@ -1029,12 +1029,12 @@ INSTRUCTIE: Integreer deze betrouwbaarheidsinformatie natuurlijk in je antwoord.
       },
       
       cancel() {
-        console.log('🔄 Wetuitleg stream cancelled')
+        console.log('')
         streamClosed = true
       }
     })
 
-    console.log('✅ Enhanced wetuitleg stream started')
+    console.log('')
     return new Response(stream, {
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
@@ -1044,7 +1044,7 @@ INSTRUCTIE: Integreer deze betrouwbaarheidsinformatie natuurlijk in je antwoord.
     })
 
   } catch (error) {
-    console.error('❌ Error in POST /api/wetuitleg:', error)
+    console.error(' Error in POST /api/wetuitleg:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

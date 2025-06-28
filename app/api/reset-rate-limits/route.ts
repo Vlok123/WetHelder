@@ -15,11 +15,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('🔄 Admin rate limit reset initiated by:', session.user.email)
+    console.log(' Admin rate limit reset initiated by:', session.user.email)
 
     // Check if DATABASE_URL is configured
     if (!process.env.DATABASE_URL) {
-      console.log('⚠️ DATABASE_URL not configured - simulating rate limit reset')
+      console.log(' DATABASE_URL not configured - simulating rate limit reset')
       return NextResponse.json({
         success: true,
         message: 'Rate limits reset simulated (no database configured). In-memory limits will reset on server restart.',
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       }
     })
     
-    console.log(`🔍 Found ${rateLimitMessages} rate limit messages in database`)
+    console.log(` Found ${rateLimitMessages} rate limit messages in database`)
     
     const deletedQueries = await prisma.query.deleteMany({
       where: {
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    console.log(`✅ Deleted ${deletedQueries.count} anonymous queries to reset rate limits (including ${rateLimitMessages} rate limit messages)`)
+    console.log(` Deleted ${deletedQueries.count} anonymous queries to reset rate limits (including ${rateLimitMessages} rate limit messages)`)
 
     // Clear in-memory rate limits from wetuitleg route
     try {
@@ -59,12 +59,12 @@ export async function POST(request: NextRequest) {
       const resetFn = (globalThis as any).resetWetuitlegRateLimits
       if (typeof resetFn === 'function') {
         resetFn()
-        console.log('✅ Wetuitleg in-memory rate limits cleared')
+        console.log(' Wetuitleg in-memory rate limits cleared')
       } else {
-        console.log('ℹ️ Wetuitleg rate limits will reset on server restart')
+        console.log(' Wetuitleg rate limits will reset on server restart')
       }
     } catch (error) {
-      console.log('ℹ️ Wetuitleg rate limits will reset on server restart')
+      console.log(' Wetuitleg rate limits will reset on server restart')
     }
     
     // Note: In-memory rate limit maps will automatically reset on server restart

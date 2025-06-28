@@ -130,7 +130,7 @@ async function searchSpecificRVVArticle(query: string): Promise<GoogleSearchResu
   
   for (const searchQuery of searchQueries) {
     try {
-      console.log(`🔍 RVV search query: ${searchQuery}`)
+      console.log(` RVV search query: ${searchQuery}`)
       const searchResults = await searchSites(searchQuery, SourceTag.WETTEN, ['wetten.overheid.nl'])
       
       // Filter for results that specifically mention the article and RVV
@@ -144,18 +144,18 @@ async function searchSpecificRVVArticle(query: string): Promise<GoogleSearchResu
       })
       
       if (relevantResults.length > 0) {
-        console.log(`✅ Found ${relevantResults.length} relevant RVV results for artikel ${articleNumber}`)
+        console.log(` Found ${relevantResults.length} relevant RVV results for artikel ${articleNumber}`)
         results.push(...relevantResults)
         break // Stop at first successful search
       }
     } catch (error) {
-      console.warn(`⚠️ RVV search failed for query: ${searchQuery}`, error)
+      console.warn(` RVV search failed for query: ${searchQuery}`, error)
     }
   }
   
   // If no specific results found, try a broader search
   if (results.length === 0) {
-    console.log(`🔍 Broadening RVV search for artikel ${articleNumber}`)
+    console.log(` Broadening RVV search for artikel ${articleNumber}`)
     try {
       const broadResults = await searchSites(
         `artikel ${articleNumber} RVV verkeersregels site:wetten.overheid.nl`,
@@ -164,7 +164,7 @@ async function searchSpecificRVVArticle(query: string): Promise<GoogleSearchResu
       )
       results.push(...broadResults)
     } catch (error) {
-      console.warn('⚠️ Broad RVV search failed', error)
+      console.warn(' Broad RVV search failed', error)
     }
   }
   
@@ -175,7 +175,7 @@ async function searchSpecificRVVArticle(query: string): Promise<GoogleSearchResu
  * Enhanced main search pipeline with specific RVV validation
  */
 export async function searchVerifiedJuridicalSources(query: string): Promise<VerifiedSearchResults> {
-  console.log(`🔍 Starting refactored search pipeline for: "${query}"`)
+  console.log(` Starting refactored search pipeline for: "${query}"`)
   
   const isHistorical = isHistoricalQuery(query)
   const timestamp = new Date()
@@ -191,7 +191,7 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
     // First try specific RVV article search
     const rvvResults = await searchSpecificRVVArticle(query)
     if (rvvResults.length > 0) {
-      console.log(`✅ Found ${rvvResults.length} specific RVV results, prioritizing these`)
+      console.log(` Found ${rvvResults.length} specific RVV results, prioritizing these`)
       
       // Calculate metrics
       const metrics = calculateMetrics(rvvResults)
@@ -304,14 +304,14 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
       sources: sourceGroups
     }
     
-    console.log(`✅ Search completed: ${metrics.total} results, ${metrics.currentYear} current year`)
+    console.log(` Search completed: ${metrics.total} results, ${metrics.currentYear} current year`)
     if (isRVQuery) {
       console.log(`🚗 RV-specific results found: ${flatResults.filter(r => r.link.includes('wetten.overheid.nl')).length}`)
     }
     return results
     
   } catch (error) {
-    console.error('❌ Search pipeline failed:', error)
+    console.error(' Search pipeline failed:', error)
     
     // Return empty results on failure
     return {
@@ -371,7 +371,7 @@ export async function executeVerifiedSearchWorkflow(question: string): Promise<{
       success: true
     }
   } catch (error) {
-    console.error('❌ Search workflow failed:', error)
+    console.error(' Search workflow failed:', error)
     return {
       searchResults: {
         results: [],

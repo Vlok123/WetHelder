@@ -16,10 +16,10 @@ const createTransporter = () => {
   
   try {
     const transporter = nodemailer.createTransport(SMTP_CONFIG)
-    console.log('✅ SMTP Transporter created successfully for info@calmpoint.nl')
+    console.log(' SMTP Transporter created successfully for info@calmpoint.nl')
     return transporter
   } catch (error) {
-    console.error('❌ SMTP Transporter creation failed:', error)
+    console.error(' SMTP Transporter creation failed:', error)
     return null
   }
 }
@@ -125,7 +125,7 @@ Verzonden op: ${new Date().toLocaleString('nl-NL')}
 
       try {
         await transporter.sendMail(mailOptions)
-        console.log('✅ E-mail succesvol verzonden naar: info@calmpoint.nl')
+        console.log(' E-mail succesvol verzonden naar: info@calmpoint.nl')
         console.log('📧 Email details:', {
           from: 'info@calmpoint.nl',
           to: 'info@calmpoint.nl',
@@ -133,10 +133,10 @@ Verzonden op: ${new Date().toLocaleString('nl-NL')}
           subject: `WetHelder Contact: ${typeLabels[type] || 'Bericht'} - ${subject}`
         })
       } catch (emailError) {
-        console.error('❌ Fout bij verzenden e-mail:', emailError)
+        console.error(' Fout bij verzenden e-mail:', emailError)
         // For debugging, log the full error
         if (emailError instanceof Error) {
-          console.error('❌ Email error details:', {
+          console.error(' Email error details:', {
             message: emailError.message,
             stack: emailError.stack
           })
@@ -147,7 +147,7 @@ Verzonden op: ${new Date().toLocaleString('nl-NL')}
         )
       }
     } else {
-      console.log('⚠️ SMTP transporter creation failed - bericht alleen gelogd')
+      console.log(' SMTP transporter creation failed - bericht alleen gelogd')
       return NextResponse.json(
         { error: 'E-mail service is momenteel niet beschikbaar. Probeer het later opnieuw of neem direct contact op.' },
         { status: 500 }

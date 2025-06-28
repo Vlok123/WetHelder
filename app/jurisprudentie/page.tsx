@@ -118,7 +118,7 @@ export default function JurisprudentiePage() {
     setError(null)
     
     try {
-      console.log('🔍 Searching jurisprudentie for:', query)
+      console.log(' Searching jurisprudentie for:', query)
       
       const response = await fetch('/api/jurisprudentie', {
         method: 'POST',
@@ -159,13 +159,13 @@ export default function JurisprudentiePage() {
         
         setFiltered(convertedResults)
         setIsSearched(true)
-        console.log(`✅ ${convertedResults.length} jurisprudentie resultaten geladen`)
+        console.log(` ${convertedResults.length} jurisprudentie resultaten geladen`)
       } else {
         throw new Error(data.message || 'Search failed')
       }
       
     } catch (error) {
-      console.error('❌ Error searching jurisprudentie:', error)
+      console.error(' Error searching jurisprudentie:', error)
       setError(error instanceof Error ? error.message : 'Er is een fout opgetreden bij het zoeken')
       setFiltered([])
     } finally {

@@ -136,7 +136,7 @@ export const isHistoricalQuery = (question: string): boolean => {
  * Genereert een standaard afwijzingsbericht voor verouderde informatie
  */
 export const generateOutdatedMessage = (reason: string): string => {
-  return `⚠️ **Deze informatie is mogelijk verouderd.**
+  return ` **Deze informatie is mogelijk verouderd.**
 
 **Reden:** ${reason}
 

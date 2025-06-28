@@ -44,7 +44,7 @@ export const searchCache = {
     return null
   }
     
-    console.log(`📋 Cache hit for ${site}: ${query}`)
+    console.log(` Cache hit for ${site}: ${query}`)
     return entry.data
   },
 
@@ -58,7 +58,7 @@ export const searchCache = {
       ttl
     })
     
-    console.log(`💾 Cached results for ${site} (TTL: ${Math.round(ttl / 60000)}min): ${query}`)
+    console.log(` Cached results for ${site} (TTL: ${Math.round(ttl / 60000)}min): ${query}`)
   },
 
   clear(): void {

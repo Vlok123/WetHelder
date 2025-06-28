@@ -31,11 +31,11 @@ const EXCEL_SOURCES_PATH = path.join(process.cwd(), 'data', 'officiele_bronnen.x
 export async function loadExcelSources(): Promise<ExcelBron[]> {
   try {
     if (!fs.existsSync(EXCEL_SOURCES_PATH)) {
-      console.warn(`⚠️ Excel bestand niet gevonden: ${EXCEL_SOURCES_PATH}`)
+      console.warn(` Excel bestand niet gevonden: ${EXCEL_SOURCES_PATH}`)
       return []
     }
 
-    console.log('📊 Loading Excel sources...')
+    console.log(' Loading Excel sources...')
     
     // Lees het Excel bestand
     const workbook = XLSX.readFile(EXCEL_SOURCES_PATH)
@@ -46,7 +46,7 @@ export async function loadExcelSources(): Promise<ExcelBron[]> {
     const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
     
     if (rawData.length < 2) {
-      console.warn('⚠️ Excel bestand bevat geen data')
+      console.warn(' Excel bestand bevat geen data')
       return []
     }
     
@@ -54,7 +54,7 @@ export async function loadExcelSources(): Promise<ExcelBron[]> {
     const headers = rawData[0] as string[]
     const dataRows = rawData.slice(1) as any[][]
     
-    console.log(`📋 Headers gevonden: ${headers.join(', ')}`)
+    console.log(` Headers gevonden: ${headers.join(', ')}`)
     
     // Map de data naar onze interface
     const sources: ExcelBron[] = dataRows
@@ -79,13 +79,13 @@ export async function loadExcelSources(): Promise<ExcelBron[]> {
           
           return source
         } catch (error) {
-          console.warn(`⚠️ Fout bij verwerken rij ${index + 2}:`, error)
+          console.warn(` Fout bij verwerken rij ${index + 2}:`, error)
           return null
         }
       })
       .filter((source): source is ExcelBron => source !== null)
     
-    console.log(`✅ ${sources.length} bronnen geladen uit Excel bestand`)
+    console.log(` ${sources.length} bronnen geladen uit Excel bestand`)
     
     // Log categorieën
     const categories = [...new Set(sources.map(s => s.categorie))]
@@ -94,7 +94,7 @@ export async function loadExcelSources(): Promise<ExcelBron[]> {
     return sources
     
   } catch (error) {
-    console.error('❌ Fout bij laden Excel bronnen:', error)
+    console.error(' Fout bij laden Excel bronnen:', error)
     return []
   }
 }
@@ -289,24 +289,24 @@ export async function testExcelIntegration(): Promise<void> {
   console.log('🧪 Testing Excel integration...')
   
   const sources = await loadExcelSources()
-  console.log(`📊 Totaal bronnen: ${sources.length}`)
+  console.log(` Totaal bronnen: ${sources.length}`)
   
   const categories = await getAvailableCategories()
   console.log(`📂 Categorieën: ${categories.join(', ')}`)
   
   const types = await getAvailableTypes()
-  console.log(`🏷️ Types: ${types.join(', ')}`)
+  console.log(` Types: ${types.join(', ')}`)
   
   // Test zoeken
   const searchResults = await searchExcelSources('politie', 5)
-  console.log(`🔍 Zoekresultaten voor 'politie': ${searchResults.length}`)
+  console.log(` Zoekresultaten voor 'politie': ${searchResults.length}`)
   
   if (searchResults.length > 0) {
-    console.log('📋 Eerste resultaat:')
+    console.log(' Eerste resultaat:')
     console.log(`   Naam: ${searchResults[0].naam}`)
     console.log(`   URL: ${searchResults[0].url}`)
     console.log(`   Categorie: ${searchResults[0].categorie}`)
   }
   
-  console.log('✅ Excel integration test completed')
+  console.log(' Excel integration test completed')
 } 

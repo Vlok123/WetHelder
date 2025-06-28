@@ -210,6 +210,6 @@ export async function GET(request: NextRequest) {
 
 // Also support POST for refresh functionality
 export async function POST(request: NextRequest) {
-  console.log('📊 Admin stats POST request - force refresh')
+  console.log(' Admin stats POST request - force refresh')
   return GET(request)
 } 

@@ -377,7 +377,7 @@ const formatText = (text: string): React.ReactElement => {
       elements.push(
         <div key={key++} className="my-6 p-6 bg-gradient-to-r from-amber-50 to-yellow-50 border-l-4 border-amber-500 rounded-r-lg shadow-sm">
           <div className="flex items-start gap-4">
-            <span className="text-amber-600 text-2xl flex-shrink-0 mt-1">⚖️</span>
+            <span className="text-amber-600 text-2xl flex-shrink-0 mt-1"></span>
             <div className="text-gray-800 leading-relaxed">
               <div className="space-y-2">
                 {processLinksInText(formattedText.replace(/<span class="[^"]*">([^<]*)<\/span>/g, '$1'))}
@@ -448,7 +448,7 @@ const formatText = (text: string): React.ReactElement => {
       elements.push(
         <div key={key++} className="my-5 p-4 bg-blue-50 border-l-3 border-blue-400 rounded-r">
           <div className="flex items-start gap-3">
-            <span className="text-blue-600 text-lg flex-shrink-0 mt-1">ℹ️</span>
+            <span className="text-blue-600 text-lg flex-shrink-0 mt-1"></span>
             <div className="text-blue-900 leading-relaxed">
               {processLinksInText(trimmedSection)}
             </div>
@@ -463,7 +463,7 @@ const formatText = (text: string): React.ReactElement => {
       elements.push(
         <div key={key++} className="my-5 p-4 bg-green-50 border-l-3 border-green-400 rounded-r">
           <div className="flex items-start gap-3">
-            <span className="text-green-600 text-lg flex-shrink-0 mt-1">✅</span>
+            <span className="text-green-600 text-lg flex-shrink-0 mt-1"></span>
             <div className="text-green-900 leading-relaxed">
               {processLinksInText(trimmedSection)}
             </div>
@@ -824,7 +824,7 @@ function AskPageContent() {
     const urlProfile = searchParams.get('profile')
     const shouldAutoSubmit = searchParams.get('autoSubmit') === 'true'
     
-    console.log('🔍 URL Params:', { urlQuery, urlProfile, shouldAutoSubmit, hasAutoSubmitted: hasAutoSubmitted.current })
+    console.log(' URL Params:', { urlQuery, urlProfile, shouldAutoSubmit, hasAutoSubmitted: hasAutoSubmitted.current })
     
     // ALWAYS set profession if URL has profile (regardless of auto-submit)
     if (urlProfile) {
@@ -846,7 +846,7 @@ function AskPageContent() {
         // Wait a bit for state updates, then submit with the correct profession
         setTimeout(() => {
           const professionToUse = urlProfile ? mapProfileToProfession(urlProfile) : profession
-          console.log('🚀 Submitting with profession:', professionToUse)
+          console.log(' Submitting with profession:', professionToUse)
           
           const fakeEvent = { preventDefault: () => {} } as React.FormEvent
           handleSubmit(fakeEvent, professionToUse)

@@ -1,5 +1,5 @@
 /**
- * 🛡️ WetHelder Legal Information Validation Library
+ * 🛡 WetHelder Legal Information Validation Library
  * Ensures reliability and accuracy of legal information provided to users
  */
 
@@ -124,15 +124,15 @@ export function generateValidationDisclaimer(validation: ValidationResult): stri
   const disclaimers: string[] = []
 
   if (!validation.isReliable) {
-    disclaimers.push("⚠️ BETROUWBAARHEIDSMELDING: Deze informatie kan niet volledig worden geverifieerd tegen officiële bronnen.")
+    disclaimers.push(" BETROUWBAARHEIDSMELDING: Deze informatie kan niet volledig worden geverifieerd tegen officiële bronnen.")
   }
 
   if (validation.confidence === 'low') {
-    disclaimers.push("🔍 VERIFICATIE AANBEVOLEN: Controleer deze informatie altijd via wetten.overheid.nl voordat u erop vertrouwt.")
+    disclaimers.push(" VERIFICATIE AANBEVOLEN: Controleer deze informatie altijd via wetten.overheid.nl voordat u erop vertrouwt.")
   }
 
   if (validation.confidence === 'medium') {
-    disclaimers.push("📋 GEDEELTELIJKE VERIFICATIE: Deze informatie is gebaseerd op beschikbare bronnen, maar controleer voor zekerheid de officiële wetgeving.")
+    disclaimers.push(" GEDEELTELIJKE VERIFICATIE: Deze informatie is gebaseerd op beschikbare bronnen, maar controleer voor zekerheid de officiële wetgeving.")
   }
 
   if (validation.sourceVerification.missingValidation.length > 0) {

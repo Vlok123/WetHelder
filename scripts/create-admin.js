@@ -15,7 +15,7 @@ async function createAdmin() {
     })
 
     if (existingUser) {
-      console.log('❌ Admin gebruiker bestaat al!')
+      console.log(' Admin gebruiker bestaat al!')
       return
     }
 
@@ -32,14 +32,14 @@ async function createAdmin() {
       }
     })
 
-    console.log('✅ Admin gebruiker aangemaakt!')
+    console.log(' Admin gebruiker aangemaakt!')
     console.log('📧 Email:', admin.email)
     console.log('👤 Naam:', admin.name)
     console.log('🔑 Role:', admin.role)
     console.log('🆔 ID:', admin.id)
 
   } catch (error) {
-    console.error('❌ Error creating admin user:', error)
+    console.error(' Error creating admin user:', error)
   } finally {
     await prisma.$disconnect()
   }

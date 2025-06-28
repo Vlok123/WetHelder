@@ -62,8 +62,8 @@ export function formatTextWithLinks(text: string, darkMode: boolean = false): Re
               // Check of het een lijst item is
               const isListItem = /^[•\-\*]\s/.test(trimmedLine) || /^\d+\.\s/.test(trimmedLine)
               
-              // Check of het een heading is (met ** of ### aan het begin)
-              const isHeading = /^(\*\*.*?\*\*:?|###.*|##.*)/.test(trimmedLine)
+                  // Check of het een heading is (met ** aan het begin)
+    const isHeading = /^(\*\*.*?\*\*:?)/.test(trimmedLine)
               
               if (isListItem) {
                 const formattedContent = formatMarkdown(trimmedLine)
@@ -174,45 +174,27 @@ export const formatPolitieWetContent = (text: string): string => {
   const articleLawReplacements: Array<{placeholder: string, text: string, type: string}> = []
   let counter = 1000
   
-  // 1. Uitgebreide regex voor artikel + wet/reglement combinaties met betere ondersteuning voor complete namen
+  // ALLEEN artikel + wet/reglement combinaties - geen standalone wet-namen
+  // Regex voor artikel/art./artikelen + nummer + wet/regelgeving naam
   processedText = processedText.replace(
-    /(artikel|art\.)\s+(\d+(?:\.\d+)*[a-z]*(?::\d+)?(?:\s+lid\s+\d+[a-z]*)?(?:\s+(?:onder\s+)?sub\s+[a-z])?)\s+((?:[A-Z][\w\s&-]*?(?:wet|wetboek|reglement|code|verdrag|richtlijn|besluit)[\w\s\d\(\)]*?(?:op\s+het\s+[\w\s]+|van\s+de\s+[\w\s]+|voor\s+de\s+[\w\s]+)?(?:\s*\([A-Z][\w\s\d]+\))?)|(?:Sr|Sv|BW|Awbi|WVW|RVV\s+\d{4}|Politiewet\s+\d{4}|Wegenverkeerswet\s+\d{4}|Reglement\s+voertuigen|Wetboek\s+van\s+Strafvordering|Wetboek\s+van\s+Strafrecht|Algemene\s+wet\s+op\s+het\s+binnentreden))/gi,
+    /(artikel|artikelen|art\.)\s+(\d+(?:\.\d+)*[a-z]*(?::\d+)?(?:\s+lid\s+\d+[a-z]*)?(?:\s+(?:onder\s+)?sub\s+[a-z])?)\s+((?:[A-Z][\w\s&-]*?(?:wet|wetboek|reglement|code|verdrag|richtlijn|besluit)[\w\s\d\(\)]*?(?:op\s+het\s+[\w\s]+|van\s+de\s+[\w\s]+|voor\s+de\s+[\w\s]+)?(?:\s*\([A-Z][\w\s\d]+\))?)|(?:Sr|Sv|BW|Awbi|WVW|RVV\s+\d{4}|Politiewet\s+\d{4}|Wegenverkeerswet\s+\d{4}|Reglement\s+voertuigen|Wetboek\s+van\s+Strafvordering|Wetboek\s+van\s+Strafrecht|Algemene\s+wet\s+op\s+het\s+binnentreden))/gi,
     (match) => {
       const cleanMatch = match.replace(/[).,;]*$/, '').trim()
       const placeholder = `__PLACEHOLDER_${counter}__`
       articleLawReplacements.push({
         placeholder,
         text: cleanMatch,
-        type: 'FULL_ARTICLE_LINK'
+        type: 'ARTICLE_LAW_LINK'
       })
       counter++
       return placeholder
     }
   )
   
-  // 2. Standalone law names (zonder artikel nummer)
-  processedText = processedText.replace(
-    /\b((?:[A-Z][\w\s&-]*?(?:wet|wetboek|reglement|code|verdrag|richtlijn|besluit)[\w\s\d\(\)]*?(?:op\s+het\s+[\w\s]+|van\s+de\s+[\w\s]+|voor\s+de\s+[\w\s]+)?(?:\s*\([A-Z][\w\s\d]+\))?)|(?:Politiewet\s+\d{4}|Wegenverkeerswet\s+\d{4}|Wetboek\s+van\s+Strafvordering|Wetboek\s+van\s+Strafrecht|Algemene\s+wet\s+op\s+het\s+binnentreden))\b/g,
-    (match) => {
-      if (match.length < 6) return match
-      const cleanMatch = match.replace(/[).,;]*$/, '').trim()
-      const placeholder = `__PLACEHOLDER_${counter}__`
-      articleLawReplacements.push({
-        placeholder,
-        text: cleanMatch,
-        type: 'LAW_LINK'
-      })
-      counter++
-      return placeholder
-    }
-  )
-  
-  // 3. Convert all placeholders to actual links
+  // Convert all placeholders to actual links
   articleLawReplacements.forEach(replacement => {
     const encodedQuery = encodeURIComponent(replacement.text)
-    const linkHtml = replacement.type === 'FULL_ARTICLE_LINK'
-      ? `<a href="/wetuitleg?q=${encodedQuery}" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:border-blue-300 cursor-pointer transition-colors">${replacement.text}</a>`
-      : `<a href="/wetuitleg?q=${encodedQuery}" class="font-semibold text-indigo-700 bg-indigo-50 px-1 rounded hover:bg-indigo-100 cursor-pointer transition-colors">${replacement.text}</a>`
+    const linkHtml = `<a href="/wetuitleg?q=${encodedQuery}" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:border-blue-300 cursor-pointer transition-colors">${replacement.text}</a>`
     
     processedText = processedText.replace(replacement.placeholder, linkHtml)
   })

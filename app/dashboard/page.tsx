@@ -423,7 +423,7 @@ export default function MemberDashboard() {
 
   const getProfessionIcon = (profession: string) => {
     switch (profession) {
-      case 'jurist': return '⚖️'
+      case 'jurist': return ''
       case 'politieagent': return '🚔'
       case 'student': return '🎓'
       case 'ondernemer': return '💼'

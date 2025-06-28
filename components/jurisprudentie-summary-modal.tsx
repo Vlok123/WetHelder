@@ -54,10 +54,10 @@ export default function JurisprudentieSummaryModal({
     setTimeout(() => {
       if (ruling.summary && ruling.summary.trim().length > 0) {
         setSummary(ruling.summary)
-        console.log('✅ Using existing summary from search results')
+        console.log(' Using existing summary from search results')
       } else {
         setSummary('Geen samenvatting beschikbaar voor deze uitspraak.')
-        console.log('⚠️ No summary available')
+        console.log(' No summary available')
       }
       setIsLoading(false)
     }, 300) // Korte delay voor UX
