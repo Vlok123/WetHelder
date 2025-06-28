@@ -449,6 +449,26 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
       text: 'Een ambtenaar van politie die is aangesteld voor de uitvoering van de politietaak, is bevoegd tot het vorderen van inzage van een identiteitsbewijs als bedoeld in artikel 1 van de Wet op de identificatieplicht van personen, voor zover dat redelijkerwijs noodzakelijk is voor de uitvoering van de politietaak.',
       url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel8'
     },
+    'artikel 8a politiewet 2012': {
+      text: 'Een ambtenaar van politie is bevoegd om bij een gerechtvaardigde verwachting van gevaar voor de veiligheid van personen of goederen terstond aan de kleding van een persoon te onderzoeken, indien dit voorwerp gevaarlijk of schadelijk kan zijn.',
+      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel8a'
+    },
+    'artikel 9 politiewet 2012': {
+      text: 'Een ambtenaar van politie die is aangesteld voor de uitvoering van de politietaak, is bevoegd in de rechtmatige uitoefening van zijn bediening geweld of vrijheidsbeperkende middelen te gebruiken, wanneer het daarmee beoogde doel dit, mede gelet op de aan het gebruik hiervan verbonden gevaren, rechtvaardigt en dat doel niet op een andere wijze kan worden bereikt. Aan het gebruik van geweld gaat zo mogelijk een waarschuwing vooraf.',
+      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel9'
+    },
+    'artikel 10 politiewet 2012': {
+      text: 'Een ambtenaar van politie is bevoegd in de gevallen waarin het gebruik van geweld of vrijheidsbeperkende middelen is toegestaan, en indien zulks noodzakelijk is met het oog op de veiligheid, een persoon aan zijn kleding vast te maken aan een vast voorwerp of een ander persoon.',
+      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel10'
+    },
+    'artikel 25 politiewet 2012': {
+      text: 'Er is een landelijke politieorganisatie, het landelijke politiekorps, dat bestaat uit: a. regionale eenheden; b. landelijke eenheden; c. het politieonderwijs; d. de politiedienstencentra.',
+      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel25'
+    },
+    'artikel 27 politiewet 2012': {
+      text: 'Aan het hoofd van het landelijke politiekorps staat een korpschef die wordt benoemd, geschorst en ontslagen bij koninklijk besluit.',
+      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel27'
+    },
     // Short form references
     'artikel 1 POLITIEWET': {
       text: 'In deze wet en de daarop berustende bepalingen wordt verstaan onder: a. Onze Minister: Onze Minister van Justitie en Veiligheid; b. politie: het landelijke politiekorps, bedoeld in artikel 25, eerste lid; c. korpschef: de korpschef, bedoeld in artikel 27; d. eenheid: een regionale of landelijke eenheid; e. regionale eenheid: een regionale eenheid van de politie als bedoeld in artikel 25, eerste lid, onder a; f. landelijke eenheid: een landelijke eenheid van de politie als bedoeld in artikel 25, eerste lid, onder b.',
@@ -465,6 +485,26 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
     'artikel 8 POLITIEWET': {
       text: 'Een ambtenaar van politie die is aangesteld voor de uitvoering van de politietaak, is bevoegd tot het vorderen van inzage van een identiteitsbewijs als bedoeld in artikel 1 van de Wet op de identificatieplicht van personen, voor zover dat redelijkerwijs noodzakelijk is voor de uitvoering van de politietaak.',
       url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel8'
+    },
+    'artikel 8a POLITIEWET': {
+      text: 'Een ambtenaar van politie is bevoegd om bij een gerechtvaardigde verwachting van gevaar voor de veiligheid van personen of goederen terstond aan de kleding van een persoon te onderzoeken, indien dit voorwerp gevaarlijk of schadelijk kan zijn.',
+      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel8a'
+    },
+    'artikel 9 POLITIEWET': {
+      text: 'Een ambtenaar van politie die is aangesteld voor de uitvoering van de politietaak, is bevoegd in de rechtmatige uitoefening van zijn bediening geweld of vrijheidsbeperkende middelen te gebruiken, wanneer het daarmee beoogde doel dit, mede gelet op de aan het gebruik hiervan verbonden gevaren, rechtvaardigt en dat doel niet op een andere wijze kan worden bereikt. Aan het gebruik van geweld gaat zo mogelijk een waarschuwing vooraf.',
+      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel9'
+    },
+    'artikel 10 POLITIEWET': {
+      text: 'Een ambtenaar van politie is bevoegd in de gevallen waarin het gebruik van geweld of vrijheidsbeperkende middelen is toegestaan, en indien zulks noodzakelijk is met het oog op de veiligheid, een persoon aan zijn kleding vast te maken aan een vast voorwerp of een ander persoon.',
+      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel10'
+    },
+    'artikel 25 POLITIEWET': {
+      text: 'Er is een landelijke politieorganisatie, het landelijke politiekorps, dat bestaat uit: a. regionale eenheden; b. landelijke eenheden; c. het politieonderwijs; d. de politiedienstencentra.',
+      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel25'
+    },
+    'artikel 27 POLITIEWET': {
+      text: 'Aan het hoofd van het landelijke politiekorps staat een korpschef die wordt benoemd, geschorst en ontslagen bij koninklijk besluit.',
+      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel27'
     }
   }
 
@@ -482,6 +522,8 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
     'artikel 8a politiewet 2012': '"artikel 8a" "politiewet 2012" "preventief fouilleren" site:wetten.overheid.nl',
     'artikel 9 politiewet 2012': '"artikel 9" "politiewet 2012" "geweld" "aanwending" site:wetten.overheid.nl',
     'artikel 10 politiewet 2012': '"artikel 10" "politiewet 2012" "handboeien" "vervoer" site:wetten.overheid.nl',
+    'artikel 25 politiewet 2012': '"artikel 25" "politiewet 2012" "landelijke politiekorps" site:wetten.overheid.nl',
+    'artikel 27 politiewet 2012': '"artikel 27" "politiewet 2012" "korpschef" site:wetten.overheid.nl',
     'artikel 11 politiewet 2012': '"artikel 11" "politiewet 2012" "surveillance" site:wetten.overheid.nl',
     'artikel 12 politiewet 2012': '"artikel 12" "politiewet 2012" "toegang woningen" site:wetten.overheid.nl',
     
@@ -492,6 +534,9 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
     'artikel 8 POLITIEWET': '"artikel 8" "politiewet 2012" "identiteitsbewijs" "identificatieplicht" site:wetten.overheid.nl',
     'artikel 8a POLITIEWET': '"artikel 8a" "politiewet 2012" "preventief fouilleren" site:wetten.overheid.nl',
     'artikel 9 POLITIEWET': '"artikel 9" "politiewet 2012" "geweld" "aanwending" site:wetten.overheid.nl',
+    'artikel 10 POLITIEWET': '"artikel 10" "politiewet 2012" "handboeien" "vervoer" site:wetten.overheid.nl',
+    'artikel 25 POLITIEWET': '"artikel 25" "politiewet 2012" "landelijke politiekorps" site:wetten.overheid.nl',
+    'artikel 27 POLITIEWET': '"artikel 27" "politiewet 2012" "korpschef" site:wetten.overheid.nl',
     
     // Other common references - Enhanced for 447e Sr
     'artikel 447e SR': '"artikel 447e" "wetboek van strafrecht" site:wetten.overheid.nl',

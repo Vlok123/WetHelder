@@ -50,7 +50,7 @@ export const politieWetData = {
       description: 'Politiebevoegdheden op de weg, blaastest, stopteken',
       icon: 'Car',
       color: 'bg-orange-100 text-orange-800',
-      articleCount: 3
+      articleCount: 4
     },
     {
       slug: 'opsporing',
@@ -815,6 +815,100 @@ Je rijdt op de snelweg en wordt aangehouden voor een verkeerscontrole. Terwijl j
 * HR 22-03-2011, ECLI:NL:HR:2011:BO8067 – Onrechtmatige doorzoeking auto is schending van privacy
 * HR 18-02-2020, ECLI:NL:HR:2020:276 – Alleen bij concrete aanwijzingen mag auto worden onderzocht
 * Aanwijzing Opsporingsbevoegdheden (OM) – Interne richtlijnen over inzet bevoegdheden zoals doorzoeking
+
+---
+
+Laatst gecheckt: 28 juni 2025  
+Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'stopteken-verplicht-stoppen',
+      title: 'Moet ik altijd stoppen als een agent me een stopteken geeft?',
+      description: 'Wanneer ben je verplicht te stoppen voor een politieagent en wat zijn de gevolgen van doorrijden?',
+      category: 'Verkeer',
+      categorySlug: 'verkeer',
+      seoTitle: 'Moet ik altijd stoppen als een agent me een stopteken geeft?',
+      seoDescription: 'Uitleg over de stopverplichting bij politiebevel: wanneer je moet stoppen, wettelijke basis en gevolgen van doorrijden.',
+      readTime: '6 min lezen',
+      lastUpdated: '2025-01-11',
+      views: 0,
+      tags: ['stopteken', 'stopplicht', 'verkeerscontrole', 'aanwijzingen', 'politiebevel'],
+      featured: false,
+      content: `## Kort antwoord
+
+Ja, je bent verplicht om direct te stoppen als een politieagent jou een stopteken geeft. Negeer je dit, dan pleeg je een strafbaar feit en kan dit leiden tot vervolging of gevaarlijke situaties.
+
+---
+
+## Uitgebreide uitleg
+
+### Wanneer geldt de stopverplichting?
+
+Een politieagent mag jou als verkeersdeelnemer een stopteken geven. Dit geldt voor alle bestuurders: auto's, motoren, bromfietsen, fietsen, vrachtwagens én ruiters of menners van paard-en-wagen.
+
+Je moet altijd stoppen als:
+
+* Een agent je een duidelijk stopteken geeft (bijv. met armgebaar, stopbord of zwaailicht).
+* De agent in uniform is of herkenbaar als politie (burgerkleding mag ook als hij zich identificeert).
+* Het stopteken komt van een agent te voet, op de fiets, motor, in een auto of vanuit een politiehelikopter.
+
+Let op: je moet ook altijd stoppen als een verkeersregelaar of ander bevoegd persoon je een stopteken geeft. Dit is wettelijk gelijkgesteld aan een politiebevel.
+
+---
+
+### Wettelijke basis
+
+De verplichting om te stoppen staat in:
+
+* artikel 160 lid 1 Wegenverkeerswet 1994 – verplichting om medewerking te verlenen bij een controle, inclusief stoppen.
+* artikel 160 lid 5 Wegenverkeerswet 1994 – je moet aanwijzingen van een politieambtenaar opvolgen.
+* artikel 82 Reglement verkeersregels en verkeerstekens 1990 (RVV 1990) – regelt dat een bevoegd persoon (zoals politie of verkeersregelaar) een stopteken mag geven.
+
+---
+
+### Praktijkvoorbeeld
+
+Een agent in uniform staat langs de weg en steekt zijn arm op naar een automobilist om hem te laten stoppen voor een verkeerscontrole. De bestuurder ziet het teken, maar rijdt door. De agent noteert het kenteken en houdt de bestuurder later alsnog staande. De automobilist heeft zich in deze situatie schuldig gemaakt aan het negeren van een wettelijk bevel.
+
+---
+
+## Plichten van de burger
+
+Je bent wettelijk verplicht om:
+
+* Te stoppen bij een stopteken van een politieagent of bevoegd persoon  
+  *(Artikel 160 lid 1 Wegenverkeerswet 1994 en Artikel 82 RVV 1990)*
+* Aanwijzingen van de politie op te volgen  
+  *(Artikel 160 lid 5 Wegenverkeerswet 1994)*
+* Medewerking te verlenen aan controle, bijvoorbeeld het tonen van rijbewijs of kentekenbewijs  
+  *(Artikel 160 lid 1 Wegenverkeerswet 1994)*
+
+---
+
+## Wat kun je doen?
+
+* Stop direct zodra je een stopteken krijgt, ook als je twijfelt aan de reden.
+* Vraag rustig naar de reden van de controle zodra je stilstaat.
+* Denk je dat het stopteken onterecht of gevaarlijk was? Dan kun je:
+
+  * Een klacht indienen bij de politie
+  * Een melding doen bij de Nationale Ombudsman
+  * Juridisch advies vragen via een advocaat, vooral als je een proces-verbaal hebt ontvangen.
+
+---
+
+## Gerelateerde regelgeving
+
+* artikel 5 Wegenverkeerswet 1994 – verbod op gevaarlijk rijgedrag (zoals doorrijden na stopteken).
+* artikel 84 RVV 1990 – regels over opvolgen van aanwijzingen van bevoegde personen.
+* Reglement voertuigen – technische eisen die kunnen worden gecontroleerd bij staandehouding.
+
+---
+
+## Belangrijke rechtspraak of beleid
+
+* HR 13-06-2000, ECLI:NL:HR:2000:AA6086 – bevestigt dat het negeren van een stopteken strafbaar is.
+* Landelijk verkeershandhavingsbeleid – benadrukt dat het opvolgen van politieaanwijzingen actief wordt gecontroleerd.
 
 ---
 
