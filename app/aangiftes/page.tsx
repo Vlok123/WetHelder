@@ -90,7 +90,6 @@ export default function SavedAangiftesPage() {
   if (status === 'loading' || isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-        <Navigation />
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           <div className="text-center py-8">
             <div className="h-8 w-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
@@ -104,7 +103,6 @@ export default function SavedAangiftesPage() {
   if (!session) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-        <Navigation />
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           <Card>
             <CardHeader>
@@ -131,8 +129,6 @@ export default function SavedAangiftesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <Navigation />
-      
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">

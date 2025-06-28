@@ -790,22 +790,32 @@ function WetUitlegPage() {
     // Remove any remaining isolated ** markers
     formatted = formatted.replace(/\*\*/g, '')
     
-    // Convert markdown links
+    // Convert markdown links - enhanced to handle various URL formats better
     formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline hover:no-underline transition-colors">$1</a>')
     
-    // Convert article references to styled spans
-    formatted = formatted.replace(/\b(artikel\s+\d+[a-z]*(?:\s+lid\s+\d+)?(?:\s+[A-Z][a-z]+)*)\b/gi, '<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium mx-1">$1</span>')
+    // Convert plain URLs to clickable links (http, https, www)
+    formatted = formatted.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline hover:no-underline transition-colors">$1</a>')
+    formatted = formatted.replace(/(www\.[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}[^\s]*)/g, '<a href="https://$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline hover:no-underline transition-colors">$1</a>')
     
-    // Convert legal codes to styled spans
-    formatted = formatted.replace(/\b(\d+[a-z]*\s+(?:Sr|Sv|BW|Awb|WVW|Politiewet))\b/g, '<span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded text-sm font-medium mx-1">$1</span>')
+    // Convert email addresses to clickable links
+    formatted = formatted.replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, '<a href="mailto:$1" class="text-blue-600 hover:text-blue-800 underline hover:no-underline transition-colors">$1</a>')
+    
+    // Create clickable links for article references with numbers that include dots (like 5.2.60)
+    // Updated pattern to handle decimals and remove trailing commas from article references
+    formatted = formatted.replace(/\b(artikel\s+\d+(?:\.\d+)*(?:\s+lid\s+\d+)?(?:\s+onder\s+[a-z])?)\s*,?\s*([A-Z][a-zA-Z\s&]+(?:voertuigen|1994|wetboek|wet|reglement))/gi, 
+      (match, article, source) => {
+        // Clean up the source by removing trailing punctuation
+        const cleanSource = source.replace(/[,\s]+$/, '')
+        return `${article} ${cleanSource}`
+      })
+    
+    // Keep article references and legal codes as plain text without highlighting
     
     return <span dangerouslySetInnerHTML={{ __html: formatted }} />
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <Navigation />
-      
       <div className="container mx-auto px-4 py-6 max-w-4xl">
         {/* Header */}
         <div className="mb-6">

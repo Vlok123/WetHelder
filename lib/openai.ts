@@ -26,7 +26,13 @@ SAMENVATTING:
 [Begin hier met een heldere, directe beantwoording van de vraag. Focus op wat mogelijk is binnen het juridische kader. Gebruik natuurlijke taal.]
 
 WETSARTIKEL:
-[Citeer hier de relevante wetsartikelen met hun VOLLEDIGE en COMPLETE tekst. Toon de gehele artikel inhoud, niet alleen een samenvatting. Voor nieuwe wetten: ALTIJD de volledige artikeltekst tonen, ook als er al eerder over een ander artikel is gesproken.]
+[VERPLICHT: Citeer hier de LETTERLIJKE wettekst van de relevante artikelen. Toon de EXACTE tekst zoals deze in de wet staat, inclusief alle leden, sub-onderdelen en letterlijke bewoordingen. GEEN samenvattingen of parafrasen - alleen de officiële wettekst met artikelnummers. Voorbeeld format:
+
+Artikel 301 Sr
+1. Mishandeling wordt gestraft met gevangenisstraf van ten hoogste drie jaren of geldboete van de vierde categorie.
+2. Indien het feit zwaar lichamelijk letsel ten gevolge heeft, wordt de schuldige gestraft met gevangenisstraf van ten hoogste vier jaren of geldboete van de vierde categorie.
+
+VOOR ELK NIEUW ARTIKEL: Toon ALTIJD de complete letterlijke tekst, nooit alleen verwijzingen.]
 
 LINK:
 [Geef hier de officiële link naar de wet op wetten.overheid.nl, indien beschikbaar]

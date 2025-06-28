@@ -172,12 +172,13 @@ export const formatPolitieWetContent = (text: string): string => {
   
     // ULTRA SIMPLE: Use unique placeholders then replace
   
-  // 1. Replace complete article + law combinations with unique placeholders
+  // 1. Replace ALLEEN complete article + law combinations (NIET standalone artikelen)
   const articleLawReplacements: Array<{placeholder: string, text: string, type: string}> = []
   let counter = 1000
   
+  // Verbeterde regex voor artikel + wet/reglement combinaties (inclusief RVV, jaartallen en haakjes)
   processedText = processedText.replace(
-    /(artikel|art\.)\s+(\d+[a-z]*(?::\d+)?(?:\s+lid\s+\d+)?)\s+([A-Z][\w\s&-]*?(?:wet|wetboek)(?:[^a-z][\w\s\d]*?)?(?=\s|$|[.!?;,)]|en\s+artikel|artikel))/gi,
+    /(artikel|art\.)\s+(\d+(?:\.\d+)*[a-z]*(?::\d+)?(?:\s+lid\s+\d+[a-z]*)?)\s+((?:[A-Z][\w\s&-]*?(?:wet|wetboek|reglement|code|verdrag|richtlijn)[\w\s\d]*?(?:\([A-Z\s\d]+\))?)|(?:Sr|Sv|BW|Awb|WVW|RVV|Politiewet|Wegenverkeerswet|Reglement\s+voertuigen)(?:\s+\d{4})?)/gi,
     (match) => {
       const cleanMatch = match.replace(/[).,;]*$/, '').trim()
       const placeholder = `__PLACEHOLDER_${counter}__`
@@ -191,36 +192,7 @@ export const formatPolitieWetContent = (text: string): string => {
     }
   )
   
-  // 2. Replace standalone articles (improved pattern for letters after numbers)
-  processedText = processedText.replace(
-    /\b(artikel\s+\d+[a-z]*(?::\d+[a-z]*)?(?:\s+lid\s+\d+[a-z]*)?)\b/gi,
-    (match) => {
-      const cleanMatch = match.replace(/[).,;]*$/, '').trim()
-      const placeholder = `__PLACEHOLDER_${counter}__`
-      articleLawReplacements.push({
-        placeholder,
-        text: cleanMatch,
-        type: 'ARTICLE_LINK'
-      })
-      counter++
-      return placeholder
-    }
-  )
-  
-  processedText = processedText.replace(
-    /\b(art\.\s+\d+[a-z]*(?::\d+[a-z]*)?(?:\s+lid\s+\d+[a-z]*)?)\b/gi,
-    (match) => {
-      const cleanMatch = match.replace(/[).,;]*$/, '').trim()
-      const placeholder = `__PLACEHOLDER_${counter}__`
-      articleLawReplacements.push({
-        placeholder,
-        text: cleanMatch,
-        type: 'ARTICLE_LINK'
-      })
-      counter++
-      return placeholder
-    }
-  )
+  // GEEN standalone artikel links meer - alleen volledige combinaties!
   
   // 3. Replace standalone laws
   processedText = processedText.replace(
@@ -242,7 +214,7 @@ export const formatPolitieWetContent = (text: string): string => {
   // 4. Convert all placeholders to actual links
   articleLawReplacements.forEach(replacement => {
     const encodedQuery = encodeURIComponent(replacement.text)
-    const linkHtml = replacement.type === 'FULL_ARTICLE_LINK' || replacement.type === 'ARTICLE_LINK'
+    const linkHtml = replacement.type === 'FULL_ARTICLE_LINK'
       ? `<a href="/wetuitleg?q=${encodedQuery}" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:border-blue-300 cursor-pointer transition-colors">${replacement.text}</a>`
       : `<a href="/wetuitleg?q=${encodedQuery}" class="font-semibold text-indigo-700 bg-indigo-50 px-1 rounded hover:bg-indigo-100 cursor-pointer transition-colors">${replacement.text}</a>`
     

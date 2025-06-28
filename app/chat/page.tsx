@@ -351,8 +351,6 @@ function ChatPageContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      <Navigation />
-      
       <div className="container mx-auto px-4 py-6 max-w-6xl">
         <div className="grid lg:grid-cols-4 gap-6">
           {/* Settings Sidebar */}

@@ -774,8 +774,6 @@ export default function AngifteAssistentPage() {
   if (toonIntro) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-        <Navigation />
-        
         <div className="container mx-auto px-4 py-4 sm:py-8 max-w-4xl">
           {/* Header */}
           <div className="text-center mb-6 sm:mb-8">
@@ -899,8 +897,6 @@ export default function AngifteAssistentPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <Navigation />
-      
       <div className="container mx-auto px-4 py-4 sm:py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8">

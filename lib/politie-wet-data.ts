@@ -50,7 +50,7 @@ export const politieWetData = {
       description: 'Politiebevoegdheden op de weg, blaastest, stopteken',
       icon: 'Car',
       color: 'bg-orange-100 text-orange-800',
-      articleCount: 1
+      articleCount: 2
     },
     {
       slug: 'opsporing',
@@ -164,103 +164,202 @@ Disclaimer: Je mag vragen waarom je identiteit wordt gecontroleerd, maar de poli
     {
       slug: 'algemene-verkeerscontrole',
       title: 'Moet ik meewerken aan een algemene verkeerscontrole en wat kan er allemaal onderdeel van zijn?',
-      description: 'Alles over je rechten en plichten bij algemene verkeerscontroles door de politie.',
+      description: 'Uitgebreide gids over verplichtingen bij verkeerscontroles, wat de politie mag controleren binnen en buiten je voertuig.',
       category: 'Verkeer',
       categorySlug: 'verkeer',
       seoTitle: 'Moet ik meewerken aan een algemene verkeerscontrole?',
-      seoDescription: 'Uitleg over verplichtingen bij verkeerscontroles, wat er gecontroleerd kan worden en je rechten als bestuurder.',
-      readTime: '6 min lezen',
+      seoDescription: 'Volledige uitleg over verkeerscontroles: wat mag de politie controleren, je rechten en plichten, wetgeving en praktijkvoorbeelden.',
+      readTime: '12 min lezen',
       lastUpdated: '2025-06-28',
       views: 1247,
-      tags: ['verkeerscontrole', 'meewerken', 'rijbewijs', 'alcohol', 'drugs'],
+      tags: ['verkeerscontrole', 'wegenverkeerswet', 'reglement voertuigen', 'rijbewijs', 'alcohol', 'drugs', 'technische controle'],
       featured: true,
-      content: `## Vraag:
+      content: `## Kort antwoord
 
-**Moet ik meewerken aan een algemene verkeerscontrole en wat kan er allemaal onderdeel van zijn?**
-
----
-
-## Kort antwoord
-
-Ja, je bent verplicht mee te werken aan een algemene verkeerscontrole. De politie kan hierbij onder andere je rijbewijs, kentekenbewijs, voertuigconditie en zaken **in** je voertuig controleren, evenals controles uitvoeren op alcohol en drugs.
+Ja, je bent verplicht mee te werken aan een algemene verkeerscontrole. De politie mag je rijbewijs, kentekenbewijs, identiteitsbewijs en de technische staat van je voertuig controleren, net als alcohol- of drugsgebruik.
 
 ---
 
 ## Uitgebreide uitleg
 
-### Wanneer moet je meewerken?
+### Wettelijke basis: artikel 160 Wegenverkeerswet 1994
 
-Als bestuurder ben je wettelijk verplicht mee te werken aan een algemene verkeerscontrole. De politie mag deze controles uitvoeren zonder dat daarvoor een specifieke reden of verdenking nodig is. Dit gebeurt om de verkeersveiligheid te verbeteren en overtredingen op te sporen. De wettelijke basis hiervoor is **artikel 160 lid 1 en lid 5 van de Wegenverkeerswet 1994**.
+De politie mag je tijdens een verkeerscontrole laten stoppen en controleren op grond van artikel 160 van de Wegenverkeerswet 1994. Dit artikel geeft agenten de bevoegdheid om:
 
-### Wat kan worden gecontroleerd?
+* Je te laten stoppen (lid 1).
+* Te vragen naar je rijbewijs, kentekenbewijs en identiteitsbewijs (lid 1).
+* Jou te verplichten mee te werken aan onderzoeken, bijvoorbeeld een blaastest (lid 5).
 
-Bij een algemene verkeerscontrole kan de politie het volgende controleren:
+Er hoeft geen sprake te zijn van een verdenking. Het mag gaan om een algemene controle, bijvoorbeeld op snelheid, voertuigveiligheid of alcoholgebruik.
 
-* **Identiteit** (identiteitsbewijs)
-* **Rijbewijs**
-* **Kentekenbewijs** (deel IA, IB, deel II of kentekencard)
-* **Technische staat van het voertuig** (zoals banden, verlichting, remmen, spiegels)
-* **Verplichte uitrusting in je voertuig** (zoals gordels, gevarendriehoek, verbanddoos en brandblusser volgens het **Reglement voertuigen**)
-* **Alcoholgebruik** (blaastest)
-* **Drugsgebruik** (speekseltest)
+### Wat kan de politie controleren?
 
-Deze bevoegdheden helpen de politie om de verkeersveiligheid te bewaken en mogelijke overtredingen te ontdekken en voorkomen.
+Tijdens een algemene verkeerscontrole kunnen de volgende zaken aan bod komen:
 
-### Controle van zaken ín het voertuig
+* Identiteitsbewijs
+* Rijbewijs
+* Kentekenbewijs
+* Verzekeringsstatus (via kentekencontrole)
+* Alcohol- of drugsgebruik (blaastest of speekseltest)
+* Technische staat van het voertuig (banden, remmen, verlichting)
+* Verplichte uitrusting en functies in je voertuig
 
-Op grond van het **Reglement voertuigen** mag de politie ook controleren of zaken binnen jouw voertuig aanwezig en in goede staat zijn. Denk hierbij aan:
+### Wat mag de politie controleren in je auto?
 
-* Veiligheidsgordels en kinderzitjes (**Reglement voertuigen, hoofdstuk 5, afdeling 1**)
-* Gevarendriehoek en eventueel veiligheidsvest (**Reglement voertuigen, art. 5.18.42 en 5.18.43**)
-* Verbanddoos (voor bedrijfsvoertuigen verplicht, zie **Reglement voertuigen art. 5.18.45**)
-* Brandblusser (voor bepaalde voertuigen verplicht, zie **Reglement voertuigen art. 5.18.47**)
+De politie mag op basis van het Reglement voertuigen ook controleren of onderdelen in je auto aanwezig zijn en voldoen aan de zogenoemde permanente eisen. Dit zijn eisen die altijd gelden – ook als je auto recent is goedgekeurd voor de APK.
 
----
+Voorbeelden van wat de politie mag controleren binnen je voertuig:
 
-## Praktijkvoorbeeld
+* Rubberlaag op rem- en gaspedaal – mag niet glad of versleten zijn (artikel 5.2.45 lid 1 onder d Reglement voertuigen).
+* Spiegels (binnen en/of buiten) – moeten voldoende zicht bieden (artikel 5.2.49 Reglement voertuigen).
+* Vrij zicht naar voren en opzij – geen belemmering door folie of voorwerpen (artikel 5.2.47 en artikel 5.2.48 Reglement voertuigen).
+* Dashboardverlichting en controlelampjes – moeten leesbaar en werkend zijn (artikel 5.2.55 Reglement voertuigen).
+* Claxon – moet goed hoorbaar en correct werkend zijn (artikel 5.2.60 Reglement voertuigen).
+* Stoelen en bevestiging daarvan – moeten stevig vastzitten (artikel 5.2.50 Reglement voertuigen).
+* Gordels en bevestigingssystemen – moeten functioneren en aanwezig zijn (artikel 5.2.51 Reglement voertuigen).
 
-Stel: je rijdt terug van je werk en ziet een bord "algemene verkeerscontrole". Een agent geeft aan dat je moet stoppen. Hij vraagt je rijbewijs, kentekenbewijs en identiteitsbewijs te tonen en controleert vervolgens de banden en verlichting van je auto. Daarna kijkt hij in de auto of de veiligheidsgordels goed werken en of je een gevarendriehoek bij je hebt. Tot slot moet je meewerken aan een blaastest. Al deze controles zijn wettelijk toegestaan en verplicht om aan mee te werken.
+Als één van deze zaken niet in orde is, kan de politie een waarschuwing geven of proces-verbaal opmaken – zelfs als je auto eerder dat jaar door de APK is gekomen.
+
+### Praktijkvoorbeeld
+
+Je rijdt op een vrijdagmiddag richting huis en ziet een politiecontrole bij een afrit. Je wordt naar een controleplek geleid. Een agent vraagt je rijbewijs, kentekenbewijs en ID-kaart. Daarna controleert hij je banden, verlichting en vraagt of je claxon werkt. Hij kijkt naar de gordels, de spiegels en merkt op dat het rubber op je rempedaal glad is. Tot slot moet je een blaastest doen. Alles wat hier gebeurt is wettelijk toegestaan – je bent verplicht om hieraan mee te werken.
 
 ---
 
 ## Rechten & plichten van de burger
 
-**Plichten**:
+* Plichten:
+  * Je moet je rijbewijs, kentekenbewijs en ID tonen op verzoek (artikel 160 lid 1 Wegenverkeerswet 1994).
+  * Je moet aanwijzingen opvolgen en meewerken aan controles (artikel 160 lid 5 Wegenverkeerswet 1994).
+  * Je voertuig moet voldoen aan de technische en functionele eisen (hoofdstuk 5.2 Reglement voertuigen).
 
-* Meewerken aan aanwijzingen van de politie tijdens de controle (**Wegenverkeerswet 1994, art. 160 lid 5**).
-* Rijbewijs, identiteitsbewijs en kentekenbewijs tonen wanneer hierom wordt gevraagd (**Wegenverkeerswet 1994, art. 160 lid 1**).
-* Verplichte veiligheidsmiddelen en uitrusting in goede staat in je auto hebben (**Reglement voertuigen, art. 5.18.42 t/m 5.18.47**).
-
-**Rechten**:
-
-* Je mag vragen waarom je bent aangehouden, maar een uitgebreide reden hoeft niet per se gegeven te worden.
-* Als je vindt dat er onrechtmatig gehandeld is, heb je achteraf het recht om een klacht in te dienen.
+* Rechten:
+  * Je mag vragen waarom je wordt gecontroleerd, maar de politie hoeft geen specifieke verdenking te hebben.
+  * Je mag achteraf een klacht indienen als je vindt dat de controle niet correct is verlopen.
 
 ---
 
 ## Wat kun je doen?
 
-* Heb je klachten over de uitvoering van de controle? Dan kun je een klacht indienen bij de politie via [politie.nl](https://www.politie.nl/klachten).
-* Heb je twijfels over de rechtmatigheid van de controle of wil je juridisch advies? Neem contact op met het Juridisch Loket, een advocaat, of je rechtsbijstandverzekeraar.
+Als je twijfelt aan de controle of je voelt je onjuist behandeld, kun je:
+
+* Klacht indienen bij de politie via [politie.nl/klachten](https://politie.nl/klachten).
+* Juridisch advies inwinnen via het Juridisch Loket, een advocaat of je rechtsbijstand.
+* Bezwaar maken tegen een boete bij de officier van justitie (zie instructies op de boetebrief).
 
 ---
 
 ## Gerelateerde regelgeving
 
-* **Regeling voertuigen**: technische voorschriften voor voertuigen, bijvoorbeeld eisen aan verlichting, banden en remmen.
-* **Besluit alcohol, drugs en geneesmiddelen in het verkeer**: regels voor het testen van alcohol- en drugsgebruik bij bestuurders.
-* **Besluit administratieve bepalingen inzake het wegverkeer (BABW)**: voorwaarden waaronder verkeerscontroles worden uitgevoerd, zoals plaatsing van verkeersborden bij controles.
+* Wegenverkeerswet 1994 artikel 160 – Bevoegdheden politie bij verkeerscontrole.
+* Reglement voertuigen hoofdstuk 5.2 – Eisen aan voertuigonderdelen en functies.
+* Besluit alcohol, drugs en geneesmiddelen in het verkeer – Regels voor testmethodes.
+* Besluit administratieve bepalingen inzake het wegverkeer (BABW) – Inrichting van verkeerscontroles.
 
 ---
 
-## Belangrijke rechtspraak of beleidsdocumenten
+## Belangrijke rechtspraak en beleid
 
-* **Hoge Raad 19 december 1995, NJ 1996, 249 (verkeerscontrole-arrest)**: bevestigt dat algemene, willekeurige verkeerscontroles zonder verdenking toegestaan zijn, mits duidelijk herkenbaar als controle.
+* Hoge Raad 19 december 1995, NJ 1996, 249 (verkeerscontrole-arrest) – De Hoge Raad oordeelde dat verkeerscontroles zonder verdenking zijn toegestaan, mits duidelijk herkenbaar en binnen de wettelijke kaders.
 
 ---
 
-**Laatst gecheckt:** 28 juni 2025
-*Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.*`
+Laatst gecheckt: 28 juni 2025  
+Disclaimer: Dit is algemene informatie; uitzonderingen zijn mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'door-rood-licht-zonder-sirene',
+      title: 'Mag de politie door rood licht rijden zonder zwaailicht en sirene?',
+      description: 'Alles over wanneer de politie van verkeersregels mag afwijken zonder optische en geluidssignalen.',
+      category: 'Verkeer',
+      categorySlug: 'verkeer',
+      seoTitle: 'Mag de politie door rood licht rijden zonder zwaailicht en sirene?',
+      seoDescription: 'Uitleg over artikel 91 RVV 1990: wanneer politie van verkeersregels mag afwijken zonder signalen, je rechten en klachtmogelijkheden.',
+      readTime: '8 min lezen',
+      lastUpdated: '2025-06-28',
+      views: 892,
+      tags: ['verkeersregels', 'politie', 'RVV 1990', 'artikel 91', 'artikel 29', 'hulpdiensten', 'spoedeisend'],
+      featured: true,
+      content: `## Kort antwoord
+
+Ja, dat mag. De wet staat het toe dat de politie zonder zwaailicht en sirene van verkeersregels afwijkt als dat noodzakelijk is voor het uitvoeren van hun taak.
+
+---
+
+## Uitgebreide uitleg
+
+### Uitzondering op de regel: artikel 91 RVV 1990
+
+Artikel 91 Reglement verkeersregels en verkeerstekens 1990 (RVV 1990) geeft politievoertuigen de ruimte om van verkeersregels af te wijken, ook zonder optische en geluidssignalen, als dat nodig is voor het uitvoeren van hun taak.
+
+Daar staat letterlijk:
+
+"De artikelen 5 tot en met 89 zijn niet van toepassing op bestuurders van voertuigen van de politie, brandweer of ambulance die een taak uitoefenen waarvoor een uitzondering van die bepalingen noodzakelijk is."
+
+Dit betekent dat de politie ook zonder zwaailicht en sirene bijvoorbeeld door rood mag rijden – mits dat noodzakelijk is voor het uitoefenen van hun taak.
+
+### Uitleg: verschil met artikel 29 RVV 1990
+
+Artikel 29 RVV 1990 zegt dat hulpdiensten alleen van verkeersregels mogen afwijken met zwaailicht en sirene. Maar dat geldt voor alle gewone hulpdiensten die deelnemen aan het verkeer.
+
+Artikel 91 RVV 1990 is een bijzondere uitzondering die alleen geldt voor:
+
+* Politie
+* Brandweer  
+* Ambulancedienst
+
+Zij mogen dus – als het noodzakelijk is voor hun werk – van verkeersregels afwijken, ook als ze geen zwaailicht en sirene gebruiken. Het moet dan gaan om een taak waarbij het gebruik van die signalen niet wenselijk of mogelijk is, bijvoorbeeld bij:
+
+* een stille observatie
+* het ongezien naderen van een verdachte
+* een ongeplande situatie waarbij snel optreden nodig is, maar sirene/zwaailicht de inzet zou verstoren
+
+### Praktijkvoorbeeld
+
+Een politiebusje rijdt zonder zwaailicht of sirene door rood. In het voertuig zitten agenten in burger, op weg naar een heterdaadmelding van huiselijk geweld waarbij de verdachte mogelijk vluchtgevaarlijk is.
+
+In deze situatie mogen zij door rood rijden zonder signalen, omdat de inzet spoedeisend is en onopvallend moet blijven.
+
+---
+
+## Rechten & plichten van de burger
+
+* Rechten:
+  * Je hebt het recht om je af te vragen of het rijgedrag van de politie verantwoord is en kunt dit melden (gebaseerd op Politiewet 2012 artikel 13: klachtrecht).
+
+* Plichten:
+  * Je hebt de plicht om geen hinder te veroorzaken bij het uitvoeren van een politie-inzet, ook als die onopvallend is (gebaseerd op artikel 5 Wegenverkeerswet 1994).
+
+---
+
+## Wat kun je doen?
+
+### Heb je zorgen over verkeersgedrag van de politie?
+
+Dien een klacht in via politie.nl > 'Klacht indienen'.
+
+### Twijfel je of het terecht was?
+
+Je kunt het ook melden bij de Nationale Ombudsman als je klacht niet serieus genomen wordt.
+
+---
+
+## Gerelateerde regelgeving
+
+* Artikel 91 RVV 1990 – Politie mag van verkeersregels afwijken als dat nodig is voor hun taak, ook zonder signalen.
+* Artikel 29 RVV 1990 – Regelt de algemene plicht voor zwaailicht en sirene bij hulpdiensten (maar artikel 91 gaat hier dus boven).
+* Besluit optische en geluidssignalen 2009 – Geeft aan welke voertuigen signalen mogen gebruiken en wanneer.
+
+---
+
+## Belangrijke rechtspraak
+
+* ECLI:NL:HR:2009:BH4266 – Bevestigt dat politie onder voorwaarden verkeersregels mag negeren, mits noodzakelijk en met zorgvuldigheid.
+
+---
+
+Laatst gecheckt: 28 juni 2025  
+Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
     }
   ] as PolitieWetArticle[]
 } 

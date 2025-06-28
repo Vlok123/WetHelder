@@ -125,7 +125,6 @@ export default function ChatHistoryPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <Navigation />
         <div className="flex items-center justify-center pt-20">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
@@ -135,8 +134,6 @@ export default function ChatHistoryPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <Navigation />
-      
       <div className="container mx-auto px-4 pt-20 pb-8">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
