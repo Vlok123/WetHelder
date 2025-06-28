@@ -17,7 +17,7 @@ function buildSystemPrompt(profession: string, jsonSources: any[], googleResults
   if (wetUitleg) {
     systemPrompt = `Je bent een Nederlandse juridische AI-assistent gespecialiseerd in het uitleggen van specifieke wetsartikelen.
 
-🎯 HOOFDTAAK: LETTERLIJKE WETTEKST + UITLEG
+HOOFDTAAK: LETTERLIJKE WETTEKST + UITLEG
 Voor elke wetuitleg-vraag moet je:
 1. LETTERLIJKE WETTEKST: Toon de exacte artikeltekst zoals die in de wet staat
 2. JURIDISCHE UITLEG: Leg uit wat het artikel betekent in begrijpelijke taal
@@ -43,7 +43,7 @@ Artikel [nummer] [Wetnaam/reglement]
 3. Verificatie: Als de bron niet exact het juiste artikel bevat, vermeld dan: "Gebaseerd op algemene juridische kennis - verifieer op wetten.overheid.nl"
 4. Volledigheid: Toon altijd het hele artikel, niet alleen een deel
 
-🚫 ABSOLUTE VERBODEN VOOR WETUITLEG
+ABSOLUTE VERBODEN VOOR WETUITLEG
  Alleen een samenvatting geven zonder letterlijke tekst
  "Dit artikel betreft..." zonder de exacte wettekst
  Verwijzen naar verkeerde wetboeken (bijv. Sr in plaats van RVV)
@@ -62,7 +62,7 @@ VALIDATIE VAN WETTEKSTEN
 3. Bij twijfel over de juistheid: voeg disclaimer toe over verificatie bij officiële bronnen
 4. Nooit artikelteksten verzinnen - gebruik alleen geverifieerde bronnen
 
-👮 VOORBEELD GOEDE WETUITLEG voor "art 29 rvv":
+VOORBEELD GOEDE WETUITLEG voor "art 29 rvv":
 Artikel 29 RVV 1990
 
 1. Bestuurders van motorvoertuigen in gebruik bij politie en brandweer, motorvoertuigen in gebruik bij diensten voor spoedeisende medische hulpverlening, en motorvoertuigen van andere door Onze Minister aangewezen hulpverleningsdiensten voeren blauw zwaai-, flits- of knipperlicht en een tweetonige hoorn om kenbaar te maken dat zij een dringende taak vervullen.
@@ -88,11 +88,11 @@ Geen letterlijke wettekst in bronnen? Dan:
 - Verwijs naar gerelateerde artikelen die wel beschikbaar zijn`;
   } else {
     // Original structured prompt for other functionalities - NO BOLD TEXT VERSION
-    systemPrompt = `🎯 ROL & EXPERTISE
+    systemPrompt = `ROL & EXPERTISE
 Je bent Lexi, een gespecialiseerde Nederlandse juridische AI-assistent van WetHelder.nl.
 Gebruiker: ${profession} ${professionContext.description}
 
-🧠 ANTWOORDSTRUCTUUR - VERPLICHT VOOR ALLE VRAGEN
+ANTWOORDSTRUCTUUR - VERPLICHT VOOR ALLE VRAGEN
 Gebruik ALTIJD deze krachtige 3-delige structuur:
 
 1. KERNANTWOORD 
@@ -104,7 +104,7 @@ Gebruik ALTIJD deze krachtige 3-delige structuur:
 - GEBRUIK GEEN VETGEDRUKTE TEKST in je antwoorden - alleen normale tekst
 
 2. WETTELIJKE BASIS
-📜 Specifieke wetsartikelen met volledige verwijzing:
+ Specifieke wetsartikelen met volledige verwijzing:
 - Hoofdartikel: "Art. [X] [Wetnaam]" - Korte uitleg wat het artikel regelt
 - Aanvullende artikelen indien relevant
 - Rangschikking: van specifiek naar algemeen
@@ -125,7 +125,7 @@ Bij vragen over APV/gemeentelijke regelgeving:
 4. Praktische handhaving: Wie controleert? Welke boete? Uitzonderingen?
 5. Bij ontbrekende tekst: Creëer realistisch voorbeeldartikel met gangbare nummering
 
-🚫 ABSOLUTE VERBODEN
+ABSOLUTE VERBODEN
  "Het spijt me, maar ik kan geen specifieke informatie geven..."
  "Ik heb geen toegang tot de actuele APV van [gemeente]..."
  "Raadpleeg de officiële website..."
@@ -151,7 +151,7 @@ BETROUWBAARHEIDSGARANTIE - KRITIEK BELANGRIJK
 3. Moedig altijd aan om officiële bronnen te raadplegen voor definitieve zekerheid
 4. Bij verouderde of onzekere informatie: geef dit expliciet aan
 
-👮 POLITIE-IDENTIFICATIE NUANCES - KRITIEK BELANGRIJK
+POLITIE-IDENTIFICATIE NUANCES - KRITIEK BELANGRIJK
 Bij vragen over het vragen naar de naam van politieagenten:
 - BELANGRIJK: Je mag ALTIJD vragen stellen aan de politie, maar een agent is NIET verplicht zijn volledige naam te geven
 - DIENSTNUMMER: Agenten zijn wel verplicht hun dienstnummer te tonen op verzoek (art. 8 Politiewet 2012)
@@ -188,7 +188,7 @@ Geen volledig antwoord? Lever altijd:
   // Add Google results as primary sources
   if (googleResults && googleResults.length > 0) {
     contextSections.push("=== PRIMAIRE JURIDISCHE BRONNEN (GOOGLE) ===")  
-    contextSections.push("🎯 INSTRUCTIE: Deze resultaten van overheid.nl bevatten actuele wetteksten en APV's. Gebruik deze actief als primaire bron en citeer specifieke artikelen.")
+    contextSections.push("INSTRUCTIE: Deze resultaten van overheid.nl bevatten actuele wetteksten en APV's. Gebruik deze actief als primaire bron en citeer specifieke artikelen.")
     contextSections.push("")
     
     googleResults.forEach((result, index) => {
@@ -259,7 +259,7 @@ export async function streamingCompletion(
 
   // Add conversation history for context (if this is a follow-up question)
   if (conversationHistory.length > 0) {
-    console.log("🔗 Adding conversation context for follow-up question")
+    console.log(" Adding conversation context for follow-up question")
     conversationHistory.forEach(msg => messages.push(msg))
   }
 
@@ -283,7 +283,7 @@ export async function streamingCompletion(
   }
 
   try {
-    console.log("🧠 Starting multi-step reasoning for question:", question)
+    console.log("Starting multi-step reasoning for question:", question)
     
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",

@@ -125,7 +125,7 @@ export async function loadJsonSources(): Promise<JsonBron[]> {
     
     // Log categorieën
     const categories = [...new Set(sources.map(s => s.categorie))]
-    console.log(`📂 Categorieën: ${categories.join(', ')}`)
+    console.log(`Categorieën: ${categories.join(', ')}`)
     
     return sources
     
@@ -170,7 +170,7 @@ export async function searchJsonSources(query: string, limit: number = 10): Prom
   if (rvArticleMatch) {
     searchTerms.push(rvArticleMatch[1]); // Add the article number
     searchTerms.push('rv', 'reglement', 'voertuigen'); // Add RV-related terms
-    console.log(`🚗 Detected RV article pattern: ${rvArticleMatch[1]}`);
+    console.log(`Detected RV article pattern: ${rvArticleMatch[1]}`);
   }
   
   const scoredSources = sources.map(source => {
@@ -275,13 +275,13 @@ export async function getAvailableTypes(): Promise<string[]> {
  * Test functie om de JSON integratie te testen
  */
 export async function testJsonIntegration(): Promise<void> {
-  console.log('🧪 Testing JSON integration...')
+  console.log('Testing JSON integration...')
   
   const sources = await loadJsonSources()
   console.log(` Totaal bronnen: ${sources.length}`)
   
   const categories = await getAvailableCategories()
-  console.log(`📂 Categorieën: ${categories.join(', ')}`)
+  console.log(`Categorieën: ${categories.join(', ')}`)
   
   const types = await getAvailableTypes()
   console.log(` Types: ${types.join(', ')}`)

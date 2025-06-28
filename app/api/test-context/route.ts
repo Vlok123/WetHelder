@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
     if (mode === 'test') {
       // Run full test suite
-      console.log('🧪 Running Context Analysis Test Suite')
+      console.log(' Running Context Analysis Test Suite')
       testContextAnalysis()
       
       return NextResponse.json({
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
   // Quick test with predefined hospital question
   const hospitalQuestion = "Ik werk in een ziekenhuis. De politie wilt camerabeelden vorderen van mij. Mag dat? Het is een ziekenhuis tenslotte."
   
-  console.log('🏥 Testing Hospital Question Context Analysis')
+  console.log('Testing Hospital Question Context Analysis')
   const result = performContextAnalysis(hospitalQuestion)
   
   return NextResponse.json({

@@ -132,14 +132,13 @@ export async function getSourcesForQuery(query: string): Promise<string[]> {
   if (customSources.length > 0) {
     console.log(` Aangepaste bronnen toegevoegd aan zoekresultaten:`)
     customSources.forEach(source => {
-      console.log(`   ${source.betrouwbaarheid === 'hoog' ? '🟢' : source.betrouwbaarheid === 'middel' ? '🟡' : '🔴'} ${source.naam}`)
+      console.log(`   [${source.betrouwbaarheid.toUpperCase()}] ${source.naam}`)
     })
   }
   
   return customSources.map(source => {
-    const betrouwbaarheidIcon = source.betrouwbaarheid === 'hoog' ? '🟢' : 
-                               source.betrouwbaarheid === 'middel' ? '🟡' : '🔴'
-    return ` AANGEPASTE BRON: ${betrouwbaarheidIcon} ${source.naam}: ${source.url} - ${source.beschrijving} (Categorie: ${source.categorie})`
+    const betrouwbaarheidLevel = `[${source.betrouwbaarheid.toUpperCase()}]`
+    return ` AANGEPASTE BRON: ${betrouwbaarheidLevel} ${source.naam}: ${source.url} - ${source.beschrijving} (Categorie: ${source.categorie})`
   })
 }
 

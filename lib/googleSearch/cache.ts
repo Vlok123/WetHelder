@@ -63,7 +63,7 @@ export const searchCache = {
 
   clear(): void {
     cache.clear()
-    console.log('🧹 Cache cleared')
+    console.log('Cache cleared')
   },
 
   // New method to get cache statistics

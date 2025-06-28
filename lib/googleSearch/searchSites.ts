@@ -146,7 +146,7 @@ export async function searchSites(
         // Strategy 3: For vehicle queries, also search specific vehicle regulations
         const vehicleTerms = ['voertuig', 'auto', 'motor', 'fiets', 'regelement', 'verkeer', 'rdw', 'kenteken', 'rijbewijs']
         if (vehicleTerms.some(term => query.toLowerCase().includes(term))) {
-          console.log('🚗 Vehicle-related query detected, searching specific regulations...')
+          console.log(' Vehicle-related query detected, searching specific regulations...')
           const vehicleSpecificQuery = `${query} (wegenverkeerswet OR voertuigreglement OR wegenwet)`
           const vehicleResults = await googleCSEEnhanced(vehicleSpecificQuery, site)
           allResults = [...allResults, ...vehicleResults]

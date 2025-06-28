@@ -630,7 +630,7 @@ function AskPageContent() {
     // Only set profession from localStorage if no URL profile parameter exists
     const urlProfile = searchParams.get('profile')
     if (!urlProfile && savedProfession) {
-      console.log('📂 Loading profession from localStorage:', savedProfession)
+      console.log('Loading profession from localStorage:', savedProfession)
       setProfession(savedProfession as Profession)
     }
   }, [searchParams])
@@ -688,8 +688,6 @@ function AskPageContent() {
       inputRef.current.value = input
     }
   }, [input, isLoading])
-
-
 
   const handleSubmit = useCallback(async (e: React.FormEvent, overrideProfession?: Profession) => {
     e.preventDefault()
@@ -829,7 +827,7 @@ function AskPageContent() {
     // ALWAYS set profession if URL has profile (regardless of auto-submit)
     if (urlProfile) {
       const mappedProfession = mapProfileToProfession(urlProfile)
-      console.log('🎯 Setting profession:', urlProfile, '→', mappedProfession)
+      console.log('Setting profession:', urlProfile, '→', mappedProfession)
       setProfession(mappedProfession)
     }
     

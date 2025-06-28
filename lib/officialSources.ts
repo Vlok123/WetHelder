@@ -343,7 +343,7 @@ export async function fetchBasiswettenbestand(): Promise<WetgevingDocument[]> {
       
       // Strategy 3: Comprehensive vehicle regulations fallback
       async () => {
-        console.log('🚗 Loading comprehensive vehicle regulations fallback...')
+        console.log(' Loading comprehensive vehicle regulations fallback...')
         
         const vehicleRegulations: WetgevingDocument[] = [
           {
@@ -898,7 +898,7 @@ export async function fetchKadaster(query: string = ''): Promise<WetgevingDocume
 // === 13. POLITIE.NL (HANDHAVING) ===
 
 export async function fetchPolitie(query: string = ''): Promise<WetgevingDocument[]> {
-  console.log('👮 Fetching Politie.nl documents...')
+  console.log('Fetching Politie.nl documents...')
   
   try {
     // Politie.nl heeft geen publieke API maar wel uitgebreide informatiebank
@@ -1237,7 +1237,7 @@ export async function fetchBoetebaseOM(query: string = ''): Promise<BoeteDocumen
 // === 20. POLITIE OPEN DATA API ===
 
 export async function fetchPolitieOpenData(query: string = '', limit: number = 10): Promise<WetgevingDocument[]> {
-  console.log('👮 Fetching Politie Open Data...')
+  console.log('Fetching Politie Open Data...')
   
   try {
     // Politie heeft verschillende datasets beschikbaar
@@ -1399,7 +1399,7 @@ export async function fetchCBSStatLine(query: string = ''): Promise<WetgevingDoc
 // === 24. RDW OPEN DATA ===
 
 export async function fetchRDWOpenData(query: string = ''): Promise<WetgevingDocument[]> {
-  console.log('🚗 Fetching RDW Open Data...')
+  console.log(' Fetching RDW Open Data...')
   
   try {
     // RDW heeft verschillende datasets via Socrata
@@ -1987,7 +1987,7 @@ export async function runFullDataSync(): Promise<void> {
     }
     
     // 10. RDW Open Data
-    console.log('🚗 Syncing RDW Open Data...')
+    console.log(' Syncing RDW Open Data...')
     const rdwOpenData = await fetchRDWOpenData('')
     for (const doc of rdwOpenData) {
       await saveDocumentToDatabase(doc)

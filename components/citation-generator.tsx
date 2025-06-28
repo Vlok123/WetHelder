@@ -258,7 +258,7 @@ Gegenereerd door WetHelder - https://wethelder.nl`
               <p>Gegenereerd op: {new Date(citationData.metadata.generatedAt).toLocaleString('nl-NL')}</p>
               <p>Toegangsdatum: {citationData.metadata.accessDate}</p>
               <p className="mt-2 text-xs">
-                💡 <strong>Tip:</strong> Controleer altijd de citatie-eisen van je instelling en pas indien nodig aan.
+                 <strong>Tip:</strong> Controleer altijd de citatie-eisen van je instelling en pas indien nodig aan.
               </p>
             </div>
           </div>

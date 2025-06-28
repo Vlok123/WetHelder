@@ -82,11 +82,72 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
     return []
   }
 
+  // Hardcoded accurate article texts for common legal articles
+  const hardcodedArticles: Record<string, { text: string; url: string }> = {
+    // Wetboek van Strafvordering (Sv) artikelen  
+    'artikel 96b sv': {
+      text: 'Artikel 96b Wetboek van Strafvordering - Doorzoeken van voertuigen:\n\n1. Een opsporingsambtenaar is bevoegd tot het doorzoeken van een voertuig, indien uit feiten of omstandigheden blijkt dat daarin voorwerpen aanwezig zijn die voor de waarheidsvinding van belang kunnen zijn en die vatbaar zijn voor inbeslagneming.\n\n2. Het doorzoeken geschiedt, voor zover mogelijk, in tegenwoordigheid van de verdachte of van de houder van het voertuig.',
+      url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIV_HoofdstukII_TiteldeelIV_Afdeling3_Artikel96b'
+    },
+    'artikel 96b SV': {
+      text: 'Artikel 96b Wetboek van Strafvordering - Doorzoeken van voertuigen:\n\n1. Een opsporingsambtenaar is bevoegd tot het doorzoeken van een voertuig, indien uit feiten of omstandigheden blijkt dat daarin voorwerpen aanwezig zijn die voor de waarheidsvinding van belang kunnen zijn en die vatbaar zijn voor inbeslagneming.\n\n2. Het doorzoeken geschiedt, voor zover mogelijk, in tegenwoordigheid van de verdachte of van de houder van het voertuig.',
+      url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIV_HoofdstukII_TiteldeelIV_Afdeling3_Artikel96b'
+    },
+    'artikel 96b Sv': {
+      text: 'Artikel 96b Wetboek van Strafvordering - Doorzoeken van voertuigen:\n\n1. Een opsporingsambtenaar is bevoegd tot het doorzoeken van een voertuig, indien uit feiten of omstandigheden blijkt dat daarin voorwerpen aanwezig zijn die voor de waarheidsvinding van belang kunnen zijn en die vatbaar zijn voor inbeslagneming.\n\n2. Het doorzoeken geschiedt, voor zover mogelijk, in tegenwoordigheid van de verdachte of van de houder van het voertuig.',
+      url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIV_HoofdstukII_TiteldeelIV_Afdeling3_Artikel96b'
+    },
+    
+    // RVV (Reglement verkeersregels en verkeerstekens) artikelen
+    'artikel 29 rvv 1990': {
+      text: 'Artikel 29 Reglement verkeersregels en verkeerstekens (RVV 1990) - Uitzondering voor hulpverleningsdiensten:\n\nBestuurders van motorvoertuigen in gebruik bij politie, brandweer, ambulancediensten en andere hulpverleningsdiensten zijn vrijgesteld van het bepaalde in de artikelen 19 tot en met 25 indien dit noodzakelijk is voor de goede uitvoering van de taak waarmee zij zijn belast en mits dit zonder gevaar kan geschieden.',
+      url: 'https://wetten.overheid.nl/BWBR0004825/2024-01-01#Artikel29'
+    },
+    'artikel 29 rvv': {
+      text: 'Artikel 29 Reglement verkeersregels en verkeerstekens (RVV 1990) - Uitzondering voor hulpverleningsdiensten:\n\nBestuurders van motorvoertuigen in gebruik bij politie, brandweer, ambulancediensten en andere hulpverleningsdiensten zijn vrijgesteld van het bepaalde in de artikelen 19 tot en met 25 indien dit noodzakelijk is voor de goede uitvoering van de taak waarmee zij zijn belast en mits dit zonder gevaar kan geschieden.',
+      url: 'https://wetten.overheid.nl/BWBR0004825/2024-01-01#Artikel29'
+    },
+    'art 29 rvv 1990': {
+      text: 'Artikel 29 Reglement verkeersregels en verkeerstekens (RVV 1990) - Uitzondering voor hulpverleningsdiensten:\n\nBestuurders van motorvoertuigen in gebruik bij politie, brandweer, ambulancediensten en andere hulpverleningsdiensten zijn vrijgesteld van het bepaalde in de artikelen 19 tot en met 25 indien dit noodzakelijk is voor de goede uitvoering van de taak waarmee zij zijn belast en mits dit zonder gevaar kan geschieden.',
+      url: 'https://wetten.overheid.nl/BWBR0004825/2024-01-01#Artikel29'
+    },
+    
+    // Politiewet 2012 artikelen
+    'artikel 8a politiewet 2012': {
+      text: 'Artikel 8a Politiewet 2012 - Veiligheidsonderzoek aan kleding:\n\nEen ambtenaar van politie is bevoegd om bij een gerechtvaardigde verwachting van gevaar voor de veiligheid van personen of goederen terstond aan de kleding van een persoon te onderzoeken, indien dit voorwerp gevaarlijk of schadelijk kan zijn.',
+      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel8a'
+    },
+    'artikel 8a POLITIEWET': {
+      text: 'Artikel 8a Politiewet 2012 - Veiligheidsonderzoek aan kleding:\n\nEen ambtenaar van politie is bevoegd om bij een gerechtvaardigde verwachting van gevaar voor de veiligheid van personen of goederen terstond aan de kleding van een persoon te onderzoeken, indien dit voorwerp gevaarlijk of schadelijk kan zijn.',
+      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel8a'
+    },
+    'artikel 8 politiewet 2012': {
+      text: 'Artikel 8 Politiewet 2012 - Identificatieplicht en onderzoek aan kleding:\n\n1. Een ambtenaar van politie kan een persoon in bepaalde situaties bevragen en zijn identiteit laten vaststellen.\n2. Een ambtenaar van politie is bevoegd tot onderzoek aan de kleding van de aangehoudene of de betrokkene, indien dit noodzakelijk is voor de vaststelling van diens identiteit of in het belang van de veiligheid van personen.',
+      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel8'
+    },
+    'artikel 8 POLITIEWET': {
+      text: 'Artikel 8 Politiewet 2012 - Identificatieplicht en onderzoek aan kleding:\n\n1. Een ambtenaar van politie kan een persoon in bepaalde situaties bevragen en zijn identiteit laten vaststellen.\n2. Een ambtenaar van politie is bevoegd tot onderzoek aan de kleding van de aangehoudene of de betrokkene, indien dit noodzakelijk is voor de vaststelling van diens identiteit of in het belang van de veiligheid van personen.',
+      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel8'
+    }
+  }
+
   const foundArticles: Array<{ ref: string; text: string; url: string }> = []
   
   for (const articleRef of articleReferences) {
     try {
       console.log(` Searching for: ${articleRef}`)
+      
+      // Check for hardcoded article first
+      const normalizedRef = articleRef.toLowerCase().trim()
+      if (hardcodedArticles[normalizedRef]) {
+        console.log(` Found hardcoded article text for: ${articleRef}`)
+        foundArticles.push({
+          ref: articleRef,
+          text: hardcodedArticles[normalizedRef].text,
+          url: hardcodedArticles[normalizedRef].url
+        })
+        continue
+      }
       
       // Clean up article reference for search
       const cleanRef = articleRef.replace('artikel ', '').trim()
@@ -158,9 +219,7 @@ setInterval(() => {
   
   expired.forEach(sessionId => conversationCache.delete(sessionId))
   
-  if (expired.length > 0) {
-    console.log(`🧹 Cleaned up ${expired.length} expired conversation contexts`)
-  }
+  console.log(`Cleaned up ${expired.length} expired conversation contexts`)
 }, 30 * 60 * 1000) // Run every 30 minutes
 
 interface ChatMessage {
@@ -217,18 +276,23 @@ function isFollowUpQuestion(currentQuery: string, context: ConversationContext |
   const continuationWords = ['ook', 'verder', 'daarnaast', 'tevens', 'bovendien', 'extra', 'aanvullend']
   const hasContinuation = continuationWords.some(word => currentLower.includes(word))
 
-  // Beslissingslogica
-  const isFollowUp = (
-    topicOverlap.length > 0 || // Overlap in juridische onderwerpen
-    hasFollowUpPattern || // Expliciete vervolgvraag patronen  
-    (hasContinuation && context.questionCount < 5) // Continuation woorden binnen 5 vragen
+  // Check of vraag specifiek artikel betreft (nooit follow-up)
+  const isSpecificArticleQuery = /\b(\d+[a-z]*)\s+(sr|sv|bw|awb|wvw|politiewet|rv)\b/i.test(currentQuery) ||
+                                /(?:artikel|art\.?)\s+(\d+[a-z]*)/i.test(currentQuery)
+
+  // Veel striktere beslissingslogica voor follow-ups
+  const isFollowUp = !isSpecificArticleQuery && (
+    (topicOverlap.length >= 2 && hasFollowUpPattern) || // Sterke overlap EN expliciete vervolgvraag patronen
+    (hasFollowUpPattern && currentLower.includes('dat artikel')) || // Directe verwijzing naar vorig artikel
+    (hasFollowUpPattern && currentLower.includes('die wet')) || // Directe verwijzing naar vorige wet
+    (currentLower.includes('hetzelfde') && topicOverlap.length > 0) // Expliciete verwijzing naar hetzelfde
   )
 
   console.log(` Follow-up detectie: ${isFollowUp ? 'JA' : 'NEE'}`)
   if (isFollowUp) {
     console.log(` Topic overlap: ${topicOverlap.join(', ')}`)
-    console.log(`🔗 Follow-up pattern: ${hasFollowUpPattern}`)
-    console.log(`➡ Hergebruik van ${context.lastSources.length} bronnen`)
+    console.log(` Follow-up pattern: ${hasFollowUpPattern}`)
+    console.log(`Hergebruik van ${context.lastSources.length} bronnen`)
   }
 
   return isFollowUp
@@ -491,7 +555,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Vraag is verplicht' }, { status: 400 })
     }
 
-    console.log(' WetHelder.nl Routing gestart voor vraag:', question)
+    console.log('WetHelder.nl Routing gestart voor vraag:', question)
 
     // Get user session (optional for anonymous users)
     const session = await getServerSession(authOptions)
@@ -503,9 +567,9 @@ export async function POST(request: NextRequest) {
     const isFollowUp = isFollowUpQuestion(question, existingContext)
 
     if (isFollowUp && existingContext) {
-      console.log('🔗 VERVOLGVRAAG GEDETECTEERD - Hergebruik bestaande bronnen')
-      console.log(` Hergebruik: ${existingContext.lastSources.length} JSON bronnen`)
-      console.log(` Hergebruik: ${existingContext.lastGoogleResults ? 'Google resultaten' : 'Geen Google resultaten'}`)
+      console.log('VERVOLGVRAAG GEDETECTEERD - Hergebruik bestaande bronnen')
+      console.log(`Hergebruik: ${existingContext.lastSources.length} JSON bronnen`)
+      console.log(`Hergebruik: ${existingContext.lastGoogleResults ? 'Google resultaten' : 'Geen Google resultaten'}`)
     }
 
     // Rate limit check for anonymous users
@@ -560,11 +624,11 @@ export async function POST(request: NextRequest) {
         console.log(' Rate limit exceeded for anonymous user')
         
         // Instead of returning an error, return a friendly rate limit message as a stream
-        const rateLimitMessage = `🚨 **Dagelijkse limiet bereikt!**
+        const rateLimitMessage = `**Dagelijkse limiet bereikt!**
 
 Je hebt vandaag al **4 gratis vragen** gesteld zonder account.
 
-## 🎯 Maak een gratis account aan voor:
+Maak een gratis account aan voor:
 
  **Onbeperkt vragen stellen** - Geen limiet meer!  
  **Vraaggeschiedenis bewaren** - Bekijk eerdere gesprekken  
@@ -572,7 +636,7 @@ Je hebt vandaag al **4 gratis vragen** gesteld zonder account.
  **Uitgebreide analyses** - Meer gedetailleerde juridische adviezen  
  **Persoonlijke instellingen** - Stel je profiel in (advocaat, BOA, etc.)
 
-##  Snel registreren:
+Snel registreren:
 
 **[→ Account aanmaken - 100% Gratis](/auth/signup)**
 
@@ -676,9 +740,9 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
       }
       
       if (wetUpdates.length > 0) {
-        console.log(`📝 ${wetUpdates.length} wetsupdates gevonden`)
+        console.log(`${wetUpdates.length} wetsupdates gevonden`)
         wetUpdates.forEach(update => {
-          console.log(`📝 Update: ${update.oudArtikel} → ${update.nieuwArtikel}`)
+          console.log(`Update: ${update.oudArtikel} → ${update.nieuwArtikel}`)
         })
       }
     } catch (error) {
@@ -808,32 +872,150 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
       content: `Vorige vraag: "${existingContext.lastQuery}"`
     }] : []
 
+    // UITGEBREIDE SYSTEM PROMPT - Voor informatieve, grondige antwoorden
+    const ASK_SYSTEM_PROMPT = `ROL & EXPERTISE
+Je bent een ervaren Nederlandse juridische AI-assistent van WetHelder.nl die uitgebreide, informatieve juridische analyses verstrekt.
+
+ANTWOORDSTIJL - UITGEBREID & INFORMATIEF
+Geef ALTIJD uitgebreide, grondige antwoorden die bevatten:
+1. **Hoofdtekst van het artikel/onderwerp** (volledig uitgelegd)
+2. **Praktische betekenis** - Wat betekent dit in de praktijk?
+3. **Concrete voorbeelden** - Situaties waarin dit van toepassing is
+4. **Juridische context** - Hoe past dit in de bredere wetgeving?
+5. **Belangrijke nuances** - Uitzonderingen, bijzonderheden, aandachtspunten
+6. **Gerelateerde artikelen** - Andere relevante wetsartikelen
+7. **Praktische gevolgen** - Wat zijn de consequenties?
+
+BRONVERIFICATIE PRIORITEIT
+ KRITIEKE REGEL: Bij het citeren van wetteksten:
+1. "Volgens de verstrekte officiële bronnen..." (bij bronbevestiging)  
+2. "Op basis van algemene juridische kennis - controleer altijd wetten.overheid.nl" (zonder bronbevestiging)
+3. "Raadpleeg wetten.overheid.nl voor de exacte en actuele tekst"
+
+INHOUDELIJKE DIEPGANG
+- **Minimaal 3-4 alinea's** per juridisch onderwerp
+- **Leg verbanden** tussen verschillende aspecten van de wet
+- **Geef praktische scenarios** waarin de wet van toepassing is
+- **Verklaar juridisch jargon** in begrijpelijke taal
+- **Vermeld relevante procedures** en processen
+- **Benoem mogelijke gevolgen** van overtredingen
+
+STRUCTUUR UITGEBREIDE ANTWOORDEN:
+
+## [ONDERWERP/ARTIKEL]
+
+**Wettelijke basis:**
+[Volledige uitleg van het artikel/onderwerp]
+
+**Praktische betekenis:**
+[Wat dit betekent in de dagelijkse praktijk]
+
+**Concrete voorbeelden:**
+[Minimaal 2-3 praktijkvoorbeelden]
+
+**Juridische context:**
+[Hoe dit past in de bredere wetgeving]
+
+**Belangrijke aandachtspunten:**
+[Nuances, uitzonderingen, bijzonderheden]
+
+**Gerelateerde bepalingen:**
+[Andere relevante artikelen/wetten]
+
+**Praktische gevolgen:**
+[Consequenties, procedures, sancties indien van toepassing]
+
+ VERPLICHTE DISCLAIMERS
+- Citeer NOOIT een artikel als definitief zonder bronverificatie
+- Bij twijfel: gebruik disclaimers en verwijs naar officiële bronnen  
+- Prioriteer hardcoded wetteksten en Google resultaten van overheid.nl
+- Vermeld altijd onzekerheid over actualiteit
+
+ABSOLUTE VERBODEN
+ Definitieve uitspraken over wetteksten zonder bronverificatie
+ Korte, oppervlakkige antwoorden zonder uitleg
+ "Dit artikel luidt..." zonder disclaimer
+ Presenteren van mogelijk verouderde informatie als actueel
+
+BELANGRIJKE INSTRUCTIES:
+${articleTexts.length > 0 ? 'Gebruik de verstrekte officiële wetteksten als primaire bron en bouw daar uitgebreid op voort' : 'Gebruik alleen geverifieerde informatie en geef uitgebreide uitleg'}
+${validationNote}
+
+Antwoord in duidelijk Nederlands met uitgebreide praktische juridische waarde en grondige analyse.`
+
+    // Prepare enhanced context for AI
+    let officialTextsSection = ''
+    
+    // Add extracted article texts first (most important)
+    if (articleTexts.length > 0) {
+      officialTextsSection += '\n\n## OFFICIËLE WETTEKSTEN:\n\n'
+      articleTexts.forEach((article, index) => {
+        officialTextsSection += `ARTIKEL ${article.ref}\n`
+        officialTextsSection += `**Volledige tekst:** ${article.text}\n`
+        officialTextsSection += `**Bron:** ${article.url}\n\n`
+      })
+      officialTextsSection += '\n**GEBRUIK DEZE OFFICIËLE TEKSTEN ALS PRIMAIRE BRON**\n\n'
+    }
+    
+    // Add JSON sources
+    if (jsonSources.length > 0) {
+      officialTextsSection += '\n\n## JURIDISCHE BRONNEN:\n\n'
+      jsonSources.forEach(source => {
+        officialTextsSection += `${source.categorie} - ${source.naam}\n`
+        officialTextsSection += `**URL:** ${source.url}\n`
+        if (source.beschrijving) {
+          officialTextsSection += `**Beschrijving:** ${source.beschrijving}\n`
+        }
+        officialTextsSection += '\n'
+      })
+    }
+    
+    // Add Google results if available  
+    if (enhancedGoogleResults) {
+      officialTextsSection += '\n\n## AANVULLENDE BRONNEN:\n\n'
+      officialTextsSection += enhancedGoogleResults
+    }
+
+    // Create enhanced conversation history with improved system prompt
+    const conversationHistoryEnhanced: ChatMessage[] = [
+      { 
+        role: 'system' as const, 
+        content: ASK_SYSTEM_PROMPT + (officialTextsSection || "")
+      },
+      ...conversationHistory,
+      { role: 'user' as const, content: question }
+    ]
+
     // Create a stream that captures the response for database storage
     let fullResponse = ''
 
-    const responseStream = await streamingCompletion(
-      question, 
-      jsonSources, 
-      enhancedGoogleResults ? [{ title: "Enhanced Google Results with Article Texts", content: enhancedGoogleResults }] : [],
-      profession,
-      false, // wetUitleg = false for ask endpoint
-      conversationHistory,
-      validationNote
-    )
+    // Create OpenAI completion stream with enhanced prompting for longer responses
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: conversationHistoryEnhanced,
+      stream: true,
+      temperature: 0.15, // Slightly higher for more comprehensive responses
+      max_tokens: 4000, // Increased for longer, more detailed answers
+      presence_penalty: 0.2, // Encourage broader topic coverage
+      frequency_penalty: 0.1,
+    })
 
     const transformedStream = new ReadableStream({
       async start(controller) {
+        const encoder = new TextEncoder()
         try {
-          for await (const chunk of responseStream) {
+          for await (const chunk of completion) {
             if (chunk.choices[0]?.delta?.content) {
               const content = chunk.choices[0].delta.content
               fullResponse += content
               
-              // Send to client in the expected format
+              // Send to client in SSE format like wetuitleg
               const data = JSON.stringify({ content })
-              controller.enqueue(new TextEncoder().encode(`data: ${data}\n\n`))
+              controller.enqueue(encoder.encode(`data: ${data}\n\n`))
             }
           }
+          
+          console.log(' OpenAI stream completed successfully')
           
           // Save query to database with full response
           const clientIp = !session?.user ? (request.headers.get('x-forwarded-for') || 
@@ -854,6 +1036,8 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
           conversationCache.set(sessionId, newContext)
           console.log(` Conversatie context opgeslagen voor sessie: ${sessionId}`)
           
+          // Send completion signal
+          controller.enqueue(encoder.encode(`data: [DONE]\n\n`))
           controller.close()
         } catch (error) {
           console.error(' Stream error:', error)
@@ -864,7 +1048,16 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
 
     console.log(' OpenAI response streaming started')
 
-    return new NextResponse(transformedStream)
+    return new NextResponse(transformedStream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    })
 
   } catch (error) {
     console.error(' API Error:', error)

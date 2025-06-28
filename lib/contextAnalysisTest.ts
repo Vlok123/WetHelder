@@ -1,12 +1,12 @@
 /**
- * 🧪 Context Analysis Test Suite
+ *  Context Analysis Test Suite
  * Demonstrates the multi-step reasoning capabilities
  */
 
 import { performContextAnalysis } from './contextAnalysis'
 
 export function testContextAnalysis() {
-  console.log('🧪 Testing WetHelder Context Analysis Engine\n')
+  console.log(' Testing WetHelder Context Analysis Engine\n')
 
   const testCases = [
     {
@@ -42,7 +42,7 @@ export function testContextAnalysis() {
     
     const result = performContextAnalysis(testCase.question)
     
-    console.log(`🎯 Gedetecteerde contexten: [${result.contexts.join(', ')}]`)
+    console.log(`Gedetecteerde contexten: [${result.contexts.join(', ')}]`)
     console.log(` Verwachte contexten: [${testCase.expectedContexts.join(', ')}]`)
     
     const isCorrect = JSON.stringify(result.contexts.sort()) === JSON.stringify(testCase.expectedContexts.sort())
@@ -56,7 +56,7 @@ export function testContextAnalysis() {
       // Show high priority rules
       const highPriorityRules = result.analysis.specialRules.filter(rule => rule.priority === 'high')
       if (highPriorityRules.length > 0) {
-        console.log(`🔴 Hoge prioriteit regels:`)
+        console.log(`Hoge prioriteit regels:`)
         highPriorityRules.forEach(rule => {
           console.log(`   • ${rule.rule} (${rule.articles.join(', ')})`)
         })
@@ -80,18 +80,18 @@ export function demoDetailedAnalysis(question: string) {
 
   const result = performContextAnalysis(question)
 
-  console.log('\n🎯 PHASE 1: CONTEXT DETECTION')
+  console.log('\nPHASE 1: CONTEXT DETECTION')
   console.log(`Detected Sectors: ${result.contexts.length > 0 ? result.contexts.join(', ') : 'None'}`)
 
   if (result.contexts.length > 0) {
-    console.log('\n🧠 PHASE 2: DEEP ANALYSIS')
+    console.log('\nPHASE 2: DEEP ANALYSIS')
     console.log(`Special Rules: ${result.analysis.specialRules.length}`)
     console.log(`Legal Principles: ${result.analysis.legalPrinciples.length}`)
     console.log(`Required Considerations: ${result.analysis.requiredConsiderations.length}`)
 
     console.log('\n SPECIAL RULES:')
     result.analysis.specialRules.forEach((rule, index) => {
-      const priority = rule.priority === 'high' ? '🔴' : rule.priority === 'medium' ? '🟡' : '🟢'
+      const priority = rule.priority === 'high' ? 'HIGH' : rule.priority === 'medium' ? 'MED' : 'LOW'
       console.log(`${index + 1}. ${priority} ${rule.rule}`)
       console.log(`   Articles: ${rule.articles.join(', ')}`)
       console.log(`   Description: ${rule.description}`)

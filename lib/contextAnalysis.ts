@@ -1,5 +1,5 @@
 /**
- * 🧠 WetHelder Context Analysis Engine
+ * WetHelder Context Analysis Engine
  * Advanced multi-step reasoning and sector-specific knowledge base
  */
 
@@ -31,7 +31,7 @@ export interface SectorKnowledge {
 }
 
 /**
- * 🏥 Comprehensive Sector Knowledge Base
+ * Comprehensive Sector Knowledge Base
  */
 const SECTOR_KNOWLEDGE: Record<string, SectorKnowledge> = {
   HEALTHCARE: {
@@ -240,7 +240,7 @@ export function detectContexts(question: string): string[] {
 }
 
 /**
- * 🧠 Phase 2: Deep Context Analysis
+ * Phase 2: Deep Context Analysis
  */
 export function analyzeContext(question: string, detectedSectors: string[]): ContextAnalysis {
   const analysis: ContextAnalysis = {
@@ -282,11 +282,11 @@ export function analyzeContext(question: string, detectedSectors: string[]): Con
 }
 
 /**
- * 🎯 Dynamic Prompt Building
+ * Dynamic Prompt Building
  */
 function generateSectorPrompt(sector: SectorKnowledge, question: string): string {
   return `
-🎯 ${sector.name.toUpperCase()} CONTEXT GEDETECTEERD:
+${sector.name.toUpperCase()} CONTEXT GEDETECTEERD:
 
 **Relevante Wetgeving:**
 ${sector.laws.map(law => `• ${law}`).join('\n')}
@@ -304,7 +304,7 @@ ${sector.considerations.map(consideration => `• ${consideration}`).join('\n')}
 
 **INSTRUCTIE:** Behandel ALLE bovenstaande aspecten in je antwoord. Geef een volledig juridisch beeld dat rekening houdt met de bijzondere positie van ${sector.name.toLowerCase()}.
 
-📌 **JURIDISCH ANTWOORDMODEL - POSITIEVE BENADERING**
+**JURIDISCH ANTWOORDMODEL - POSITIEVE BENADERING**
 - Begin met wat juridisch gezien **wel mag** op basis van wetgeving
 - Gebruik **"Ja, mits..."** formuleringen in plaats van **"Nee, tenzij..."**
 `
@@ -325,7 +325,7 @@ export function buildEnhancedPrompt(
   const enhancedPrompt = `
 ${basePrompt}
 
-🧠 MULTI-STEP REASONING ACTIVATED:
+MULTI-STEP REASONING ACTIVATED:
 
 STAP 1: CONTEXT ANALYSE VOLTOOID
 Gedetecteerde sectoren: ${contextAnalysis.sectors.join(', ')}
@@ -344,13 +344,13 @@ ${contextAnalysis.requiredConsiderations.map((consideration, index) =>
 STAP 4: SPECIALE JURIDISCHE REGELS (PRIORITEIT)
 ${contextAnalysis.specialRules
   .filter(rule => rule.priority === 'high')
-  .map(rule => `🔴 HOGE PRIORITEIT: ${rule.rule} (${rule.articles.join(', ')})
+  .map(rule => `HOGE PRIORITEIT: ${rule.rule} (${rule.articles.join(', ')})
    ${rule.description}`)
   .join('\n')}
 
 ${contextAnalysis.specialRules
   .filter(rule => rule.priority !== 'high')
-  .map(rule => `🟡 ${rule.rule} (${rule.articles.join(', ')})
+  .map(rule => `${rule.rule} (${rule.articles.join(', ')})
    ${rule.description}`)
   .join('\n')}
 
@@ -369,7 +369,7 @@ Structureer je antwoord als volgt:
 }
 
 /**
- * 🎯 Main Context Analysis Function
+ *  Main Context Analysis Function
  */
 export function performContextAnalysis(question: string): {
   contexts: string[]

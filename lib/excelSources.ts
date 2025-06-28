@@ -89,7 +89,7 @@ export async function loadExcelSources(): Promise<ExcelBron[]> {
     
     // Log categorieën
     const categories = [...new Set(sources.map(s => s.categorie))]
-    console.log(`📂 Categorieën: ${categories.join(', ')}`)
+    console.log(`Categorieën: ${categories.join(', ')}`)
     
     return sources
     
@@ -286,13 +286,13 @@ export async function getAvailableTypes(): Promise<string[]> {
  * Test functie om de Excel integratie te testen
  */
 export async function testExcelIntegration(): Promise<void> {
-  console.log('🧪 Testing Excel integration...')
+  console.log('Testing Excel integration...')
   
   const sources = await loadExcelSources()
   console.log(` Totaal bronnen: ${sources.length}`)
   
   const categories = await getAvailableCategories()
-  console.log(`📂 Categorieën: ${categories.join(', ')}`)
+  console.log(`Categorieën: ${categories.join(', ')}`)
   
   const types = await getAvailableTypes()
   console.log(` Types: ${types.join(', ')}`)

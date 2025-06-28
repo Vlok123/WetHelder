@@ -106,7 +106,7 @@ function formatCombinedSnippets(results: GoogleSearchResult[], jsonSources: Json
  * Specifically validates against wetten.overheid.nl for accurate law text
  */
 async function searchSpecificRVVArticle(query: string): Promise<GoogleSearchResult[]> {
-  console.log(`🚦 Enhanced RVV article search for: "${query}"`)
+  console.log(`Enhanced RVV article search for: "${query}"`)
   
   // Extract RVV article number from query
   const rvvMatch = query.match(/(?:artikel\s+)?(\d+)\s+(?:rvv|reglement\s+verkeersregels)/i)
@@ -115,7 +115,7 @@ async function searchSpecificRVVArticle(query: string): Promise<GoogleSearchResu
   }
   
   const articleNumber = rvvMatch[1]
-  console.log(`🚦 Searching for RVV artikel ${articleNumber}`)
+  console.log(`Searching for RVV artikel ${articleNumber}`)
   
   // Direct searches for RVV 1990 on wetten.overheid.nl
   const searchQueries = [
@@ -186,7 +186,7 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
                     query.toLowerCase().includes('verkeersregels en verkeerstekens')
   
   if (isRVVQuery) {
-    console.log('🚦 Detected RVV (Reglement verkeersregels en verkeerstekens) query - using enhanced search')
+    console.log('Detected RVV (Reglement verkeersregels en verkeerstekens) query - using enhanced search')
     
     // First try specific RVV article search
     const rvvResults = await searchSpecificRVVArticle(query)
@@ -237,7 +237,7 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
         if (tag === SourceTag.WETTEN) {
           // Enhanced search query for RV articles
           const enhancedQuery = `${query} "reglement voertuigen" OR "voertuigreglement" OR "BWBR0025798"`
-          console.log(`🚗 Enhanced RV search: ${enhancedQuery}`)
+          console.log(` Enhanced RV search: ${enhancedQuery}`)
           return searchSites(enhancedQuery, tag as SourceTag, sites)
         }
         return searchSites(query, tag as SourceTag, sites)
@@ -274,7 +274,7 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
         if (bIsWetten && bHasRV && !(aIsWetten && aHasRV)) return 1
         return 0
       })
-      console.log(`🚗 Sorted ${flatResults.length} results for RV query`)
+      console.log(` Sorted ${flatResults.length} results for RV query`)
     }
     
     // Calculate metrics in single pass
@@ -306,7 +306,7 @@ export async function searchVerifiedJuridicalSources(query: string): Promise<Ver
     
     console.log(` Search completed: ${metrics.total} results, ${metrics.currentYear} current year`)
     if (isRVQuery) {
-      console.log(`🚗 RV-specific results found: ${flatResults.filter(r => r.link.includes('wetten.overheid.nl')).length}`)
+      console.log(` RV-specific results found: ${flatResults.filter(r => r.link.includes('wetten.overheid.nl')).length}`)
     }
     return results
     
@@ -338,13 +338,13 @@ export function generateStrictChatGPTPrompt(question: string, verifiedResults: V
   
   return `${promptTemplate}
 
-## VRAAG:
+VRAAG:
 ${question}
 
-## BESCHIKBARE BRONNEN:
+BESCHIKBARE BRONNEN:
 ${verifiedResults.combinedSnippets}
 
-## ZOEKSTATISTIEKEN:
+ZOEKSTATISTIEKEN:
 - Totaal resultaten: ${verifiedResults.totalResults}
 - Actuele resultaten: ${verifiedResults.currentYearResults}
 - JSON bronnen: ${verifiedResults.jsonResults}

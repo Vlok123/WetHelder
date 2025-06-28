@@ -76,7 +76,7 @@ if (fs.existsSync(WORD_DOC_PATH)) {
 }
 
 // Instructies
-console.log('\n🎯 Next Steps:')
+console.log('\n Next Steps:')
 console.log('==============')
 console.log('1. 📝 Edit your sources:')
 console.log(`   - JSON file: ${TARGET_FILE}`)

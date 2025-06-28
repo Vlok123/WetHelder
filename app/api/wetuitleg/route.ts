@@ -108,14 +108,14 @@ function extractArticleReferences(query: string): string[] {
   if (rvvMatch) {
     const articleNum = rvvMatch[1]
     references.push(`artikel ${articleNum} RVV 1990`)
-    console.log(`🚦 Detected RVV artikel ${articleNum} - adding specific RVV 1990 reference`)
+    console.log(`Detected RVV artikel ${articleNum} - adding specific RVV 1990 reference`)
   }
   
   // Pattern 4: "29 rvv" (short format for RVV)
   const shortRvvMatch = lowerQuery.match(/\b(\d+)\s+rvv\b/i)
   if (shortRvvMatch && !references.some(ref => ref.includes('RVV'))) {
     references.push(`artikel ${shortRvvMatch[1]} RVV 1990`)
-    console.log(`🚦 Detected short RVV format: artikel ${shortRvvMatch[1]} RVV 1990`)
+    console.log(`Detected short RVV format: artikel ${shortRvvMatch[1]} RVV 1990`)
   }
   
   // Pattern 5: "304 sr" (short format for other laws)
@@ -346,7 +346,7 @@ async function searchLiteralLawText(articleReferences: string[]): Promise<Array<
     
     // HARDCODED VALIDATION FOR ARTIKEL 29 RVV 1990
     if (ref.toLowerCase().includes('artikel 29') && (ref.toLowerCase().includes('rvv') || ref.toLowerCase().includes('reglement verkeersregels'))) {
-      console.log('🚦 HARDCODED: Found artikel 29 RVV - returning correct text about emergency services')
+      console.log('HARDCODED: Found artikel 29 RVV - returning correct text about emergency services')
       results.push({
         ref: ref,
         text: `Artikel 29 RVV 1990
@@ -469,6 +469,20 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
       text: 'Aan het hoofd van het landelijke politiekorps staat een korpschef die wordt benoemd, geschorst en ontslagen bij koninklijk besluit.',
       url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel27'
     },
+    // Wetboek van Strafvordering (Sv) artikelen
+    'artikel 96b sv': {
+      text: 'Artikel 96b Wetboek van Strafvordering - Doorzoeken van voertuigen:\n\n1. Een opsporingsambtenaar is bevoegd tot het doorzoeken van een voertuig, indien uit feiten of omstandigheden blijkt dat daarin voorwerpen aanwezig zijn die voor de waarheidsvinding van belang kunnen zijn en die vatbaar zijn voor inbeslagneming.\n\n2. Het doorzoeken geschiedt, voor zover mogelijk, in tegenwoordigheid van de verdachte of van de houder van het voertuig.',
+      url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIV_HoofdstukII_TiteldeelIV_Afdeling3_Artikel96b'
+    },
+    'artikel 96b SV': {
+      text: 'Artikel 96b Wetboek van Strafvordering - Doorzoeken van voertuigen:\n\n1. Een opsporingsambtenaar is bevoegd tot het doorzoeken van een voertuig, indien uit feiten of omstandigheden blijkt dat daarin voorwerpen aanwezig zijn die voor de waarheidsvinding van belang kunnen zijn en die vatbaar zijn voor inbeslagneming.\n\n2. Het doorzoeken geschiedt, voor zover mogelijk, in tegenwoordigheid van de verdachte of van de houder van het voertuig.',
+      url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIV_HoofdstukII_TiteldeelIV_Afdeling3_Artikel96b'
+    },
+    'artikel 96b Sv': {
+      text: 'Artikel 96b Wetboek van Strafvordering - Doorzoeken van voertuigen:\n\n1. Een opsporingsambtenaar is bevoegd tot het doorzoeken van een voertuig, indien uit feiten of omstandigheden blijkt dat daarin voorwerpen aanwezig zijn die voor de waarheidsvinding van belang kunnen zijn en die vatbaar zijn voor inbeslagneming.\n\n2. Het doorzoeken geschiedt, voor zover mogelijk, in tegenwoordigheid van de verdachte of van de houder van het voertuig.',
+      url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIV_HoofdstukII_TiteldeelIV_Afdeling3_Artikel96b'
+    },
+    
     // Short form references
     'artikel 1 POLITIEWET': {
       text: 'In deze wet en de daarop berustende bepalingen wordt verstaan onder: a. Onze Minister: Onze Minister van Justitie en Veiligheid; b. politie: het landelijke politiekorps, bedoeld in artikel 25, eerste lid; c. korpschef: de korpschef, bedoeld in artikel 27; d. eenheid: een regionale of landelijke eenheid; e. regionale eenheid: een regionale eenheid van de politie als bedoeld in artikel 25, eerste lid, onder a; f. landelijke eenheid: een landelijke eenheid van de politie als bedoeld in artikel 25, eerste lid, onder b.',
@@ -606,7 +620,7 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
         }
       }
       
-      console.log(`🎯 Using search query: ${searchQuery}`)
+      console.log(`Using search query: ${searchQuery}`)
       
       const searchResults = await searchVerifiedJuridicalSources(searchQuery)
       
@@ -649,31 +663,38 @@ async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise
 }
 
 // Wetuitleg systeemprompt versie 28-06-2025 - verbeterde wettekst handling
-const WETUITLEG_SYSTEM_PROMPT = `🎯 ROL & EXPERTISE
+const WETUITLEG_SYSTEM_PROMPT = `ROL & EXPERTISE
 Je bent Lexi, een gespecialiseerde Nederlandse juridische AI-assistent van WetHelder.nl die UITSLUITEND betrouwbare, gevalideerde juridische informatie verstrekt.
 
 BETROUWBAARHEIDSGARANTIE - ABSOLUTE PRIORITEIT
- KRITIEKE REGEL: Bij het citeren van wetteksten ALTIJD een van deze opties:
+🔒 KRITIEKE REGEL: Bij het citeren van wetteksten ALTIJD een van deze opties:
 1. "Volgens de verstrekte officiële bronnen..." (bij bronbevestiging)
 2. "Op basis van algemene juridische kennis - controleer altijd wetten.overheid.nl voor de actuele versie" (zonder bronbevestiging)
 3. "Raadpleeg wetten.overheid.nl voor de exacte en meest actuele tekst van dit artikel"
 
- VALIDATIEVERPLICHTINGEN
+🛡️ VALIDATIEVERPLICHTINGEN
 - Citeer NOOIT een artikel als definitief zonder bronverificatie
 - Bij twijfel: gebruik disclaimers en verwijs naar officiële bronnen
 - Prioriteer Google resultaten van overheid.nl boven eigen kennis
 - Vermeld altijd onzekerheid over actualiteit van informatie
 
- VERPLICHTE STRUCTUUR - Gebruik EXACT deze markers voor elke vraag:
+📋 VERPLICHTE STRUCTUUR - Gebruik EXACT deze markers voor elke vraag:
 
 SAMENVATTING:
 [Begin hier met een heldere, directe beantwoording van de vraag. Gebruik ALTIJD een disclaimer als er geen directe bronverificatie is]
 
 WETSARTIKEL:
-[Citeer hier de relevante wetsartikelen met hun VOLLEDIGE tekst. VERPLICHT: Start met "Volgens de verstrekte bronnen..." of "Op basis van algemene juridische kennis - controleer wetten.overheid.nl..."]
+[BELANGRIJK: Als er een specifiek wetsartikel wordt gevraagd (bijvoorbeeld "wat zegt artikel 302 strafrecht"), citeer dan de VOLLEDIGE LETTERLIJKE tekst in een apart kader:
+
+📖 **ARTIKEL [NUMMER] [WETBOEK] - VOLLEDIGE TEKST**
+[Hier de complete, letterlijke wettekst zoals die officieel luidt]
+**Bron:** [link naar wetten.overheid.nl]
+
+Voor vervolgvragen hoef je het artikel niet opnieuw volledig te citeren.
+VERPLICHT: Start met "Volgens de verstrekte bronnen..." of "Op basis van algemene juridische kennis - controleer wetten.overheid.nl..."]
 
 LINK:
-[Geef hier de officiële link naar de wet op wetten.overheid.nl - ALTIJD aanbevelen om hier te controleren]
+[Geef hier de officiële link naar de wet op wetten.overheid.nl in PLATTE TEKST - GEEN HTML. Gebruik format: "Raadpleeg de officiële tekst op: https://wetten.overheid.nl/... "]
 
 TOELICHTING:
 [Leg hier uit wat de wetsartikelen betekenen. Vermeld indien van toepassing: "Deze uitleg is gebaseerd op algemene juridische interpretatie"]
@@ -690,17 +711,23 @@ VERWANTE ARTIKELEN:
 BRONNEN:
 [Lijst gebruikte bronnen + ALTIJD: "Controleer altijd de meest actuele versie op wetten.overheid.nl"]
 
-🚫 ABSOLUTE VERBODEN
- Definitieve uitspraken over wetteksten zonder bronverificatie
- "Dit artikel luidt..." zonder disclaimer
- Presenteren van mogelijk verouderde informatie als actueel
- Weglatingen van onzekerheidsvermeldingen
+❌ ABSOLUTE VERBODEN
+❌ Definitieve uitspraken over wetteksten zonder bronverificatie
+❌ "Dit artikel luidt..." zonder disclaimer
+❌ Presenteren van mogelijk verouderde informatie als actueel
+❌ Weglatingen van onzekerheidsvermeldingen
 
- FAIL-SAFE PRINCIPE
+🔄 FAIL-SAFE PRINCIPE
 - Transparantie over bronnen en beperkingen
 - Stimuleer verificatie via officiële kanalen
 - Erken onzekerheid waar van toepassing
-- Juridische waarde leveren met eerlijkheid over betrouwbaarheid`
+- Juridische waarde leveren met eerlijkheid over betrouwbaarheid
+
+🎯 SPECIFIEKE INSTRUCTIE VOOR WETSARTIKELEN:
+Bij vragen zoals "wat zegt artikel X", "wat staat in artikel Y", "artikel Z betekenis":
+1. Toon EERST de volledige, letterlijke wettekst in een duidelijk kader
+2. Voeg daarna uitleg en context toe
+3. Bij vervolgvragen over hetzelfde artikel: verwijs kort naar de tekst maar herhaal niet volledig`
 
 export async function GET(request: NextRequest) {
   try {
@@ -1044,10 +1071,10 @@ INSTRUCTIE: Integreer deze betrouwbaarheidsinformatie natuurlijk in je antwoord.
     })
 
   } catch (error) {
-    console.error(' Error in POST /api/wetuitleg:', error)
+    console.error('🔴 Error in POST /api/wetuitleg:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     )
   }
-} 
+}

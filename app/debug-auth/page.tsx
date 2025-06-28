@@ -146,7 +146,7 @@ export default function DebugAuthPage() {
           {/* Demo Accounts */}
           <Card>
             <CardHeader>
-              <CardTitle>💡 Demo Accounts</CardTitle>
+              <CardTitle>Demo Accounts</CardTitle>
               <CardDescription>
                 Beschikbare test accounts voor development
               </CardDescription>

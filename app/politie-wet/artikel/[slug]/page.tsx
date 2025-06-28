@@ -32,7 +32,7 @@ const legacySampleArticles = {
 
 Nee, fouilleren op straat mag alleen onder specifieke voorwaarden. De politie heeft een wettelijke grondslag nodig en moet kunnen uitleggen waarom zij jou willen fouilleren.
 
-## Wanneer is fouilleren toegestaan?
+Wanneer is fouilleren toegestaan?
 
 1. Veiligheidsfouillering (art. 8 Politiewet 2012)
 De politie mag een veiligheidsfouillering uitvoeren wanneer:
@@ -53,7 +53,7 @@ Bij een rechtmatige aanhouding mag de politie altijd fouilleren om:
 - Bewijsmateriaal veilig te stellen
 - Te voorkomen dat je vlucht
 
-## Wat zijn jouw rechten?
+Wat zijn jouw rechten?
 
 Informatieplicht politie
 De politie moet je vertellen:
@@ -73,7 +73,7 @@ Mag je weigeren?
 - Preventief fouilleren: Nee, in aangewezen gebieden
 - Zonder grondslag: Ja, je mag vragen naar de wettelijke basis
 
-## Wat mag de politie tijdens fouillering?
+Wat mag de politie tijdens fouillering?
 
 Toegestaan
 - Aftasten van kleding en lichaam
@@ -87,7 +87,7 @@ Niet toegestaan zonder extra bevoegdheid
 - Onderzoek van lichaamsopeningen
 - Langdurig vasthouden zonder arrestatie
 
-## Wat te doen bij problemen?
+Wat te doen bij problemen?
 
 Tijdens de fouillering
 - Blijf kalm en werk mee
@@ -100,7 +100,7 @@ Na de fouillering
 - Advocaat: Bij ernstige problemen kun je juridische bijstand zoeken
 - Getuigen: Vraag contactgegevens van eventuele getuigen
 
-## Samenvatting
+Samenvatting
 
 - Politie moet duidelijke reden hebben voor fouillering
 - Burger mag vragen naar grondslag en uitleg
@@ -124,7 +124,7 @@ Iedere situatie is anders. Voor specifiek juridisch advies over jouw situatie ku
 
 De politie heeft uitgebreide bevoegdheden bij verkeerscontroles, maar deze moeten wel proportioneel zijn en er moet een wettelijke grondslag zijn voor elke handeling.
 
-## Stopteken geven
+Stopteken geven
 
 Wanneer mag de politie je laten stoppen?
 - Algemene verkeerscontrole: Altijd toegestaan voor controle rijbewijs, kentekenbewijs en verzekering
@@ -135,7 +135,7 @@ Wanneer mag de politie je laten stoppen?
 Moet je altijd stoppen?
 Ja, altijd. Het negeren van een stopteken is een strafbaar feit (art. 179 Wegenverkeerswet).
 
-## Documenten controleren
+Documenten controleren
 
 Welke documenten mag de politie vragen?
 - Rijbewijs: Verplicht bij besturen van motorvoertuigen
@@ -148,7 +148,7 @@ Wat als je documenten vergeten bent?
 - De politie kan het voertuig stilzetten
 - Soms krijg je de kans documenten binnen 24 uur te tonen
 
-## Alcohol- en drugscontroles
+Alcohol- en drugscontroles
 
 Blaastest
 - Verplichte medewerking: Je moet meewerken aan een blaastest

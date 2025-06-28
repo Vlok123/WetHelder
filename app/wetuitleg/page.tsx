@@ -258,11 +258,11 @@ function WetUitlegPage() {
     }
     
     if (savedProfession && savedProfession in professionConfig) {
-      console.log('📂 Loading profession from localStorage for wetuitleg:', savedProfession)
+      console.log('Loading profession from localStorage for wetuitleg:', savedProfession)
       setProfession(savedProfession as Profession)
     } else {
       // Ensure we always have a valid profession set
-      console.log('📂 Setting default profession: algemeen')
+      console.log('Setting default profession: algemeen')
       setProfession('algemeen')
     }
   }, [])
@@ -479,15 +479,14 @@ function WetUitlegPage() {
 
   const parseAnalysisContent = (content: string) => {
     // Extract exact legal text from markdown code blocks, emoji sections or specific markers
-    const exactTextPatterns = [
-      /```[\s\S]*?```/g,
-      /📜[\s\S]*?(?=||💡|🔗||$)/g,
-      /\*\*📜 EXACTE WETTEKST\*\*[\s\S]*?(?=\*\*|$)/g,
+    const patterns = [
+      /[\s\S]*?(?=|||||$)/g,
+      /\*\* EXACTE WETTEKST\*\*[\s\S]*?(?=\*\*|$)/g,
       /EXACTE WETTEKST[\s\S]*?(?=JURIDISCHE ANALYSE|$)/g
     ]
     
     let exactText = ''
-    for (const pattern of exactTextPatterns) {
+    for (const pattern of patterns) {
       const matches = content.match(pattern)
       if (matches && matches.length > 0) {
         exactText = matches.join('\n\n')
@@ -496,12 +495,12 @@ function WetUitlegPage() {
     }
     
     const sections = {
-      articleText: exactText || extractSection(content, '📜', '') || extractSection(content, 'EXACTE WETTEKST', 'JURIDISCHE ANALYSE'),
+      articleText: exactText || extractSection(content, '', '') || extractSection(content, 'EXACTE WETTEKST', 'JURIDISCHE ANALYSE'),
       summary: extractSection(content, '', '') || extractSection(content, 'JURIDISCHE ANALYSE', 'JURISPRUDENTIE') || content, // Fallback to full content
-      explanation: extractSection(content, '💡', '🔗') || extractSection(content, 'PRAKTISCHE TOEPASSING', 'GERELATEERDE ARTIKELEN'),
-      practicalApplication: extractSection(content, '💡', '🔗') || extractSection(content, 'PRAKTISCHE TOEPASSING', 'GERELATEERDE ARTIKELEN'),
-      jurisprudence: extractSection(content, '', '💡') || extractSection(content, 'JURISPRUDENTIE', 'PRAKTISCHE TOEPASSING'),
-      relatedArticles: extractSection(content, '🔗', '') || extractSection(content, 'GERELATEERDE ARTIKELEN', 'BELANGRIJKE AANDACHTSPUNTEN'),
+      explanation: extractSection(content, '', '') || extractSection(content, 'PRAKTISCHE TOEPASSING', 'GERELATEERDE ARTIKELEN'),
+      practicalApplication: extractSection(content, '', '') || extractSection(content, 'PRAKTISCHE TOEPASSING', 'GERELATEERDE ARTIKELEN'),
+      jurisprudence: extractSection(content, '', '') || extractSection(content, 'JURISPRUDENTIE', 'PRAKTISCHE TOEPASSING'),
+      relatedArticles: extractSection(content, '', '') || extractSection(content, 'GERELATEERDE ARTIKELEN', 'BELANGRIJKE AANDACHTSPUNTEN'),
       officialLink: extractSection(content, 'LINK:', '') || extractSection(content, 'URL:', '') || extractSection(content, 'Bron:', ''),
       sources: extractSources(content)
     }
@@ -797,9 +796,17 @@ function WetUitlegPage() {
     formatted = formatted.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">$1</a>')
     formatted = formatted.replace(/(www\.[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}[^\s]*)/g, '<a href="https://$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">$1</a>')
     
-    // Fix malformed link text that shows HTML as text
+    // Fix malformed link text that shows HTML as text (multiple patterns)
     formatted = formatted.replace(/LINK:\s*Raadpleeg de officiële tekst van ([^"]+)"\s*target="_blank"\s*rel="noopener noreferrer"\s*class="[^"]*">([^<]+)/g, 
       'LINK: <a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">Raadpleeg de officiële tekst van $1</a>')
+    
+    // Fix malformed links with missing opening tag (more general pattern)
+    formatted = formatted.replace(/([^<])(https?:\/\/[^\s"]+)"\s*target="_blank"\s*rel="noopener noreferrer"\s*class="[^"]*">([^<]+)/g, 
+      '$1<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">$3</a>')
+    
+    // Fix isolated URLs that appear as broken HTML
+    formatted = formatted.replace(/([^href="])(https?:\/\/[^\s"]+)"\s*target="_blank"/g, 
+      '$1<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">$2</a>')
     
     // Convert email addresses to clickable links
     formatted = formatted.replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, '<a href="mailto:$1" class="text-blue-600 hover:text-blue-800 underline hover:no-underline transition-colors">$1</a>')
@@ -988,7 +995,7 @@ function WetUitlegPage() {
                             </div>
                             <div className="flex-1">
                               <h3 className="text-xl font-medium text-blue-900 mb-2 flex items-center gap-2">
-                                📜 Exacte Wettekst
+                                 Exacte Wettekst
                               </h3>
                               <p className="text-sm text-blue-700 bg-blue-100/50 px-3 py-1 rounded-full inline-block">
                                 Officiële tekst zoals gepubliceerd op wetten.overheid.nl
@@ -1238,7 +1245,7 @@ function WetUitlegPage() {
                   
                   {/* Mobile tip */}
                   <p className="text-xs text-gray-500 text-center w-full sm:w-auto sm:text-right">
-                    💡 Voor uitgebreide uitleg van specifieke wetsartikelen
+                     Voor uitgebreide uitleg van specifieke wetsartikelen
                   </p>
                 </div>
               </div>

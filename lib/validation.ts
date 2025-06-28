@@ -1,5 +1,5 @@
 /**
- * 🛡 WetHelder Legal Information Validation Library
+ * WetHelder Legal Information Validation Library
  * Ensures reliability and accuracy of legal information provided to users
  */
 
@@ -136,11 +136,11 @@ export function generateValidationDisclaimer(validation: ValidationResult): stri
   }
 
   if (validation.sourceVerification.missingValidation.length > 0) {
-    disclaimers.push("🎯 ARTIKEL VERIFICATIE: " + validation.sourceVerification.missingValidation.join(", "))
+    disclaimers.push("ARTIKEL VERIFICATIE: " + validation.sourceVerification.missingValidation.join(", "))
   }
 
   if (validation.recommendations.length > 0) {
-    disclaimers.push("💡 AANBEVELINGEN: " + validation.recommendations.join("; "))
+    disclaimers.push("AANBEVELINGEN: " + validation.recommendations.join("; "))
   }
 
   return disclaimers.join("\n\n")
@@ -152,11 +152,11 @@ export function generateValidationDisclaimer(validation: ValidationResult): stri
 export function getReliabilityIndicator(confidence: 'high' | 'medium' | 'low'): string {
   switch (confidence) {
     case 'high':
-      return "🟢 HOGE BETROUWBAARHEID (Geverifieerd via officiële bronnen)"
+      return "HOGE BETROUWBAARHEID (Geverifieerd via officiële bronnen)"
     case 'medium':
-      return "🟡 GEMIDDELDE BETROUWBAARHEID (Gedeeltelijke verificatie)"
+      return "GEMIDDELDE BETROUWBAARHEID (Gedeeltelijke verificatie)"
     case 'low':
-      return "🔴 LAGE BETROUWBAARHEID (Geen officiële bronverificatie)"
+      return "LAGE BETROUWBAARHEID (Geen officiële bronverificatie)"
   }
 }
 

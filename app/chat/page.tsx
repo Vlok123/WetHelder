@@ -447,7 +447,7 @@ function ChatPageContent() {
                       </div>
                       {remainingQuestions <= 1 && (
                         <div className="text-xs text-blue-700 mt-2">
-                          💡 <strong>Maak een gratis account</strong> aan voor onbeperkt vragen!
+                          <strong>Maak een gratis account</strong> aan voor onbeperkt vragen!
                         </div>
                       )}
                     </div>
@@ -534,7 +534,7 @@ function ChatPageContent() {
                       <p>Configuratie: <strong>{currentProfile.name}</strong></p>
                       {settings.wetUitleg && <p>✓ Met uitgebreide uitleg</p>}
                       {settings.wetgeving && <p>✓ Met wetteksten zoeken</p>}
-                      <p className="mt-2 text-xs">💡 Uw gesprekgeschiedenis wordt automatisch bewaard</p>
+                      <p className="mt-2 text-xs">Uw gesprekgeschiedenis wordt automatisch bewaard</p>
                     </div>
                   </div>
                 ) : (
