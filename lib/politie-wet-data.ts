@@ -42,7 +42,7 @@ export const politieWetData = {
       description: 'Alles over ID-plicht, fouilleren, veiligheidsfouillering',
       icon: 'Users',
       color: 'bg-green-100 text-green-800',
-      articleCount: 2
+      articleCount: 3
     },
     {
       slug: 'verkeer',
@@ -50,7 +50,7 @@ export const politieWetData = {
       description: 'Politiebevoegdheden op de weg, blaastest, stopteken',
       icon: 'Car',
       color: 'bg-orange-100 text-orange-800',
-      articleCount: 6
+      articleCount: 7
     },
     {
       slug: 'opsporing',
@@ -2190,6 +2190,159 @@ Als burger heb je de volgende rechten:
 * Wet zorg en dwang – Zorgdwang bij dementie
 * Jeugdwet – Zorg voor minderjarigen
 * Wet maatschappelijke ondersteuning – Hulp bij zelfredzaamheid
+
+Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'bloedproef-weigering-rijden-onder-invloed',
+      title: 'Ben je verplicht om mee te werken aan een bloedproef na verdenking van rijden onder invloed?',
+      description: 'Uitgebreide uitleg over de verplichting tot bloedproef bij verdenking van rijden onder invloed, aanhouding en je rechten.',
+      category: 'Verkeer',
+      categorySlug: 'verkeer',
+      seoTitle: 'Ben je verplicht om mee te werken aan een bloedproef na verdenking van rijden onder invloed?',
+      seoDescription: 'Alles over bloedproef bij rijden onder invloed: verplichtingen, aanhouding, weigering en je rechten volgens artikel 163 Wegenverkeerswet.',
+      readTime: '9 min lezen',
+      lastUpdated: '2025-06-01',
+      views: 0,
+      tags: ['bloedproef', 'rijden onder invloed', 'artikel 163 wegenverkeerswet', 'speekseltest', 'aanhouding', 'drugs', 'alcohol'],
+      featured: true,
+      content: `## Kort antwoord
+
+Ja, je bent verplicht mee te werken aan een bloedproef als je wordt verdacht van rijden onder invloed. Vaak word je daarbij ook aangehouden, zodat je rechten en plichten duidelijk zijn geregeld.
+
+## Uitgebreide uitleg
+
+### Bloedproef na verdenking: ben je verplicht mee te werken?
+
+**Verdenking van rijden onder invloed**
+
+Als de politie vermoedt dat je onder invloed van alcohol, drugs of medicijnen hebt gereden, mogen ze je laten testen. Bij drugs of medicijnen gebeurt dit meestal met een speekseltest. Als die positief is, of als testen niet lukt, kan een bloedproef volgen.
+
+Het bevel tot bloedafname moet worden gegeven door een opsporingsambtenaar van ten minste de rang brigadier. Dit staat in **artikel 163 Wegenverkeerswet 1994**. Het is dus een formeel besluit binnen de regels van de wet.
+
+### Waarom word je vaak aangehouden?
+
+**Juridische bescherming en bevoegdheden**
+
+In de praktijk word je bij een bloedproef meestal aangehouden. Dat is belangrijk, want aanhouding geeft jou én de politie duidelijke rechten en plichten.
+
+Door de aanhouding:
+* Heb je recht op bijstand van een advocaat.
+* Mag je alleen onder voorwaarden worden vastgehouden.
+* Wordt duidelijk dat het om een strafrechtelijk onderzoek gaat.
+* Mag de politie je (onder voorwaarden) laten onderzoeken of vasthouden.
+* Wordt het bevel tot bloedafname onderdeel van een strafproces.
+
+De aanhouding vindt vaak plaats op grond van **artikel 61 Wetboek van Strafvordering**, omdat er een redelijk vermoeden is van een strafbaar feit. Na aanhouding word je meegenomen naar het politiebureau of een arts.
+
+### Wat als je weigert?
+
+**Weigeren is strafbaar**
+
+Als je weigert mee te werken aan een bloedproef, is dat strafbaar. Je overtreedt dan **artikel 163 lid 6 Wegenverkeerswet 1994**. Zelfs als je niets hebt gebruikt, kan je straf krijgen voor de weigering alleen.
+
+Je wordt dan ook als verdachte behandeld, en de politie kan:
+* Je aanhouden of vasthouden.
+* Je alsnog verplichten tot bloedafname via een arts.
+* Een proces-verbaal opmaken voor weigering.
+
+Fysiek verzet tegen bloedafname kan leiden tot extra strafbare feiten, zoals wederspannigheid (**artikel 180 Wetboek van Strafrecht**).
+
+## Praktijkvoorbeeld
+
+Je rijdt 's avonds en wordt staande gehouden na een melding. De politie ziet dat je wankel loopt en traag reageert. Een speekseltest mislukt, en de hulpofficier geeft het bevel voor een bloedproef. Je wordt aangehouden, naar het bureau gebracht, en een arts neemt bloed af. Omdat je bent aangehouden, heb je recht op een advocaat. De uitslag blijkt positief op drugs. Je krijgt een proces-verbaal en mogelijk een rijontzegging.
+
+### Wat zijn je rechten bij aanhouding?
+
+Bij aanhouding in het kader van een bloedproef heb je recht op:
+* Duidelijke uitleg over de verdenking en het bevel.
+* Bijstand van een advocaat, meestal via de piketdienst.
+* Informatie over hoe lang je mag worden vastgehouden.
+* Inzage in het bloedonderzoeksrapport.
+* Klachtmogelijkheden bij onjuist optreden van de politie.
+
+## Wat kun je doen?
+
+* **Werk altijd mee** aan een bloedproef als daarom wordt gevraagd.
+* **Vraag uitleg** over het bevel en de aanhouding.
+* **Neem bij twijfel** contact op met een advocaat of het Juridisch Loket.
+* **Wil je achteraf klagen?** Dien dan een klacht in via het klachtenloket politie.
+
+## Gerelateerde regelgeving
+
+* artikel 163 Wegenverkeerswet 1994 – Bevel tot bloedafname
+* artikel 61 Wetboek van Strafvordering – Aanhouding bij verdenking
+* artikel 180 Wetboek van Strafrecht – Wederspannigheid
+* Opiumwet – Strafbare feiten betreffende drugs
+* Wegenverkeerswet 1994 – Rijden onder invloed
+
+Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'vingerafdrukken-afnemen-aanhouding',
+      title: 'Ben ik verplicht mijn vingerafdruk af te staan nadat ik door de politie ben aangehouden?',
+      description: 'Alles over het afnemen van vingerafdrukken na aanhouding: wanneer het mag, je verplichtingen en wat er met je gegevens gebeurt.',
+      category: 'Identificatie & Fouilleren',
+      categorySlug: 'id-fouilleren',
+      seoTitle: 'Ben ik verplicht mijn vingerafdruk af te staan nadat ik door de politie ben aangehouden?',
+      seoDescription: 'Complete gids over vingerafdrukken na aanhouding: wanneer verplicht, artikel 55c Wetboek van Strafvordering, bewaartermijnen en je rechten.',
+      readTime: '8 min lezen',
+      lastUpdated: '2025-06-01',
+      views: 0,
+      tags: ['vingerafdrukken', 'aanhouding', 'artikel 55c Sv', 'identificatie', 'wet politiegegevens', 'bewaartermijn', 'persoonsgegevens'],
+      featured: true,
+      content: `## Kort antwoord
+
+Ja, de politie mag na een aanhouding je vingerafdrukken afnemen om je identiteit vast te stellen of te controleren of je voorkomt in politie- of justitiesystemen. Je bent wettelijk verplicht hieraan mee te werken.
+
+## Uitgebreide uitleg
+
+### Wanneer mag de politie vingerafdrukken afnemen?
+
+De politie mag vingerafdrukken afnemen als je bent aangehouden op verdenking van een strafbaar feit. Dit is geregeld in **artikel 55c van het Wetboek van Strafvordering**. De afname is toegestaan wanneer:
+
+* je je identiteit niet kunt of wilt aantonen;
+* er aanwijzingen zijn dat je een valse identiteit gebruikt;
+* je wordt verdacht van een strafbaar feit waarvoor voorlopige hechtenis is toegestaan (zoals diefstal, mishandeling of zwaardere delicten).
+
+De afdrukken mogen worden gebruikt om je identiteit vast te stellen, om te controleren of je voorkomt in het systeem, en om sporen op plaatsen delict te vergelijken.
+
+### Ben ik verplicht om mee te werken?
+
+Ja, je bent wettelijk verplicht om mee te werken aan het afnemen van vingerafdrukken. Weigeren is niet toegestaan. Als je niet vrijwillig meewerkt, mag de politie dwang toepassen om de afdrukken toch af te nemen. Dit valt binnen hun bevoegdheid.
+
+### Wat gebeurt er met mijn vingerafdrukken?
+
+De politie bewaart je vingerafdrukken volgens de regels van de **Wet politiegegevens**. Hoe lang ze bewaard worden, hangt af van wat er verder gebeurt in je strafzaak:
+
+* **Geen vervolging of vrijspraak**: de gegevens moeten binnen drie maanden worden verwijderd.
+* **Veroordeling**: de bewaartermijn is afhankelijk van de ernst van het strafbaar feit. Voor ernstige misdrijven kan dit tot 20 jaar zijn.
+
+Je vingerafdrukken kunnen worden opgenomen in een databank en vergeleken worden met sporen van andere zaken, zolang de bewaartermijn loopt.
+
+## Praktijkvoorbeeld
+
+Je wordt op straat aangehouden omdat je verdacht wordt van een poging tot inbraak. Je hebt geen identiteitsbewijs bij je. De politie mag dan je vingerafdrukken nemen om te controleren wie je bent en of je al eerder met de politie in aanraking bent geweest. Ook kunnen ze controleren of jouw afdrukken overeenkomen met sporen die eerder zijn gevonden bij andere inbraken.
+
+### Wat zijn je rechten?
+
+Als verdachte heb je ook rechten, zoals:
+* het recht om een advocaat te spreken, zeker als je ook wordt verhoord;
+* het recht op inzage in je persoonsgegevens, waaronder vingerafdrukken, via een inzageverzoek bij de politie.
+
+## Wat kun je doen?
+
+* **Heb je klachten** over de wijze van afname of verwerking van je vingerafdrukken? Dien dan een klacht in bij de politie of bij de Nationale Ombudsman via [www.nationaleombudsman.nl](https://www.nationaleombudsman.nl).
+* **Wil je weten** welke gegevens over jou zijn vastgelegd? Je kunt een inzageverzoek doen via [www.politie.nl](https://www.politie.nl).
+* **Heb je juridisch advies** nodig? Neem dan contact op met het Juridisch Loket of je advocaat.
+
+## Gerelateerde regelgeving
+
+* artikel 55c Wetboek van Strafvordering – Afname vingerafdrukken
+* Wet politiegegevens – Verwerking en bewaring van politiegegevens
+* artikel 61 Wetboek van Strafvordering – Aanhouding van verdachten
+* Wet op de identificatieplicht – Identificatieverplichtingen
+* AVG (Algemene Verordening Gegevensbescherming) – Bescherming persoonsgegevens
 
 Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
     }
