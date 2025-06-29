@@ -50,7 +50,7 @@ export const politieWetData = {
       description: 'Politiebevoegdheden op de weg, blaastest, stopteken',
       icon: 'Car',
       color: 'bg-orange-100 text-orange-800',
-      articleCount: 5
+      articleCount: 6
     },
     {
       slug: 'opsporing',
@@ -83,6 +83,14 @@ export const politieWetData = {
       icon: 'Store',
       color: 'bg-indigo-100 text-indigo-800',
       articleCount: 1
+    },
+    {
+      slug: 'jeugdstrafrecht',
+      title: 'Jeugdstrafrecht',
+      description: 'Rechten van minderjarigen, HALT-afdoening en jeugdstrafrechtprocedures',
+      icon: 'Users',
+      color: 'bg-pink-100 text-pink-800',
+      articleCount: 2
     },
     {
       slug: 'klacht',
@@ -1629,7 +1637,7 @@ Rechten:
     },
     {
       slug: 'winkelverbod-huisrecht',
-      title: 'Mag een winkel mij zomaar een winkelverbod opleggen, ook al denk ik dat ik niks fouts heb gedaan?',
+      title: 'Mag een winkel mij zomaar een winkelverbod opleggen?',
       description: 'Uitgebreide gids over winkelverboden en huisrecht: wanneer mag een winkel je weigeren en wat zijn je rechten.',
       category: 'Burgerrecht & Winkels',
       categorySlug: 'burgerrecht',
@@ -1687,7 +1695,7 @@ Je rechten (o.a. volgens BW en Grondwet):
 * Je mag de reden van het verbod vragen, maar de winkel is niet verplicht daar uitgebreid op in te gaan.
 
 Je plichten:
-* Je moet je aan het winkelverbod houden, ook als je het onterecht vindt. Doorgaan met binnenkomen kan worden gezien als huisvredebreuk (Artikel 138 Strafrecht).
+* Je moet je aan het winkelverbod houden, ook als je het onterecht vindt. Doorgaan met binnenkomen kan worden gezien als huisvredebreuk (Wetboek van Strafrecht artikel 138).
 
 
 ## Wat kun je doen?
@@ -1700,9 +1708,9 @@ Je plichten:
 
 ## Gerelateerde regelgeving
 
-* Artikel 138 Wetboek van Strafrecht – Huisvredebreuk: als je een winkel betreedt terwijl je daar niet mag zijn.
+* Wetboek van Strafrecht artikel 138 – Huisvredebreuk: als je een winkel betreedt terwijl je daar niet mag zijn.
 * Grondwet artikel 1 – Discriminatieverbod.
-* Artikel 6:162 BW – Onrechtmatige daad bij misbruik van bevoegdheid.
+* Burgerlijk Wetboek 6 artikel 162 – Onrechtmatige daad bij misbruik van bevoegdheid.
 
 
 ## Belangrijke rechtspraak of beleid
@@ -1715,6 +1723,155 @@ Je plichten:
 
 29 juni 2025
 Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'minderjarige-verdachte-rechten',
+      title: 'Welke rechten heeft een minderjarige verdachte bij politieonderzoek en strafproces?',
+      description: 'Uitgebreide gids over rechten van minderjarige verdachten: zwijgrecht, advocaat, vertrouwenspersoon en bescherming.',
+      category: 'Jeugdstrafrecht',
+      categorySlug: 'jeugdstrafrecht',
+      seoTitle: 'Rechten minderjarige verdachte bij politie en strafproces',
+      seoDescription: 'Alles over rechten van minderjarige verdachten: zwijgrecht, advocaat, vertrouwenspersoon aanwezig bij verhoor.',
+      readTime: '8 min lezen',
+      lastUpdated: '2025-12-29',
+      views: 0,
+      tags: ['minderjarigen', 'jeugdstrafrecht', 'verdachte', 'zwijgrecht', 'advocaat', 'vertrouwenspersoon'],
+      featured: true,
+      content: `## Kort antwoord
+
+Een minderjarige verdachte heeft recht op duidelijke informatie over de verdenking, op zwijgrecht en op juridische bijstand met een advocaat én een vertrouwenspersoon (bijvoorbeeld een ouder). Tijdens verhoor moet bovendien een ouder, voogd of andere – wettelijk erkende – vertrouwenspersoon aanwezig zijn.
+
+## Uitgebreide uitleg
+
+Rechten bij aanhouding en verhoor
+
+Iedere verdachte krijgt bij aanhouding direct te horen waarom hij is opgepakt en welke rechten hij heeft. Dit geldt ook voor minderjarigen. Zo moet de politie de verdachte informeren over:
+* de aard van de verdenking;
+* het zwijgrecht (niet meewerken aan vragen) (Wetboek van Strafvordering artikel 28);
+* het recht op rechtsbijstand (Wetboek van Strafvordering artikel 29).
+
+Minderjarigen krijgen deze informatie in begrijpelijke bewoordingen, aangepast aan hun leeftijd, zodat ze écht begrijpen wat er speelt.
+
+Specifieke rechten voor minderjarigen
+
+Minderjarige verdachten (< 18 jaar) hebben extra waarborgen in het jeugdstrafrecht:
+
+1. Vertrouwenspersoon aanwezig Voor, tijdens en na het verhoor moet er een vertrouwenspersoon aanwezig zijn, vaak een ouder of voogd. Deze persoon ondersteunt de jongere en kan helpen door uitleg te geven of gerust te stellen.
+
+2. Eigen advocaat Een minderjarige kan altijd een eigen advocaat kiezen en kosteloos een pro-Deo-advocaat krijgen als de financiële situatie daartoe aanleiding geeft. De advocaat bereidt het verhoor voor en kan meeluisteren en adviseren.
+
+3. Interpreter of tolk Spreekt de minderjarige de taal niet goed, dan is er recht op een tolk zodat alle informatie helder is.
+
+4. Privacy en omgangsvormen Onderzoek en verhoor vinden plaats op een kindvriendelijke locatie, gescheiden van volwassen verdachten.
+
+## Praktijkvoorbeeld
+
+Een 16-jarige wordt opgepakt voor winkeldiefstal. Bij aankomst legt de agent uit waarom hij is aangehouden en dat hij niet verplicht is te praten (zwijgrecht). Zijn moeder wordt gebeld en aanwezig vóór het verhoor, samen met een advocaat. De advocaat legt uit welke vragen er komen en waarschuwt voor valkuilen; de moeder biedt emotionele steun. Na afloop krijgen zij een gescheiden bijstandslocatie aangeboden, zodat de jongere niet tussen volwassen verdachten zit.
+
+## Rechten en plichten in lopende tekst
+
+Een minderjarige verdachte moet zich aan de aanwijzingen van de politie houden (bijvoorbeeld om mee te gaan naar het politiebureau). Hij is verplicht zich te identificeren als daarom wordt gevraagd. Tegelijkertijd mag hij altijd gebruikmaken van zijn zwijgrecht en hoeft hij geen belastende verklaringen af te leggen.
+
+## Wat kun je doen?
+
+Als (verzorgende van) een minderjarige verdachte kun je:
+* contact opnemen met het Juridisch Loket voor gratis eerste advies;
+* een gespecialiseerde jeugdstrafrechtadvocaat inschakelen via de orde van advocaten;
+* bij onduidelijkheden of klachten de Nationale Ombudsman of het Kinderombudsteam benaderen.
+
+Laatst gecheckt: december 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'halt-afdoening-jongeren',
+      title: 'Hoe werkt de Halt-afdoening voor jongeren die een licht strafbaar feit plegen?',
+      description: 'Uitgebreide gids over HALT-afdoening: procedure, voorwaarden, maatregelen en gevolgen voor jongeren.',
+      category: 'Jeugdstrafrecht',
+      categorySlug: 'jeugdstrafrecht',
+      seoTitle: 'HALT-afdoening jongeren: procedure en voorwaarden',
+      seoDescription: 'Alles over HALT voor jongeren: wat is het, hoe werkt het, welke maatregelen en wat zijn de gevolgen.',
+      readTime: '6 min lezen',
+      lastUpdated: '2025-12-29',
+      views: 0,
+      tags: ['HALT', 'jongeren', 'jeugdstrafrecht', 'lichte delicten', 'maatregel', 'strafblad'],
+      featured: true,
+      content: `## Kort antwoord
+
+HALT is een extra-justitiële regeling voor jongeren van 12 tot 18 jaar met een licht delict. De jongere volgt een maatregel (bijvoorbeeld een gesprek, taakstraf of herstelgesprek) waarna de zaak meestal wordt afgesloten zonder strafblad.
+
+## Wat is HALT?
+
+HALT is geen strafrechtelijke veroordeling, maar een voorwaardelijke afdoening voor jongeren die een eerste of eenmalige lichte overtreding begaan. Het doel is hen te laten leren van hun fout en verdere herhaling te voorkomen.
+
+## Voorwaarden en procedure
+
+Een HALT-afdoening kan wanneer:
+* De jongere tussen 12 en 18 jaar is.
+* Het gaat om een licht feit (bijvoorbeeld winkeldiefstal, vandalisme, vechtpartij zonder ernstig letsel).
+* Er geen eerder vergelijkbare HALT-afdoening of strafbare feiten zijn geweest.
+
+Procedure:
+1. Overtreding en intake De politie of het Openbaar Ministerie verwijst de jongere door naar HALT.
+2. Verkennend gesprek Een HALT-medewerker gaat in gesprek met de jongere en eventueel de ouders.
+3. Maatregel kiezen Afhankelijk van het delict kan de jongere bijvoorbeeld een taakstraf doen, excuses aanbieden aan het slachtoffer of deelnemen aan een groepsgesprek.
+4. Uitvoering en afronding Na goede uitvoering van de maatregel wordt de zaak gesloten; er volgt geen vermelding in justitiële documentatie.
+
+## Praktijkvoorbeeld
+
+Een 15-jarige steelt een reep chocola in de supermarkt. De politie schakelt HALT in. De jongere komt langs bij HALT, biedt schriftelijk excuses aan en helpt tijdens een middag mee met het opruimen van de winkel. Na afloop is de zaak afgedaan en heeft hij geen strafblad.
+
+## Rechten en plichten van de jongere
+
+Jongeren hebben het recht op een eerlijk gesprek en duidelijke uitleg over de HALT-regeling. Ze zijn verplicht de maatregel, zoals afgesproken, volledig uit te voeren. Niet-nakomen kan alsnog leiden tot een officier van justitie-zaak.
+
+## Wat kun je doen?
+
+Voor vragen of ondersteuning kun je terecht bij:
+* HALT-locatie bij jou in de buurt (via halt.nl).
+* Juridisch Loket voor gratis advies over je rechten.
+* Advocaat jeugdrecht bij twijfel over de procedure.
+
+Laatst gecheckt: december 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'telefoon-vasthouden-fietsen',
+      title: 'Is het strafbaar om tijdens het fietsen alleen een telefoon vast te houden?',
+      description: 'Uitgebreide uitleg over het verbod op vasthouden van mobiele apparaten tijdens het fietsen.',
+      category: 'Verkeer',
+      categorySlug: 'verkeer',
+      seoTitle: 'Telefoon vasthouden tijdens fietsen: wat is toegestaan?',
+      seoDescription: 'Alles over het verbod op telefoon vasthouden tijdens fietsen: regels, boetes en wat wel mag.',
+      readTime: '5 min lezen',
+      lastUpdated: '2025-12-29',
+      views: 0,
+      tags: ['fietsen', 'telefoon', 'mobiel apparaat', 'verkeer', 'RVV 1990', 'boete'],
+      featured: true,
+      content: `## Kort antwoord
+
+Ja. Het is verboden om tijdens het fietsen een mobiel apparaat zoals een telefoon in de hand te houden, ongeacht of je ernaar kijkt.
+
+## Uitgebreide uitleg
+
+Wettelijke grondslag
+
+Reglement verkeersregels en verkeerstekens 1990 artikel 61a verbiedt het vasthouden van een mobiel elektronisch apparaat tijdens het rijden. Onder "rijden" valt elke beweging op de fiets. Dit verbod geldt voor onder andere mobiele telefoons, tablets en mediaspelers.
+
+## Wat betekent dat in de praktijk?
+
+Je mag je telefoon niet in de hand hebben terwijl je fietst, ook niet wanneer je – bijvoorbeeld bij een verkeerslicht – alleen even in je hand houdt zonder naar het scherm te kijken. Pas wanneer je volledig stilstaat en niet meer "rijdt", mag je het apparaat vasthouden en gebruiken. Een telefoon veilig in een houder op het stuur of in een tasje bevestigd is wél toegestaan.
+
+## Praktijkvoorbeeld
+
+Je wilt onderweg je route controleren. Als je de telefoon in een houder op het stuur plaatst, mag de navigatie-app zichtbaar blijven; je hebt dan geen handvrije overtreding. Houd je de telefoon echter in je hand terwijl je doorfietst, dan overtreed je Reglement verkeersregels en verkeerstekens 1990 artikel 61a.
+
+## Rechten en plichten van burgers
+
+Fietsers moeten dit verbod naleven om verkeersveiligheid te bevorderen. Bij overtreding kan de politie een boete opleggen. Betaling of verzet via de kantonrechter is de enige manier om hiertegen op te komen.
+
+## Wat kunt u doen?
+
+U kunt uw telefoon in een houder op het stuur of in een fietstas plaatsen om veilig te navigeren zonder de regels te overtreden. Heeft u een boete gekregen die u onterecht vindt, dan kunt u binnen zes weken bezwaar maken bij de officier van justitie of gratis juridisch advies inwinnen bij het Juridisch Loket.
+
+Laatst gecheckt: december 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor uw eigen situatie.`
     }
   ] as PolitieWetArticle[]
 } 
