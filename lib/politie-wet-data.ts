@@ -58,7 +58,7 @@ export const politieWetData = {
       description: 'Wanneer en hoe mag iemand worden aangehouden?',
       icon: 'AlertCircle',
       color: 'bg-red-100 text-red-800',
-      articleCount: 3
+      articleCount: 4
     },
     {
       slug: 'privacy',
@@ -66,7 +66,7 @@ export const politieWetData = {
       description: 'Camerabeelden, persoonsgegevens, inzagerecht',
       icon: 'Eye',
       color: 'bg-purple-100 text-purple-800',
-      articleCount: 6
+      articleCount: 7
     },
     {
       slug: 'slachtoffer',
@@ -106,7 +106,7 @@ export const politieWetData = {
       description: 'Hoe dien ik een klacht of bezwaar in tegen de politie?',
       icon: 'FileText',
       color: 'bg-yellow-100 text-yellow-800',
-      articleCount: 1
+      articleCount: 2
     }
   ] as PolitieWetCategory[],
 
@@ -2343,6 +2343,281 @@ Als verdachte heb je ook rechten, zoals:
 * artikel 61 Wetboek van Strafvordering – Aanhouding van verdachten
 * Wet op de identificatieplicht – Identificatieverplichtingen
 * AVG (Algemene Verordening Gegevensbescherming) – Bescherming persoonsgegevens
+
+Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'woning-betreden-verdachte',
+      title: 'Wanneer mag de politie een woning betreden van een verdachte?',
+      description: 'Volledige uitleg over wanneer de politie een woning mag betreden: met toestemming, machtiging of in acute noodsituaties volgens artikel 3 Politiewet.',
+      category: 'Opsporing & Aanhouding',
+      categorySlug: 'opsporing',
+      seoTitle: 'Wanneer mag de politie een woning betreden van een verdachte?',
+      seoDescription: 'Alles over het betreden van woningen door politie: toestemming, machtiging, noodsituaties, Algemene wet binnentreden en je rechten als burger.',
+      readTime: '9 min lezen',
+      lastUpdated: '2025-06-01',
+      views: 0,
+      tags: ['woning betreden', 'algemene wet binnentreden', 'artikel 3 politiewet', 'machtiging', 'huisrecht', 'noodsituatie'],
+      featured: true,
+      content: `## Kort antwoord
+
+De politie mag een woning betreden met toestemming van de bewoner of met een machtiging van een (hulp)officier van justitie. Alleen bij een acute noodsituatie – zoals levensgevaar – mag dit ook zonder toestemming of machtiging, op basis van artikel 3 Politiewet 2012; strafrechtelijk optreden mag dan volgen, maar mag niet het doel van het binnengaan zijn.
+
+## Wettelijke regels voor binnentreden van een woning
+
+Woningen zijn grondwettelijk beschermd (**artikel 12 Grondwet**). Binnentreden zonder toestemming is alleen toegestaan op basis van een wettelijk vastgelegde bevoegdheid. Die zijn te vinden in:
+
+* De **Algemene wet op het binnentreden (Awbi)**
+* Het **Wetboek van Strafvordering (Sv)**
+* De **Politiewet 2012**
+* Eventueel in bijzondere wetten (zoals de Opiumwet of de Wet publieke gezondheid)
+
+### 1. Met toestemming van de bewoner
+
+De politie mag de woning binnengaan als een meerderjarige bewoner uitdrukkelijk toestemming geeft, vrijwillig en zonder druk. Dit is geregeld in **artikel 1 lid 2 Awbi**.
+
+### 2. Met machtiging tot binnentreden
+
+Zonder toestemming is een schriftelijke machtiging tot binnentreden nodig van een (hulp)officier van justitie, op basis van **artikel 2 Awbi**. Dit is bijvoorbeeld vereist bij:
+
+* Aanhouding in een woning,
+* Inbeslagnames,
+* Observatie of opsporing.
+
+Voorafgaand aan het binnentreden moet de machtiging worden getoond en moet de ambtenaar zich legitimeren (**artikel 1 lid 1 Awbi**).
+
+### 3. In acute noodsituaties – artikel 3 Politiewet 2012
+
+De enige uitzondering waarbij binnentreden zonder toestemming én zonder machtiging is toegestaan, is bij directe hulpverlening aan personen in nood, op grond van **artikel 3 Politiewet 2012**.
+
+**Voorwaarden:**
+
+* Er is sprake van direct en ernstig gevaar voor leven of gezondheid.
+* De politie treedt binnen uitsluitend om hulp te verlenen (bijvoorbeeld bij mishandeling, reanimatie of zelfbeschadiging).
+* Strafrechtelijk optreden (zoals aanhouding of bewijs veiligstellen) mag pas daarna, en mag niet de reden zijn voor het binnengaan.
+
+**Wat mag wel en niet?**
+
+* **Wel toegestaan**: woning binnengaan om iemand van mishandeling te redden, en als de situatie veilig is, de verdachte aanhouden.
+* **Niet toegestaan**: woning binnengaan zonder machtiging, alleen om iemand aan te houden of bewijs te zoeken, onder het mom van "hulpverlening".
+
+Deze beperking voorkomt misbruik van artikel 3 Politiewet als verkapte opsporingsbevoegdheid.
+
+## Praktijkvoorbeeld
+
+Agenten krijgen een melding dat iemand ernstig wordt mishandeld in een woning. Ze horen geschreeuw en zien geweld door het raam. Ze treden binnen op grond van artikel 3 Politiewet 2012 om het slachtoffer te beschermen. Nadat de situatie is gestabiliseerd, houden ze de dader aan en leggen verklaringen vast.
+
+Dit is rechtmatig, omdat de eerste handeling gericht was op hulpverlening. Strafrechtelijk optreden volgt daar logisch op.
+
+Zouden ze echter zonder machtiging naar binnen zijn gegaan puur om de verdachte aan te houden, dan zou dat onrechtmatig zijn.
+
+## Rechten van burgers
+
+* Je hebt recht op bescherming van je woning: binnentreden mag alleen met een geldige wettelijke grond.
+* Je mag vragen naar legitimatie en een machtiging als agenten je woning willen betreden.
+* Als het binnentreden onterecht was, kun je hiertegen in bezwaar of klacht indienen.
+
+## Wat kun je doen?
+
+* Vraag bij twijfel advies bij het **Juridisch Loket** via [www.juridischloket.nl](https://www.juridischloket.nl).
+* Je kunt een klacht indienen bij de politie of bij de **Nationale Ombudsman**.
+* In ernstige gevallen (bijvoorbeeld schade of schending van rechten) kun je een advocaat inschakelen en eventueel een civiele procedure starten.
+
+## Gerelateerde regelgeving
+
+* artikel 12 Grondwet – Onaantastbaarheid van de woning
+* Algemene wet op het binnentreden – Voorwaarden voor binnentreden
+* artikel 3 Politiewet 2012 – Hulpverlening in noodsituaties
+* Wetboek van Strafvordering – Opsporingsbevoegdheden
+* artikel 1 lid 1 en 2 Awbi – Legitimatie en toestemming
+
+Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'klacht-politiegeweld-buitensporig',
+      title: 'Wat kun je doen als je vindt dat de politie buitensporig geweld heeft gebruikt bij een aanhouding?',
+      description: 'Complete gids voor het indienen van klachten over politiegeweld: klachtprocedure, aangifte, schadevergoeding en je rechten volgens de Politiewet.',
+      category: 'Klacht & Bezwaar',
+      categorySlug: 'klacht',
+      seoTitle: 'Wat kun je doen als je vindt dat de politie buitensporig geweld heeft gebruikt?',
+      seoDescription: 'Stap-voor-stap uitleg over klachten tegen politiegeweld: klachtprocedure, aangifte mishandeling, Nationale Ombudsman en schadevergoeding.',
+      readTime: '8 min lezen',
+      lastUpdated: '2025-06-01',
+      views: 0,
+      tags: ['politiegeweld', 'klacht politie', 'artikel 61 politiewet', 'aangifte mishandeling', 'nationale ombudsman', 'schadevergoeding'],
+      featured: true,
+      content: `## Kort antwoord
+
+Als je denkt dat de politie buitensporig geweld heeft gebruikt bij een aanhouding, kun je een klacht indienen bij de politie of aangifte doen van mishandeling. Ook kun je een letselschadeprocedure starten of melding maken bij de Nationale ombudsman.
+
+## Wat betekent buitensporig geweld?
+
+De politie mag alleen geweld gebruiken als het noodzakelijk en proportioneel is. Dat staat in **artikel 7 Politiewet 2012** en **artikel 1 t/m 12f Ambtsinstructie voor de politie**. Geweld moet dus in verhouding staan tot het doel (proportioneel), en er moet geen minder ingrijpende manier zijn (subsidiariteit). Elk gebruik van geweld moet achteraf worden gemeld, beoordeeld en vastgelegd.
+
+Als je vindt dat die grenzen zijn overschreden – bijvoorbeeld als je onnodig geslagen bent terwijl je je al had overgegeven – dan kun je actie ondernemen.
+
+### Hoe wordt politiegeweld beoordeeld?
+
+Bij elk geweldsgebruik moet de politie zelf rapporteren wat er is gebeurd. Een leidinggevende beoordeelt of het geweld rechtmatig was. Dat gebeurt aan de hand van:
+
+* de regels uit de Ambtsinstructie,
+* camerabeelden (bijv. bodycam, beveiliging),
+* verklaringen van betrokkenen.
+
+Als iemand daartegen bezwaar heeft, zijn er verschillende mogelijkheden.
+
+## Mogelijkheden om in actie te komen
+
+### 1. Dien een klacht in bij de politie
+
+Je kunt een klacht indienen op basis van **artikel 61 Politiewet 2012**. De klacht wordt eerst intern behandeld door de politie. Als je het niet eens bent met het resultaat, kun je vragen of de klacht wordt beoordeeld door een onafhankelijke klachtencommissie.
+
+Klachten kunnen gaan over gedrag, bejegening of inzet van geweld.
+
+**Hoe dien je een klacht in?**
+
+* Via [politie.nl](https://www.politie.nl)
+* Schriftelijk per post
+* Of aan de balie van een politiebureau
+
+### 2. Doe aangifte van mishandeling
+
+Als het geweld echt buiten proportie was, kun je ook aangifte doen van een strafbaar feit, bijvoorbeeld mishandeling. Dat kan bij elk politiebureau. De aangifte wordt dan strafrechtelijk onderzocht, eventueel door de Rijksrecherche als het ernstig is.
+
+De **Rijksrecherche** onderzoekt politiegeweld in ernstige gevallen, bijvoorbeeld als iemand zwaar gewond is geraakt of is overleden.
+
+### 3. Meld je bij de Nationale ombudsman
+
+Als je het gevoel hebt dat je klacht niet serieus wordt genomen of onpartijdig is afgehandeld, kun je terecht bij de **Nationale ombudsman**. Die kan onderzoek doen naar hoe de politie jouw klacht heeft behandeld.
+
+Zie: [www.nationaleombudsman.nl](https://www.nationaleombudsman.nl)
+
+### 4. Start een letselschadeprocedure
+
+Als je gewond bent geraakt door het geweld, kun je ook civiel rechtelijk een schadevergoeding eisen van de politie. Daarvoor kun je het beste een letselschadeadvocaat inschakelen.
+
+## Concreet praktijkvoorbeeld
+
+Je wordt aangehouden op straat omdat je wordt verdacht van diefstal. Je werkt mee, maar een agent slaat je meerdere keren hard met een wapenstok, terwijl je op de grond ligt en al geboeid bent. Je loopt blauwe plekken en een gebroken rib op.
+
+In dat geval kun je:
+
+* aangifte doen van mishandeling,
+* klacht indienen bij de politie over de inzet van geweld,
+* en/of schadevergoeding eisen voor je verwondingen.
+
+## Rechten en plichten van burgers
+
+Als burger mag je de inzet van geweld altijd laten toetsen. Je hebt het recht om:
+
+* een klacht in te dienen over politieoptreden;
+* aangifte te doen van strafbaar politiegedrag;
+* bewijs te verzamelen (zoals medische verklaringen of getuigenissen);
+* juridische hulp in te schakelen.
+
+**Let op**: je bent verplicht om aanwijzingen van de politie op te volgen, maar je mag wel achteraf bezwaar maken of een klacht indienen. Het is dus niet verstandig om ter plekke te weigeren of fysiek te reageren.
+
+## Wat kun je doen?
+
+* **Verzamel bewijs**: maak foto's van letsel, zoek getuigen, bewaar medische stukken.
+* **Dien een klacht in** via [politie.nl](https://www.politie.nl) of op het bureau.
+* **Doe aangifte** bij het politiebureau (je mag aangeven dat het om politiegeweld gaat).
+* **Neem contact op** met het **Juridisch Loket** voor gratis juridisch advies: [www.juridischloket.nl](https://www.juridischloket.nl)
+* **Overweeg een melding** bij de **Nationale ombudsman** als je klacht niet goed is afgehandeld.
+
+## Gerelateerde regelgeving
+
+* artikel 7 Politiewet 2012 – Geweldsgebruik door politie
+* artikel 1 t/m 12f Ambtsinstructie voor de politie – Regels geweldsgebruik
+* artikel 61 Politiewet 2012 – Klachtrecht
+* Wetboek van Strafrecht – Mishandeling door ambtenaren
+* Burgerlijk Wetboek – Onrechtmatige daad en schadevergoeding
+
+Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'telecom-gegevens-opvragen-politie',
+      title: 'Mag de politie telefoon- en internetgegevens opvragen bij telecomproviders zonder tussenkomst van de officier van justitie?',
+      description: 'Uitgebreide uitleg over het opvragen van telecom- en internetgegevens door politie: wanneer zonder OVJ, identificerende gegevens vs inhoud.',
+      category: 'Privacy & Informatie',
+      categorySlug: 'privacy',
+      seoTitle: 'Mag de politie telefoon- en internetgegevens opvragen zonder officier van justitie?',
+      seoDescription: 'Alles over opvragen telecomgegevens: artikel 126nc Sv, identificerende gegevens, verkeersgegevens, rechten en wanneer rechterlijke toestemming nodig is.',
+      readTime: '9 min lezen',
+      lastUpdated: '2025-06-01',
+      views: 0,
+      tags: ['telecomgegevens', 'artikel 126nc sv', 'identificerende gegevens', 'verkeersgegevens', 'rechter-commissaris', 'privacy'],
+      featured: true,
+      content: `## Kort antwoord
+
+Ja, de politie mag bepaalde beperkte gegevens direct opvragen bij telecomproviders zonder toestemming van de officier van justitie. Dit geldt alleen voor zogenoemde identificerende gegevens, zoals op basis van artikel 126nc Wetboek van Strafvordering.
+
+## Welke gegevens mag de politie opvragen zonder tussenkomst van de officier van justitie?
+
+De wet maakt onderscheid tussen verschillende soorten gegevens. Sommige gegevens mag de politie zelfstandig vorderen, andere alleen met toestemming van de officier van justitie of zelfs de rechter-commissaris. De minst ingrijpende categorie zijn de identificerende gegevens.
+
+### 1. Identificerende gegevens – zonder tussenkomst OVJ
+
+Op basis van **artikel 126nc Wetboek van Strafvordering** (en het vergelijkbare artikel 126uc voor onderzoeken naar bepaalde misdrijven zoals terrorisme), mag een bevoegd opsporingsambtenaar zelfstandig gegevens vorderen die noodzakelijk zijn om een persoon te identificeren. Dit kan bij een redelijk vermoeden van een strafbaar feit.
+
+**Voorbeelden:**
+
+* Naam, adres en woonplaats (NAW-gegevens)
+* Gebruikersnaam of klantnummer
+* Telefoonnummer of e-mailadres
+* IP-adres dat hoort bij een gebruiker
+
+Dit betekent dat de politie in dit soort gevallen geen toestemming van een officier van justitie nodig heeft. Wel moet de vordering schriftelijk zijn en gericht op een concreet onderzoek.
+
+### 2. Verkeers- en locatiegegevens – mét toestemming OVJ
+
+Zodra de politie meer wil dan alleen identificerende informatie, bijvoorbeeld:
+
+* wanneer iemand belde,
+* met wie,
+* hoelang een verbinding duurde,
+* of waar iemand was,
+
+dan is toestemming van de officier van justitie nodig. Dit staat geregeld in **artikel 126n Wetboek van Strafvordering**.
+
+### 3. Inhoud van communicatie – alleen met rechterlijke machtiging
+
+Bij gegevens over de inhoud van communicatie (zoals telefoongesprekken, e-mails, berichten), moet de officier van justitie eerst een machtiging vragen aan de rechter-commissaris. Zonder die toestemming mag dit niet. Dit valt onder **artikel 126m lid 5 Wetboek van Strafvordering**.
+
+## Praktijkvoorbeeld
+
+Stel: iemand plaatst anonieme haatberichten via een forum. De politie wil weten wie dit doet.
+
+* Ze vorderen op basis van artikel 126nc Sv bij de forumbeheerder het IP-adres dat gebruikt is. Hiervoor is geen officier van justitie nodig.
+* Daarna vragen ze aan de internetprovider welk account bij dat IP-adres hoort. Ook dat mag op basis van artikel 126nc Sv, zonder tussenkomst van de OVJ.
+* Als ze willen weten waar die persoon zich op dat moment bevond, is dat een locatiegegeven. Daarvoor is wel toestemming van de officier van justitie nodig (artikel 126n Sv).
+* Willen ze toekomstige communicatie meelezen? Dan moet de rechter-commissaris dit goedkeuren (artikel 126m lid 5 Sv).
+
+## Wat zijn je rechten als burger?
+
+De politie mag alleen gegevens opvragen als er een concreet strafrechtelijk onderzoek loopt en aan de voorwaarden is voldaan. Als burger heb je daarbij de volgende rechten:
+
+* **Recht op informatie en inzage**: Je mag weten of jouw gegevens door de politie zijn verwerkt (tenzij het onderzoek dat verhindert).
+* **Recht op correctie**: Onjuiste gegevens kun je laten aanpassen.
+* **Recht op bezwaar of klacht**: Je kunt bezwaar maken tegen het opvragen of gebruiken van je gegevens.
+
+Deze rechten zijn geregeld in de **Wet politiegegevens (Wpg)** en de **AVG**.
+
+## Wat kun je doen?
+
+* **Vraag inzage aan** bij de politie: Ga naar [politie.nl/privacyrechten](https://www.politie.nl/privacyrechten) om te zien of jouw gegevens zijn opgevraagd.
+* **Dien een klacht in** bij de politie of **Nationale Ombudsman**: Als je vermoedt dat jouw gegevens onterecht zijn opgevraagd.
+* **Dien een melding in** bij de **Autoriteit Persoonsgegevens**: Als je denkt dat jouw privacyrechten zijn geschonden.
+* **Zoek juridisch advies**: Bijvoorbeeld via het **Juridisch Loket** of een gespecialiseerde advocaat.
+
+## Gerelateerde regelgeving
+
+* artikel 126nc Wetboek van Strafvordering – Identificerende gegevens
+* artikel 126n Wetboek van Strafvordering – Verkeers- en locatiegegevens
+* artikel 126m lid 5 Wetboek van Strafvordering – Inhoud communicatie
+* Wet politiegegevens – Verwerking politiegegevens
+* AVG – Algemene Verordening Gegevensbescherming
+* artikel 126uc Wetboek van Strafvordering – Bijzondere onderzoeken
 
 Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
     }
