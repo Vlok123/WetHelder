@@ -826,7 +826,7 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
     }
 
     // Voeg conversatie context toe voor betere vervolgvragen
-    let conversationHistory: ChatMessage[] = []
+    const conversationHistory: ChatMessage[] = []
     
     if (isFollowUp && history && history.length > 0) {
       console.log('📚 Voeg gesprekgeschiedenis toe aan context:', history.length, 'berichten')
