@@ -50,7 +50,7 @@ export const politieWetData = {
       description: 'Politiebevoegdheden op de weg, blaastest, stopteken',
       icon: 'Car',
       color: 'bg-orange-100 text-orange-800',
-      articleCount: 7
+      articleCount: 10
     },
     {
       slug: 'opsporing',
@@ -106,7 +106,7 @@ export const politieWetData = {
       description: 'Hoe dien ik een klacht of bezwaar in tegen de politie?',
       icon: 'FileText',
       color: 'bg-yellow-100 text-yellow-800',
-      articleCount: 2
+      articleCount: 3
     }
   ] as PolitieWetCategory[],
 
@@ -2620,6 +2620,319 @@ Deze rechten zijn geregeld in de **Wet politiegegevens (Wpg)** en de **AVG**.
 * artikel 126uc Wetboek van Strafvordering – Bijzondere onderzoeken
 
 Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'boete-zonder-staandehouding-mulder',
+      title: 'Kan een agent een boete geven zonder dat je bent staande gehouden, en hoe zit dat bij Mulder-feiten zoals inhalen bij een doorgetrokken streep?',
+      description: 'Kan een agent een boete geven zonder dat je bent staande gehouden, en hoe zit dat bij Mulder-feiten zoals inhalen bij een doorgetrokken streep?',
+      category: 'Verkeer',
+      categorySlug: 'verkeer',
+      seoTitle: 'Boete zonder staandehouding: wanneer mag dat bij Mulder-feiten?',
+      seoDescription: 'Uitleg over wanneer politie boetes mag geven zonder staandehouding, Mulder-feiten, Wahv-wetgeving en je rechten als kentekenhouder.',
+      readTime: '',
+      lastUpdated: '2025-01-17',
+      views: 0,
+      tags: ['mulder-feiten', 'staandehouding', 'wahv', 'boete', 'kenteken', 'doorgetrokken streep'],
+      featured: true,
+      content: `## Kort antwoord
+
+In principe moet een agent je staande houden om een boete te geven, zodat je weet waarvoor je wordt aangesproken. Alleen bij specifieke uitzonderingen, zoals Mulder-feiten (bijvoorbeeld inhalen bij een doorgetrokken streep), mag een boete ook zonder staandehouding worden opgelegd, op basis van kenteken.
+
+## Staandehouding is in principe verplicht
+
+De hoofdregel is dat een politieagent iemand staande houdt voordat hij een boete oplegt. Dit staat in **artikel 52 van het Wetboek van Strafvordering**. De staandehouding is bedoeld om:
+
+* je identiteit vast te stellen
+* je te informeren over de overtreding
+* eventueel je kant van het verhaal te horen
+
+Zonder staandehouding is er vaak geen geldige koppeling tussen het feit en een verdachte persoon. Daarom is het in de meeste gevallen een noodzakelijke stap in de afhandeling van strafbare feiten.
+
+## Uitzondering: geen staandehouding bij Mulder-feiten
+
+Op deze hoofdregel bestaat een wettelijk vastgelegde uitzondering: de zogenaamde **Mulder-feiten**. Dit zijn lichte verkeersovertredingen die vallen onder de **Wet administratiefrechtelijke handhaving verkeersvoorschriften (Wahv)**.
+
+Bij deze feiten mag de boete worden opgelegd op basis van het kenteken, zonder dat de bestuurder zelf is aangesproken of staande is gehouden. Dit mag alleen als:
+
+* het feit objectief en duidelijk vaststaat (bijvoorbeeld waargenomen door een agent of met camera);
+* de overtreding valt onder de Wahv (zoals inhalen bij een doorgetrokken streep);
+* het voertuig geïdentificeerd kan worden via kenteken.
+
+De boete wordt dan gestuurd aan de kentekenhouder, die verantwoordelijk is tenzij anders bewezen.
+
+## Voorbeeld: inhalen bij een doorgetrokken streep
+
+Inhalen bij een doorgetrokken streep is een Mulder-feit. Stel: een agent ziet vanuit een surveillancevoertuig een auto een andere auto inhalen waar dat niet mag, maar kan de auto niet staande houden door verkeersdrukte of veiligheid.
+
+De agent noteert het kenteken en meldt het feit. Ook wordt de reden genoteerd waarom er geen staandehouding heeft plaatsgevonden. De boete wordt vervolgens via het CJIB naar de kentekenhouder gestuurd. Dit mag, ook al is er geen staandehouding geweest.
+
+## Wanneer is staandehouding echt nodig?
+
+Voor feiten die niet onder de Wahv vallen – zoals rijden onder invloed, gevaarlijk rijgedrag of rijden zonder rijbewijs – is een persoonlijke identificatie noodzakelijk. Zonder staandehouding is het dan meestal niet mogelijk om iemand te beboeten, tenzij er andere bewijsmiddelen zijn én de persoon alsnog duidelijk in beeld komt als verdachte.
+
+## Belang van onderscheid
+
+Het onderscheid is dus:
+
+* **Mulder-feiten (Wahv)**: mogen zonder staandehouding op kenteken, omdat de wet dat toestaat.
+* **Strafrechtelijke feiten**: vereisen in beginsel een verdachte persoon, dus ook een staandehouding of ander middel om de identiteit vast te stellen.
+
+Een boete zonder staandehouding is alleen toegestaan als de wet dat nadrukkelijk mogelijk maakt – zoals bij de Wahv – of als er dwingende omstandigheden zijn waardoor staandehouding onmogelijk was, én de identiteit van de overtreder alsnog vaststaat.
+
+## Wat kun je doen als je zo'n boete krijgt?
+
+Ontvang je een boete zonder dat je bent staande gehouden?
+
+1. **Controleer of het een Mulder-feit is** (zoals inhalen bij een doorgetrokken streep).
+2. **Vraag zo nodig het proces-verbaal op** via het CJIB of politie.
+3. **Maak bezwaar bij de officier van justitie** als je het niet eens bent – doe dit binnen 6 weken.
+4. **Neem contact op met Het Juridisch Loket** voor gratis juridisch advies.
+
+Let op: bij Mulder-feiten ben je als kentekenhouder aansprakelijk, tenzij je overtuigend aantoont dat je het voertuig niet bestuurde op dat moment.
+
+## Gerelateerde regelgeving
+
+* artikel 52 Wetboek van Strafvordering – Staandehouding verdachte
+* Wet administratiefrechtelijke handhaving verkeersvoorschriften (Wahv) – Mulder-feiten
+* artikel 1 Besluit administratiefrechtelijke handhaving verkeersvoorschriften – Lijst Wahv-feiten
+* Wegenverkeerswet 1994 – Verkeersvoorschriften
+
+Laatst gecheckt: januari 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'verlopen-rijbewijs-rijden',
+      title: 'Mag je met een verlopen rijbewijs rijden?',
+      description: 'Mag je met een verlopen rijbewijs rijden?',
+      category: 'Verkeer',
+      categorySlug: 'verkeer',
+      seoTitle: 'Mag je rijden met een verlopen rijbewijs?',
+      seoDescription: 'Alles over rijden met verlopen rijbewijs: wettelijke gevolgen, boetes, verzekeringsproblemen en hoe je je rijbewijs kunt verlengen.',
+      readTime: '',
+      lastUpdated: '2025-01-17',
+      views: 0,
+      tags: ['verlopen rijbewijs', 'wegenverkeerswet', 'rijbevoegdheid', 'verzekering', 'cbr'],
+      featured: true,
+      content: `## Kort antwoord
+
+Nee, rijden met een verlopen rijbewijs is verboden. Je bent dan niet langer bevoegd om een motorvoertuig te besturen en riskeert een boete én verdere gevolgen.
+
+## Rijden met een verlopen rijbewijs: hoe zit het?
+
+### Wat zegt de wet?
+
+Volgens **artikel 107 Wegenverkeerswet 1994** moet je een geldig rijbewijs hebben om een motorrijtuig te mogen besturen. Zodra de geldigheidsduur van je rijbewijs is verlopen, ben je wettelijk niet langer bevoegd om te rijden. Het maakt daarbij niet uit hoe lang je rijbewijs al verlopen is.
+
+De geldigheidsduur van een rijbewijs staat vermeld op het document zelf. Voor de meeste mensen is dat 10 jaar, maar voor ouderen of mensen met een medische indicatie kan dit korter zijn.
+
+### Wat zijn de gevolgen?
+
+Rijd je toch met een verlopen rijbewijs, dan gelden de volgende regels:
+
+* Je begaat een strafbaar feit (overtreding).
+* Je kunt een boete krijgen.
+* **Je bent niet verzekerd bij een ongeluk** – je verzekeraar mag de schade weigeren te vergoeden.
+* De politie kan je staande houden en eventueel verbieden om verder te rijden.
+
+Let op: een verlopen rijbewijs is niet hetzelfde als een ongeldig verklaard rijbewijs (bijvoorbeeld na alcoholgebruik). Bij een verlopen rijbewijs ben je "je bevoegdheid verloren"; bij ongeldigverklaring is het document niet meer rechtsgeldig vanwege een sanctie.
+
+## Praktijkvoorbeeld
+
+Je rijbewijs is op 1 juni verlopen, maar je hebt het nog niet verlengd. Op 15 juni wordt je staande gehouden bij een verkeerscontrole. De agent controleert je gegevens en ziet dat je rijbewijs is verlopen. Je krijgt dan een bekeuring voor het rijden zonder geldig rijbewijs. Afhankelijk van de situatie mag je daarna niet verder rijden. Als je toch doorrijdt, riskeer je extra straf.
+
+## Rechten en plichten van burgers
+
+### Als je rijbewijs verloopt:
+
+* **Je hebt de plicht** het rijbewijs tijdig te verlengen via je gemeente.
+* **Je hebt geen recht** om in de tussentijd door te rijden, ook niet als je "nog weet hoe het moet".
+* **Je hebt wél het recht** om een nieuw rijbewijs aan te vragen, mits je aan de eisen voldoet (zoals een medische keuring bij bepaalde leeftijden of categorieën).
+
+## Wat kun je doen?
+
+* **Rijbewijs verlopen?** Maak direct een afspraak bij je gemeente om het te vernieuwen. Doe dit online of telefonisch.
+* **Is je rijbewijs kort geleden verlopen (maximaal 5 jaar)?** Dan kun je meestal zonder opnieuw examen te doen verlengen.
+* **Moet je nog rijden (bijvoorbeeld voor werk)?** Regel vervangend vervoer totdat je rijbewijs weer geldig is.
+* **Heb je medische vragen over verlengen?** Raadpleeg het CBR of je arts.
+
+### Voor hulp of vragen kun je terecht bij:
+
+* **Rijksoverheid** – Rijbewijs verlopen
+* **RDW.nl** – Rijbewijs verlengen
+* Of bel je gemeente voor een afspraak of uitleg.
+
+## Gerelateerde regelgeving
+
+* artikel 107 Wegenverkeerswet 1994 – Rijbevoegdheid
+* Regeling rijbewijzen – Geldigheidsduur rijbewijzen
+* artikel 123 lid 1 Wegenverkeerswet 1994 – Strafbaarstelling rijden zonder geldig rijbewijs
+* Wet aansprakelijkheidsverzekering motorrijtuigen – Verzekeringsdekking
+
+Laatst gecheckt: januari 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'wok-melding-betekenis',
+      title: 'Wat is een WOK-melding?',
+      description: 'Wat is een WOK-melding?',
+      category: 'Verkeer',
+      categorySlug: 'verkeer',
+      seoTitle: 'Wat is een WOK-melding? Uitleg Wacht Op Keuren status',
+      seoDescription: 'Alles over WOK-meldingen: wanneer wordt deze afgegeven, wat zijn de gevolgen, hoe kom je er vanaf en wat zijn je rechten als eigenaar.',
+      readTime: '',
+      lastUpdated: '2025-01-17',
+      views: 0,
+      tags: ['wok-melding', 'wacht op keuren', 'rdw', 'voertuigkeuring', 'kenteken'],
+      featured: true,
+      content: `## Kort antwoord
+
+Een WOK-melding betekent dat een voertuig niet op de openbare weg mag rijden totdat het is goedgekeurd door de RDW. Deze melding wordt geregistreerd als het voertuig niet aan de wettelijke eisen voldoet, bijvoorbeeld na schade of een controle.
+
+## Wat is een WOK-melding?
+
+Een **WOK-melding** staat voor **Wacht Op Keuren**. Het is een officiële aantekening bij het kenteken van een voertuig die aangeeft dat het voertuig op dat moment niet voldoet aan de eisen voor toelating tot het verkeer. De melding wordt opgenomen in het kentekenregister van de RDW (Rijksdienst voor het Wegverkeer).
+
+Zolang deze melding actief is, **mag het voertuig niet op de openbare weg rijden**. Pas nadat de RDW het voertuig opnieuw heeft goedgekeurd, vervalt de WOK-status.
+
+## Wanneer wordt een WOK-melding afgegeven?
+
+Een WOK-melding kan worden afgegeven in verschillende situaties:
+
+* Als een voertuig zwaar beschadigd is, bijvoorbeeld na een ongeval, waardoor de veiligheid of constructie niet meer is gegarandeerd.
+* Bij een controle langs de weg, als blijkt dat het voertuig technisch in slechte staat is of ondeugdelijke aanpassingen heeft.
+* Bij de invoer van een buitenlands voertuig, zolang het nog niet technisch is goedgekeurd voor gebruik op Nederlandse wegen.
+* Als een voertuig is verbouwd of getuned op een manier die niet is toegestaan.
+
+De politie, RDW of andere bevoegde instanties kunnen zo'n melding registreren na beoordeling.
+
+## Wettelijke basis
+
+De WOK-melding is geregeld in de **Regeling voertuigen**, onder verantwoordelijkheid van het Ministerie van Infrastructuur en Waterstaat. De basis voor toezicht op voertuigveiligheid ligt in de **Wegenverkeerswet 1994**, met name in:
+
+* **Artikel 72 Wegenverkeerswet 1994**: voertuigen mogen alleen op de weg worden gebruikt als ze aan de wettelijke eisen voldoen.
+* **Artikel 73 Wegenverkeerswet 1994**: het kentekenbewijs kan worden ingetrokken bij overtreding van de technische eisen.
+
+## Wat zijn de gevolgen van een WOK-melding?
+
+Een voertuig met een WOK-status:
+
+* **Mag niet rijden** op de openbare weg.
+* **Moet opnieuw worden gekeurd** bij een keuringsstation van de RDW.
+* **Kan alleen via een trailer of transportmiddel** naar de keuringslocatie worden gebracht.
+
+Tot de RDW het voertuig heeft goedgekeurd, blijft de WOK-melding actief. De kentekenregistratie blijft bestaan, maar het voertuig is feitelijk geschorst voor gebruik op de weg.
+
+## Praktijkvoorbeeld
+
+Een motorrijder wordt staande gehouden bij een verkeerscontrole. De agent constateert dat er aan het frame is gelast en dat essentiële onderdelen, zoals de verlichting en remmen, niet functioneren. Hij meldt dit bij de RDW, die een WOK-melding op het kenteken registreert. De motorrijder mag nu niet meer de weg op totdat het voertuig technisch is hersteld en opnieuw is goedgekeurd. Pas dan vervalt de melding.
+
+## Rechten en plichten van de eigenaar
+
+Als eigenaar van een voertuig met WOK-melding heb je de volgende verplichtingen:
+
+* Je moet het voertuig laten herstellen zodat het aan de technische eisen voldoet.
+* Je moet een herkeuring aanvragen bij de RDW.
+* **Je mag het voertuig niet gebruiken** op de openbare weg, ook niet voor korte ritten.
+
+Rijd je toch met een WOK-voertuig? Dan kun je een proces-verbaal krijgen, en in sommige gevallen kan het voertuig zelfs in beslag worden genomen.
+
+## Wat kun je doen?
+
+1. **Controleer de WOK-status** van je voertuig via de RDW-voertuigcontrole.
+2. **Laat het voertuig herstellen** bij een erkende garage of specialist.
+3. **Maak een afspraak voor herkeuring** bij de RDW via rdw.nl.
+4. **Vervoer het voertuig** op een aanhanger of laat het ophalen door een transportbedrijf.
+5. **Heb je vragen of twijfel je** of de melding terecht is? Neem contact op met de RDW of vraag juridisch advies bij het Juridisch Loket.
+
+## Gerelateerde regelgeving
+
+* artikel 72 Wegenverkeerswet 1994 – Eisen voertuigen
+* artikel 73 Wegenverkeerswet 1994 – Intrekking kentekenbewijs
+* Regeling voertuigen – Technische eisen
+* Wegenverkeerswet 1994 – Algemene verkeersregels
+* Kentekenwet – Kentekenregistratie
+
+Laatst gecheckt: januari 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'gijzeling-overheid-betekenis',
+      title: 'Wat is gijzeling door de overheid?',
+      description: 'Wat is gijzeling door de overheid?',
+      category: 'Klacht & Bezwaar',
+      categorySlug: 'klacht',
+      seoTitle: 'Wat is gijzeling door de overheid? Uitleg dwangmiddel',
+      seoDescription: 'Alles over gijzeling als dwangmiddel: Mulder-boetes, getuigen, rechten, procedure en hoe je gijzeling kunt voorkomen.',
+      readTime: '',
+      lastUpdated: '2025-01-17',
+      views: 0,
+      tags: ['gijzeling', 'mulder-boete', 'dwangmiddel', 'wahv', 'cjib', 'getuige'],
+      featured: true,
+      content: `## Kort antwoord
+
+De overheid kan iemand gijzelen als dwangmiddel om te zorgen dat diegene iets doet wat verplicht is, zoals betalen van een boete of verschijnen bij de rechter. Het is géén straf, maar een laatste middel om medewerking af te dwingen.
+
+## Wat is gijzeling precies?
+
+Gijzeling is in dit geval een juridisch middel waarbij iemand tijdelijk wordt opgesloten, omdat diegene weigert te voldoen aan een wettelijke verplichting. Dit gebeurt niet zomaar, en alleen als alle andere mogelijkheden zijn geprobeerd. De bedoeling is om druk uit te oefenen, niet om iemand te straffen.
+
+Gijzeling wordt geregeld in verschillende wetten, afhankelijk van de situatie. De bekendste vormen zijn:
+
+* **Strafvorderlijke gijzeling**: bijvoorbeeld bij een getuige die weigert te verschijnen.
+* **Civiele gijzeling**: bijv. bij het niet betalen van een dwangsom of boete, zoals bij een Wet Mulder-boete.
+
+## Wettelijke basis van gijzeling
+
+### Gijzeling bij Mulder-boetes
+
+Bij verkeersboetes op grond van de **Wet administratiefrechtelijke handhaving verkeersvoorschriften (Wahv)** kan iemand die niet betaalt uiteindelijk gegijzeld worden. Dit staat in **artikel 28 Wahv**. Hierin staat dat het CJIB een rechter kan vragen om gijzeling toe te staan, als:
+
+1. De boete is opgelegd en onherroepelijk (niet meer aan te vechten).
+2. Betaling uitblijft, ondanks herinneringen en aanmaningen.
+3. Andere manieren van innen niet zijn gelukt (zoals loonbeslag).
+4. De rechter oordeelt dat gijzeling nog zinvol is.
+
+De gijzeling mag **maximaal 7 dagen per openstaande boete** duren en eindigt direct als er betaald wordt.
+
+### Gijzeling van een getuige
+
+Volgens **artikel 221 Wetboek van Strafvordering** kan een getuige die is opgeroepen door de rechter, maar zonder goede reden weigert te verschijnen, door de politie worden opgehaald of gegijzeld worden totdat hij of zij wel verklaart. Ook hier gaat het niet om straf, maar om het afdwingen van aanwezigheid.
+
+## Gijzeling is geen straf
+
+Gijzeling mag **nooit als straf** worden opgelegd. Het is alleen een drukmiddel om iets gedaan te krijgen. De gijzeling heft de verplichting niet op: als iemand na afloop nog steeds niet betaald heeft, blijft de boete openstaan en kan alsnog ander beslag volgen.
+
+## Voorbeeld uit de praktijk
+
+Een man heeft een verkeersboete van €450 gekregen. Hij weigert te betalen en reageert nergens op. Het CJIB probeert beslag te leggen, maar hij heeft geen loon of bezittingen. De rechter beslist dat gijzeling nodig is. De man wordt door de politie opgehaald en moet 7 dagen de cel in. Op dag 3 betaalt een familielid de boete. De man wordt dan direct vrijgelaten.
+
+## Wat zijn je rechten?
+
+Wie met gijzeling wordt bedreigd of vastgezet, heeft recht op:
+
+* **Een beslissing van de rechter**, je wordt dus niet zomaar opgepakt.
+* **Inzage in de reden** van gijzeling.
+* **Vrijlating zodra** aan de verplichting is voldaan.
+* **Behandeling volgens de regels** van vrijheidsbeneming, dus humaan en met toegang tot juridische hulp.
+
+## Wat kun je doen?
+
+Als je een brief krijgt over mogelijke gijzeling:
+
+1. **Betaal de boete of schuld** zo snel mogelijk om gijzeling te voorkomen.
+2. **Neem contact op met het CJIB** als je denkt dat er een fout is gemaakt.
+3. **Vraag juridische hulp** via het Juridisch Loket of een advocaat.
+4. **Dien bezwaar in**, als dat nog kan en je reden hebt om aan te nemen dat de boete onterecht is.
+5. **Als je echt niet kunt betalen**, vraag een betalingsregeling aan.
+
+Let op: Als de rechter eenmaal heeft beslist, kan de politie op elk moment overgaan tot gijzeling.
+
+## Gerelateerde regelgeving
+
+* artikel 28 Wet administratiefrechtelijke handhaving verkeersvoorschriften (Wahv) – Gijzeling bij Mulder-boetes
+* artikel 221 Wetboek van Strafvordering – Gijzeling getuigen
+* artikel 585 Wetboek van Burgerlijke Rechtsvordering – Civiele gijzeling
+* Penitentiaire beginselenwet – Behandeling gedetineerden
+* Grondwet artikel 15 – Vrijheidsbeneming
+
+Laatst gecheckt: januari 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
     }
   ] as PolitieWetArticle[]
 } 
