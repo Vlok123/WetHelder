@@ -114,7 +114,7 @@ export const politieWetData = {
     {
       slug: 'id-controle-politie',
       title: 'Mag de politie mijn identiteit controleren?',
-      description: 'Mag de politie mijn identiteit controleren?',
+      description: '',
       category: 'Identificatie & Fouilleren',
       categorySlug: 'id-fouilleren',
       seoTitle: 'Mag de politie mijn identiteit controleren?',
@@ -147,7 +147,7 @@ Je loopt rond middernacht door een woonwijk. De politie krijgt een melding dat e
 
 Wat als je geen ID kunt of wilt laten zien?
 
-Als je geen identiteitsbewijs bij je hebt wanneer een agent hierom vraagt, riskeer je een boete. Dit is strafbaar volgens artikel 447e Wetboek van Strafrecht. Weiger je mee te werken, dan kun je zelfs worden aangehouden en meegenomen naar het politiebureau.
+Als je geen identiteitsbewijs bij je hebt wanneer een agent hierom vraagt, riskeer je een boete. Dit is strafbaar volgens artikel 447e Wetboek van Strafrecht (Sr). Weiger je mee te werken, dan kun je zelfs worden aangehouden en meegenomen naar het politiebureau.
 
 Rechten & plichten van de burger
 
@@ -184,7 +184,7 @@ Disclaimer: Je mag vragen waarom je identiteit wordt gecontroleerd, maar de poli
     {
       slug: 'algemene-verkeerscontrole',
       title: 'Moet ik meewerken aan een algemene verkeerscontrole en wat kan er allemaal onderdeel van zijn?',
-      description: 'Moet ik meewerken aan een algemene verkeerscontrole en wat kan er allemaal onderdeel van zijn?',
+      description: '',
       category: 'Verkeer',
       categorySlug: 'verkeer',
       seoTitle: 'Moet ik meewerken aan een algemene verkeerscontrole?',
@@ -201,9 +201,9 @@ Ja, je bent verplicht mee te werken aan een algemene verkeerscontrole. De politi
 
 Uitgebreide uitleg
 
-Wettelijke basis: artikel 160 Wegenverkeerswet 1994
+Wettelijke basis: artikel 160 Wegenverkeerswet 1994 (WVW 1994)
 
-De politie mag je tijdens een verkeerscontrole laten stoppen en controleren op grond van artikel 160 van de Wegenverkeerswet 1994. Dit artikel geeft agenten de bevoegdheid om:
+De politie mag je tijdens een verkeerscontrole laten stoppen en controleren op grond van artikel 160 Wegenverkeerswet 1994 (WVW 1994) (WVW 1994). Dit artikel geeft agenten de bevoegdheid om:
 
 * Je te laten stoppen (lid 1).
 * Te vragen naar je rijbewijs, kentekenbewijs en identiteitsbewijs (lid 1).
@@ -284,7 +284,7 @@ Disclaimer: Dit is algemene informatie; uitzonderingen zijn mogelijk – vraag d
     {
       slug: 'door-rood-licht-zonder-sirene',
       title: 'Mag de politie door rood licht rijden zonder zwaailicht en sirene?',
-      description: 'Mag de politie door rood licht rijden zonder zwaailicht en sirene?',
+      description: '',
       category: 'Verkeer',
       categorySlug: 'verkeer',
       seoTitle: 'Mag de politie door rood licht rijden zonder zwaailicht en sirene?',
@@ -372,7 +372,7 @@ Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig adv
     {
       slug: 'betreden-tuin-zonder-machtiging',
       title: 'Mag een agent zonder machtiging een tuin betreden voor onderzoek of inbeslagname?',
-      description: 'Mag een agent zonder machtiging een tuin betreden voor onderzoek of inbeslagname?',
+      description: '',
       category: 'Opsporing & Aanhouding',
       categorySlug: 'opsporing',
       seoTitle: 'Mag politie zonder machtiging een tuin betreden voor onderzoek?',
@@ -459,11 +459,11 @@ Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig adv
     {
       slug: 'politie-verplicht-aangifte-opnemen',
       title: 'Is de politie verplicht om een aangifte van mij op te nemen als ik dat wil?',
-      description: 'Is de politie verplicht om een aangifte van mij op te nemen als ik dat wil?',
+      description: '',
       category: 'Opsporing & Aanhouding',
       categorySlug: 'opsporing',
       seoTitle: 'Is de politie verplicht om een aangifte op te nemen? - WetHelder',
-      seoDescription: 'Uitleg over je recht om aangifte te doen en de plicht van de politie om deze op te nemen volgens artikel 163 Wetboek van Strafvordering.',
+      seoDescription: 'Uitleg over je recht om aangifte te doen en de plicht van de politie om deze op te nemen volgens artikel 163 Wetboek van Strafvordering (Sv).',
       readTime: '',
       lastUpdated: '2025-01-11',
       views: 0,
@@ -471,7 +471,7 @@ Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig adv
       featured: true,
       content: `## Kort antwoord
 
-Ja, de politie is verplicht om jouw aangifte op te nemen als je slachtoffer of getuige bent van een strafbaar feit. Dat staat in artikel 163 lid 1 van het Wetboek van Strafvordering.
+Ja, de politie is verplicht om jouw aangifte op te nemen als je slachtoffer of getuige bent van een strafbaar feit. Dat staat in artikel 163 lid 1 Wetboek van Strafvordering (Sv).
 
 
 Uitgebreide uitleg
@@ -500,7 +500,7 @@ Dat mag dus niet. Jij hebt recht op het doen van aangifte, en de politie is verp
 
 Rechten & plichten van de burger
 
-Bron: artikel 163 Wetboek van Strafvordering
+Bron: artikel 163 Wetboek van Strafvordering (Sv)
 
 *  Je hebt het recht om aangifte te doen van een strafbaar feit.
 *  De politie heeft de plicht om je aangifte op te nemen.
@@ -521,8 +521,8 @@ Als de politie weigert jouw aangifte op te nemen:
 
 Gerelateerde regelgeving
 
-* Artikel 163 Wetboek van Strafvordering – aangifteplicht politie
-* Artikel 164 Wetboek van Strafvordering – opmaken proces-verbaal
+* artikel 163 Wetboek van Strafvordering (Sv) – aangifteplicht politie
+* artikel 164 Wetboek van Strafvordering (Sv) – opmaken proces-verbaal
 * Artikel 3 Politiewet 2012 – taak van de politie (waaronder opsporing)
 * Wet politiegegevens artikel 8 – registratie van aangiften en klachten
 
@@ -540,7 +540,7 @@ Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig adv
     {
       slug: 'fouilleren-transport-insluiting',
       title: 'Wanneer mag de politie mij fouilleren – inclusief bij transport en insluiting?',
-      description: 'Wanneer mag de politie mij fouilleren – inclusief bij transport en insluiting?',
+      description: '',
       category: 'Identificatie & Fouilleren',
       categorySlug: 'id-fouilleren',
       seoTitle: 'Wanneer mag de politie mij fouilleren bij transport en insluiting?',
@@ -736,13 +736,13 @@ Exacte wetsartikelen
 * artikel 151b lid 1 Gemeentewet – Aanwijzen veiligheidsrisicogebied
 * artikel 174b lid 1 Gemeentewet – Aanwijzing bij spoedeisende situaties
 * artikelen 50 lid 3, 51 lid 3 en 52 lid 3 Wet wapens en munitie – Bevoegdheid tot voertuigonderzoek bij preventief fouilleren
-* artikel 160 Wegenverkeerswet 1994 – Verkeerscontrole
+* artikel 160 Wegenverkeerswet 1994 (WVW 1994) – Verkeerscontrole
 * artikel 3 Politiewet 2012 – Optreden bij acuut gevaar of dreiging
 
 
 Praktijkvoorbeeld
 
-Je rijdt op de snelweg en wordt aangehouden voor een verkeerscontrole. Terwijl je je rijbewijs geeft, ruikt de agent een sterke wietlucht. Je weigert toestemming voor doorzoeking. Omdat er sprake is van een concreet vermoeden van een strafbaar feit, mag de politie tóch zoeken op basis van artikel 96b Sv – jouw weigering verandert daar niets aan. Fysiek verzet is dan strafbaar.
+Je rijdt op de snelweg en wordt aangehouden voor een verkeerscontrole. Terwijl je je rijbewijs geeft, ruikt de agent een sterke wietlucht. Je weigert toestemming voor doorzoeking. Omdat er sprake is van een concreet vermoeden van een strafbaar feit, mag de politie tóch zoeken op basis van artikel 96b Wetboek van Strafvordering (Sv) – jouw weigering verandert daar niets aan. Fysiek verzet is dan strafbaar.
 
 
 Rechten & plichten van de burger
@@ -789,7 +789,7 @@ Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig adv
     {
       slug: 'stopteken-verplicht-stoppen',
       title: 'Moet ik altijd stoppen als een agent me een stopteken geeft?',
-      description: 'Moet ik altijd stoppen als een agent me een stopteken geeft?',
+      description: '',
       category: 'Verkeer',
       categorySlug: 'verkeer',
       seoTitle: 'Moet ik altijd stoppen als een agent me een stopteken geeft?',
@@ -825,7 +825,7 @@ De verplichting om te stoppen staat in:
 
 * artikel 160 lid 1 Wegenverkeerswet 1994 – verplichting om medewerking te verlenen bij een controle, inclusief stoppen.
 * artikel 160 lid 5 Wegenverkeerswet 1994 – je moet aanwijzingen van een politieambtenaar opvolgen.
-* artikel 82 Reglement verkeersregels en verkeerstekens 1990 (RVV 1990) – regelt dat een bevoegd persoon (zoals politie of verkeersregelaar) een stopteken mag geven.
+* artikel 82 RVV 1990 – regelt dat een bevoegd persoon (zoals politie of verkeersregelaar) een stopteken mag geven.
 
 
 Praktijkvoorbeeld
@@ -875,7 +875,7 @@ Disclaimer: Algemene informatie; uitzonderingen mogelijk – vraag deskundig adv
     {
       slug: 'boa-bevoegdheden-vs-politie',
       title: 'Hebben BOA\'s dezelfde bevoegdheden als politieagenten?',
-      description: 'Hebben BOA\'s dezelfde bevoegdheden als politieagenten?',
+      description: '',
       category: 'Algemene Bevoegdheden',
       categorySlug: 'bevoegdheden',
       seoTitle: 'Hebben BOA\'s dezelfde bevoegdheden als politieagenten?',
@@ -896,7 +896,7 @@ Wat doet een BOA?
 
 Een BOA (Buitengewoon Opsporingsambtenaar) controleert of mensen zich aan bepaalde regels houden. Denk aan foutparkeren, afval op straat of zwartrijden in de tram. BOA's werken bijvoorbeeld voor een gemeente, openbaar vervoerbedrijf of natuurorganisatie. Ze mogen alleen handhaven binnen hun taakgebied, zoals 'openbare ruimte' of 'milieu'.
 
-Een BOA is géén volwaardige politiefunctionaris. De bevoegdheden zijn beperkt en staan in artikel 142 van het Wetboek van Strafvordering. Iedere BOA heeft een legitimatiepas waarop staat in welk domein hij of zij mag optreden.
+Een BOA is géén volwaardige politiefunctionaris. De bevoegdheden zijn beperkt en staan in artikel 142 Wetboek van Strafvordering (Sv). Iedere BOA heeft een legitimatiepas waarop staat in welk domein hij of zij mag optreden.
 
 
 Wat mag de politie méér?
@@ -908,7 +908,7 @@ De politie heeft veel ruimere bevoegdheden. Die mag bijvoorbeeld:
 * handboeien of een wapen dragen;
 * woningen betreden met toestemming van een officier van justitie.
 
-Deze bevoegdheden staan onder meer in artikel 141 van het Wetboek van Strafvordering en de Politiewet 2012.
+Deze bevoegdheden staan onder meer in artikel 141 Wetboek van Strafvordering (Sv) en de Politiewet 2012.
 
 
 Mag een BOA je tuin of erf op?
@@ -950,8 +950,8 @@ Wat kun je doen?
 
 Gerelateerde regelgeving
 
-* Artikel 142 Wetboek van Strafvordering – Bevoegdheden BOA.
-* Artikel 141 Wetboek van Strafvordering – Bevoegdheden politie.
+* artikel 142 Wetboek van Strafvordering (Sv) – Bevoegdheden BOA.
+* artikel 141 Wetboek van Strafvordering (Sv) – Bevoegdheden politie.
 * Artikel 5:15 Algemene wet bestuursrecht – BOA mag erf of tuin betreden.
 * Artikel 8 lid 1 Wet op de identificatieplicht – ID-plicht voor burgers.
 * Politiewet 2012 – Politietaak en geweldsbevoegdheden.
@@ -965,7 +965,7 @@ Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je 
     {
       slug: 'rechten-vh-feit-aanhouding',
       title: 'Waar heb je recht op als je bent aangehouden als verdachte van een VH-feit?',
-      description: 'Waar heb je recht op als je bent aangehouden als verdachte van een VH-feit?',
+      description: '',
       category: 'Opsporing & Aanhouding',
       categorySlug: 'opsporing',
       seoTitle: 'Rechten bij aanhouding voor VH-feit (voorlopige hechtenis)',
@@ -1001,7 +1001,7 @@ Is er na het eerste onderzoek meer tijd nodig? Dan kan de officier van justitie 
 
 3. Voorlopige hechtenis
 
-Na de IVS kan de rechter-commissaris bepalen dat je langer vast moet blijven (bijvoorbeeld via bewaring van 14 dagen – zie artikel 63 Sv). Daarna kan eventueel gevangenhouding volgen, opnieuw op last van een rechter.
+Na de IVS kan de rechter-commissaris bepalen dat je langer vast moet blijven (bijvoorbeeld via bewaring van 14 dagen – zie artikel 63 Wetboek van Strafvordering (Sv)). Daarna kan eventueel gevangenhouding volgen, opnieuw op last van een rechter.
 
 
 Rechten vanaf het moment van aanhouding
@@ -1051,7 +1051,7 @@ Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je 
     {
       slug: 'klachtencommissie-politie',
       title: 'Hoe zit het met de klachtencommissie bij de politie?',
-      description: 'Hoe zit het met de klachtencommissie bij de politie?',
+      description: '',
       category: 'Klacht & Bezwaar',
       categorySlug: 'klacht',
       seoTitle: 'Klachtencommissie politie: procedure en rechten',
@@ -1163,7 +1163,7 @@ Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je 
     {
       slug: 'slachtofferrechten-misdrijf',
       title: 'Wat zijn je rechten als slachtoffer van een misdrijf?',
-      description: 'Wat zijn je rechten als slachtoffer van een misdrijf?',
+      description: '',
       category: 'Slachtoffer & Rechten',
       categorySlug: 'slachtoffer',
       seoTitle: 'Rechten als slachtoffer van een misdrijf',
@@ -1256,7 +1256,7 @@ Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je 
     {
       slug: 'politie-persoonsgegevens',
       title: 'Hoe gaat de politie om met mijn persoonsgegevens?',
-      description: 'Hoe gaat de politie om met mijn persoonsgegevens?',
+      description: '',
       category: 'Privacy & Informatie',
       categorySlug: 'privacy',
       seoTitle: 'Politie en persoonsgegevens: rechten en regels',
@@ -1342,7 +1342,7 @@ Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je 
     {
       slug: 'camerabeelden-126nda-bevel',
       title: 'Wat moet ik doen als de politie om camerabeelden vraagt van de beveiligingscamera aan mijn woning?',
-      description: 'Wat moet ik doen als de politie om camerabeelden vraagt van de beveiligingscamera aan mijn woning?',
+      description: '',
       category: 'Privacy & Informatie',
       categorySlug: 'privacy',
       seoTitle: 'Politie vraagt camerabeelden: 126nda bevel uitgelegd',
@@ -1354,7 +1354,7 @@ Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je 
       featured: true,
       content: `## 1. Kort antwoord in 2 zinnen
 
-Als je geen slachtoffer bent, vraagt de politie tegenwoordig meestal om camerabeelden via een officieel bevel op basis van artikel 126nda Wetboek van Strafvordering. Zo'n bevel is verplicht bij bepaalde strafbare feiten, en weigeren kan – in uitzonderlijke gevallen – strafbaar zijn.
+Als je geen slachtoffer bent, vraagt de politie tegenwoordig meestal om camerabeelden via een officieel bevel op basis van artikel 126nda Wetboek van Strafvordering (Sv). Zo'n bevel is verplicht bij bepaalde strafbare feiten, en weigeren kan – in uitzonderlijke gevallen – strafbaar zijn.
 
 
 ## 2. Uitgebreide uitleg
@@ -1371,9 +1371,9 @@ Soms vraagt de politie of je vrijwillig beelden wilt delen, bijvoorbeeld als get
 
 Steeds vaker: formeel bevel via artikel 126nda Sv
 
-In de praktijk vraagt de politie bijna standaard beelden via een formeel bevel op basis van artikel 126nda Wetboek van Strafvordering. Dit bevel kan worden opgelegd door een politieagent zelf (opsporingsambtenaar), zonder tussenkomst van een (hulp)officier van justitie.
+In de praktijk vraagt de politie bijna standaard beelden via een formeel bevel op basis van artikel 126nda Wetboek van Strafvordering (Sv). Dit bevel kan worden opgelegd door een politieagent zelf (opsporingsambtenaar), zonder tussenkomst van een (hulp)officier van justitie.
 
-Dit bevel mag alleen worden gegeven bij strafbare feiten waarvoor voorlopige hechtenis is toegestaan. Dat staat in artikel 67 Wetboek van Strafvordering. Voorbeelden zijn:
+Dit bevel mag alleen worden gegeven bij strafbare feiten waarvoor voorlopige hechtenis is toegestaan. Dat staat in artikel 67 Wetboek van Strafvordering (Sv). Voorbeelden zijn:
 * Mishandeling
 * Diefstal
 * Inbraak
@@ -1397,7 +1397,7 @@ Als je zo'n bevel krijgt, ben je wettelijk verplicht om de gevraagde beelden aan
 
 Wat als je niet meewerkt?
 
-In eerste instantie gaat de politie uit van medewerking. Maar als je opzettelijk weigert om aan een geldig bevel te voldoen, dan kun je strafbaar zijn op grond van artikel 184 Wetboek van Strafrecht. Dat artikel stelt dat wie een wettelijk gegeven ambtelijk bevel negeert, strafbaar is.
+In eerste instantie gaat de politie uit van medewerking. Maar als je opzettelijk weigert om aan een geldig bevel te voldoen, dan kun je strafbaar zijn op grond van artikel 184 Wetboek van Strafrecht (Sr). Dat artikel stelt dat wie een wettelijk gegeven ambtelijk bevel negeert, strafbaar is.
 
 Dit wordt doorgaans niet direct toegepast, maar het kan wel – zeker als je zonder geldige reden tegenwerkt.
 
@@ -1453,7 +1453,7 @@ Bron: Wetboek van Strafvordering, Strafrecht, AVG
     {
       slug: 'inzage-politiegegevens',
       title: 'Mag ik weten wat de politie over mij weet?',
-      description: 'Mag ik weten wat de politie over mij weet?',
+      description: '',
       category: 'Privacy & Informatie',
       categorySlug: 'privacy',
       seoTitle: 'Inzagerecht politiegegevens: wat mag ik weten?',
@@ -1546,7 +1546,7 @@ Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je 
     {
       slug: 'snelheidsmeting-politie',
       title: 'Op welke wijze kan de politie een snelheidsmeting doen en moeten zij dit aan mij kunnen bewijzen?',
-      description: 'Op welke wijze kan de politie een snelheidsmeting doen en moeten zij dit aan mij kunnen bewijzen?',
+      description: '',
       category: 'Verkeer',
       categorySlug: 'verkeer',
       seoTitle: 'Snelheidsmeting politie: methoden en bewijsvoering',
@@ -1646,7 +1646,7 @@ Rechten:
     {
       slug: 'winkelverbod-huisrecht',
       title: 'Mag een winkel mij zomaar een winkelverbod opleggen?',
-      description: 'Mag een winkel mij zomaar een winkelverbod opleggen?',
+      description: '',
       category: 'Civielrecht',
       categorySlug: 'burgerrecht',
       seoTitle: 'Winkelverbod en huisrecht: mag dit zomaar?',
@@ -1697,7 +1697,7 @@ Je rechten (o.a. volgens BW en Grondwet):
 * Je mag de reden van het verbod vragen, maar de winkel is niet verplicht daar uitgebreid op in te gaan.
 
 Je plichten:
-* Je moet je aan het winkelverbod houden, ook als je het onterecht vindt. Doorgaan met binnenkomen kan worden gezien als huisvredebreuk (artikel 138 Wetboek van Strafrecht).
+* Je moet je aan het winkelverbod houden, ook als je het onterecht vindt. Doorgaan met binnenkomen kan worden gezien als huisvredebreuk (artikel 138 Wetboek van Strafrecht (Sr)).
 
 ## Wat kun je doen?
 
@@ -1722,7 +1722,7 @@ Laatst gecheckt: 29 juni 2025. Algemene informatie; uitzonderingen mogelijk – 
     {
       slug: 'minderjarige-verdachte-rechten',
       title: 'Welke rechten heeft een minderjarige verdachte bij politieonderzoek en strafproces?',
-      description: 'Welke rechten heeft een minderjarige verdachte bij politieonderzoek en strafproces?',
+      description: '',
       category: 'Jeugdstrafrecht',
       categorySlug: 'jeugdstrafrecht',
       seoTitle: 'Rechten minderjarige verdachte bij politie en strafproces',
@@ -1779,7 +1779,7 @@ Laatst gecheckt: december 2025. Algemene informatie; uitzonderingen mogelijk –
     {
       slug: 'halt-afdoening-jongeren',
       title: 'Hoe werkt de Halt-afdoening voor jongeren die een licht strafbaar feit plegen?',
-      description: 'Hoe werkt de Halt-afdoening voor jongeren die een licht strafbaar feit plegen?',
+      description: '',
       category: 'Jeugdstrafrecht',
       categorySlug: 'jeugdstrafrecht',
       seoTitle: 'HALT-afdoening jongeren: procedure en voorwaarden',
@@ -1830,7 +1830,7 @@ Laatst gecheckt: december 2025. Algemene informatie; uitzonderingen mogelijk –
     {
       slug: 'telefoon-vasthouden-fietsen',
       title: 'Is het strafbaar om tijdens het fietsen alleen een telefoon vast te houden?',
-      description: 'Is het strafbaar om tijdens het fietsen alleen een telefoon vast te houden?',
+      description: '',
       category: 'Verkeer',
       categorySlug: 'verkeer',
       seoTitle: 'Telefoon vasthouden tijdens fietsen: wat is toegestaan?',
@@ -1856,7 +1856,7 @@ Je mag je telefoon niet in de hand hebben terwijl je fietst, ook niet wanneer je
 
 ## Praktijkvoorbeeld
 
-Je wilt onderweg je route controleren. Als je de telefoon in een houder op het stuur plaatst, mag de navigatie-app zichtbaar blijven; je hebt dan geen handvrije overtreding. Houd je de telefoon echter in je hand terwijl je doorfietst, dan overtreed je artikel 61a Reglement verkeersregels en verkeerstekens 1990.
+Je wilt onderweg je route controleren. Als je de telefoon in een houder op het stuur plaatst, mag de navigatie-app zichtbaar blijven; je hebt dan geen handvrije overtreding. Houd je de telefoon echter in je hand terwijl je doorfietst, dan overtreed je artikel 61a RVV 1990.
 
 ## Rechten en plichten van burgers
 
@@ -1871,7 +1871,7 @@ Laatst gecheckt: december 2025. Algemene informatie; uitzonderingen mogelijk –
     {
       slug: 'agent-filmen-straat',
       title: 'Mag ik een agent op straat filmen?',
-      description: 'Mag ik een agent op straat filmen?',
+      description: '',
       category: 'Privacy & Informatie',
       categorySlug: 'privacy',
       seoTitle: 'Mag ik een agent op straat filmen? | Rechten en regels',
@@ -1891,7 +1891,7 @@ Ja, u mag in de openbare ruimte een politieagent filmen; de wet verbiedt dit nie
 
 Filmen in de openbare ruimte valt onder de informatievrijheid (artikel 10 EVRM) en de vrijheid van meningsuiting. U mag optredens van politie vastleggen zolang u de orde en veiligheid niet verstoort.
 
-### artikel 184 Wetboek van Strafrecht
+### artikel 184 Wetboek van Strafrecht (Sr)
 
 **Tekst:**
 "Hij die opzettelijk niet voldoet aan een bevel of vordering (...) krachtens wettelijk voorschrift gedaan door een ambtenaar (...) belet, belemmert of verijdelt, wordt gestraft met (...) gevangenisstraf (...) of geldboete."
@@ -1924,8 +1924,8 @@ Burgers mogen filmen zolang zij:
 ## Gerelateerde regelgeving
 
 * artikel 10 EVRM – Informatievrijheid en vrijheid van meningsuiting
-* artikel 184 Wetboek van Strafrecht – Niet voldoen aan wettig bevel ambtenaar
-* artikel 261 Wetboek van Strafrecht – Belediging
+* artikel 184 Wetboek van Strafrecht (Sr) – Niet voldoen aan wettig bevel ambtenaar
+* artikel 261 Wetboek van Strafrecht (Sr) – Belediging
 * Auteurswet artikelen 19-21 – Portretrecht
 
 Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor uw eigen situatie.`
@@ -1933,7 +1933,7 @@ Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vra
     {
       slug: 'persoonsgegevens-agent-legitimatie',
       title: 'Welke persoonsgegevens moet een agent mij geven als ik erom vraag?',
-      description: 'Welke persoonsgegevens moet een agent mij geven als ik erom vraag?',
+      description: '',
       category: 'Privacy & Informatie',
       categorySlug: 'privacy',
       seoTitle: 'Persoonsgegevens agent: wat moet hij mij geven?',
@@ -2004,7 +2004,7 @@ Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vra
     {
       slug: 'stroomstootwapen-gebruik-politie',
       title: 'Wanneer mag de politie een stroomstootwapen gebruiken?',
-      description: 'Wanneer mag de politie een stroomstootwapen gebruiken?',
+      description: '',
       category: 'Geweld & Handhaving',
       categorySlug: 'geweld',
       seoTitle: 'Wanneer mag de politie een stroomstootwapen gebruiken?',
@@ -2107,7 +2107,7 @@ Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vra
     {
       slug: 'zorgmelding-politie-hulpverlening',
       title: 'De politie zegt dat ze een zorgmelding op gaan maken. Wat houdt dit in?',
-      description: 'De politie zegt dat ze een zorgmelding op gaan maken. Wat houdt dit in?',
+      description: '',
       category: 'Privacy & Informatie',
       categorySlug: 'privacy',
       seoTitle: 'Zorgmelding politie: wat betekent dit en wat zijn je rechten?',
@@ -2196,7 +2196,7 @@ Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vra
     {
       slug: 'bloedproef-weigering-rijden-onder-invloed',
       title: 'Ben je verplicht om mee te werken aan een bloedproef na verdenking van rijden onder invloed?',
-      description: 'Ben je verplicht om mee te werken aan een bloedproef na verdenking van rijden onder invloed?',
+      description: '',
       category: 'Verkeer',
       categorySlug: 'verkeer',
       seoTitle: 'Ben je verplicht om mee te werken aan een bloedproef na verdenking van rijden onder invloed?',
@@ -2246,7 +2246,7 @@ Je wordt dan ook als verdachte behandeld, en de politie kan:
 * Je alsnog verplichten tot bloedafname via een arts.
 * Een proces-verbaal opmaken voor weigering.
 
-Fysiek verzet tegen bloedafname kan leiden tot extra strafbare feiten, zoals wederspannigheid (**artikel 180 Wetboek van Strafrecht**).
+Fysiek verzet tegen bloedafname kan leiden tot extra strafbare feiten, zoals wederspannigheid (**artikel 180 Wetboek van Strafrecht (Sr)**).
 
 ## Praktijkvoorbeeld
 
@@ -2272,7 +2272,7 @@ Bij aanhouding in het kader van een bloedproef heb je recht op:
 
 * artikel 163 Wegenverkeerswet 1994 – Bevel tot bloedafname
 * artikel 61 Wetboek van Strafvordering – Aanhouding bij verdenking
-* artikel 180 Wetboek van Strafrecht – Wederspannigheid
+* artikel 180 Wetboek van Strafrecht (Sr) – Wederspannigheid
 * Opiumwet – Strafbare feiten betreffende drugs
 * Wegenverkeerswet 1994 – Rijden onder invloed
 
@@ -2281,7 +2281,7 @@ Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vra
     {
       slug: 'vingerafdrukken-afnemen-aanhouding',
       title: 'Ben ik verplicht mijn vingerafdruk af te staan nadat ik door de politie ben aangehouden?',
-      description: 'Ben ik verplicht mijn vingerafdruk af te staan nadat ik door de politie ben aangehouden?',
+      description: '',
       category: 'Identificatie & Fouilleren',
       categorySlug: 'id-fouilleren',
       seoTitle: 'Ben ik verplicht mijn vingerafdruk af te staan nadat ik door de politie ben aangehouden?',
@@ -2349,7 +2349,7 @@ Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vra
     {
       slug: 'woning-betreden-verdachte',
       title: 'Wanneer mag de politie een woning betreden van een verdachte?',
-      description: 'Wanneer mag de politie een woning betreden van een verdachte?',
+      description: '',
       category: 'Opsporing & Aanhouding',
       categorySlug: 'opsporing',
       seoTitle: 'Wanneer mag de politie een woning betreden van een verdachte?',
@@ -2378,7 +2378,7 @@ De politie mag de woning binnengaan als een meerderjarige bewoner uitdrukkelijk 
 
 ### 2. Met machtiging tot binnentreden
 
-Zonder toestemming is een schriftelijke machtiging tot binnentreden nodig van een (hulp)officier van justitie, op basis van **artikel 2 Awbi**. Dit is bijvoorbeeld vereist bij:
+Zonder toestemming is een schriftelijke machtiging tot binnentreden nodig van een (hulp)officier van justitie, op basis van **artikel 2 Algemene wet op het binnentreden (Awbi)**. Dit is bijvoorbeeld vereist bij:
 
 * Aanhouding in een woning,
 * Inbeslagnames,
@@ -2436,7 +2436,7 @@ Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vra
     {
       slug: 'klacht-politiegeweld-buitensporig',
       title: 'Wat kun je doen als je vindt dat de politie buitensporig geweld heeft gebruikt bij een aanhouding?',
-      description: 'Wat kun je doen als je vindt dat de politie buitensporig geweld heeft gebruikt bij een aanhouding?',
+      description: '',
       category: 'Klacht & Bezwaar',
       categorySlug: 'klacht',
       seoTitle: 'Wat kun je doen als je vindt dat de politie buitensporig geweld heeft gebruikt?',
@@ -2538,11 +2538,11 @@ Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vra
     {
       slug: 'telecom-gegevens-opvragen-politie',
       title: 'Mag de politie telefoon- en internetgegevens opvragen bij telecomproviders zonder tussenkomst van de officier van justitie?',
-      description: 'Mag de politie telefoon- en internetgegevens opvragen bij telecomproviders zonder tussenkomst van de officier van justitie?',
+      description: '',
       category: 'Privacy & Informatie',
       categorySlug: 'privacy',
       seoTitle: 'Mag de politie telefoon- en internetgegevens opvragen zonder officier van justitie?',
-      seoDescription: 'Alles over opvragen telecomgegevens: artikel 126nc Sv, identificerende gegevens, verkeersgegevens, rechten en wanneer rechterlijke toestemming nodig is.',
+      seoDescription: 'Alles over opvragen telecomgegevens: artikel 126nc Wetboek van Strafvordering (Sv), identificerende gegevens, verkeersgegevens, rechten en wanneer rechterlijke toestemming nodig is.',
       readTime: '',
       lastUpdated: '2025-06-01',
       views: 0,
@@ -2588,8 +2588,8 @@ Bij gegevens over de inhoud van communicatie (zoals telefoongesprekken, e-mails,
 
 Stel: iemand plaatst anonieme haatberichten via een forum. De politie wil weten wie dit doet.
 
-* Ze vorderen op basis van artikel 126nc Sv bij de forumbeheerder het IP-adres dat gebruikt is. Hiervoor is geen officier van justitie nodig.
-* Daarna vragen ze aan de internetprovider welk account bij dat IP-adres hoort. Ook dat mag op basis van artikel 126nc Sv, zonder tussenkomst van de OVJ.
+* Ze vorderen op basis van artikel 126nc Wetboek van Strafvordering (Sv) bij de forumbeheerder het IP-adres dat gebruikt is. Hiervoor is geen officier van justitie nodig.
+* Daarna vragen ze aan de internetprovider welk account bij dat IP-adres hoort. Ook dat mag op basis van artikel 126nc Wetboek van Strafvordering (Sv), zonder tussenkomst van de OVJ.
 * Als ze willen weten waar die persoon zich op dat moment bevond, is dat een locatiegegeven. Daarvoor is wel toestemming van de officier van justitie nodig (artikel 126n Sv).
 * Willen ze toekomstige communicatie meelezen? Dan moet de rechter-commissaris dit goedkeuren (artikel 126m lid 5 Sv).
 
@@ -2624,7 +2624,7 @@ Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vra
     {
       slug: 'boete-zonder-staandehouding-mulder',
       title: 'Kan een agent een boete geven zonder dat je bent staande gehouden, en hoe zit dat bij Mulder-feiten zoals inhalen bij een doorgetrokken streep?',
-      description: 'Kan een agent een boete geven zonder dat je bent staande gehouden, en hoe zit dat bij Mulder-feiten zoals inhalen bij een doorgetrokken streep?',
+      description: '',
       category: 'Verkeer',
       categorySlug: 'verkeer',
       seoTitle: 'Boete zonder staandehouding: wanneer mag dat bij Mulder-feiten?',
@@ -2640,7 +2640,7 @@ In principe moet een agent je staande houden om een boete te geven, zodat je wee
 
 ## Staandehouding is in principe verplicht
 
-De hoofdregel is dat een politieagent iemand staande houdt voordat hij een boete oplegt. Dit staat in **artikel 52 van het Wetboek van Strafvordering**. De staandehouding is bedoeld om:
+De hoofdregel is dat een politieagent iemand staande houdt voordat hij een boete oplegt. Dit staat in **artikel 52 Wetboek van Strafvordering (Sv)**. De staandehouding is bedoeld om:
 
 * je identiteit vast te stellen
 * je te informeren over de overtreding
@@ -2702,7 +2702,7 @@ Laatst gecheckt: januari 2025. Algemene informatie; uitzonderingen mogelijk – 
     {
       slug: 'verlopen-rijbewijs-rijden',
       title: 'Mag je met een verlopen rijbewijs rijden?',
-      description: 'Mag je met een verlopen rijbewijs rijden?',
+      description: '',
       category: 'Verkeer',
       categorySlug: 'verkeer',
       seoTitle: 'Mag je rijden met een verlopen rijbewijs?',
@@ -2772,7 +2772,7 @@ Laatst gecheckt: januari 2025. Algemene informatie; uitzonderingen mogelijk – 
     {
       slug: 'wok-melding-betekenis',
       title: 'Wat is een WOK-melding?',
-      description: 'Wat is een WOK-melding?',
+      description: '',
       category: 'Verkeer',
       categorySlug: 'verkeer',
       seoTitle: 'Wat is een WOK-melding? Uitleg Wacht Op Keuren status',
@@ -2855,7 +2855,7 @@ Laatst gecheckt: januari 2025. Algemene informatie; uitzonderingen mogelijk – 
     {
       slug: 'gijzeling-overheid-betekenis',
       title: 'Wat is gijzeling door de overheid?',
-      description: 'Wat is gijzeling door de overheid?',
+      description: '',
       category: 'Klacht & Bezwaar',
       categorySlug: 'klacht',
       seoTitle: 'Wat is gijzeling door de overheid? Uitleg dwangmiddel',
@@ -2893,7 +2893,7 @@ De gijzeling mag **maximaal 7 dagen per openstaande boete** duren en eindigt dir
 
 ### Gijzeling van een getuige
 
-Volgens **artikel 221 Wetboek van Strafvordering** kan een getuige die is opgeroepen door de rechter, maar zonder goede reden weigert te verschijnen, door de politie worden opgehaald of gegijzeld worden totdat hij of zij wel verklaart. Ook hier gaat het niet om straf, maar om het afdwingen van aanwezigheid.
+Volgens **artikel 221 Wetboek van Strafvordering (Sv)** kan een getuige die is opgeroepen door de rechter, maar zonder goede reden weigert te verschijnen, door de politie worden opgehaald of gegijzeld worden totdat hij of zij wel verklaart. Ook hier gaat het niet om straf, maar om het afdwingen van aanwezigheid.
 
 ## Gijzeling is geen straf
 
@@ -2927,7 +2927,7 @@ Let op: Als de rechter eenmaal heeft beslist, kan de politie op elk moment overg
 ## Gerelateerde regelgeving
 
 * artikel 28 Wet administratiefrechtelijke handhaving verkeersvoorschriften (Wahv) – Gijzeling bij Mulder-boetes
-* artikel 221 Wetboek van Strafvordering – Gijzeling getuigen
+* artikel 221 Wetboek van Strafvordering (Sv) – Gijzeling getuigen
 * artikel 585 Wetboek van Burgerlijke Rechtsvordering – Civiele gijzeling
 * Penitentiaire beginselenwet – Behandeling gedetineerden
 * Grondwet artikel 15 – Vrijheidsbeneming
