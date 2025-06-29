@@ -259,7 +259,7 @@ Als je twijfelt aan de controle of je voelt je onjuist behandeld, kun je:
 
 Gerelateerde regelgeving
 
-* Wegenverkeerswet 1994 artikel 160 – Bevoegdheden politie bij verkeerscontrole.
+* Artikel 160 Wegenverkeerswet 1994 – Bevoegdheden politie bij verkeerscontrole.
 * Reglement voertuigen hoofdstuk 5.2 – Eisen aan voertuigonderdelen en functies.
 * Besluit alcohol, drugs en geneesmiddelen in het verkeer – Regels voor testmethodes.
 * Besluit administratieve bepalingen inzake het wegverkeer (BABW) – Inrichting van verkeerscontroles.
@@ -329,7 +329,7 @@ In deze situatie mogen zij door rood rijden zonder signalen, omdat de inzet spoe
 Rechten & plichten van de burger
 
 * Rechten:
-  * Je hebt het recht om je af te vragen of het rijgedrag van de politie verantwoord is en kunt dit melden (gebaseerd op Politiewet 2012 artikel 13: klachtrecht).
+  * Je hebt het recht om je af te vragen of het rijgedrag van de politie verantwoord is en kunt dit melden (gebaseerd op artikel 13 Politiewet 2012: klachtrecht).
 
 * Plichten:
   * Je hebt de plicht om geen hinder te veroorzaken bij het uitvoeren van een politie-inzet, ook als die onopvallend is (gebaseerd op artikel 5 Wegenverkeerswet 1994).
@@ -438,7 +438,7 @@ Gerelateerde regelgeving
 
 * Algemene wet op het binnentreden (Awbi) – regels over machtigingen en woningbegrip.
 * Wetboek van Strafvordering artikelen 96b t/m 96g – bevoegdheden voor inbeslagname en betreden niet-woningen.
-* Politiewet 2012 artikel 3 – taakomschrijving politie (waaronder opsporing en handhaving).
+* Artikel 3 Politiewet 2012 – taakomschrijving politie (waaronder opsporing en handhaving).
 
 Belangrijke rechtspraak
 
@@ -492,7 +492,7 @@ Dat mag dus niet. Jij hebt recht op het doen van aangifte, en de politie is verp
 
 Rechten & plichten van de burger
 
-Bron: Wetboek van Strafvordering artikel 163
+Bron: artikel 163 Wetboek van Strafvordering
 
 *  Je hebt het recht om aangifte te doen van een strafbaar feit.
 *  De politie heeft de plicht om je aangifte op te nemen.
@@ -515,7 +515,7 @@ Gerelateerde regelgeving
 
 * Artikel 163 Wetboek van Strafvordering – aangifteplicht politie
 * Artikel 164 Wetboek van Strafvordering – opmaken proces-verbaal
-* Politiewet 2012 artikel 3 – taak van de politie (waaronder opsporing)
+* Artikel 3 Politiewet 2012 – taak van de politie (waaronder opsporing)
 * Wet politiegegevens artikel 8 – registratie van aangiften en klachten
 
 
@@ -1667,15 +1667,15 @@ Je hoeft dus niet iets strafbaars te hebben gedaan om een winkelverbod te krijge
 Toch zijn er grenzen
 
 Een winkelverbod mag niet in strijd zijn met de wet, zoals:
-* Discriminatieverbod: Een verbod mag niet gebaseerd zijn op afkomst, huidskleur, geslacht, religie, etc. (Grondwet artikel 1).
-* Misbruik van recht: Als het verbod puur bedoeld is om te pesten of onder druk te zetten, kan dat onder omstandigheden als onrechtmatig gelden (Burgerlijk Wetboek artikel 162 – onrechtmatige daad).
+* Discriminatieverbod: Een verbod mag niet gebaseerd zijn op afkomst, huidskleur, geslacht, religie, etc. (artikel 1 Grondwet).
+* Misbruik van recht: Als het verbod puur bedoeld is om te pesten of onder druk te zetten, kan dat onder omstandigheden als onrechtmatig gelden (artikel 162 Burgerlijk Wetboek – onrechtmatige daad).
 
 Als je het gevoel hebt dat het verbod nergens op slaat of discriminerend is, kun je hier iets tegen doen (zie onder).
 
 ## Wetsartikelen waarop dit is gebaseerd
 
-* Grondwet artikel 1 – Gelijkheidsbeginsel en verbod op discriminatie.
-* Burgerlijk Wetboek artikel 162 – Onrechtmatige daad.
+* Artikel 1 Grondwet – Gelijkheidsbeginsel en verbod op discriminatie.
+* Artikel 162 Burgerlijk Wetboek – Onrechtmatige daad.
 * Huisrecht (juridisch leerstuk, niet één artikel) – Recht van een eigenaar om iemand toegang tot privéterrein te weigeren.
 
 ## Praktijkvoorbeeld
@@ -1689,7 +1689,7 @@ Je rechten (o.a. volgens BW en Grondwet):
 * Je mag de reden van het verbod vragen, maar de winkel is niet verplicht daar uitgebreid op in te gaan.
 
 Je plichten:
-* Je moet je aan het winkelverbod houden, ook als je het onterecht vindt. Doorgaan met binnenkomen kan worden gezien als huisvredebreuk (Wetboek van Strafrecht artikel 138).
+* Je moet je aan het winkelverbod houden, ook als je het onterecht vindt. Doorgaan met binnenkomen kan worden gezien als huisvredebreuk (artikel 138 Wetboek van Strafrecht).
 
 ## Wat kun je doen?
 
@@ -1700,9 +1700,9 @@ Je plichten:
 
 ## Gerelateerde regelgeving
 
-* Wetboek van Strafrecht artikel 138 – Huisvredebreuk: als je een winkel betreedt terwijl je daar niet mag zijn.
-* Grondwet artikel 1 – Discriminatieverbod.
-* Burgerlijk Wetboek artikel 162 – Onrechtmatige daad bij misbruik van bevoegdheid.
+* Artikel 138 Wetboek van Strafrecht – Huisvredebreuk: als je een winkel betreedt terwijl je daar niet mag zijn.
+* Artikel 1 Grondwet – Discriminatieverbod.
+* Artikel 162 Burgerlijk Wetboek – Onrechtmatige daad bij misbruik van bevoegdheid.
 
 ## Belangrijke rechtspraak of beleid
 
@@ -1734,8 +1734,8 @@ Rechten bij aanhouding en verhoor
 
 Iedere verdachte krijgt bij aanhouding direct te horen waarom hij is opgepakt en welke rechten hij heeft. Dit geldt ook voor minderjarigen. Zo moet de politie de verdachte informeren over:
 * de aard van de verdenking;
-* het zwijgrecht (niet meewerken aan vragen) (Wetboek van Strafvordering artikel 28);
-* het recht op rechtsbijstand (Wetboek van Strafvordering artikel 29).
+* het zwijgrecht (niet meewerken aan vragen) (artikel 28 Wetboek van Strafvordering);
+* het recht op rechtsbijstand (artikel 29 Wetboek van Strafvordering).
 
 Minderjarigen krijgen deze informatie in begrijpelijke bewoordingen, aangepast aan hun leeftijd, zodat ze écht begrijpen wat er speelt.
 
@@ -1840,7 +1840,7 @@ Ja. Het is verboden om tijdens het fietsen een mobiel apparaat zoals een telefoo
 
 Wettelijke grondslag
 
-Reglement verkeersregels en verkeerstekens 1990 artikel 61a verbiedt het vasthouden van een mobiel elektronisch apparaat tijdens het rijden. Onder "rijden" valt elke beweging op de fiets. Dit verbod geldt voor onder andere mobiele telefoons, tablets en mediaspelers.
+Artikel 61a Reglement verkeersregels en verkeerstekens 1990 verbiedt het vasthouden van een mobiel elektronisch apparaat tijdens het rijden. Onder "rijden" valt elke beweging op de fiets. Dit verbod geldt voor onder andere mobiele telefoons, tablets en mediaspelers.
 
 ## Wat betekent dat in de praktijk?
 
@@ -1848,7 +1848,7 @@ Je mag je telefoon niet in de hand hebben terwijl je fietst, ook niet wanneer je
 
 ## Praktijkvoorbeeld
 
-Je wilt onderweg je route controleren. Als je de telefoon in een houder op het stuur plaatst, mag de navigatie-app zichtbaar blijven; je hebt dan geen handvrije overtreding. Houd je de telefoon echter in je hand terwijl je doorfietst, dan overtreed je Reglement verkeersregels en verkeerstekens 1990 artikel 61a.
+Je wilt onderweg je route controleren. Als je de telefoon in een houder op het stuur plaatst, mag de navigatie-app zichtbaar blijven; je hebt dan geen handvrije overtreding. Houd je de telefoon echter in je hand terwijl je doorfietst, dan overtreed je artikel 61a Reglement verkeersregels en verkeerstekens 1990.
 
 ## Rechten en plichten van burgers
 
