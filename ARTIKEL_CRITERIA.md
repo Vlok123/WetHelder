@@ -80,6 +80,7 @@
 - ✅ **Alleen wetgeving/regelgeving**: Hyperlinks uitsluitend voor artikel- en wetnamen
 - ❌ **Geen losse teksten**: Geen hyperlinks voor gewone woorden of zinsdelen
 - ✅ **Correcte patronen**: "Artikel 8 Politiewet 2012", "Wetboek van Strafvordering"
+- ⚠️ **KRITIEK: Artikel-volgorde NOOIT veranderen**: Altijd "artikel [nummer] [wetboek]" - NOOIT omdraaien naar "[wetboek] artikel [nummer]"! Dit breekt hyperlinks!
 
 ### 2. **Opmaak & Styling**
 - ❌ **Geen ** tekens**: Alle markdown ** formatting automatisch verwijderen

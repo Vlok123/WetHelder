@@ -66,7 +66,7 @@ export const politieWetData = {
       description: 'Camerabeelden, persoonsgegevens, inzagerecht',
       icon: 'Eye',
       color: 'bg-purple-100 text-purple-800',
-      articleCount: 3
+      articleCount: 5
     },
     {
       slug: 'slachtoffer',
@@ -78,7 +78,7 @@ export const politieWetData = {
     },
     {
       slug: 'burgerrecht',
-      title: 'Burgerrecht & Winkels',
+      title: 'Civielrecht',
       description: 'Huisrecht van winkels, winkelverboden en burgerlijke geschillen',
       icon: 'Store',
       color: 'bg-indigo-100 text-indigo-800',
@@ -91,6 +91,14 @@ export const politieWetData = {
       icon: 'Users',
       color: 'bg-pink-100 text-pink-800',
       articleCount: 2
+    },
+    {
+      slug: 'geweld',
+      title: 'Geweld & Handhaving',
+      description: 'Wanneer mag de politie geweld gebruiken en welke middelen mogen zij inzetten?',
+      icon: 'Zap',
+      color: 'bg-red-100 text-red-800',
+      articleCount: 1
     },
     {
       slug: 'klacht',
@@ -1639,7 +1647,7 @@ Rechten:
       slug: 'winkelverbod-huisrecht',
       title: 'Mag een winkel mij zomaar een winkelverbod opleggen?',
       description: 'Uitgebreide gids over winkelverboden en huisrecht: wanneer mag een winkel je weigeren en wat zijn je rechten.',
-      category: 'Burgerrecht & Winkels',
+      category: 'Civielrecht',
       categorySlug: 'burgerrecht',
       seoTitle: 'Winkelverbod en huisrecht: mag dit zomaar?',
       seoDescription: 'Alles over winkelverboden: huisrecht van winkels, discriminatieverbod, je rechten en wat je kunt doen bij onterecht verbod.',
@@ -1859,6 +1867,242 @@ Fietsers moeten dit verbod naleven om verkeersveiligheid te bevorderen. Bij over
 U kunt uw telefoon in een houder op het stuur of in een fietstas plaatsen om veilig te navigeren zonder de regels te overtreden. Heeft u een boete gekregen die u onterecht vindt, dan kunt u binnen zes weken bezwaar maken bij de officier van justitie of gratis juridisch advies inwinnen bij het Juridisch Loket.
 
 Laatst gecheckt: december 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor uw eigen situatie.`
+    },
+    {
+      slug: 'agent-filmen-straat',
+      title: 'Mag ik een agent op straat filmen?',
+      description: 'Uitgebreide gids over het recht om politieagenten te filmen in de openbare ruimte, wetgeving en praktijktips.',
+      category: 'Privacy & Informatie',
+      categorySlug: 'privacy',
+      seoTitle: 'Mag ik een agent op straat filmen? | Rechten en regels',
+      seoDescription: 'Alles over het filmen van politieagenten: wanneer mag het, welke regels gelden en wat zijn je rechten volgens de wet.',
+      readTime: '6 min lezen',
+      lastUpdated: '2025-06-01',
+      views: 0,
+      tags: ['filmen', 'privacy', 'rechten', 'artikel 184 sr', 'portretrecht', 'informatievrijheid'],
+      featured: true,
+      content: `## Kort antwoord
+
+Ja, u mag in de openbare ruimte een politieagent filmen; de wet verbiedt dit niet. Alleen als uw opname de uitvoering van zijn taak belemmert, kan de agent u op grond van artikel 184 Sr een wettig bevel geven om te stoppen.
+
+## Uitgebreide uitleg
+
+### Wettelijke basis
+
+Filmen in de openbare ruimte valt onder de informatievrijheid (artikel 10 EVRM) en de vrijheid van meningsuiting. U mag optredens van politie vastleggen zolang u de orde en veiligheid niet verstoort.
+
+### artikel 184 Wetboek van Strafrecht
+
+**Tekst:**
+"Hij die opzettelijk niet voldoet aan een bevel of vordering (...) krachtens wettelijk voorschrift gedaan door een ambtenaar (...) belet, belemmert of verijdelt, wordt gestraft met (...) gevangenisstraf (...) of geldboete."
+
+Dit artikel ziet op het hinderen van een ambtenaar bij de uitoefening van zijn taak, niet op het filmen op gepaste afstand.
+
+### Portretrecht
+
+Het portretrecht (Auteurswet art. 19–21) staat het opnemen van ambtenaren in functie niet in de weg. Wel geldt: als u beelden publiceert met het doel iemands reputatie te schaden (bijvoorbeeld in een negatief artikel of via doxing), kan dit leiden tot civielrechtelijke claims (onrechtmatige daad) of strafrechtelijke vervolging voor belediging (bijv. artikel 261 Sr).
+
+## Praktijkvoorbeeld
+
+U filmt een aanhouding vanaf enkele meters afstand zonder de agent te hinderen. Dit is toegestaan. Publiceert u de beelden echter online met denigrerende of lasterlijke bijschriften, dan kan de agent u laten vervolgen voor bv belediging.
+
+## Rechten en plichten van burgers
+
+Burgers mogen filmen zolang zij:
+1. op voldoende afstand blijven en de politie niet hinderen,
+2. de opname zichtbaar en niet heimelijk maken,  
+3. een wettig bevel om te stoppen of te vertrekken opvolgen,
+4. de beelden niet gebruiken voor onrechtmatige of beledigende publicatie.
+
+## Wat kunt u doen?
+
+1. **Houd afstand** – film vanuit enkele meters zodat u de agent niet in de weg loopt.
+2. **Volg bevelen op** – voorkomt eventuele strafrechtelijke gevolgen.
+3. **Juridisch Loket** – gratis advies via juridischloket.nl.
+4. **Nationale Ombudsman** – klacht indienen via nationaleombudsman.nl.
+
+## Gerelateerde regelgeving
+
+* artikel 10 EVRM – Informatievrijheid en vrijheid van meningsuiting
+* artikel 184 Wetboek van Strafrecht – Niet voldoen aan wettig bevel ambtenaar
+* artikel 261 Wetboek van Strafrecht – Belediging
+* Auteurswet artikelen 19-21 – Portretrecht
+
+Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor uw eigen situatie.`
+    },
+    {
+      slug: 'persoonsgegevens-agent-legitimatie',
+      title: 'Welke persoonsgegevens moet een agent mij geven als ik erom vraag?',
+      description: 'Uitgebreide uitleg over het recht op identificatie van politieagenten: legitimatiebewijs, dienstnummer en privacybescherming.',
+      category: 'Privacy & Informatie',
+      categorySlug: 'privacy',
+      seoTitle: 'Persoonsgegevens agent: wat moet hij mij geven?',
+      seoDescription: 'Alles over identificatie van politieagenten: legitimatiebewijs, dienstnummer en wat wel/niet gedeeld moet worden.',
+      readTime: '5 min lezen',
+      lastUpdated: '2025-06-01',
+      views: 0,
+      tags: ['legitimatie', 'persoonsgegevens', 'dienstnummer', 'identificatie', 'ambtsinstructie'],
+      featured: true,
+      content: `## Kort antwoord
+
+Een politieagent is verplicht op verzoek zijn politielegitimatiebewijs te tonen. Hierop staat een foto en een dienstnummer; de naam hoeft niet getoond of genoemd te worden.
+
+## Uitgebreide uitleg
+
+### Wat zegt de wet?
+
+Volgens artikel 2 van de Ambtsinstructie moet elke politieambtenaar in functie een officieel legitimatiebewijs bij zich dragen. Dit legitimatiebewijs moet worden getoond als een burger daar om vraagt. De wet spreekt niet over het geven van naam of andere persoonsgegevens.
+
+Op het legitimatiebewijs staan in ieder geval:
+* een pasfoto van de agent,
+* een dienstnummer.
+
+De naam van de agent hoeft niet te worden vermeld of mondeling gedeeld. Dat is wettelijk niet verplicht.
+
+### Wat is een dienstnummer?
+
+Een dienstnummer is een uniek nummer waarmee een agent binnen de politieorganisatie geïdentificeerd kan worden. Dit nummer kan bestaan uit:
+
+* drie letters (van het vroegere district) met een volgnummer, bijvoorbeeld "ABC12345",
+* of een nieuw zescijferig nummer, bijvoorbeeld "123456".
+
+Beide varianten zijn geldig.
+
+### Waarom geen naam?
+
+De wet beschermt politieambtenaren tegen persoonlijke benadering of risico's buiten werktijd. Daarom is het dienstnummer voldoende om een agent te kunnen identificeren binnen de organisatie. Burgers kunnen via dat nummer navraag doen of een klacht indienen.
+
+## Praktijkvoorbeeld
+
+U wordt op straat aangesproken door een persoon in burgerkleding die zegt van de politie te zijn. U vraagt om legitimatie. De persoon toont een legitimatiebewijs met foto en dienstnummer "456789". U heeft daarmee voldaan aan uw recht op inzage, en de agent aan zijn plicht tot legitimatie.
+
+## Rechten en plichten van burgers
+
+Als burger heeft u het recht om:
+* te vragen om het politielegitimatiebewijs van een agent;
+* het dienstnummer en de foto te zien;
+* géén genoegen te nemen met een mondelinge uitleg zonder pas.
+
+U heeft geen recht op de naam van de agent.
+
+## Wat kunt u doen?
+
+Twijfelt u aan het optreden van een agent of is legitimatie geweigerd? Dan kunt u:
+* contact opnemen met de politie via 0900-8844 (vraag naar de dienstdoende teamchef of leidinggevende),
+* een klacht indienen via www.politie.nl/klacht,
+* advies vragen bij het Juridisch Loket via www.juridischloket.nl,
+* of contact opnemen met de Nationale ombudsman als u vindt dat uw klacht onjuist is afgehandeld.
+
+## Gerelateerde regelgeving
+
+* artikel 2 Ambtsinstructie – Legitimatieplicht politieambtenaren
+* Politiewet 2012 – Algemene bevoegdheden en plichten van de politie
+* Wet politiegegevens – Bescherming persoonsgegevens politieambtenaren
+
+Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor uw eigen situatie.`
+    },
+    {
+      slug: 'stroomstootwapen-gebruik-politie',
+      title: 'Wanneer mag de politie een stroomstootwapen gebruiken?',
+      description: 'Uitgebreide gids over wanneer en hoe de politie stroomstootwapens mag inzetten: regels, waarschuwingsplicht en burgerrechten.',
+      category: 'Geweld & Handhaving',
+      categorySlug: 'geweld',
+      seoTitle: 'Wanneer mag de politie een stroomstootwapen gebruiken?',
+      seoDescription: 'Alles over stroomstootwapen gebruik door politie: wanneer toegestaan, regels uit Ambtsinstructie en wat je kunt doen.',
+      readTime: '8 min lezen',
+      lastUpdated: '2025-06-01',
+      views: 0,
+      tags: ['stroomstootwapen', 'taser', 'geweld', 'ambtsinstructie', 'artikel 12c', 'politiegeweld'],
+      featured: true,
+      content: `## Kort antwoord
+
+De politie mag een stroomstootwapen gebruiken bij verzet of gevaarlijke situaties, zoals vlucht bij aanhouding of dreiging met geweld. Ze hoeven daarbij niet eerst andere geweldsmiddelen zoals pepperspray te gebruiken.
+
+## Uitgebreide uitleg
+
+### Wanneer mag de politie een stroomstootwapen inzetten?
+
+**Duidelijke regels met ruime toepassing**
+
+In artikel 12c van de Ambtsinstructie voor de politie staat precies omschreven wanneer een stroomstootwapen mag worden gebruikt. De voorwaarden zijn duidelijk, maar in de praktijk bieden ze relatief veel ruimte voor gebruik – vooral bij actief verzet of dreiging met geweld.
+
+### Inzet in schietmodus (pijltjes op afstand)
+
+De politie mag het stroomstootwapen in schietmodus gebruiken in de volgende situaties:
+
+1. **Aanhouding van een gewapend persoon:** Als iemand een wapen gereed heeft om direct te gebruiken tegen een ander, of direct ander geweld dreigt te gebruiken.
+
+2. **Bij verzet tegen aanhouding:** Als iemand zich verzet tegen een rechtmatige aanhouding of zich daaraan probeert te onttrekken.
+
+3. **Tegen agressieve dieren:** Als een dier direct gevaar oplevert.
+
+4. **Om ernstig letsel of levensgevaar af te wenden.**
+
+Dit middel is bedoeld om snel en gericht in te grijpen bij gevaarlijke of onhoudbare situaties.
+
+### Inzet in schokmodus (direct contact)
+
+De schokmodus, waarbij het apparaat rechtstreeks op het lichaam wordt geplaatst, mag alleen worden gebruikt:
+
+* tegen agressieve dieren, of
+* om direct gevaar voor het leven of zwaar lichamelijk letsel te voorkomen.
+
+### Geen verplichte volgorde van geweldsmiddelen
+
+De politie hoeft niet eerst pepperspray, wapenstok of andere lichtere middelen te gebruiken. Ze mogen direct kiezen voor het stroomstootwapen als dat het meest geschikte middel is in de situatie. Wel gelden de algemene geweldsregels uit:
+
+* artikel 7 Politiewet 2012, en
+* artikel 7 Ambtsinstructie
+
+Deze schrijven voor dat geweld altijd:
+* noodzakelijk moet zijn (geen andere manier),
+* proportioneel moet zijn (niet meer dan nodig), en  
+* gericht moet worden ingezet.
+
+### Waarschuwen is in principe verplicht
+
+Volgens artikel 12d Ambtsinstructie moet de politie het gebruik van een stroomstootwapen altijd vooraf aankondigen, tenzij de situatie dat niet toelaat.
+
+De waarschuwing bestaat uit:
+* een duidelijke verbale aankondiging, zoals "Politie, stroomstootwapen!", en
+* het zichtbaar richten van het rode richtpunt (laser) op de persoon.
+
+Is er sprake van acuut gevaar of snelle escalatie, dan mag de waarschuwing worden overgeslagen.
+
+## Praktijkvoorbeelden
+
+### 1. Aanhouding met verzet
+
+Een man is staande gehouden op verdenking van mishandeling. Tijdens de aanhouding begint hij te duwen, te schoppen en probeert hij te vluchten. Omdat hij zich actief verzet tegen een rechtmatige aanhouding en het risico op letsel toeneemt, mag de politie het stroomstootwapen in schietmodus gebruiken.
+
+### 2. Dreigende houding en vechtpositie
+
+Een persoon reageert agressief, schreeuwt bedreigingen en neemt een gevechtshouding aan tegenover agenten. Hij balt zijn vuisten en stapt op hen af. De politie mag het stroomstootwapen inzetten om het dreigende geweld direct te stoppen. Ze moeten het gebruik aankondigen, tenzij dat door de ernst van de situatie niet veilig is.
+
+## Rechten van burgers
+
+Als burger heb je bij het gebruik van een stroomstootwapen recht op:
+
+* **Inzage in het geweldsrapport** dat is opgemaakt
+* **Medische zorg**, als je letsel hebt opgelopen  
+* **Uitleg** over de reden van geweldgebruik
+* **Klacht indienen**, als je vindt dat het middel onterecht is ingezet
+
+## Wat kun je doen?
+
+* **Laat je medisch onderzoeken** als je bent geraakt door een stroomstootwapen.
+* **Dien een klacht in** via politie.nl/klacht als je het optreden onterecht vindt.
+* **Neem contact op** met het Juridisch Loket voor gratis advies.
+* **Meld het incident** bij de Nationale Ombudsman als je er met de politie niet uitkomt.
+
+## Gerelateerde regelgeving
+
+* artikel 12c Ambtsinstructie – Gebruik stroomstootwapen
+* artikel 12d Ambtsinstructie – Waarschuwingsplicht
+* artikel 7 Politiewet 2012 – Algemene geweldsregels
+* artikel 7 Ambtsinstructie – Proportionaliteit en noodzaak
+
+Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
     }
   ] as PolitieWetArticle[]
 } 

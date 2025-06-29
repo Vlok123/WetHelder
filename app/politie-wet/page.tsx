@@ -49,9 +49,18 @@ export default function PolitieWetPage() {
                 Politie & Wet
               </h1>
             </div>
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-xl text-gray-600 mb-6">
               Duidelijke antwoorden op veelgestelde vragen over politiewetgeving en jouw rechten als burger
             </p>
+            
+            <div className="bg-white/70 backdrop-blur-sm rounded-lg p-6 mb-8 text-left max-w-3xl mx-auto">
+              <h2 className="text-lg font-semibold text-gray-800 mb-3">Waarom Politie & Wet?</h2>
+              <p className="text-gray-700 leading-relaxed">
+                Het idee van deze sectie is dat je kunt opzoeken waar bepaalde politiebevoegdheden bij veelvoorkomende handelingen vandaan komen. 
+                De praktijk leert dat mensen vaak veel vragen hebben over het handelen van de politie. Dit is meestal goed uit te leggen op basis van de wet, 
+                maar deze diepere uitleg is vaak niet gemakkelijk te vinden op internet. Hier vind je heldere, toegankelijke informatie over je rechten en plichten.
+              </p>
+            </div>
             
             {/* Search Form */}
             <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
