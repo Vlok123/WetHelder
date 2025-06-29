@@ -237,65 +237,24 @@ interface GoogleSearchResult {
 /**
  * Detecteert of de huidige vraag een vervolgvraag is over hetzelfde onderwerp
  */
-function isFollowUpQuestion(currentQuery: string, context: ConversationContext | undefined): boolean {
+function isFollowUpQuestion(currentQuery: string, context: ConversationContext | undefined, history: ChatMessage[] = []): boolean {
+  // Simpelere detectie: als er history is OF als er context is binnen 30 minuten
+  if (history && history.length > 0) {
+    console.log('🔗 VERVOLGVRAAG GEDETECTEERD - History aanwezig:', history.length, 'berichten')
+    return true
+  }
+  
   if (!context || Date.now() - context.timestamp > 30 * 60 * 1000) { // 30 minuten timeout
     return false
   }
 
-  const currentLower = currentQuery.toLowerCase()
-  const lastLower = context.lastQuery.toLowerCase()
-
-  // Extract key topics from both queries
-  const currentTopics = extractLegalTopics(currentQuery)
-  const lastTopics = context.lastTopics
-
-  // Check for overlap in legal topics
-  const topicOverlap = currentTopics.filter(topic => 
-    lastTopics.some(lastTopic => 
-      topic.includes(lastTopic) || lastTopic.includes(topic) || 
-      levenshteinDistance(topic, lastTopic) < 3
-    )
-  )
-
-  // Check for follow-up patterns
-  const followUpPatterns = [
-    'en als ik', 'maar wat als', 'en dan', 'maar dan', 'wat gebeurt als',
-    'mag ik ook', 'en dan ook', 'geldt dat ook', 'en in het geval',
-    'maar dan moet', 'en als dat', 'wat als ik dan', 'en wanneer',
-    'hoe zit het met', 'en voor', 'geldt hetzelfde', 'dezelfde wet',
-    'dat artikel', 'die wet', 'die regel', 'dit geval', 'hierbij',
-    'verder nog', 'ook nog', 'andere vraag', 'vervolgvraag',
-    'kan je uitleggen', 'wat betekent dat', 'hoe werkt dat'
-  ]
-
-  const hasFollowUpPattern = followUpPatterns.some(pattern => 
-    currentLower.includes(pattern)
-  )
-
-  // Check for question continuation indicators
-  const continuationWords = ['ook', 'verder', 'daarnaast', 'tevens', 'bovendien', 'extra', 'aanvullend']
-  const hasContinuation = continuationWords.some(word => currentLower.includes(word))
-
-  // Check of vraag specifiek artikel betreft (nooit follow-up)
-  const isSpecificArticleQuery = /\b(\d+[a-z]*)\s+(sr|sv|bw|awb|wvw|politiewet|rv)\b/i.test(currentQuery) ||
-                                /(?:artikel|art\.?)\s+(\d+[a-z]*)/i.test(currentQuery)
-
-  // Veel striktere beslissingslogica voor follow-ups
-  const isFollowUp = !isSpecificArticleQuery && (
-    (topicOverlap.length >= 2 && hasFollowUpPattern) || // Sterke overlap EN expliciete vervolgvraag patronen
-    (hasFollowUpPattern && currentLower.includes('dat artikel')) || // Directe verwijzing naar vorig artikel
-    (hasFollowUpPattern && currentLower.includes('die wet')) || // Directe verwijzing naar vorige wet
-    (currentLower.includes('hetzelfde') && topicOverlap.length > 0) // Expliciete verwijzing naar hetzelfde
-  )
-
-  console.log(` Follow-up detectie: ${isFollowUp ? 'JA' : 'NEE'}`)
-  if (isFollowUp) {
-    console.log(` Topic overlap: ${topicOverlap.join(', ')}`)
-    console.log(` Follow-up pattern: ${hasFollowUpPattern}`)
-    console.log(`Hergebruik van ${context.lastSources.length} bronnen`)
+  // Eenvoudige check: als er minder dan 30 minuten is verstreken sinds laatste vraag
+  if (context.questionCount > 0) {
+    console.log('🔗 VERVOLGVRAAG GEDETECTEERD - Context aanwezig, vraagnummer:', context.questionCount + 1)
+    return true
   }
 
-  return isFollowUp
+  return false
 }
 
 /**
@@ -564,7 +523,7 @@ export async function POST(request: NextRequest) {
     // Get conversation context
     const sessionId = getSessionId(userId, request)
     const existingContext = conversationCache.get(sessionId)
-    const isFollowUp = isFollowUpQuestion(question, existingContext)
+    const isFollowUp = isFollowUpQuestion(question, existingContext, history)
 
     if (isFollowUp && existingContext) {
       console.log('VERVOLGVRAAG GEDETECTEERD - Hergebruik bestaande bronnen')
@@ -867,10 +826,27 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
     }
 
     // Voeg conversatie context toe voor betere vervolgvragen
-    const conversationHistory = isFollowUp && existingContext ? [{
-      role: 'user' as const,
-      content: `Vorige vraag: "${existingContext.lastQuery}"`
-    }] : []
+    let conversationHistory: ChatMessage[] = []
+    
+    if (isFollowUp && history && history.length > 0) {
+      console.log('📚 Voeg gesprekgeschiedenis toe aan context:', history.length, 'berichten')
+      
+      // Voeg een instructie toe dat dit een vervolgvraag is
+      conversationHistory.push({
+        role: 'system' as const,
+        content: `🔗 VERVOLGVRAAG CONTEXT: De gebruiker stelt een vervolgvraag. Hieronder volgt de volledige gesprekgeschiedenis. Verwijs naar eerdere antwoorden waar relevant en bouw voort op de context. Als de gebruiker vraagt om "het vorige artikel" of "die wet", verwijs dan naar informatie uit de eerdere berichten.`
+      })
+      
+      // Voeg alle berichten uit history toe (max 10 voor performance)
+      const recentHistory = history.slice(-10)
+      conversationHistory.push(...recentHistory)
+    } else if (isFollowUp && existingContext) {
+      console.log('📚 Voeg context toe van vorige vraag')
+      conversationHistory.push({
+        role: 'system' as const,
+        content: `🔗 VERVOLGVRAAG CONTEXT: De gebruiker stelt een vervolgvraag gerelateerd aan een eerdere vraag: "${existingContext.lastQuery}". Houd rekening met deze context bij uw antwoord.`
+      })
+    }
 
     // UITGEBREIDE SYSTEM PROMPT - Voor informatieve, grondige antwoorden
     const ASK_SYSTEM_PROMPT = `ROL & EXPERTISE

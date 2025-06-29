@@ -7,6 +7,7 @@ import { Navigation } from '@/components/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
@@ -339,13 +340,6 @@ function ChatPageContent() {
     }
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      sendMessage()
-    }
-  }
-
   const currentProfile = professionProfiles.find(p => p.id === settings.profession) || professionProfiles[0]
   const ProfileIcon = currentProfile.icon
 
@@ -576,24 +570,31 @@ function ChatPageContent() {
               {/* Input */}
               <div className="border-t p-4">
                 <div className="flex gap-3">
-                  <Input
+                  <Textarea
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder={messages.length > 0 ? "Stel een vervolgvraag..." : "Stel uw juridische vraag..."}
-                    className="flex-1 text-base"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault()
+                        sendMessage()
+                      }
+                    }}
+                    placeholder={messages.length > 0 ? "Stel een vervolgvraag... (Shift+Enter voor nieuwe regel)" : "Stel uw juridische vraag... (Shift+Enter voor nieuwe regel)"}
+                    className="flex-1 min-h-[80px] resize-none"
                     disabled={isLoading}
+                    rows={3}
                   />
                   <Button 
                     onClick={sendMessage} 
                     disabled={!input.trim() || isLoading}
                     size="lg"
+                    className="self-end"
                   >
                     <Send className="h-5 w-5" />
                   </Button>
                 </div>
                 <div className="text-xs text-gray-500 mt-2 text-center">
-                  Press Enter om te verzenden • Shift+Enter voor nieuwe regel
+                  Enter om te verzenden • Shift+Enter voor nieuwe regel
                   {messages.length > 0 && " • Uw gesprekgeschiedenis wordt meegenomen"}
                 </div>
               </div>

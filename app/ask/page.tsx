@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback, Suspense } from 'react'
 import { useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Navigation } from '@/components/navigation'
@@ -574,9 +575,8 @@ function AskPageContent() {
   const [remainingQuestions, setRemainingQuestions] = useState<number | null>(null)
   const [userRole, setUserRole] = useState<string>('ANONYMOUS')
   const [selectedCitationQuery, setSelectedCitationQuery] = useState<{queryId: string, question: string} | null>(null)
-  const [wetUitlegEnabled, setWetUitlegEnabled] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
   const hasAutoSubmitted = useRef(false)
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -642,22 +642,7 @@ function AskPageContent() {
   }, [profession])
 
   // Check for Wet & Uitleg preference from localStorage and URL parameters
-  useEffect(() => {
-    // Check URL parameter first
-    const wetuitlegParam = searchParams.get('wetuitleg')
-    if (wetuitlegParam === 'true') {
-      setWetUitlegEnabled(true)
-      return
-    }
-    
-    // Fall back to localStorage
-    const wetUitlegPref = localStorage.getItem('wetUitlegEnabled')
-    if (wetUitlegPref === 'true') {
-      setWetUitlegEnabled(true)
-      // Clear the preference after using it
-      localStorage.removeItem('wetUitlegEnabled')
-    }
-  }, [searchParams])
+  // Removed wetUitleg functionality - users can use /wetuitleg route instead
 
   // Check rate limit status on page load
   useEffect(() => {
@@ -751,7 +736,7 @@ function AskPageContent() {
           question,
           profession: currentProfession,
           history: conversationHistory,
-          wetUitleg: wetUitlegEnabled
+          wetUitleg: false // Removed - users can use /wetuitleg route instead
         }),
       })
 
@@ -814,7 +799,7 @@ function AskPageContent() {
     } finally {
       setIsLoading(false)
     }
-  }, [isLoading, profession, messages, setMessages, setInput, setIsLoading, setRemainingQuestions, wetUitlegEnabled, input])
+  }, [isLoading, profession, messages, setMessages, setInput, setIsLoading, setRemainingQuestions, input])
 
   // Handle URL parameters for auto-submit and profile setting
   useEffect(() => {
@@ -1051,7 +1036,7 @@ function AskPageContent() {
               <form onSubmit={(e) => handleSubmit(e, profession)} className="space-y-4">
                 {/* Question Input */}
                 <div className="flex gap-2">
-                  <Input
+                  <Textarea
                     ref={inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
@@ -1065,10 +1050,11 @@ function AskPageContent() {
                         }
                       }
                     }}
-                    placeholder="Stel je juridische vraag..."
-                    className="flex-1"
+                    placeholder="Stel je juridische vraag... (Shift+Enter voor nieuwe regel)"
+                    className="flex-1 min-h-[80px] resize-none"
+                    rows={3}
                   />
-                  <Button type="submit" disabled={isLoading || !input.trim() || (!session && remainingQuestions === 0)}>
+                  <Button type="submit" disabled={isLoading || !input.trim() || (!session && remainingQuestions === 0)} className="self-end">
                     {isLoading ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
@@ -1104,30 +1090,6 @@ function AskPageContent() {
                     </Select>
                   </div>
 
-                  {/* Wet & Uitleg Toggle */}
-                  <div className="flex items-center gap-2">
-                    <Button
-                      type="button"
-                      variant={wetUitlegEnabled ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setWetUitlegEnabled(!wetUitlegEnabled)}
-                      className="h-9 flex items-center gap-2"
-                      title={wetUitlegEnabled ? "Uitgebreide artikelanalyse ingeschakeld" : "Schakel uitgebreide artikelanalyse in"}
-                    >
-                      {wetUitlegEnabled ? (
-                        <ToggleRight className="h-4 w-4" />
-                      ) : (
-                        <ToggleLeft className="h-4 w-4" />
-                      )}
-                      <span className="text-xs">Wet & Uitleg</span>
-                      {wetUitlegEnabled && (
-                        <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
-                          +Artikelen
-                        </Badge>
-                      )}
-                    </Button>
-                  </div>
-
                   {/* Clear Button */}
                   {messages.length > 0 && (
                     <Button
@@ -1142,6 +1104,11 @@ function AskPageContent() {
                       Wis gesprek
                     </Button>
                   )}
+                </div>
+                
+                <div className="text-xs text-gray-500 text-center">
+                  Enter om te verzenden • Shift+Enter voor nieuwe regel
+                  {messages.length > 0 && " • Uw gesprekgeschiedenis wordt automatisch meegenomen"}
                 </div>
               </form>
             </CardContent>

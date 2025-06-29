@@ -1158,33 +1158,36 @@ function WetUitlegPage() {
           <CardContent className="p-3 md:p-6">
             <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
               {/* Question Input */}
-              <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
+              <div className="flex gap-3">
                 <Input
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Bijv: Wat zegt artikel 318 Sr?"
-                  className="flex-1 h-12 text-base"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault()
+                      submitQuery(input)
+                    }
+                  }}
+                  placeholder="Voer een artikel nummer in (bijv. artikel 96b Sv) of stel een juridische vraag..."
+                  className="flex-1"
                   disabled={isLoading}
                 />
                 <Button 
-                  type="submit" 
-                  disabled={isLoading || !input.trim() || (!session && remainingQuestions === 0)}
-                  className="h-12 px-4 md:px-6 w-full sm:w-auto"
+                  onClick={() => submitQuery(input)} 
+                  disabled={!input.trim() || isLoading}
                   size="lg"
                 >
                   {isLoading ? (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                      <span className="hidden sm:inline">Bezig...</span>
-                    </>
+                    <Loader2 className="h-5 w-5 animate-spin" />
                   ) : (
-                    <>
-                      <Send className="h-5 w-5 mr-2" />
-                      <span className="hidden sm:inline">Analyseer</span>
-                    </>
+                    <Send className="h-5 w-5" />
                   )}
                 </Button>
+              </div>
+              <div className="text-xs text-gray-500 mt-2 text-center">
+                Enter om te analyseren • Shift+Enter voor nieuwe regel
+                {analyses.length > 0 && " • Uw gesprekgeschiedenis wordt meegenomen"}
               </div>
 
               {/* Options */}
