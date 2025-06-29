@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { Search, ArrowLeft, Shield, Users, Car, Eye, FileText, AlertCircle, Clock } from 'lucide-react'
+import { Search, ArrowLeft, Shield, Users, Car, Eye, FileText, AlertCircle, Clock, Store } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -12,7 +12,7 @@ import { politieWetData, PolitieWetArticle } from '@/lib/politie-wet-data'
 
 // Icon mapping
 const iconMap = {
-  Shield, Users, Car, AlertCircle, Eye, FileText
+  Shield, Users, Car, AlertCircle, Eye, FileText, Store
 }
 
 // Categories data converted to lookup object
@@ -137,7 +137,7 @@ export default function CategoryPage() {
     )
   }
 
-  const IconComponent = category.icon
+  const IconComponent = category.icon || Shield
   const filteredArticles = articles.filter((article: PolitieWetArticle) =>
     article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     article.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
