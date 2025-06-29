@@ -66,7 +66,15 @@ export const politieWetData = {
       description: 'Camerabeelden, persoonsgegevens, inzagerecht',
       icon: 'Eye',
       color: 'bg-purple-100 text-purple-800',
-      articleCount: 0
+      articleCount: 2
+    },
+    {
+      slug: 'slachtoffer',
+      title: 'Slachtoffer & Rechten',
+      description: 'Rechten als slachtoffer van een misdrijf',
+      icon: 'Shield',
+      color: 'bg-teal-100 text-teal-800',
+      articleCount: 1
     },
     {
       slug: 'klacht',
@@ -1127,6 +1135,296 @@ Belangrijke rechtspraak / beleid
 
 Laatst gecheckt: 28 juni 2025
 Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'slachtofferrechten-misdrijf',
+      title: 'Wat zijn je rechten als slachtoffer van een misdrijf?',
+      description: 'Uitgebreide gids over je rechten als slachtoffer: bescherming, informatie, ondersteuning en deelname aan het strafproces.',
+      category: 'Slachtoffer & Rechten',
+      categorySlug: 'slachtoffer',
+      seoTitle: 'Rechten als slachtoffer van een misdrijf',
+      seoDescription: 'Volledige uitleg over slachtofferrechten: bescherming, informatie, ondersteuning, schadevergoeding en deelname aan strafproces.',
+      readTime: '10 min lezen',
+      lastUpdated: '2025-06-29',
+      views: 0,
+      tags: ['slachtoffer', 'rechten', 'strafproces', 'schadevergoeding', 'slachtofferhulp'],
+      featured: true,
+      content: `## Kort antwoord
+
+Als slachtoffer van een misdrijf heb je recht op bescherming, informatie en ondersteuning. Je mag soms ook actief deelnemen aan het strafproces, bijvoorbeeld door een verklaring af te leggen of een schadevergoeding te vragen.
+
+
+Uitgebreide uitleg
+
+Slachtoffer zijn – wat betekent dat eigenlijk?
+
+Wanneer je slachtoffer wordt van een misdrijf – bijvoorbeeld geweld, diefstal, seksueel geweld of een ernstig verkeersdelict – staat je leven vaak even stil. Het strafproces lijkt soms vooral te draaien om de verdachte, maar als slachtoffer heb je wél degelijk rechten. In Nederland zijn die rechten wettelijk vastgelegd en worden ze steeds beter beschermd.
+
+De overheid vindt het belangrijk dat jij je als slachtoffer gezien, gehoord en serieus genomen voelt. Daarom zijn er wettelijke regels die ervoor zorgen dat je weet wat je rechten zijn, hoe je hulp kunt krijgen en hoe je eventueel invloed kunt uitoefenen op de strafzaak.
+
+
+Recht op informatie en ondersteuning
+
+Als slachtoffer mag je verwachten dat je goed geïnformeerd wordt. Dat begint al bij de aangifte. Je moet duidelijk uitgelegd krijgen wat er met jouw melding gebeurt, hoe het strafproces in elkaar zit en wat jouw rol daarin kan zijn.
+
+Ook heb je recht op ondersteuning. Denk aan juridische hulp, emotionele steun of praktische begeleiding. Vaak wordt die hulp geboden door Slachtofferhulp Nederland, die jou kosteloos kan helpen bij:
+* het opstellen van een slachtofferverklaring,
+* het regelen van schadevergoeding,
+* of het omgaan met de emotionele impact.
+
+Je hoeft het dus niet alleen te doen.
+
+
+Meedoen in het strafproces
+
+Sommige slachtoffers mogen ook actief meedoen in de rechtszaak. Dit hangt af van het soort misdrijf. Als je bijvoorbeeld slachtoffer bent van een ernstig geweldsdelict of zedenmisdrijf, kun je gebruikmaken van een slachtofferverklaring.
+
+Daarin vertel je de rechter, de officier van justitie en de verdachte wat het misdrijf met jou heeft gedaan. Deze verklaring mag je schriftelijk indienen, maar je kunt die ook zelf voorlezen tijdens de zitting. Veel slachtoffers vinden dat belangrijk voor hun verwerking.
+
+Als je schade hebt geleden, zoals kapotte spullen of medische kosten, dan kun je vragen of de dader die kosten terugbetaalt. Dat doe je via een verzoek tot schadevergoeding. Dit kan vaak al tijdens het strafproces zelf, zodat je niet apart naar de civiele rechter hoeft.
+
+
+Bescherming en veiligheid
+
+De overheid neemt ook je veiligheid serieus. Als slachtoffer kun je bescherming krijgen, bijvoorbeeld als je bang bent dat de verdachte contact met je zoekt. In sommige gevallen kun je anoniem blijven in het strafdossier, of gescheiden van de verdachte wachten bij de rechtbank.
+
+Er zijn ook extra maatregelen mogelijk, zoals een contactverbod of een straatverbod via de rechter. Dit wordt per zaak bekeken.
+
+
+Inzicht in het dossier
+
+Je mag in bepaalde gevallen (gedeeltelijk) het strafdossier inzien. Bijvoorbeeld als je schadevergoeding vraagt of een verklaring wilt afleggen. Dit dossier bevat informatie over het onderzoek en de stand van zaken. De officier van justitie beslist of je toegang krijgt, soms met hulp van een advocaat of juridisch adviseur.
+
+
+Voorbeeld uit de praktijk
+
+Stel je voor: je fiets wordt gestolen, maar je raakt ook gewond doordat je omver wordt geduwd. Je doet aangifte bij de politie en krijgt hulp van Slachtofferhulp Nederland. Tijdens het strafproces lees je zelf je slachtofferverklaring voor in de rechtszaal. Je vraagt ook vergoeding van je medische kosten. De rechter neemt jouw verhaal serieus en veroordeelt de dader. De schadevergoeding wordt toegewezen.
+
+
+Meer weten?
+
+Op de website van de Rijksoverheid vind je een duidelijk overzicht van alle rechten voor slachtoffers en nabestaanden: 👉 www.rijksoverheid.nl/slachtofferrechten
+
+Daar vind je onder andere informatie over:
+* het verschil tussen slachtoffer en nabestaande;
+* de hulp die je kunt krijgen;
+* wat je mag verwachten tijdens het strafproces.
+
+
+Wetten waarop dit gebaseerd is
+
+* Wetboek van Strafvordering, artikel 51a t/m 51h
+* Wet ter versterking van de positie van het slachtoffer in het strafproces
+* Besluit schadefonds geweldsmisdrijven (voor vergoeding via de overheid als de dader onbekend of onvermogend is)
+
+
+Wat kun je doen?
+
+* Neem contact op met Slachtofferhulp Nederland via 0900-0101 of slachtofferhulp.nl
+* Vraag hulp bij het opstellen van een slachtofferverklaring of schadevergoeding
+* Bespreek met de officier van justitie of je mag deelnemen aan de zitting
+* Raadpleeg een advocaat bij complexe zaken
+
+
+Laatst gecheckt: 29 juni 2025
+Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'politie-persoonsgegevens',
+      title: 'Hoe gaat de politie om met mijn persoonsgegevens?',
+      description: 'Uitleg over hoe de politie persoonsgegevens verwerkt, welke regels gelden en wat jouw rechten zijn.',
+      category: 'Privacy & Informatie',
+      categorySlug: 'privacy',
+      seoTitle: 'Politie en persoonsgegevens: rechten en regels',
+      seoDescription: 'Alles over persoonsgegevens bij de politie: Wet politiegegevens, je rechten, inzage, correctie en bescherming.',
+      readTime: '8 min lezen',
+      lastUpdated: '2025-06-29',
+      views: 0,
+      tags: ['persoonsgegevens', 'privacy', 'wet politiegegevens', 'inzage', 'AVG'],
+      featured: true,
+      content: `## Kort antwoord
+
+De politie mag jouw persoonsgegevens verwerken, maar alleen als dat noodzakelijk is voor hun werk. Ze moeten zich daarbij houden aan strenge regels uit de Wet politiegegevens.
+
+
+Hoe werkt dit precies?
+
+De politie werkt met eigen privacyregels
+
+De politie gebruikt persoonsgegevens, bijvoorbeeld om misdrijven op te sporen of orde te handhaven. Maar dat mag niet zomaar. De regels hiervoor staan in de Wet politiegegevens (Wpg). Deze wet is speciaal gemaakt voor de politie en lijkt op de AVG (privacywet), maar is strenger door het soort werk dat de politie doet.
+
+
+Wanneer mag de politie gegevens verwerken?
+
+Volgens artikel 3 Wet politiegegevens mag de politie persoonsgegevens verwerken als dat nodig is voor:
+* opsporing van strafbare feiten
+* handhaving van de openbare orde en veiligheid
+* het verlenen van hulp aan mensen die dat nodig hebben
+* uitvoering van taken in het kader van vreemdelingencontrole of bewaking en beveiliging
+
+De gegevens mogen niet langer bewaard worden dan nodig is voor het doel waarvoor ze zijn verzameld (artikel 8 lid 1 Wpg).
+
+
+Welke gegevens gaat het om?
+
+Het kan gaan om allerlei soorten gegevens:
+* naam, adres, geboortedatum
+* foto's, camerabeelden, kentekens
+* informatie over contacten met de politie (zoals aangiften of staandehoudingen)
+
+Soms worden ook bijzondere persoonsgegevens verwerkt (bijvoorbeeld over gezondheid of etniciteit), maar dat mag alleen als er een wettelijke reden voor is (artikel 9 Wpg).
+
+
+Praktijkvoorbeeld
+
+Je wordt staande gehouden omdat je zonder licht fietst. De politieagent noteert je naam en geboortedatum om een waarschuwing of boete op te maken. Deze gegevens komen in een politiebestand, maar mogen niet eindeloos worden bewaard. Als je geen verdachte bent van iets ernstigs, worden ze na een bepaalde tijd automatisch verwijderd.
+
+
+Wat zijn jouw rechten?
+
+Volgens de artikelen 25 t/m 32 Wet politiegegevens heb je als burger rechten, zoals:
+* Recht op inzage: je mag vragen of en welke gegevens de politie over jou heeft.
+* Recht op correctie: als gegevens niet kloppen, mag je vragen om aanpassing.
+* Recht op verwijdering: als gegevens onterecht zijn vastgelegd.
+* Recht op informatie: je mag weten waarvoor je gegevens worden gebruikt, behalve als dat het werk van de politie zou verstoren.
+
+Je kunt dit regelen via de politie via www.politie.nl/privacy
+
+
+Wat kun je doen?
+
+* Inzageverzoek indienen bij de politie: ga naar politie.nl/privacy.
+* Klacht indienen bij de politie als je denkt dat jouw gegevens verkeerd gebruikt zijn.
+* Naar de Autoriteit Persoonsgegevens stappen als je klacht niet goed is afgehandeld: autoriteitpersoonsgegevens.nl
+
+
+Gerelateerde regelgeving
+
+* Wet politiegegevens (Wpg) – speciale privacywet voor politiegegevens
+* AVG (Algemene Verordening Gegevensbescherming) – geldt niet direct, maar wel als achtergrond
+* Besluit politiegegevens – bevat nadere regels, zoals bewaartermijnen en beveiliging
+
+
+Belangrijke rechtspraak en beleidsdocumenten
+
+1. ECLI:NL:HR:2020:1725 – Hoge Raad over bewaartermijnen bij politiegegevens
+2. Beleidsregel politiegegevens (ministerie van Justitie & Veiligheid) – geeft uitleg over hoe de politie de Wpg toepast
+3. Toezichtsrapporten Autoriteit Persoonsgegevens – geven inzicht in waar het soms misgaat
+
+
+Laatst gecheckt: 29 juni 2025
+Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'camerabeelden-126nda-bevel',
+      title: 'Wat moet ik doen als de politie om camerabeelden vraagt van de beveiligingscamera aan mijn woning?',
+      description: 'Uitgebreide gids over het 126nda bevel: wanneer je verplicht bent camerabeelden te delen en wat je rechten zijn.',
+      category: 'Privacy & Informatie',
+      categorySlug: 'privacy',
+      seoTitle: 'Politie vraagt camerabeelden: 126nda bevel uitgelegd',
+      seoDescription: 'Alles over het delen van camerabeelden met politie: artikel 126nda Sv, verplichtingen, rechten en praktische tips.',
+      readTime: '12 min lezen',
+      lastUpdated: '2025-06-29',
+      views: 0,
+      tags: ['camerabeelden', '126nda', 'bevel', 'privacy', 'bewakingscamera', 'strafvordering'],
+      featured: true,
+      content: `## 1. Kort antwoord in 2 zinnen
+
+Als je geen slachtoffer bent, vraagt de politie tegenwoordig meestal om camerabeelden via een officieel bevel op basis van artikel 126nda Wetboek van Strafvordering. Zo'n bevel is verplicht bij bepaalde strafbare feiten, en weigeren kan – in uitzonderlijke gevallen – strafbaar zijn.
+
+
+## 2. Uitgebreide uitleg
+
+Jij bent verantwoordelijk voor je camerabeelden
+
+Heb je een beveiligingscamera aan je woning die ook de openbare ruimte filmt? Dan ben jij verantwoordelijk voor de opslag en het beheer van die beelden. De politie mag daar niet zomaar bij, maar kan ze wel opvragen via duidelijke procedures.
+
+
+Vrijwillig delen mag, maar hoeft niet
+
+Soms vraagt de politie of je vrijwillig beelden wilt delen, bijvoorbeeld als getuige. Je bent dan vrij om ja of nee te zeggen. Als je zélf slachtoffer bent (bijvoorbeeld na vandalisme aan je auto), mag je beelden op basis van artikel 6 AVG vrijwillig geven, omdat je dan een gerechtvaardigd belang hebt.
+
+
+Steeds vaker: formeel bevel via artikel 126nda Sv
+
+In de praktijk vraagt de politie bijna standaard beelden via een formeel bevel op basis van artikel 126nda Wetboek van Strafvordering. Dit bevel kan worden opgelegd door een politieagent zelf (opsporingsambtenaar), zonder tussenkomst van een (hulp)officier van justitie.
+
+Dit bevel mag alleen worden gegeven bij strafbare feiten waarvoor voorlopige hechtenis is toegestaan. Dat staat in artikel 67 Wetboek van Strafvordering. Voorbeelden zijn:
+* Mishandeling
+* Diefstal
+* Inbraak
+* Vernieling
+* Bedreiging
+* Zedendelicten
+* Zware verkeersdelicten
+
+De gedachte hierachter is dat er sprake moet zijn van een zwaarder feit, voordat de politie een bevel tot gegevensafgifte mag inzetten.
+
+
+Wat houdt zo'n bevel in?
+
+Een 126nda-bevel moet altijd:
+* Schriftelijk zijn (of bij spoed: mondeling, gevolgd door schriftelijke bevestiging)
+* Duidelijk vermelden: welke gegevens worden gevorderd (zoals de datum en tijd van de beelden)
+* Afkomstig zijn van een bevoegde opsporingsambtenaar
+
+Als je zo'n bevel krijgt, ben je wettelijk verplicht om de gevraagde beelden aan te leveren.
+
+
+Wat als je niet meewerkt?
+
+In eerste instantie gaat de politie uit van medewerking. Maar als je opzettelijk weigert om aan een geldig bevel te voldoen, dan kun je strafbaar zijn op grond van artikel 184 Wetboek van Strafrecht. Dat artikel stelt dat wie een wettelijk gegeven ambtelijk bevel negeert, strafbaar is.
+
+Dit wordt doorgaans niet direct toegepast, maar het kan wel – zeker als je zonder geldige reden tegenwerkt.
+
+
+## 3. Exacte wetsartikelen
+
+* Artikel 126nda Wetboek van Strafvordering – Bevel tot uitlevering van opgeslagen gegevens
+* Artikel 67 lid 1 Wetboek van Strafvordering – Strafbare feiten waarvoor voorlopige hechtenis mogelijk is
+* Artikel 184 lid 1 sub 1 Wetboek van Strafrecht – Niet voldoen aan wettelijk bevel is strafbaar
+* Artikel 6 lid 1 sub f AVG – Vrijwillige verwerking bij gerechtvaardigd belang
+
+
+## 4. Praktijkvoorbeeld
+
+Op vrijdagavond vindt een zware mishandeling plaats op straat. De politie vermoedt dat jouw beveiligingscamera het incident heeft vastgelegd. Jij bent geen slachtoffer. Een agent overhandigt een 126nda-bevel, waarin gevraagd wordt om beelden van 21.00 tot 22.00 uur. Omdat mishandeling een feit is waarvoor voorlopige hechtenis geldt (artikel 67 Sv), is het bevel wettelijk toegestaan. Jij levert de beelden aan, waarmee de politie verder kan in het onderzoek.
+
+
+## 5. Rechten & plichten van de burger
+
+Bron: Wetboek van Strafvordering, Strafrecht, AVG
+* Je mag vragen of het gaat om een verzoek of een bevel
+* Je hebt recht op een schriftelijke kopie van het bevel
+* Je bent verplicht mee te werken aan een geldig 126nda-bevel bij een strafbaar feit uit artikel 67 Sv
+* De politie mag je woning of systemen niet binnengaan zonder aparte machtiging
+* Weigeren zonder geldige reden kan strafbaar zijn op grond van artikel 184 Sr
+
+
+## 6. Wat kun je doen?
+
+* Vraag altijd om verduidelijking: verzoek of bevel?
+* Controleer of het bevel schriftelijk, specifiek en onderbouwd is
+* Lever de beelden correct aan of bewaar een kopie voor jezelf
+* Twijfel je? Vraag advies bij een advocaat of het Juridisch Loket
+
+
+## 7. Gerelateerde regelgeving
+
+* AVG (Algemene Verordening Gegevensbescherming) – regels voor delen van persoonsgegevens
+* Wet politiegegevens – hoe de politie met persoonsgegevens moet omgaan
+* Besluit politiegegevens – nadere uitwerking van bewaartermijnen en verwerking
+
+
+## 8. Belangrijke rechtspraak of beleid
+
+* HR 30-11-1999, NJ 2000/204 – Rechtmatigheid van gegevensinbeslagname
+* Politiehandleiding camerabeelden bij opsporing (intern) – Adviseert standaard gebruik 126nda bij derden
+
+
+## 9. Laatst gecheckt
+
+29 juni 2025 Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
     }
   ] as PolitieWetArticle[]
 } 
