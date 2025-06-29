@@ -1652,7 +1652,6 @@ Rechten:
 
 Ja, een winkel mag in principe zelf bepalen wie zij wel of niet toelaat. Maar er zijn grenzen: het verbod mag niet discrimineren en moet redelijk zijn.
 
-
 ## Uitgebreide uitleg
 
 Een winkel is privéterrein
@@ -1661,32 +1660,27 @@ Winkels zijn juridisch gezien geen openbare ruimtes, maar privéterreinen die op
 
 Dat betekent dat een winkel een klant mag weigeren of de toegang mag ontzeggen, ook zonder strafbaar feit. Denk aan iemand die zich onbeleefd gedraagt, medewerkers lastigvalt, of herhaaldelijk problemen veroorzaakt.
 
-
 Geen strafbaar feit nodig
 
 Je hoeft dus niet iets strafbaars te hebben gedaan om een winkelverbod te krijgen. Ook ongewenst gedrag of herhaalde conflicten kunnen reden zijn. Het verbod kan mondeling of schriftelijk worden opgelegd. Bij een schriftelijk winkelverbod staat vaak ook voor hoelang het geldt en waarom het is opgelegd.
-
 
 Toch zijn er grenzen
 
 Een winkelverbod mag niet in strijd zijn met de wet, zoals:
 * Discriminatieverbod: Een verbod mag niet gebaseerd zijn op afkomst, huidskleur, geslacht, religie, etc. (Grondwet artikel 1).
-* Misbruik van recht: Als het verbod puur bedoeld is om te pesten of onder druk te zetten, kan dat onder omstandigheden als onrechtmatig gelden (Burgerlijk Wetboek 6 artikel 162 – onrechtmatige daad).
+* Misbruik van recht: Als het verbod puur bedoeld is om te pesten of onder druk te zetten, kan dat onder omstandigheden als onrechtmatig gelden (Burgerlijk Wetboek artikel 162 – onrechtmatige daad).
 
 Als je het gevoel hebt dat het verbod nergens op slaat of discriminerend is, kun je hier iets tegen doen (zie onder).
-
 
 ## Wetsartikelen waarop dit is gebaseerd
 
 * Grondwet artikel 1 – Gelijkheidsbeginsel en verbod op discriminatie.
-* Burgerlijk Wetboek 6 artikel 162 – Onrechtmatige daad.
+* Burgerlijk Wetboek artikel 162 – Onrechtmatige daad.
 * Huisrecht (juridisch leerstuk, niet één artikel) – Recht van een eigenaar om iemand toegang tot privéterrein te weigeren.
-
 
 ## Praktijkvoorbeeld
 
-Stel: je komt vaak in een winkel en maakt wel eens een sarcastische opmerking richting personeel. Op een dag zegt een medewerker dat je niet meer welkom bent vanwege "onprettig gedrag". Je hebt niks gestolen of iets kapotgemaakt. Toch mag de winkel dit doen, zolang het niet op discriminatie gebaseerd is of onredelijk escaleert.
-
+Je komt vaak in een winkel en maakt wel eens een sarcastische opmerking richting personeel. Op een dag zegt een medewerker dat je niet meer welkom bent vanwege "onprettig gedrag". Je hebt niks gestolen of iets kapotgemaakt. Toch mag de winkel dit doen, zolang het niet op discriminatie gebaseerd is of onredelijk escaleert.
 
 ## Rechten en plichten van de burger
 
@@ -1697,7 +1691,6 @@ Je rechten (o.a. volgens BW en Grondwet):
 Je plichten:
 * Je moet je aan het winkelverbod houden, ook als je het onterecht vindt. Doorgaan met binnenkomen kan worden gezien als huisvredebreuk (Wetboek van Strafrecht artikel 138).
 
-
 ## Wat kun je doen?
 
 * Vraag om de reden van het verbod en laat eventueel schriftelijk bevestigen.
@@ -1705,24 +1698,18 @@ Je plichten:
 * Vraag juridisch advies als je denkt dat het verbod discriminerend of onrechtmatig is.
 * Ga niet terug de winkel in, anders riskeer je een strafbaar feit.
 
-
 ## Gerelateerde regelgeving
 
 * Wetboek van Strafrecht artikel 138 – Huisvredebreuk: als je een winkel betreedt terwijl je daar niet mag zijn.
 * Grondwet artikel 1 – Discriminatieverbod.
-* Burgerlijk Wetboek 6 artikel 162 – Onrechtmatige daad bij misbruik van bevoegdheid.
-
+* Burgerlijk Wetboek artikel 162 – Onrechtmatige daad bij misbruik van bevoegdheid.
 
 ## Belangrijke rechtspraak of beleid
 
 * HR 29 maart 1991, NJ 1991, 668 (Woningbouwvereniging/Huurder) – over grenzen aan huisrecht.
 * HR 18 januari 2013, ECLI:NL:HR:2013:BY0550 – over onrechtmatige daad bij buitensluiting.
 
-
-## Laatst gecheckt
-
-29 juni 2025
-Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+Laatst gecheckt: 29 juni 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
     },
     {
       slug: 'minderjarige-verdachte-rechten',
