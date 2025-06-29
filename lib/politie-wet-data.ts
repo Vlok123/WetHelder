@@ -66,7 +66,7 @@ export const politieWetData = {
       description: 'Camerabeelden, persoonsgegevens, inzagerecht',
       icon: 'Eye',
       color: 'bg-purple-100 text-purple-800',
-      articleCount: 5
+      articleCount: 6
     },
     {
       slug: 'slachtoffer',
@@ -2101,6 +2101,95 @@ Als burger heb je bij het gebruik van een stroomstootwapen recht op:
 * artikel 12d Ambtsinstructie – Waarschuwingsplicht
 * artikel 7 Politiewet 2012 – Algemene geweldsregels
 * artikel 7 Ambtsinstructie – Proportionaliteit en noodzaak
+
+Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'zorgmelding-politie-hulpverlening',
+      title: 'De politie zegt dat ze een zorgmelding op gaan maken. Wat houdt dit in?',
+      description: 'Uitgebreide uitleg over zorgmeldingen door de politie: wanneer, aan wie, welke gegevens en wat je rechten zijn.',
+      category: 'Privacy & Informatie',
+      categorySlug: 'privacy',
+      seoTitle: 'Zorgmelding politie: wat betekent dit en wat zijn je rechten?',
+      seoDescription: 'Alles over zorgmeldingen door politie: wanneer ze worden gemaakt, welke gegevens gedeeld worden en wat je rechten zijn.',
+      readTime: '7 min lezen',
+      lastUpdated: '2025-06-01',
+      views: 0,
+      tags: ['zorgmelding', 'hulpverlening', 'GGD', 'GGZ', 'Veilig Thuis', 'persoonsgegevens', 'artikel 8 wet politiegegevens'],
+      featured: true,
+      content: `## Kort antwoord
+
+Een zorgmelding betekent dat de politie zorgen over iemands veiligheid of gezondheid doorgeeft aan een hulpinstantie. Dit gebeurt bijvoorbeeld bij psychische problemen, verwaarlozing of gevaarlijk gedrag.
+
+## Uitgebreide uitleg
+
+### Wat is een zorgmelding?
+
+Een **zorgmelding** is een melding die de politie doet bij een hulpverlenende organisatie als zij zich zorgen maakt over iemand. Het gaat dan om situaties waarin er (nog) geen strafbaar feit is, maar wel risico's voor de persoon zelf of de omgeving. De melding is bedoeld om hulpverlening op gang te brengen.
+
+De melding wordt meestal gedaan aan organisaties zoals de GGD, GGZ, Veilig Thuis of het wijkteam van de gemeente.
+
+### Wanneer doet de politie een zorgmelding?
+
+De politie doet een zorgmelding als zij signalen ziet die duiden op:
+
+* verward gedrag of psychische problemen;
+* mogelijk huiselijk geweld of verwaarlozing;
+* zelfverwaarlozing of gevaar voor eigen leven;
+* zorgen over kinderen of gezinnen;
+* terugkerende conflicten of overlast waarbij hulp nodig lijkt.
+
+De politie maakt dan een registratie aan met informatie over wat zij hebben gezien of gehoord.
+
+### Wat gebeurt er ná de zorgmelding?
+
+De instantie die de melding ontvangt, beoordeelt of actie nodig is. Mogelijke vervolgstappen zijn:
+
+* contact opnemen met de persoon of het gezin;
+* inschakelen van hulpverleners;
+* overleg met andere instanties (bijvoorbeeld het wijkteam);
+* in ernstige gevallen: gedwongen hulp of opname (via de Wet verplichte ggz of Wet zorg en dwang).
+
+De politie zelf is daarna meestal niet meer actief betrokken, tenzij er opnieuw incidenten zijn.
+
+### Worden je gegevens gedeeld?
+
+Ja. De politie mag in een zorgmelding persoonsgegevens vermelden, zoals:
+
+* naam en adresgegevens;
+* een omschrijving van de situatie;
+* de aanleiding voor de melding.
+
+Dat mag volgens **artikel 8 Wet politiegegevens**, als dit nodig is om schade aan personen te voorkomen. De ontvangende instantie moet zorgvuldig omgaan met deze gegevens en mag ze alleen gebruiken voor hulpverlening.
+
+## Praktijkvoorbeeld
+
+De politie treft een vrouw aan die verward over straat loopt en zegt dat ze niet meer verder wil leven. Ze heeft geen misdrijf gepleegd, maar de agenten maken zich zorgen. Ze brengen haar thuis en maken een zorgmelding bij de GGZ. Een dag later neemt een sociaalpsychiatrisch verpleegkundige contact op voor hulp.
+
+## Rechten van burgers
+
+Als burger heb je de volgende rechten:
+
+* Je hoeft **geen toestemming** te geven voor een zorgmelding.
+* Je mag **navragen** bij de politie of de instantie welke informatie is gemeld (dit hangt af van de situatie).
+* Je mag **inzage vragen** in je gegevens via een verzoek op grond van de Wet politiegegevens.
+* Je mag **klagen** of bezwaar maken als je vindt dat de melding onterecht is.
+
+## Wat kun je doen?
+
+* **Vraag de politie** om uitleg: waarom wordt de melding gedaan, aan wie, en met welke informatie?
+* **Neem contact op** met de instantie die de melding ontvangt om uitleg of correctie te vragen.
+* **Dien een klacht in** bij de politie via [www.politie.nl](https://www.politie.nl) als je het oneens bent met de melding.
+* **Vraag juridisch advies** via [www.juridischloket.nl](https://www.juridischloket.nl).
+* Bij zorgen over je privacy kun je terecht bij de **Autoriteit Persoonsgegevens**: [www.autoriteitpersoonsgegevens.nl](https://www.autoriteitpersoonsgegevens.nl).
+
+## Gerelateerde regelgeving
+
+* artikel 8 Wet politiegegevens – Verstrekking gegevens voor hulpverlening
+* Wet verplichte ggz – Gedwongen opname bij psychische problemen  
+* Wet zorg en dwang – Zorgdwang bij dementie
+* Jeugdwet – Zorg voor minderjarigen
+* Wet maatschappelijke ondersteuning – Hulp bij zelfredzaamheid
 
 Laatst gecheckt: juni 2025. Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
     }
