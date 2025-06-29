@@ -50,7 +50,7 @@ export const politieWetData = {
       description: 'Politiebevoegdheden op de weg, blaastest, stopteken',
       icon: 'Car',
       color: 'bg-orange-100 text-orange-800',
-      articleCount: 4
+      articleCount: 5
     },
     {
       slug: 'opsporing',
@@ -66,7 +66,7 @@ export const politieWetData = {
       description: 'Camerabeelden, persoonsgegevens, inzagerecht',
       icon: 'Eye',
       color: 'bg-purple-100 text-purple-800',
-      articleCount: 2
+      articleCount: 3
     },
     {
       slug: 'slachtoffer',
@@ -74,6 +74,14 @@ export const politieWetData = {
       description: 'Rechten als slachtoffer van een misdrijf',
       icon: 'Shield',
       color: 'bg-teal-100 text-teal-800',
+      articleCount: 1
+    },
+    {
+      slug: 'burgerrecht',
+      title: 'Burgerrecht & Winkels',
+      description: 'Huisrecht van winkels, winkelverboden en burgerlijke geschillen',
+      icon: 'Store',
+      color: 'bg-indigo-100 text-indigo-800',
       articleCount: 1
     },
     {
@@ -1425,6 +1433,288 @@ Bron: Wetboek van Strafvordering, Strafrecht, AVG
 ## 9. Laatst gecheckt
 
 29 juni 2025 Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'inzage-politiegegevens',
+      title: 'Mag ik weten wat de politie over mij weet?',
+      description: 'Uitgebreide gids over inzagerecht in politiegegevens: wanneer mag je opvragen wat de politie over jou heeft en welke uitzonderingen gelden.',
+      category: 'Privacy & Informatie',
+      categorySlug: 'privacy',
+      seoTitle: 'Inzagerecht politiegegevens: wat mag ik weten?',
+      seoDescription: 'Alles over inzage in politiegegevens: Wet politiegegevens, uitzonderingen, procedure en je rechten op correctie.',
+      readTime: '8 min lezen',
+      lastUpdated: '2025-06-29',
+      views: 0,
+      tags: ['inzagerecht', 'politiegegevens', 'wet politiegegevens', 'privacy', 'dossier'],
+      featured: true,
+      content: `## Kort antwoord
+
+Ja, je mag opvragen welke persoonsgegevens de politie van jou heeft opgeslagen. Dit heet een inzageverzoek op basis van de Wet politiegegevens (Wpg).
+
+
+## Uitgebreide uitleg
+
+Je mag jouw gegevens inzien
+
+Iedere burger heeft het recht om te weten welke persoonsgegevens de politie over hem of haar verwerkt. Dit staat in artikel 25 lid 1 van de Wet politiegegevens (Wpg). Je kunt daarvoor een verzoek indienen bij de politie – digitaal of schriftelijk.
+
+Het gaat hier dus niet om een volledig strafdossier, maar om gegevens die bijvoorbeeld in meldingen, politiesystemen of contactmomenten zijn geregistreerd.
+
+
+Wat valt onder 'politiegegevens'?
+
+Bijvoorbeeld:
+* Vermelding in een aangifte of melding.
+* Notities over overlast, signaleringen of controles.
+* Gesprekken of waarnemingen door de politie.
+* Gegevens in systemen zoals BVH, Summ-IT of HKS.
+
+
+Uitzonderingen op inzage
+
+De politie mag jouw inzageverzoek weigeren of beperken in bepaalde situaties:
+
+Volgens artikel 25 lid 2 Wpg:
+* Als inzage de veiligheid van de staat schaadt.
+* Als dit de opsporing van strafbare feiten belemmert.
+* Of: ter bescherming van de rechten en vrijheden van anderen.
+
+Volgens artikel 27 Wpg:
+* Mag de politie inzage uitstellen, beperken, of zelfs verzwijgen dat er gegevens zijn, als dat nodig is voor:
+    * Een lopend onderzoek;
+    * De bescherming van derden;
+    * Of de rechtsorde.
+
+
+Praktijkvoorbeeld
+
+Je bent drie jaar geleden betrokken geweest bij een burenruzie waarbij de politie is langsgekomen. Je vraagt je af of je naam nog ergens geregistreerd staat. Je dient een inzageverzoek in. De politie laat weten dat er een melding is waarin jouw naam genoemd wordt, maar sommige gegevens zijn afgeschermd omdat deze betrekking hebben op de buurman (bescherming rechten van anderen – artikel 27 Wpg).
+
+
+Rechten & plichten van de burger
+
+Op basis van de Wet politiegegevens heb je recht op:
+* Inzage in je persoonsgegevens (artikel 25 lid 1 Wpg).
+* Correctie of verwijdering van onjuiste of onrechtmatige gegevens (artikel 28 Wpg).
+* Beperking of verzet tegen verwerking in bepaalde gevallen (artikel 29 Wpg).
+
+Let op: de politie mag inzage weigeren of beperken op basis van artikel 25 lid 2 en artikel 27.
+
+
+Wat kun je doen?
+
+1. Inzageverzoek indienen bij de politie
+2. Reactietermijn: binnen 6 weken.
+3. Niet eens met het antwoord?
+    * Vraag om correctie of verwijdering (artikel 28).
+    * Dien een klacht in bij de politie.
+    * Of stap naar de Autoriteit Persoonsgegevens.
+
+
+Gerelateerde regelgeving
+
+* Wet politiegegevens (Wpg) – regelt verwerking van persoonsgegevens bij de politie.
+* Beleidsregels verwerking politiegegevens (Korpschef) – geeft uitleg over hoe de politie dit uitvoert.
+* AVG (voor zover van toepassing) – vult de Wpg in beperkte gevallen aan.
+
+
+Belangrijke rechtspraak / documenten
+
+* ECLI:NL:CBB:2020:497 – bevestigt dat inzage beperkt mag worden bij opsporingsbelang.
+* Handleiding Inzageverzoeken Politie (interne werkinstructie) – bepaalt hoe de politie met jouw verzoek omgaat.
+
+
+Laatst gecheckt: 29 juni 2025
+Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'snelheidsmeting-politie',
+      title: 'Op welke wijze kan de politie een snelheidsmeting doen en moeten zij dit aan mij kunnen bewijzen?',
+      description: 'Uitgebreide gids over snelheidsmetingen door politie: radar, laser, uitloopmeting en wat je rechten zijn bij bewijsvoering.',
+      category: 'Verkeer',
+      categorySlug: 'verkeer',
+      seoTitle: 'Snelheidsmeting politie: methoden en bewijsvoering',
+      seoDescription: 'Alles over politie snelheidsmetingen: radar, laser, ProVida, uitloopmeting, bewijsplicht en je rechten bij bezwaar.',
+      readTime: '10 min lezen',
+      lastUpdated: '2025-06-29',
+      views: 0,
+      tags: ['snelheidsmeting', 'radar', 'laser', 'uitloopmeting', 'provida', 'bewijsvoering', 'verkeer'],
+      featured: true,
+      content: `## 1. Kort antwoord
+
+De politie mag je snelheid meten met o.a. radar, laser of door je te volgen met een dienstvoertuig (uitloopmeting). Ze hoeven dit ter plekke niet te bewijzen, maar jij mag later de gegevens opvragen.
+
+
+## 2. Uitgebreide uitleg
+
+Hoe meet de politie snelheid?
+
+De politie gebruikt verschillende methoden om snelheid vast te stellen:
+* Radar of laser: Bekend van flitspalen of handbediende laserguns.
+* Trajectcontrole: Je gemiddelde snelheid wordt automatisch berekend tussen twee vaste punten.
+* ProVida-systeem: Vanuit een politievoertuig wordt je snelheid gemeten en vastgelegd op video.
+* Uitloopmeting: Een agent rijdt achter je en gebruikt de snelheidsmeter van het dienstvoertuig om jouw snelheid vast te stellen. Dit gebeurt zonder foto of digitale registratie.
+
+
+Wat is een uitloopmeting?
+
+Bij een uitloopmeting volgt de agent jouw voertuig, vaak als je wegrijdt van de politie. De agent houdt een constante afstand en kijkt naar de snelheid van de dienstauto, die volgens de wet gekalibreerd moet zijn. Die snelheid geldt dan als minimale gereden snelheid van jouw voertuig. Dit is toegestaan, ook zonder opname of meetrapport.
+
+Belangrijk:
+* De dienstauto moet voorzien zijn van een goedgekeurde en recent gekalibreerde snelheidsmeter.
+* De afstand en duur van de meting moeten voldoende zijn voor een betrouwbare inschatting.
+* De politieagent moet dit duidelijk vastleggen in het proces-verbaal.
+
+
+Moet de politie dit direct bewijzen?
+
+Nee. Agenten hoeven je op straat geen meetgegevens te tonen. Je krijgt meestal later een beschikking of proces-verbaal thuis. Als je het er niet mee eens bent, mag je in bezwaar gaan en daarbij inzage vragen in de meetgegevens, zoals:
+* Het type meting.
+* Kalibratiegegevens van het gebruikte apparaat of voertuig.
+* De observatie en verklaring van de agent.
+
+
+## 3. Wetsartikelen
+
+* Artikel 160 Wegenverkeerswet 1994: politie mag voertuigen stilhouden en controleren.
+* Artikel 5.1 Reglement verkeersregels en verkeerstekens 1990 (RVV 1990): verbiedt overschrijding van maximumsnelheid.
+* Artikel 8 Wet administratiefrechtelijke handhaving verkeersvoorschriften (Wet Mulder): boete via administratiefrechtelijke weg.
+* Artikel 7 lid 1 Politiewet 2012: toezicht op naleving van verkeersregels.
+* Artikel 152 Wegenverkeerswet 1994: verklaring van een opsporingsambtenaar geldt als bewijsmiddel.
+
+
+## 4. Praktijkvoorbeeld
+
+Een automobilist rijdt weg bij een verkeerslicht. Een agent vermoedt dat de bestuurder te hard rijdt. Hij volgt hem met de politieauto op constante afstand over een afstand van ongeveer 700 meter. De snelheidsmeter van de politieauto, die recent is gekalibreerd, geeft 104 km/u aan op een weg waar 80 is toegestaan. De agent noteert dit in het proces-verbaal. De bestuurder krijgt een boete op basis van deze uitloopmeting. Ook zonder foto is dit geldig bewijs.
+
+
+## 5. Rechten en plichten van de burger
+
+Plichten:
+* Stoppen bij een controle (artikel 160 WVW).
+* Je identificeren en rijbewijs tonen.
+
+Rechten:
+* Je mag bezwaar maken tegen de boete (artikel 6:4 Algemene wet bestuursrecht).
+* Je hebt recht op inzage in:
+    * Het proces-verbaal.
+    * De gebruikte meetmethode.
+    * Kalibratiegegevens (Regeling meetmiddelen politie 2022).
+
+
+## 6. Wat kun je doen?
+
+* Maak bezwaar als je twijfelt aan de juistheid van de meting.
+* Vraag om het proces-verbaal en kalibratiegegevens, vooral bij uitloopmetingen.
+* Schakel juridisch advies in bij twijfel of onduidelijkheid.
+* Controleer of het meetmiddel is toegestaan, bijvoorbeeld via de Regeling meetmiddelen politie 2022.
+
+
+## 7. Gerelateerde regelgeving
+
+* Regeling meetmiddelen politie 2022: bepaalt welke snelheidsmeetinstrumenten de politie mag gebruiken en hoe vaak deze gekalibreerd moeten worden.
+* Wet Mulder: regelt de administratieve afhandeling van verkeersboetes.
+* Besluit administratiefrechtelijke handhaving verkeersvoorschriften: geeft aan hoe bezwaar- en beroepsprocedures verlopen.
+
+
+## 8. Belangrijke rechtspraak
+
+* HR 29 juni 1999, ECLI:NL:HR:1999:ZD1490: verklaring van agent mag als bewijs dienen bij juiste toepassing van meetmethode.
+* RB Midden-Nederland 2021, ECLI:NL:RBMNE:2021:1534: uitloopmeting is geldig als het voertuig gekalibreerd is en de observatie goed is vastgelegd.
+
+
+## 9. Laatst gecheckt
+
+29 juni 2025 – Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
+    },
+    {
+      slug: 'winkelverbod-huisrecht',
+      title: 'Mag een winkel mij zomaar een winkelverbod opleggen, ook al denk ik dat ik niks fouts heb gedaan?',
+      description: 'Uitgebreide gids over winkelverboden en huisrecht: wanneer mag een winkel je weigeren en wat zijn je rechten.',
+      category: 'Burgerrecht & Winkels',
+      categorySlug: 'burgerrecht',
+      seoTitle: 'Winkelverbod en huisrecht: mag dit zomaar?',
+      seoDescription: 'Alles over winkelverboden: huisrecht van winkels, discriminatieverbod, je rechten en wat je kunt doen bij onterecht verbod.',
+      readTime: '7 min lezen',
+      lastUpdated: '2025-06-29',
+      views: 0,
+      tags: ['winkelverbod', 'huisrecht', 'discriminatie', 'burgerrecht', 'winkels'],
+      featured: true,
+      content: `## Kort antwoord
+
+Ja, een winkel mag in principe zelf bepalen wie zij wel of niet toelaat. Maar er zijn grenzen: het verbod mag niet discrimineren en moet redelijk zijn.
+
+
+## Uitgebreide uitleg
+
+Een winkel is privéterrein
+
+Winkels zijn juridisch gezien geen openbare ruimtes, maar privéterreinen die openstaan voor publiek. De eigenaar of beheerder heeft daarom het recht om te bepalen wie toegang krijgt. Dit heet het huisrecht.
+
+Dat betekent dat een winkel een klant mag weigeren of de toegang mag ontzeggen, ook zonder strafbaar feit. Denk aan iemand die zich onbeleefd gedraagt, medewerkers lastigvalt, of herhaaldelijk problemen veroorzaakt.
+
+
+Geen strafbaar feit nodig
+
+Je hoeft dus niet iets strafbaars te hebben gedaan om een winkelverbod te krijgen. Ook ongewenst gedrag of herhaalde conflicten kunnen reden zijn. Het verbod kan mondeling of schriftelijk worden opgelegd. Bij een schriftelijk winkelverbod staat vaak ook voor hoelang het geldt en waarom het is opgelegd.
+
+
+Toch zijn er grenzen
+
+Een winkelverbod mag niet in strijd zijn met de wet, zoals:
+* Discriminatieverbod: Een verbod mag niet gebaseerd zijn op afkomst, huidskleur, geslacht, religie, etc. (Grondwet artikel 1).
+* Misbruik van recht: Als het verbod puur bedoeld is om te pesten of onder druk te zetten, kan dat onder omstandigheden als onrechtmatig gelden (Burgerlijk Wetboek 6 artikel 162 – onrechtmatige daad).
+
+Als je het gevoel hebt dat het verbod nergens op slaat of discriminerend is, kun je hier iets tegen doen (zie onder).
+
+
+## Wetsartikelen waarop dit is gebaseerd
+
+* Grondwet artikel 1 – Gelijkheidsbeginsel en verbod op discriminatie.
+* Burgerlijk Wetboek 6 artikel 162 – Onrechtmatige daad.
+* Huisrecht (juridisch leerstuk, niet één artikel) – Recht van een eigenaar om iemand toegang tot privéterrein te weigeren.
+
+
+## Praktijkvoorbeeld
+
+Stel: je komt vaak in een winkel en maakt wel eens een sarcastische opmerking richting personeel. Op een dag zegt een medewerker dat je niet meer welkom bent vanwege "onprettig gedrag". Je hebt niks gestolen of iets kapotgemaakt. Toch mag de winkel dit doen, zolang het niet op discriminatie gebaseerd is of onredelijk escaleert.
+
+
+## Rechten en plichten van de burger
+
+Je rechten (o.a. volgens BW en Grondwet):
+* Je mag bezwaar maken tegen een winkelverbod als dit in strijd is met de wet, bijvoorbeeld vanwege discriminatie.
+* Je mag de reden van het verbod vragen, maar de winkel is niet verplicht daar uitgebreid op in te gaan.
+
+Je plichten:
+* Je moet je aan het winkelverbod houden, ook als je het onterecht vindt. Doorgaan met binnenkomen kan worden gezien als huisvredebreuk (Artikel 138 Strafrecht).
+
+
+## Wat kun je doen?
+
+* Vraag om de reden van het verbod en laat eventueel schriftelijk bevestigen.
+* Maak bezwaar bij de winkel zelf (bijvoorbeeld via een e-mail aan de manager).
+* Vraag juridisch advies als je denkt dat het verbod discriminerend of onrechtmatig is.
+* Ga niet terug de winkel in, anders riskeer je een strafbaar feit.
+
+
+## Gerelateerde regelgeving
+
+* Artikel 138 Wetboek van Strafrecht – Huisvredebreuk: als je een winkel betreedt terwijl je daar niet mag zijn.
+* Grondwet artikel 1 – Discriminatieverbod.
+* Artikel 6:162 BW – Onrechtmatige daad bij misbruik van bevoegdheid.
+
+
+## Belangrijke rechtspraak of beleid
+
+* HR 29 maart 1991, NJ 1991, 668 (Woningbouwvereniging/Huurder) – over grenzen aan huisrecht.
+* HR 18 januari 2013, ECLI:NL:HR:2013:BY0550 – over onrechtmatige daad bij buitensluiting.
+
+
+## Laatst gecheckt
+
+29 juni 2025
+Algemene informatie; uitzonderingen mogelijk – vraag deskundig advies voor je eigen situatie.`
     }
   ] as PolitieWetArticle[]
 } 
