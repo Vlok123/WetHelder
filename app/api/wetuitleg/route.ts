@@ -496,13 +496,28 @@ Geef een accurate, wettelijk onderbouwde analyse met bronvermelding.`
           if (!validation.isValid && validation.confidence === 'low') {
             console.log('❌ Antwoord faalde validatie')
             
-            const warningMessage = `⚠️ **ONVOLLEDIGE INFORMATIE**
+            // Filter alleen officiële overheidsbronnen voor waarschuwing
+            const officialSourcesForWarning = legalSources.filter(s => 
+              s.domain.includes('wetten.overheid.nl') || 
+              s.domain.includes('rechtspraak.nl') || 
+              s.domain.includes('rijksoverheid.nl') ||
+              s.domain.includes('om.nl')
+            ).slice(0, 3)
+
+            let warningMessage = `⚠️ **ONVOLLEDIGE INFORMATIE**
 
 Gebaseerd op de beschikbare internetbronnen kan ik geen volledig betrouwbaar antwoord geven omdat:
-${validation.warnings.map(w => `• ${w}`).join('\n')}
+${validation.warnings.map(w => `• ${w}`).join('\n')}`
 
-**Beschikbare bronnen:**
-${legalSources.slice(0, 3).map(s => `• ${s.title} - ${s.link}`).join('\n')}
+            // Alleen officiële bronnen vermelden als die er zijn
+            if (officialSourcesForWarning.length > 0) {
+              warningMessage += `
+
+**Beschikbare officiële bronnen:**
+${officialSourcesForWarning.map(s => `• ${s.title} - ${s.link}`).join('\n')}`
+            }
+
+            warningMessage += `
 
 **Aanbeveling:**
 • Raadpleeg de volledige wettekst op wetten.overheid.nl
@@ -521,13 +536,27 @@ ${legalSources.slice(0, 3).map(s => `• ${s.title} - ${s.link}`).join('\n')}
             console.log('✅ Antwoord goedgekeurd door validatie')
             
             // Voeg bronvermelding en validatie-info toe
-            const validatedAnswer = `${initialAnswer}
+            const officialGovernmentSources = legalSources.filter(s => 
+              s.verified && (
+                s.domain.includes('wetten.overheid.nl') || 
+                s.domain.includes('rechtspraak.nl') || 
+                s.domain.includes('rijksoverheid.nl') ||
+                s.domain.includes('om.nl')
+              )
+            ).slice(0, 3)
+
+            let validatedAnswer = initialAnswer
+
+            // Alleen bronvermelding tonen als er officiële overheidsbronnen zijn
+            if (officialGovernmentSources.length > 0) {
+              validatedAnswer += `
 
 ---
 **📚 BRONVERMELDING:**
-${legalSources.filter(s => s.verified).slice(0, 5).map(s => 
-  `• ${s.title} - ${s.link}`
-).join('\n')}
+${officialGovernmentSources.map(s => `• ${s.title} - ${s.link}`).join('\n')}`
+            }
+
+            validatedAnswer += `
 
 ✅ **Betrouwbaarheid: ${validation.confidence.toUpperCase()}**
 ${validation.verifiedFacts.length > 0 ? `\n🔍 **Geverifieerde feiten:**\n${validation.verifiedFacts.map(f => `• ${f}`).join('\n')}` : ''}
