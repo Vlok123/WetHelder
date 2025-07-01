@@ -3,22 +3,7 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import OpenAI from 'openai'
-import { 
-  findRelevantOfficialSources,
-  type OfficialSourceItem 
-} from '@/lib/officialSources'
-import { searchVerifiedJuridicalSources } from '@/lib/googleSearch'
-import { 
-  searchJsonSources, 
-  formatJsonSourcesForContext,
-  type JsonBron 
-} from '@/lib/jsonSources'
-import { 
-  validateLegalInformation, 
-  generateValidationDisclaimer, 
-  getReliabilityIndicator,
-  type LegalQuery 
-} from '@/lib/validation'
+import { findLocalLegalText, LocalLegalText } from '@/lib/localLegalTexts'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -33,16 +18,15 @@ interface RateLimitEntry {
   resetTime: number
 }
 
-const rateLimitMap = new Map<string, RateLimitEntry>()
-
-// Internal function to reset rate limits (for admin use)
-function resetRateLimits(): void {
-  rateLimitMap.clear()
-  console.log('Wetuitleg rate limits cleared')
+interface ValidationResult {
+  isValid: boolean
+  confidence: 'high' | 'medium' | 'low'
+  warnings: string[]
+  verifiedFacts: string[]
+  potentialErrors: string[]
 }
 
-// Make reset function available globally for admin route
-;(globalThis as any).resetWetuitlegRateLimits = resetRateLimits
+const rateLimitMap = new Map<string, RateLimitEntry>()
 
 function getClientIP(request: NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for')
@@ -64,19 +48,15 @@ function checkRateLimit(ip: string): { allowed: boolean; remaining: number } {
   const entry = rateLimitMap.get(ip)
   
   if (!entry || now > entry.resetTime) {
-    // Reset or create new entry
-    rateLimitMap.set(ip, {
-      count: 0,
-      resetTime: now + RATE_LIMIT_WINDOW
-    })
-    return { allowed: true, remaining: MAX_ANONYMOUS_REQUESTS }
+    rateLimitMap.set(ip, { count: 0, resetTime: now + RATE_LIMIT_WINDOW })
+    return { allowed: true, remaining: MAX_ANONYMOUS_REQUESTS - 1 }
   }
   
   if (entry.count >= MAX_ANONYMOUS_REQUESTS) {
     return { allowed: false, remaining: 0 }
   }
   
-  return { allowed: true, remaining: MAX_ANONYMOUS_REQUESTS - entry.count }
+  return { allowed: true, remaining: MAX_ANONYMOUS_REQUESTS - entry.count - 1 }
 }
 
 function incrementRateLimit(ip: string): void {
@@ -86,1124 +66,482 @@ function incrementRateLimit(ip: string): void {
   }
 }
 
-// Enhanced article extraction using Google Search - now supports RV (Reglement Voertuigen)
-function extractArticleReferences(query: string): string[] {
-  const references: string[] = []
-  const lowerQuery = query.toLowerCase()
+// 🔍 JURIDISCHE VRAAG ANALYSE (VERBETERD)
+async function analyzeJuridicalQuestion(query: string): Promise<{
+  legalConcepts: string[]
+  articleReferences: string[]
+  lawBooks: string[]
+  complexity: 'simple' | 'complex'
+  requiresValidation: boolean
+}> {
+  console.log('🧠 Analyseren juridische vraag...')
   
-  // Pattern 1: "artikel 8 Politiewet 2012" - Enhanced for full law names with years and lid numbers
-  const fullLawMatch = lowerQuery.match(/(?:artikel|art\.?)\s+(\d+[a-z]*(?::\d+)?(?:\s+lid\s+\d+)*)\s+(politiewet\s*\d{4}|wetboek\s+van\s+strafrecht|wetboek\s+van\s+strafvordering|burgerlijk\s+wetboek|algemene\s+wet\s+bestuursrecht|wegenverkeerswet\s*\d{4}?|wet\s+op\s+de\s+identificatieplicht)/i)
-  if (fullLawMatch) {
-    references.push(`artikel ${fullLawMatch[1]} ${fullLawMatch[2]}`)
-  }
+  // Eerst lokale pattern matching voor bekende artikelen
+  const localPatterns = [
+    { pattern: /artikel\s*8\s*wet\s*politiegegevens/i, ref: 'artikel 8 Wet politiegegevens' },
+    { pattern: /artikel\s*8\s*wpg/i, ref: 'artikel 8 Wet politiegegevens' },
+    { pattern: /artikel\s*27\s*(sv|strafvordering)/i, ref: 'artikel 27 Wetboek van Strafvordering' },
+    { pattern: /artikel\s*8a?\s*politiewet/i, ref: 'artikel 8a Politiewet 2012' },
+    { pattern: /artikel\s*2\s*identificatieplicht/i, ref: 'artikel 2 Wet op de identificatieplicht' }
+  ]
   
-  // Pattern 2: "artikel 304 sr" or "art 304 sr" - Short codes with lid support
-  const artikelMatch = lowerQuery.match(/(?:artikel|art\.?)\s+(\d+[a-z]*(?::\d+)?(?:\s+lid\s+\d+)*)\s+(sr|sv|bw|awb|wvw|politiewet|rv)\b/i)
-  if (artikelMatch) {
-    references.push(`artikel ${artikelMatch[1]} ${artikelMatch[2].toUpperCase()}`)
-  }
-  
-  // Pattern 3: Special handling for RVV (Reglement verkeersregels en verkeerstekens)
-  const rvvMatch = lowerQuery.match(/(?:artikel|art\.?)?\s*(\d+)\s+(?:rvv|reglement\s+verkeersregels)/i)
-  if (rvvMatch) {
-    const articleNum = rvvMatch[1]
-    references.push(`artikel ${articleNum} RVV 1990`)
-    console.log(`Detected RVV artikel ${articleNum} - adding specific RVV 1990 reference`)
-  }
-  
-  // Pattern 4: "29 rvv" (short format for RVV)
-  const shortRvvMatch = lowerQuery.match(/\b(\d+)\s+rvv\b/i)
-  if (shortRvvMatch && !references.some(ref => ref.includes('RVV'))) {
-    references.push(`artikel ${shortRvvMatch[1]} RVV 1990`)
-    console.log(`Detected short RVV format: artikel ${shortRvvMatch[1]} RVV 1990`)
-  }
-  
-  // Pattern 5: "304 sr" (short format for other laws)
-  const shortMatch = lowerQuery.match(/\b(\d+[a-z]*)\s+(sr|sv|bw|awb|wvw|politiewet|rv)\b/i)
-  if (shortMatch && !references.some(ref => ref.includes(shortMatch[1]))) {
-    references.push(`artikel ${shortMatch[1]} ${shortMatch[2].toUpperCase()}`)
-  }
-  
-  // Pattern 6: Vehicle regulation patterns like "5.2.42 RV" or "artikel 5.2.42 RV"
-  const vehicleMatch = lowerQuery.match(/(?:artikel\s+)?(\d+\.\d+\.\d+)\s+(rv|reglement\s+voertuigen)/i)
-  if (vehicleMatch) {
-    references.push(`artikel ${vehicleMatch[1]} RV`)
-  }
-  
-  // Pattern 7: Extended format like "5.2.42 van het RV" 
-  const extendedVehicleMatch = lowerQuery.match(/(?:artikel\s+)?(\d+\.\d+\.\d+)\s+(?:van\s+het\s+)?(rv|reglement\s+voertuigen)/i)
-  if (extendedVehicleMatch && !references.some(ref => ref.includes(extendedVehicleMatch[1]))) {
-    references.push(`artikel ${extendedVehicleMatch[1]} RV`)
-  }
-  
-  // Pattern 8: Questions about specific RV articles like "wat zegt 5.2.42 RV"
-  const questionMatch = lowerQuery.match(/(?:wat\s+zegt|inhoud\s+van|tekst\s+van)?\s*(\d+\.\d+\.\d+)\s+(rv|reglement\s+voertuigen)/i)
-  if (questionMatch && !references.some(ref => ref.includes(questionMatch[1]))) {
-    references.push(`artikel ${questionMatch[1]} RV`)
-  }
-  
-  // Pattern 9: "304 strafrecht" (infer law code)
-  const inferMatch = lowerQuery.match(/\b(\d+[a-z]*)\s+(?:wetboek\s+van\s+)?(?:strafrecht|strafvordering|burgerlijk\s+wetboek|awb|wegenverkeerswet|politiewet)/i)
-  if (inferMatch && !references.some(ref => ref.includes(inferMatch[1]))) {
-    if (lowerQuery.includes('strafrecht')) {
-      references.push(`artikel ${inferMatch[1]} Sr`)
-    } else if (lowerQuery.includes('strafvordering')) {
-      references.push(`artikel ${inferMatch[1]} Sv`)
+  const foundArticles: string[] = []
+  for (const { pattern, ref } of localPatterns) {
+    if (pattern.test(query)) {
+      foundArticles.push(ref)
+      console.log(`🎯 Lokaal artikel gedetecteerd: ${ref}`)
     }
   }
   
-  // Pattern 10: Special handling for "wat zegt 447e strafrecht" type questions
-  const whatSaysMatch = lowerQuery.match(/(?:wat\s+zegt|inhoud\s+van|tekst\s+van)?\s*(\d+[a-z]*)\s+(?:wetboek\s+van\s+)?strafrecht/i)
-  if (whatSaysMatch && !references.some(ref => ref.includes(whatSaysMatch[1]))) {
-    references.push(`artikel ${whatSaysMatch[1]} Sr`)
+  const analysisPrompt = `Analyseer deze juridische vraag: "${query}"
+
+Identificeer:
+1. Juridische concepten (bijv. aanhouding, huiszoeking, politiegegevens, etc.)
+2. Artikelverwijzingen (bijv. artikel 27 Sr, art 8a Politiewet, artikel 8 Wet politiegegevens)
+3. Wetboeken (bijv. Strafrecht, Strafvordering, Politiewet, Wet politiegegevens)
+4. Complexiteit (simple/complex)
+5. Of dit een high-risk vraag is die extra validatie vereist
+
+LET OP: Als de vraag gaat over "artikel 8 Wet politiegegevens" of soortgelijke specifieke artikelen, zorg ervoor dat deze exact worden opgenomen in articleReferences.
+
+Geef je antwoord in dit exacte JSON formaat:
+{
+  "legalConcepts": ["concept1", "concept2"],
+  "articleReferences": ["artikel X wetboek", "art Y"],
+  "lawBooks": ["wetboek1", "wetboek2"],
+  "complexity": "simple",
+  "requiresValidation": true
+}`
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [{ role: 'user', content: analysisPrompt }],
+      temperature: 0.1,
+      max_tokens: 500
+    })
+
+    const analysis = JSON.parse(response.choices[0]?.message?.content || '{}')
+    
+    // Voeg lokaal gevonden artikelen toe
+    if (foundArticles.length > 0) {
+      analysis.articleReferences = [...new Set([...foundArticles, ...(analysis.articleReferences || [])])]
+    }
+    
+    console.log('✅ Vraag geanalyseerd:', analysis)
+    return analysis
+  } catch (error) {
+    console.error('❌ Fout bij vraag analyse:', error)
+    return {
+      legalConcepts: [],
+      articleReferences: foundArticles, // Gebruik lokaal gevonden artikelen als fallback
+      lawBooks: [],
+      complexity: 'complex',
+      requiresValidation: true
+    }
   }
-  
-  // Pattern 11: Direct "447e sr" pattern without artikel prefix
-  const directCodeMatch = lowerQuery.match(/\b(\d+[a-z]*)\s+(sr|sv|bw|awb|wvw)\b/i)
-  if (directCodeMatch && !references.some(ref => ref.includes(directCodeMatch[1]))) {
-    references.push(`artikel ${directCodeMatch[1]} ${directCodeMatch[2].toUpperCase()}`)
-  }
-  
-      console.log(`Article extraction from "${query}":`, references)
-  
-  // Remove duplicates
-  return Array.from(new Set(references))
 }
 
-// VOLLEDIGE ROUTING LOGICA VAN /ASK - EXACTE KOPIE
-interface GoogleSearchResult {
-  title: string
-  link: string
-  snippet: string
+// 🔍 SPECIFIEKE WETTEKST ZOEKER (LOKAAL + GOOGLE)
+async function findExactLegalTexts(articleRefs: string[]): Promise<Array<{
+  article: string
+  text: string
   source: string
+  verified: boolean
+}>> {
+  console.log('📖 Zoeken naar exacte wetteksten...')
+  
+  const legalTexts: Array<{
+    article: string
+    text: string
+    source: string
+    verified: boolean
+  }> = []
+
+  for (const articleRef of articleRefs) {
+    let found = false
+    
+    // STAP 1: Zoek eerst in lokale database
+    console.log(`🏠 Zoeken lokaal naar: ${articleRef}`)
+    const localResults = findLocalLegalText(articleRef)
+    
+    if (localResults.length > 0) {
+      const localText = localResults[0]
+      legalTexts.push({
+        article: articleRef,
+        text: localText.fullText,
+        source: localText.source,
+        verified: true // Lokale teksten zijn altijd geverifieerd
+      })
+      console.log(`✅ Lokale wettekst gevonden voor ${articleRef}`)
+      found = true
+    }
+    
+    // STAP 2: Als niet lokaal gevonden, zoek via Google
+    if (!found) {
+      const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY
+      const GOOGLE_CSE_ID = process.env.GOOGLE_CSE_ID
+      
+      if (GOOGLE_API_KEY && GOOGLE_CSE_ID) {
+        try {
+          console.log(`🔍 Google zoeken naar: ${articleRef}`)
+          const query = `"${articleRef}" exacte tekst site:wetten.overheid.nl`
+          const url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CSE_ID}&q=${encodeURIComponent(query)}&num=3`
+          
+          const response = await fetch(url)
+          const data = await response.json()
+          
+          if (data.items?.length > 0) {
+            const item = data.items[0]
+            legalTexts.push({
+              article: articleRef,
+              text: item.snippet || '',
+              source: item.link || '',
+              verified: item.link?.includes('wetten.overheid.nl') || false
+            })
+            console.log(`✅ Google wettekst gevonden voor ${articleRef}`)
+            found = true
+          }
+        } catch (error) {
+          console.error(`❌ Fout bij Google zoeken naar ${articleRef}:`, error)
+        }
+      }
+    }
+    
+    if (!found) {
+      console.log(`❌ Geen wettekst gevonden voor ${articleRef}`)
+      // Voeg een fallback toe met verwijzing naar de officiële bron
+      legalTexts.push({
+        article: articleRef,
+        text: `Volledige tekst niet beschikbaar in bronnen. Raadpleeg de complete tekst op: https://wetten.overheid.nl`,
+        source: 'https://wetten.overheid.nl',
+        verified: false
+      })
+    }
+  }
+
+  return legalTexts
 }
 
-async function searchGoogleCustomAPI(query: string): Promise<GoogleSearchResult[]> {
+// ⚖️ FACT-CHECKING EN VALIDATIE
+async function validateLegalAnswer(
+  question: string, 
+  proposedAnswer: string, 
+  officialSources: Array<{article: string, text: string, source: string}>
+): Promise<ValidationResult> {
+  console.log('⚖️ Valideren juridisch antwoord...')
+  
+  const validationPrompt = `Je bent een juridische fact-checker. 
+
+VRAAG: "${question}"
+
+VOORGESTELD ANTWOORD:
+"${proposedAnswer}"
+
+OFFICIËLE BRONNEN:
+${officialSources.map(s => `- ${s.article}: "${s.text}" (Bron: ${s.source})`).join('\n')}
+
+Controleer het antwoord zorgvuldig op:
+1. Juistheid van artikelverwijzingen
+2. Correcte interpretatie van wetteksten
+3. Mogelijke juridische fouten
+4. Betrouwbaarheid van de informatie
+
+Geef je validatie in dit exacte JSON formaat:
+{
+  "isValid": true/false,
+  "confidence": "high/medium/low",
+  "warnings": ["waarschuwing1", "waarschuwing2"],
+  "verifiedFacts": ["feit1", "feit2"],
+  "potentialErrors": ["fout1", "fout2"]
+}`
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [{ role: 'user', content: validationPrompt }],
+      temperature: 0.0, // Zeer conservatief voor validatie
+      max_tokens: 800
+    })
+
+    const validation = JSON.parse(response.choices[0]?.message?.content || '{}')
+    console.log('✅ Validatie resultaat:', validation)
+    return validation
+  } catch (error) {
+    console.error('❌ Fout bij validatie:', error)
+    return {
+      isValid: false,
+      confidence: 'low',
+      warnings: ['Validatie kon niet worden uitgevoerd'],
+      verifiedFacts: [],
+      potentialErrors: ['Onzekere informatie - wees voorzichtig']
+    }
+  }
+}
+
+// 🚀 UITGEBREIDE MULTI-SOURCE ZOEKSTRATEGIE (aangepast)
+async function comprehensiveSearch(query: string): Promise<Array<{ title: string; snippet: string; link: string; source: string }>> {
   const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY
   const GOOGLE_CSE_ID = process.env.GOOGLE_CSE_ID
   
   if (!GOOGLE_API_KEY || !GOOGLE_CSE_ID) {
-    console.log('')
+    console.log('❌ Google API credentials niet beschikbaar')
     return []
   }
-  
-  try {
-    console.log('', query)
-    
-    // Verbeter zoekterm voor APV vragen
-    let searchQuery = query
-    const queryLower = query.toLowerCase()
-    
-    // Detecteer APV-gerelateerde vragen (ook zonder expliciet "APV" te noemen)
-    const apvKeywords = [
-      'apv', 'gemeentelijk', 'lokaal', 'gemeente', 'plaatselijk', 'verordening',
-      'alcohol', 'drinken', 'straat', 'openbaar', 'park', 'plein', 'evenement',
-      'geluid', 'overlast', 'terras', 'vergunning', 'handhaving', 'boa',
-      'camper', 'parkeren', 'kamperen', 'hondenpoep', 'hond', 'vuur', 'barbecue',
-      'muziek', 'lawaai', 'reclame', 'uithangbord', 'standplaats', 'markt',
-      'amsterdam', 'rotterdam', 'den haag', 'utrecht', 'eindhoven', 'groningen',
-      'tilburg', 'almere', 'breda', 'nijmegen', 'apeldoorn', 'haarlem', 'arnhem',
-      'enschede', 'haarlemmermeer', 'zaanstad', 'amersfoort', 'hertogenbosch',
-      'zoetermeer', 'zwolle', 'ede', 'dordrecht', 'leiden', 'emmen', 'maastricht',
-      'delft', 'venlo', 'leeuwarden', 'alkmaar', 'helmond', 'deventer',
-      'ijsselstreek', 'oude ijssel', 'ijssel',
-      'nieuw beleid', 'recent', 'actueel', 'jurisprudentie', 'uitspraak', 'vonnis', 'arrest'
-    ]
-    
-    // Check for gemeente names
-    const gemeenten = [
-      'amsterdam', 'rotterdam', 'den haag', 'utrecht', 'eindhoven', 'tilburg',
-      'groningen', 'almere', 'breda', 'nijmegen', 'apeldoorn', 'haarlem', 'arnhem',
-      'enschede', 'haarlemmermeer', 'zaanstad', 'amersfoort', 'hertogenbosch'
-    ]
-    
-    const hasApvKeyword = apvKeywords.some(keyword => queryLower.includes(keyword))
-    const hasGemeenteNaam = gemeenten.some(gemeente => queryLower.includes(gemeente))
-    
-    if (hasApvKeyword || hasGemeenteNaam) {
-      // Voor APV vragen: voeg specifieke zoektermen toe
-      searchQuery = `${query} site:lokaleregelgeving.overheid.nl OR site:overheid.nl APV "Algemene Plaatselijke Verordening"`
-      console.log('', searchQuery)
-    }
-    
-    const searchUrl = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CSE_ID}&q=${encodeURIComponent(searchQuery)}&num=10`
-    
-    const response = await fetch(searchUrl)
-    const data = await response.json()
-    
-    if (!data.items) {
-      console.log('')
-      return []
-    }
-    
-    const results: GoogleSearchResult[] = data.items.map((item: any) => ({
-      title: item.title,
-      link: item.link,
-      snippet: item.snippet,
-      source: extractSourceFromUrl(item.link)
-    }))
-    
-    console.log(` ${results.length} Google zoekresultaten gevonden`)
-    return results
-    
-  } catch (error) {
-    console.error(' Google Custom Search API error:', error)
-    return []
-  }
-}
 
-/**
- * Extraheert de bron uit een URL voor identificatie
- */
-function extractSourceFromUrl(url: string): string {
-  try {
-    const domain = new URL(url).hostname
-    
-    if (domain.includes('wetten.overheid.nl')) return 'Wetten.overheid.nl'
-    if (domain.includes('lokaleregelgeving.overheid.nl')) return 'LokaleRegelgeving.Overheid.nl'
-    if (domain.includes('rechtspraak.nl')) return 'Rechtspraak.nl'
-    if (domain.includes('overheid.nl')) return 'Overheid.nl'
-    if (domain.includes('officielebekendmakingen.nl')) return 'OfficiëleBekendemakingen.nl'
-    if (domain.includes('belastingdienst.nl')) return 'Belastingdienst'
-    if (domain.includes('uwv.nl')) return 'UWV'
-    if (domain.includes('politie.nl')) return 'Politie.nl'
-    if (domain.includes('rijksoverheid.nl')) return 'Rijksoverheid'
-    if (domain.includes('cbr.nl')) return 'CBR'
-    if (domain.includes('cbs.nl')) return 'CBS'
-    if (domain.includes('juridischloket.nl')) return 'Juridisch Loket'
-    
-    return domain
-  } catch {
-    return 'Onbekende bron'
-  }
-}
-
-/**
- * Formatteert Google zoekresultaten voor context - NO BOLD TEXT VERSION
- */
-function formatGoogleResultsForContext(results: GoogleSearchResult[]): string {
-  if (results.length === 0) {
-    return ''
-  }
+  console.log(`🔍 Uitgebreide zoekactie voor: "${query}"`)
   
-  return results.map(result => {
-    return `${result.title} (${result.source})
-URL: ${result.link}
-Samenvatting: ${result.snippet}
----`
-  }).join('\n\n')
-}
-
-/**
- * ROUTING LOGICA: Bepaalt of Google API nodig is
- */
-function needsGoogleSearch(jsonSources: JsonBron[], query: string): boolean {
-  // Als er geen directe match is in JSON bronnen
-  if (jsonSources.length === 0) {
-    console.log('')
-    return true
-  }
+  const allResults: Array<{ title: string; snippet: string; link: string; source: string }> = []
   
-  // Als de dekking twijfelachtig is (minder dan 3 relevante bronnen)
-  if (jsonSources.length < 3) {
-    console.log('')
-    return true
-  }
-  
-  // Specifieke gevallen waar Google altijd wordt geraadpleegd
-  const queryLower = query.toLowerCase()
-  const needsGoogleKeywords = [
-    'apv', 'gemeentelijk', 'lokaal', 'gemeente', 'plaatselijk', 'verordening',
-    'alcohol', 'drinken', 'straat', 'openbaar', 'park', 'plein', 'evenement',
-    'geluid', 'overlast', 'terras', 'vergunning', 'handhaving', 'boa',
-    'camper', 'parkeren', 'kamperen', 'hondenpoep', 'hond', 'vuur', 'barbecue',
-    'muziek', 'lawaai', 'reclame', 'uithangbord', 'standplaats', 'markt',
-    'amsterdam', 'rotterdam', 'den haag', 'utrecht', 'eindhoven', 'groningen',
-    'tilburg', 'almere', 'breda', 'nijmegen', 'apeldoorn', 'haarlem', 'arnhem',
-    'enschede', 'haarlemmermeer', 'zaanstad', 'amersfoort', 'hertogenbosch',
-    'zoetermeer', 'zwolle', 'ede', 'dordrecht', 'leiden', 'emmen', 'maastricht',
-    'delft', 'venlo', 'leeuwarden', 'alkmaar', 'helmond', 'deventer',
-    'ijsselstreek', 'oude ijssel', 'ijssel',
-    'nieuw beleid', 'recent', 'actueel', 'jurisprudentie', 'uitspraak', 'vonnis', 'arrest'
+  // 1. PRIORITEIT: Officiële bronnen eerst
+  const prioritySites = [
+    'wetten.overheid.nl',
+    'rechtspraak.nl', 
+    'rijksoverheid.nl'
   ]
   
-  const needsGoogle = needsGoogleKeywords.some(keyword => queryLower.includes(keyword))
-  if (needsGoogle) {
-    console.log('')
-    return true
-  }
-  
-  console.log('')
-  return false
-}
-
-// Enhanced function to search for literal law text on wetten.overheid.nl
-async function searchLiteralLawText(articleReferences: string[]): Promise<Array<{ ref: string; text: string; url: string }>> {
-  const results: Array<{ ref: string; text: string; url: string }> = []
-  
-  for (const ref of articleReferences) {
-    console.log(` Searching for literal text of: ${ref}`)
-    
-    // HARDCODED VALIDATION FOR ARTIKEL 29 RVV 1990
-    if (ref.toLowerCase().includes('artikel 29') && (ref.toLowerCase().includes('rvv') || ref.toLowerCase().includes('reglement verkeersregels'))) {
-      console.log('🚦 HARDCODED: Found artikel 29 RVV - returning correct text about emergency services')
-      results.push({
-        ref: ref,
-        text: `Artikel 29 RVV 1990
-
-1. Bestuurders van motorvoertuigen in gebruik bij politie en brandweer, motorvoertuigen in gebruik bij diensten voor spoedeisende medische hulpverlening, en motorvoertuigen van andere door Onze Minister aangewezen hulpverleningsdiensten voeren blauw zwaai-, flits- of knipperlicht en een tweetonige hoorn om kenbaar te maken dat zij een dringende taak vervullen.
-
-2. De in het eerste lid genoemde bestuurders mogen aanvullend op de in dat lid bedoelde verlichting overdag knipperende koplampen voeren.
-
-3. Bij ministeriële regeling kunnen voorschriften worden vastgesteld betreffende het blauwe zwaai-, flits- of knipperlicht, de tweetonige hoorn en de knipperende koplampen.`,
-        url: 'https://wetten.overheid.nl/BWBR0004825/2021-07-01#Hoofdstuk2_Paragraaf6_Artikel29'
-      })
-      continue
-    }
-    
-    // HARDCODED VALIDATION FOR ARTIKEL 61 LID 2 WETBOEK VAN STRAFVORDERING
-    if (ref.toLowerCase().includes('artikel 61') && ref.toLowerCase().includes('lid 2') && (ref.toLowerCase().includes('sv') || ref.toLowerCase().includes('strafvordering'))) {
-      console.log('⚖️ HARDCODED: Found artikel 61 lid 2 Sv - returning correct text about arrest powers')
-      results.push({
-        ref: ref,
-        text: `Artikel 61 Wetboek van Strafvordering - Staandehouding
-
-1. De hulpofficier van justitie en de opsporingsambtenaar zijn bevoegd de verdachte aan te houden.
-
-2. Zij zijn eveneens bevoegd ieder ander aan te houden, voor wie een bevel tot aanhouding is uitgevaardigd of ten aanzien van wie uit feiten of omstandigheden blijkt dat hij op heterdaad wordt betrapt bij het plegen van een misdrijf.`,
-        url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIII_HoofdstukII_Afdeling1_Artikel61'
-      })
-      continue
-    }
-    
-    // HARDCODED VALIDATION FOR ARTIKEL 96B WETBOEK VAN STRAFVORDERING - DOORZOEKEN VERVOERMIDDELEN
-    if (ref.toLowerCase().includes('artikel 96b') && (ref.toLowerCase().includes('sv') || ref.toLowerCase().includes('strafvordering'))) {
-      console.log('🚗 HARDCODED: Found artikel 96b Sv - returning correct text about vehicle searches')
-      results.push({
-        ref: ref,
-        text: `Artikel 96b Wetboek van Strafvordering
-
-1. In geval van ontdekking op heterdaad van een strafbaar feit of in geval van verdenking van een misdrijf als omschreven in artikel 67, eerste lid, is de opsporingsambtenaar bevoegd ter inbeslagneming een vervoermiddel, met uitzondering van het woongedeelte zonder toestemming van de bewoner, te doorzoeken en zich daartoe de toegang tot dit vervoermiddel te verschaffen.
-
-2. Indien zulks met het oog op de uitoefening van de in het eerste lid verleende bevoegdheid noodzakelijk is, kan de opsporingsambtenaar:
-a. van de bestuurder van het vervoermiddel vorderen dat hij het vervoermiddel tot stilstand brengt, en
-b. het vervoermiddel vervolgens naar een daartoe door hem aangewezen plaats overbrengen of door de bestuurder laten overbrengen.`,
-        url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIV_HoofdstukII_TiteldeelIV_Afdeling3_Artikel96b'
-      })
-      continue
-    }
-    
-    // HARDCODED VALIDATION FOR ARTIKEL 300 WETBOEK VAN STRAFRECHT - MISHANDELING
-    if (ref.toLowerCase().includes('artikel 300') && (ref.toLowerCase().includes('sr') || ref.toLowerCase().includes('strafrecht'))) {
-      console.log('⚖️ HARDCODED: Found artikel 300 Sr - returning correct text about assault')
-      results.push({
-        ref: ref,
-        text: `Artikel 300 Wetboek van Strafrecht
-
-1. Mishandeling wordt gestraft met gevangenisstraf van ten hoogste drie jaren of geldboete van de vierde categorie.
-
-2. Indien het feit zwaar lichamelijk letsel ten gevolge heeft, wordt de schuldige gestraft met gevangenisstraf van ten hoogste vier jaren of geldboete van de vierde categorie.
-
-3. Indien het feit de dood ten gevolge heeft, wordt hij gestraft met gevangenisstraf van ten hoogste zes jaren of geldboete van de vierde categorie.
-
-4. Met mishandeling wordt gelijkgesteld opzettelijke benadeling van de gezondheid.`,
-        url: 'https://wetten.overheid.nl/BWBR0001854/2024-07-10#TiteldeelXX_HoofdstukXX_Artikel300'
-      })
-      continue
-    }
-    
-    // HARDCODED VALIDATION FOR ARTIKEL 302 WETBOEK VAN STRAFRECHT - ZWARE MISHANDELING
-    if (ref.toLowerCase().includes('artikel 302') && (ref.toLowerCase().includes('sr') || ref.toLowerCase().includes('strafrecht'))) {
-      console.log('⚖️ HARDCODED: Found artikel 302 Sr - returning correct text about aggravated assault')
-      results.push({
-        ref: ref,
-        text: `Artikel 302 Wetboek van Strafrecht
-
-1. Hij die opzettelijk een ander zwaar lichamelijk letsel toebrengt, wordt, als schuldig aan zware mishandeling, gestraft met gevangenisstraf van ten hoogste acht jaren of geldboete van de vijfde categorie.
-
-2. Indien het feit de dood ten gevolge heeft, wordt de schuldige gestraft met gevangenisstraf van ten hoogste tien jaren of geldboete van de vijfde categorie.`,
-        url: 'https://wetten.overheid.nl/BWBR0001854/2024-07-10#TiteldeelXX_HoofdstukXX_Artikel302'
-      })
-      continue
-    }
-    
-    // HARDCODED VALIDATION FOR ARTIKEL 350 WETBOEK VAN STRAFVORDERING - CASSATIE
-    if (ref.toLowerCase().includes('artikel 350') && (ref.toLowerCase().includes('sv') || ref.toLowerCase().includes('strafvordering'))) {
-      console.log('⚖️ HARDCODED: Found artikel 350 Sv - returning correct text about cassation')
-      results.push({
-        ref: ref,
-        text: `Artikel 350 Wetboek van Strafvordering
-
-1. Een uitspraak van de rechtbank kan door de procureur-generaal bij de Hoge Raad, door de gewezen verdachte of door zijn raadsman in cassatie worden gebracht.
-
-2. Indien de gewezen verdachte bij het uitbrengen van zijn cassatieberoep niet in persoon verschijnt, is bijstand door een advocaat verplicht.
-
-3. Cassatie kan uitsluitend worden ingesteld ter zake van schending van het recht.`,
-        url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelV_HoofdstukII_Afdeling1_Artikel350'
-      })
-      continue
-    }
-    
-    // HARDCODED VALIDATION FOR ARTIKEL 8 POLITIEWET 2012 - IDENTIFICATIEPLICHT
-    if ((ref.toLowerCase().includes('artikel 8') && ref.toLowerCase().includes('politiewet')) || (ref.toLowerCase().includes('artikel 8') && ref.toLowerCase().includes('politiewet'))) {
-      console.log('👮 HARDCODED: Found artikel 8 Politiewet 2012 - returning correct text about identification duty')
-      results.push({
-        ref: ref,
-        text: `Artikel 8 Politiewet 2012
-
-Een ambtenaar van politie die is aangesteld voor de uitvoering van de politietaak, is bevoegd tot het vorderen van inzage van een identiteitsbewijs als bedoeld in artikel 1 van de Wet op de identificatieplicht van personen, voor zover dat redelijkerwijs noodzakelijk is voor de uitvoering van de politietaak.`,
-        url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel8'
-      })
-      continue
-    }
-    
-    // Extract article number and law code
-    const match = ref.match(/artikel\\s+(\\d+[a-z]*)\\s+(.+)/i)
-    if (!match) continue
-    
-    const articleNum = match[1]
-    const lawCode = match[2].trim()
-    
-    // Build specific search queries for wetten.overheid.nl
-    let searchQueries: string[] = []
-    
-    if (lawCode.includes('RVV') || lawCode.includes('1990')) {
-      // Special handling for other RVV articles (not artikel 29)
-      searchQueries = [
-        `"artikel ${articleNum}" site:wetten.overheid.nl "BWBR0004825"`,
-        `"artikel ${articleNum}" site:wetten.overheid.nl "reglement verkeersregels"`,
-        `"artikel ${articleNum}" site:wetten.overheid.nl RVV`
-      ]
-    } else if (lawCode.includes('politiewet')) {
-      searchQueries = [
-        `"artikel ${articleNum}" site:wetten.overheid.nl politiewet`,
-        `"artikel ${articleNum}" site:wetten.overheid.nl "BWBR0031788"`
-      ]
-    } else if (lawCode.includes('sr') || lawCode.includes('strafrecht')) {
-      searchQueries = [
-        `"artikel ${articleNum}" site:wetten.overheid.nl "wetboek van strafrecht"`,
-        `"artikel ${articleNum}" site:wetten.overheid.nl "BWBR0001854"`
-      ]
-    } else {
-      // Generic search for other laws
-      searchQueries = [
-        `"artikel ${articleNum}" "${lawCode}" site:wetten.overheid.nl`,
-        `"artikel ${articleNum}" site:wetten.overheid.nl`
-      ]
-    }
-    
-    // Perform the searches
-    for (const query of searchQueries) {
-      try {
-        console.log(` Searching for literal law text: ${query}`)
-        const searchResults = await searchGoogleCustomAPI(query)
-        
-        if (searchResults && searchResults.length > 0) {
-          const lawResult = searchResults.find((result: GoogleSearchResult) => 
-            result.link?.includes('wetten.overheid.nl') &&
-            result.snippet?.toLowerCase().includes(`artikel ${articleNum.toLowerCase()}`)
-          )
-          
-          if (lawResult && lawResult.snippet) {
-            console.log(` Found validated law text for ${ref}`)
-            results.push({
-              ref: ref,
-              text: lawResult.snippet,
-              url: lawResult.link || 'https://wetten.overheid.nl'
-            })
-            break // Stop searching once we found a match
-          }
-        }
-      } catch (error) {
-        console.error(` Error searching for ${ref}:`, error)
-      }
-    }
-  }
-  
-  return results
-}
-
-// Enhanced article search with comprehensive politiewet mapping and local fallback
-async function searchArticleTextsViaGoogle(articleReferences: string[]): Promise<Array<{ ref: string; text: string; url: string }>> {
-  const articleTexts: Array<{ ref: string; text: string; url: string }> = []
-  
-  // Direct mapping of actual Politiewet 2012 article texts (from official law text)
-  const politiewetArticleTexts: Record<string, { text: string; url: string }> = {
-    'artikel 1 politiewet 2012': {
-      text: 'In deze wet en de daarop berustende bepalingen wordt verstaan onder: a. Onze Minister: Onze Minister van Justitie en Veiligheid; b. politie: het landelijke politiekorps, bedoeld in artikel 25, eerste lid; c. korpschef: de korpschef, bedoeld in artikel 27; d. eenheid: een regionale of landelijke eenheid; e. regionale eenheid: een regionale eenheid van de politie als bedoeld in artikel 25, eerste lid, onder a; f. landelijke eenheid: een landelijke eenheid van de politie als bedoeld in artikel 25, eerste lid, onder b.',
-      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel1'
-    },
-    'artikel 3 politiewet 2012': {
-      text: 'De politie heeft tot taak in ondergeschiktheid aan het bevoegd gezag en in overeenstemming met de geldende rechtsregels te zorgen voor de daadwerkelijke handhaving van de rechtsorde en het verlenen van hulp aan hen die deze behoeven.',
-      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel3'
-    },
-    'artikel 7 politiewet 2012': {
-      text: 'De ambtenaar van politie die is aangesteld voor de uitvoering van de politietaak, is bevoegd in de rechtmatige uitoefening van zijn bediening geweld of vrijheidsbeperkende middelen te gebruiken, wanneer het daarmee beoogde doel dit, mede gelet op de aan het gebruik hiervan verbonden gevaren, rechtvaardigt en dat doel niet op een andere wijze kan worden bereikt. Aan het gebruik van geweld gaat zo mogelijk een waarschuwing vooraf.',
-      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel7'
-    },
-    'artikel 8 politiewet 2012': {
-      text: 'Een ambtenaar van politie die is aangesteld voor de uitvoering van de politietaak, is bevoegd tot het vorderen van inzage van een identiteitsbewijs als bedoeld in artikel 1 van de Wet op de identificatieplicht van personen, voor zover dat redelijkerwijs noodzakelijk is voor de uitvoering van de politietaak.',
-      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel8'
-    },
-    'artikel 8a politiewet 2012': {
-      text: 'Een ambtenaar van politie is bevoegd om bij een gerechtvaardigde verwachting van gevaar voor de veiligheid van personen of goederen terstond aan de kleding van een persoon te onderzoeken, indien dit voorwerp gevaarlijk of schadelijk kan zijn.',
-      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel8a'
-    },
-    'artikel 9 politiewet 2012': {
-      text: 'Een ambtenaar van politie die is aangesteld voor de uitvoering van de politietaak, is bevoegd in de rechtmatige uitoefening van zijn bediening geweld of vrijheidsbeperkende middelen te gebruiken, wanneer het daarmee beoogde doel dit, mede gelet op de aan het gebruik hiervan verbonden gevaren, rechtvaardigt en dat doel niet op een andere wijze kan worden bereikt. Aan het gebruik van geweld gaat zo mogelijk een waarschuwing vooraf.',
-      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel9'
-    },
-    'artikel 10 politiewet 2012': {
-      text: 'Een ambtenaar van politie is bevoegd in de gevallen waarin het gebruik van geweld of vrijheidsbeperkende middelen is toegestaan, en indien zulks noodzakelijk is met het oog op de veiligheid, een persoon aan zijn kleding vast te maken aan een vast voorwerp of een ander persoon.',
-      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel10'
-    },
-    'artikel 25 politiewet 2012': {
-      text: 'Er is een landelijke politieorganisatie, het landelijke politiekorps, dat bestaat uit: a. regionale eenheden; b. landelijke eenheden; c. het politieonderwijs; d. de politiedienstencentra.',
-      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel25'
-    },
-    'artikel 27 politiewet 2012': {
-      text: 'Aan het hoofd van het landelijke politiekorps staat een korpschef die wordt benoemd, geschorst en ontslagen bij koninklijk besluit.',
-      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel27'
-    },
-    // Wetboek van Strafvordering (Sv) artikelen
-    'artikel 61 lid 2 wetboek van strafvordering': {
-      text: 'Artikel 61 Wetboek van Strafvordering - Staandehouding:\n\n1. De hulpofficier van justitie en de opsporingsambtenaar zijn bevoegd de verdachte aan te houden.\n\n2. Zij zijn eveneens bevoegd ieder ander aan te houden, voor wie een bevel tot aanhouding is uitgevaardigd of ten aanzien van wie uit feiten of omstandigheden blijkt dat hij op heterdaad wordt betrapt bij het plegen van een misdrijf.',
-      url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIII_HoofdstukII_Afdeling1_Artikel61'
-    },
-    'artikel 61 lid 2 sv': {
-      text: 'Artikel 61 Wetboek van Strafvordering - Staandehouding:\n\n1. De hulpofficier van justitie en de opsporingsambtenaar zijn bevoegd de verdachte aan te houden.\n\n2. Zij zijn eveneens bevoegd ieder ander aan te houden, voor wie een bevel tot aanhouding is uitgevaardigd of ten aanzien van wie uit feiten of omstandigheden blijkt dat hij op heterdaad wordt betrapt bij het plegen van een misdrijf.',
-      url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIII_HoofdstukII_Afdeling1_Artikel61'
-    },
-    'artikel 61 lid 2 SV': {
-      text: 'Artikel 61 Wetboek van Strafvordering - Staandehouding:\n\n1. De hulpofficier van justitie en de opsporingsambtenaar zijn bevoegd de verdachte aan te houden.\n\n2. Zij zijn eveneens bevoegd ieder ander aan te houden, voor wie een bevel tot aanhouding is uitgevaardigd of ten aanzien van wie uit feiten of omstandigheden blijkt dat hij op heterdaad wordt betrapt bij het plegen van een misdrijf.',
-      url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIII_HoofdstukII_Afdeling1_Artikel61'
-    },
-    'artikel 96b sv': {
-      text: 'Artikel 96b Wetboek van Strafvordering\n\n1. In geval van ontdekking op heterdaad van een strafbaar feit of in geval van verdenking van een misdrijf als omschreven in artikel 67, eerste lid, is de opsporingsambtenaar bevoegd ter inbeslagneming een vervoermiddel, met uitzondering van het woongedeelte zonder toestemming van de bewoner, te doorzoeken en zich daartoe de toegang tot dit vervoermiddel te verschaffen.\n\n2. Indien zulks met het oog op de uitoefening van de in het eerste lid verleende bevoegdheid noodzakelijk is, kan de opsporingsambtenaar:\na. van de bestuurder van het vervoermiddel vorderen dat hij het vervoermiddel tot stilstand brengt, en\nb. het vervoermiddel vervolgens naar een daartoe door hem aangewezen plaats overbrengen of door de bestuurder laten overbrengen.',
-      url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIV_HoofdstukII_TiteldeelIV_Afdeling3_Artikel96b'
-    },
-    'artikel 96b SV': {
-      text: 'Artikel 96b Wetboek van Strafvordering\n\n1. In geval van ontdekking op heterdaad van een strafbaar feit of in geval van verdenking van een misdrijf als omschreven in artikel 67, eerste lid, is de opsporingsambtenaar bevoegd ter inbeslagneming een vervoermiddel, met uitzondering van het woongedeelte zonder toestemming van de bewoner, te doorzoeken en zich daartoe de toegang tot dit vervoermiddel te verschaffen.\n\n2. Indien zulks met het oog op de uitoefening van de in het eerste lid verleende bevoegdheid noodzakelijk is, kan de opsporingsambtenaar:\na. van de bestuurder van het vervoermiddel vorderen dat hij het vervoermiddel tot stilstand brengt, en\nb. het vervoermiddel vervolgens naar een daartoe door hem aangewezen plaats overbrengen of door de bestuurder laten overbrengen.',
-      url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIV_HoofdstukII_TiteldeelIV_Afdeling3_Artikel96b'
-    },
-    'artikel 96b Sv': {
-      text: 'Artikel 96b Wetboek van Strafvordering\n\n1. In geval van ontdekking op heterdaad van een strafbaar feit of in geval van verdenking van een misdrijf als omschreven in artikel 67, eerste lid, is de opsporingsambtenaar bevoegd ter inbeslagneming een vervoermiddel, met uitzondering van het woongedeelte zonder toestemming van de bewoner, te doorzoeken en zich daartoe de toegang tot dit vervoermiddel te verschaffen.\n\n2. Indien zulks met het oog op de uitoefening van de in het eerste lid verleende bevoegdheid noodzakelijk is, kan de opsporingsambtenaar:\na. van de bestuurder van het vervoermiddel vorderen dat hij het vervoermiddel tot stilstand brengt, en\nb. het vervoermiddel vervolgens naar een daartoe door hem aangewezen plaats overbrengen of door de bestuurder laten overbrengen.',
-      url: 'https://wetten.overheid.nl/BWBR0001903/2024-07-10#TiteldeelIV_HoofdstukII_TiteldeelIV_Afdeling3_Artikel96b'
-    },
-    
-    // Short form references
-    'artikel 1 POLITIEWET': {
-      text: 'In deze wet en de daarop berustende bepalingen wordt verstaan onder: a. Onze Minister: Onze Minister van Justitie en Veiligheid; b. politie: het landelijke politiekorps, bedoeld in artikel 25, eerste lid; c. korpschef: de korpschef, bedoeld in artikel 27; d. eenheid: een regionale of landelijke eenheid; e. regionale eenheid: een regionale eenheid van de politie als bedoeld in artikel 25, eerste lid, onder a; f. landelijke eenheid: een landelijke eenheid van de politie als bedoeld in artikel 25, eerste lid, onder b.',
-      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel1'
-    },
-    'artikel 3 POLITIEWET': {
-      text: 'De politie heeft tot taak in ondergeschiktheid aan het bevoegd gezag en in overeenstemming met de geldende rechtsregels te zorgen voor de daadwerkelijke handhaving van de rechtsorde en het verlenen van hulp aan hen die deze behoeven.',
-      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel3'
-    },
-    'artikel 7 POLITIEWET': {
-      text: 'De ambtenaar van politie die is aangesteld voor de uitvoering van de politietaak, is bevoegd in de rechtmatige uitoefening van zijn bediening geweld of vrijheidsbeperkende middelen te gebruiken, wanneer het daarmee beoogde doel dit, mede gelet op de aan het gebruik hiervan verbonden gevaren, rechtvaardigt en dat doel niet op een andere wijze kan worden bereikt. Aan het gebruik van geweld gaat zo mogelijk een waarschuwing vooraf.',
-      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel7'
-    },
-    'artikel 8 POLITIEWET': {
-      text: 'Een ambtenaar van politie die is aangesteld voor de uitvoering van de politietaak, is bevoegd tot het vorderen van inzage van een identiteitsbewijs als bedoeld in artikel 1 van de Wet op de identificatieplicht van personen, voor zover dat redelijkerwijs noodzakelijk is voor de uitvoering van de politietaak.',
-      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel8'
-    },
-    'artikel 8a POLITIEWET': {
-      text: 'Een ambtenaar van politie is bevoegd om bij een gerechtvaardigde verwachting van gevaar voor de veiligheid van personen of goederen terstond aan de kleding van een persoon te onderzoeken, indien dit voorwerp gevaarlijk of schadelijk kan zijn.',
-      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel8a'
-    },
-    'artikel 9 POLITIEWET': {
-      text: 'Een ambtenaar van politie die is aangesteld voor de uitvoering van de politietaak, is bevoegd in de rechtmatige uitoefening van zijn bediening geweld of vrijheidsbeperkende middelen te gebruiken, wanneer het daarmee beoogde doel dit, mede gelet op de aan het gebruik hiervan verbonden gevaren, rechtvaardigt en dat doel niet op een andere wijze kan worden bereikt. Aan het gebruik van geweld gaat zo mogelijk een waarschuwing vooraf.',
-      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel9'
-    },
-    'artikel 10 POLITIEWET': {
-      text: 'Een ambtenaar van politie is bevoegd in de gevallen waarin het gebruik van geweld of vrijheidsbeperkende middelen is toegestaan, en indien zulks noodzakelijk is met het oog op de veiligheid, een persoon aan zijn kleding vast te maken aan een vast voorwerp of een ander persoon.',
-      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel10'
-    },
-    'artikel 25 POLITIEWET': {
-      text: 'Er is een landelijke politieorganisatie, het landelijke politiekorps, dat bestaat uit: a. regionale eenheden; b. landelijke eenheden; c. het politieonderwijs; d. de politiedienstencentra.',
-      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel25'
-    },
-    'artikel 27 POLITIEWET': {
-      text: 'Aan het hoofd van het landelijke politiekorps staat een korpschef die wordt benoemd, geschorst en ontslagen bij koninklijk besluit.',
-      url: 'https://wetten.overheid.nl/BWBR0031788/2024-08-01#Artikel27'
-    }
-  }
-
-  // Comprehensive mapping for politiewet articles with specific search terms
-  const articleSearchTerms: Record<string, string> = {
-    // Politiewet 2012 articles - specific search terms for accurate results
-    'artikel 1 politiewet 2012': '"artikel 1" "politiewet 2012" "begripsbepalingen" site:wetten.overheid.nl',
-    'artikel 2 politiewet 2012': '"artikel 2" "politiewet 2012" "nationale politie" site:wetten.overheid.nl', 
-    'artikel 3 politiewet 2012': '"artikel 3" "politiewet 2012" "taak politie" "handhaving rechtsorde" site:wetten.overheid.nl',
-    'artikel 4 politiewet 2012': '"artikel 4" "politiewet 2012" "regionale eenheden" site:wetten.overheid.nl',
-    'artikel 5 politiewet 2012': '"artikel 5" "politiewet 2012" "landelijke eenheid" site:wetten.overheid.nl',
-    'artikel 6 politiewet 2012': '"artikel 6" "politiewet 2012" "centrale en landelijke" site:wetten.overheid.nl',
-    'artikel 7 politiewet 2012': '"artikel 7" "politiewet 2012" "politie ondersteunende" site:wetten.overheid.nl',
-    'artikel 8 politiewet 2012': '"artikel 8" "politiewet 2012" "identiteitsbewijs" "identificatieplicht" site:wetten.overheid.nl',
-    'artikel 8a politiewet 2012': '"artikel 8a" "politiewet 2012" "preventief fouilleren" site:wetten.overheid.nl',
-    'artikel 9 politiewet 2012': '"artikel 9" "politiewet 2012" "geweld" "aanwending" site:wetten.overheid.nl',
-    'artikel 10 politiewet 2012': '"artikel 10" "politiewet 2012" "handboeien" "vervoer" site:wetten.overheid.nl',
-    'artikel 25 politiewet 2012': '"artikel 25" "politiewet 2012" "landelijke politiekorps" site:wetten.overheid.nl',
-    'artikel 27 politiewet 2012': '"artikel 27" "politiewet 2012" "korpschef" site:wetten.overheid.nl',
-    'artikel 11 politiewet 2012': '"artikel 11" "politiewet 2012" "surveillance" site:wetten.overheid.nl',
-    'artikel 12 politiewet 2012': '"artikel 12" "politiewet 2012" "toegang woningen" site:wetten.overheid.nl',
-    
-    // Short form references
-    'artikel 1 POLITIEWET': '"artikel 1" "politiewet 2012" "begripsbepalingen" site:wetten.overheid.nl',
-    'artikel 2 POLITIEWET': '"artikel 2" "politiewet 2012" "nationale politie" site:wetten.overheid.nl',
-    'artikel 3 POLITIEWET': '"artikel 3" "politiewet 2012" "taak politie" "handhaving rechtsorde" site:wetten.overheid.nl',
-    'artikel 8 POLITIEWET': '"artikel 8" "politiewet 2012" "identiteitsbewijs" "identificatieplicht" site:wetten.overheid.nl',
-    'artikel 8a POLITIEWET': '"artikel 8a" "politiewet 2012" "preventief fouilleren" site:wetten.overheid.nl',
-    'artikel 9 POLITIEWET': '"artikel 9" "politiewet 2012" "geweld" "aanwending" site:wetten.overheid.nl',
-    'artikel 10 POLITIEWET': '"artikel 10" "politiewet 2012" "handboeien" "vervoer" site:wetten.overheid.nl',
-    'artikel 25 POLITIEWET': '"artikel 25" "politiewet 2012" "landelijke politiekorps" site:wetten.overheid.nl',
-    'artikel 27 POLITIEWET': '"artikel 27" "politiewet 2012" "korpschef" site:wetten.overheid.nl',
-    
-    // Other common references - Enhanced for 447e Sr
-    'artikel 447e SR': '"artikel 447e" "wetboek van strafrecht" site:wetten.overheid.nl',
-    'artikel 447e sr': '"artikel 447e" "wetboek van strafrecht" site:wetten.overheid.nl',
-    'artikel 447e Sr': '"artikel 447e" "wetboek van strafrecht" site:wetten.overheid.nl',
-    'artikel 447e strafrecht': '"artikel 447e" "wetboek van strafrecht" site:wetten.overheid.nl',
-    'artikel 447e wetboek van strafrecht': '"artikel 447e" "wetboek van strafrecht" site:wetten.overheid.nl',
-    '447e sr': '"artikel 447e" "wetboek van strafrecht" site:wetten.overheid.nl',
-    '447e Sr': '"artikel 447e" "wetboek van strafrecht" site:wetten.overheid.nl',
-    '447e SR': '"artikel 447e" "wetboek van strafrecht" site:wetten.overheid.nl',
-    'artikel 2 wet op de identificatieplicht': '"artikel 2" "wet op de identificatieplicht" site:wetten.overheid.nl',
-    
-    // Vehicle regulations (WVW)
-    'artikel 5 WVW': '"artikel 5" "wegenverkeerswet" "bestuurder" site:wetten.overheid.nl',
-    'artikel 8 WVW': '"artikel 8" "wegenverkeerswet" "alcohol" "drugs" site:wetten.overheid.nl',
-    'artikel 107 WVW': '"artikel 107" "wegenverkeerswet" "alcohol" "promillage" site:wetten.overheid.nl',
-    'artikel 160 WVW': '"artikel 160" "wegenverkeerswet" "documenten" "legitimatie" site:wetten.overheid.nl',
-    'artikel 179 WVW': '"artikel 179" "wegenverkeerswet" "stopteken" site:wetten.overheid.nl'
-  }
-
-  // Note: Relying on GPT-4o-mini's built-in legal knowledge and Google search
-  
-  for (const ref of articleReferences.slice(0, 3)) { // Limit to 3 articles
+  for (const site of prioritySites) {
     try {
-      console.log(` Searching for: ${ref}`)
+      const siteQuery = `${query} site:${site}`
+      console.log(`🏛️ Zoeken op ${site}: "${query}"`)
       
-      // First try: Check direct politiewet mapping for exact texts
-      const normalizedRef = ref.toLowerCase().trim()
-      if (politiewetArticleTexts[normalizedRef]) {
-        console.log(` Found direct politiewet text for: ${ref}`)
-        articleTexts.push({
-          ref,
-          text: politiewetArticleTexts[normalizedRef].text,
-          url: politiewetArticleTexts[normalizedRef].url
+      const url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CSE_ID}&q=${encodeURIComponent(siteQuery)}&num=5`
+      const response = await fetch(url)
+      const data = await response.json()
+      
+      if (data.items?.length > 0) {
+        console.log(`✅ ${data.items.length} resultaten gevonden op ${site}`)
+        data.items.forEach((item: any) => {
+          allResults.push({
+            title: item.title || '',
+            snippet: item.snippet || '',
+            link: item.link || '',
+            source: site
+          })
         })
-        continue
-      }
-      
-      // Try alternative forms for politiewet
-      if (ref.toLowerCase().includes('politiewet') && !ref.includes('2012')) {
-        const alternativeRef = ref.toLowerCase().replace('politiewet', 'politiewet 2012')
-        if (politiewetArticleTexts[alternativeRef]) {
-          console.log(` Found direct politiewet text (alt form) for: ${ref}`)
-          articleTexts.push({
-            ref,
-            text: politiewetArticleTexts[alternativeRef].text,
-            url: politiewetArticleTexts[alternativeRef].url
-          })
-          continue
-        }
-      }
-      
-      // Fallback to Google search - Use specific search terms if available, otherwise fallback to enhanced generic
-      let searchQuery = articleSearchTerms[ref.toLowerCase()]
-      
-      if (!searchQuery) {
-        // Enhanced fallback search for politiewet articles
-        if (ref.toLowerCase().includes('politiewet')) {
-          const articleNumber = ref.match(/\d+[a-z]*/)?.[0]
-          if (articleNumber) {
-            searchQuery = `"artikel ${articleNumber}" "politiewet 2012" site:wetten.overheid.nl`
-          } else {
-            searchQuery = `"${ref}" "politiewet 2012" site:wetten.overheid.nl`
-          }
-        } else {
-          searchQuery = `"${ref}" site:wetten.overheid.nl`
-        }
-      }
-      
-      console.log(`Using search query: ${searchQuery}`)
-      
-      const searchResults = await searchVerifiedJuridicalSources(searchQuery)
-      
-      // Find the most relevant result from wetten.overheid.nl
-      const wettenResult = searchResults.results.find(result => 
-        result.link.includes('wetten.overheid.nl') && 
-        result.snippet.length > 100 // Ensure we have substantial content
-      )
-      
-      if (wettenResult) {
-        // Extract and clean the article text from the snippet
-        let articleText = wettenResult.snippet
-          .replace(/\s+/g, ' ')
-          .trim()
-        
-        // Remove common navigation text
-        articleText = articleText
-          .replace(/Bron:\s*wetten\.overheid\.nl.*$/i, '')
-          .replace(/Geldig vanaf:.*$/i, '')
-          .replace(/Artikel\s+\d+[a-z]*\s*$/i, '')
-          .trim()
-        
-        if (articleText.length > 50) {
-          console.log(` Found article text via Google: ${ref} (${articleText.length} chars)`)
-          articleTexts.push({
-            ref,
-            text: articleText,
-            url: wettenResult.link
-          })
-        }
-      } else {
-        console.log(` No suitable Google result found for: ${ref}`)
       }
     } catch (error) {
-      console.error(` Error searching for article ${ref}:`, error)
+      console.log(`❌ Fout bij zoeken op ${site}:`, error)
     }
   }
   
-  return articleTexts
+  return allResults.slice(0, 10) // Beperkt aantal voor betere kwaliteit
 }
 
-// Wetuitleg systeemprompt versie 28-06-2025 - verbeterde wettekst handling
-const WETUITLEG_SYSTEM_PROMPT = `ROL & EXPERTISE
-Je bent Lexi, een gespecialiseerde Nederlandse juridische AI-assistent van WetHelder.nl die UITSLUITEND betrouwbare, gevalideerde juridische informatie verstrekt.
-
-BETROUWBAARHEIDSGARANTIE - ABSOLUTE PRIORITEIT
-🔒 KRITIEKE REGEL: Bij het citeren van wetteksten ALTIJD een van deze opties:
-1. "Volgens de verstrekte officiële bronnen..." (bij bronbevestiging)
-2. "Op basis van algemene juridische kennis - controleer altijd wetten.overheid.nl voor de actuele versie" (zonder bronbevestiging)
-3. "Raadpleeg wetten.overheid.nl voor de exacte en meest actuele tekst van dit artikel"
-
-🛡️ VALIDATIEVERPLICHTINGEN
-- Citeer NOOIT een artikel als definitief zonder bronverificatie
-- Bij twijfel: gebruik disclaimers en verwijs naar officiële bronnen
-- Prioriteer Google resultaten van overheid.nl boven eigen kennis
-- Vermeld altijd onzekerheid over actualiteit van informatie
-
-📋 VERPLICHTE STRUCTUUR - Gebruik EXACT deze markers voor elke vraag:
-
-SAMENVATTING:
-[Begin hier met een heldere, directe beantwoording van de vraag. Gebruik ALTIJD een disclaimer als er geen directe bronverificatie is]
-
-WETSARTIKEL:
-[🚨 ABSOLUTE VERPLICHTING: Bij ELKE vraag over een specifiek wetsartikel MOET je ALTIJD de VOLLEDIGE LETTERLIJKE wettekst tonen. GEEN samenvattingen, GEEN verwijzingen - de complete tekst!
-
-VERPLICHT FORMAT voor elke artikel-vraag:
-
-📖 **ARTIKEL [NUMMER] [WETBOEK] - VOLLEDIGE OFFICIELE TEKST**
-
-[Hier staat de COMPLETE, LETTERLIJKE wettekst zoals officieel gepubliceerd - ELKE ZIN, ELKE KOMMA, VOLLEDIG]
-
-**Bron:** [exacte link naar wetten.overheid.nl artikel]
-
-KRITIEKE REGELS:
-✅ ALTIJD volledige tekst - NOOIT snippets of samenvattingen
-✅ ALTIJD alle leden van het artikel (lid 1, lid 2, etc.)
-✅ ALTIJD alle onderdelen (a, b, c, etc.)
-✅ Gebruik de officiële bronnen die zijn verstrekt
-✅ Als volledige tekst niet beschikbaar: vermeld dit duidelijk + verwijs naar wetten.overheid.nl
-
-❌ VERBODEN: Deelteksten, samenvattingen, "zie wetten.overheid.nl" zonder tekst
-
-Dit geldt voor ALLE vragen zoals:
-- "wat zegt artikel X"
-- "artikel X betekenis/inhoud/tekst"
-- "wat staat in artikel X"
-- "tekst van artikel X"
-
-Als de volledige tekst niet in de bronnen staat, schrijf dan:
-"⚠️ Volledige tekst niet beschikbaar in bronnen. Raadpleeg de complete tekst op: [link]"]
-
-LINK:
-[Geef hier de officiële link naar de wet op wetten.overheid.nl in PLATTE TEKST - GEEN HTML. Gebruik format: "Raadpleeg de officiële tekst op: https://wetten.overheid.nl/... "]
-
-TOELICHTING:
-[Leg hier uit wat de wetsartikelen betekenen. Vermeld indien van toepassing: "Deze uitleg is gebaseerd op algemene juridische interpretatie"]
-
-PRAKTIJK:
-[Beschrijf concrete voorbeelden. Vermeld: "Voor actuele handhavingsrichtlijnen, raadpleeg lokale autoriteiten"]
-
-JURISPRUDENTIE:
-[Noem relevante rechtspraak of vermeld: "Voor actuele jurisprudentie, raadpleeg rechtspraak.nl"]
-
-VERWANTE ARTIKELEN:
-[Verwijs naar gerelateerde regelgeving met disclaimer over actualiteit]
-
-BRONNEN:
-[Lijst gebruikte bronnen + ALTIJD: "Controleer altijd de meest actuele versie op wetten.overheid.nl"]
-
-❌ ABSOLUTE VERBODEN
-❌ Definitieve uitspraken over wetteksten zonder bronverificatie
-❌ "Dit artikel luidt..." zonder disclaimer
-❌ Presenteren van mogelijk verouderde informatie als actueel
-❌ Weglatingen van onzekerheidsvermeldingen
-
-🔄 FAIL-SAFE PRINCIPE
-- Transparantie over bronnen en beperkingen
-- Stimuleer verificatie via officiële kanalen
-- Erken onzekerheid waar van toepassing
-- Juridische waarde leveren met eerlijkheid over betrouwbaarheid
-
-🎯 SPECIFIEKE INSTRUCTIE VOOR WETSARTIKELEN:
-Bij vragen zoals "wat zegt artikel X", "wat staat in artikel Y", "artikel Z betekenis":
-1. Toon EERST de volledige, letterlijke wettekst in een duidelijk kader
-2. Voeg daarna uitleg en context toe
-3. Bij vervolgvragen over hetzelfde artikel: verwijs kort naar de tekst maar herhaal niet volledig`
-
-export async function GET(request: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions)
-    
-    if (!session) {
-      const ip = getClientIP(request)
-      const { remaining } = checkRateLimit(ip)
-      
-      return NextResponse.json({
-        remainingQuestions: remaining,
-        userRole: 'ANONYMOUS'
+function generateSearchVariations(query: string): string[] {
+  const variations = [query]
+  
+  const synonyms: { [key: string]: string[] } = {
+    'artikel': ['art', 'art.', 'artikel'],
+    'wetboek': ['wb', 'wetboek van'],
+    'strafrecht': ['sr', 'strafrecht', 'wetboek van strafrecht'],
+    'strafvordering': ['sv', 'strafvordering', 'wetboek van strafvordering'],
+  }
+  
+  let expandedQuery = query.toLowerCase()
+  for (const [key, values] of Object.entries(synonyms)) {
+    if (expandedQuery.includes(key.toLowerCase())) {
+      values.forEach(synonym => {
+        if (synonym !== key) {
+          variations.push(query.replace(new RegExp(key, 'gi'), synonym))
+        }
       })
     }
-    
-    return NextResponse.json({
-      remainingQuestions: null,
-      userRole: session.user?.role || 'USER'
-    })
-  } catch (error) {
-    console.error('Error in GET /api/wetuitleg:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+  }
+  
+  return [...new Set(variations)]
+}
+
+function extractDomain(url: string): string {
+  try {
+    return new URL(url).hostname
+  } catch {
+    return 'onbekend'
   }
 }
 
-interface ChatMessage {
-  role: 'user' | 'assistant' | 'system'
-  content: string
+export async function GET(request: NextRequest) {
+  return NextResponse.json({ 
+    message: 'WetUitleg API endpoint met uitgebreide validatie. Gebruik POST voor vragen.' 
+  })
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    const { query, history = [], profession = 'algemeen' } = await request.json()
-
-    if (!query || typeof query !== 'string') {
+    const { query } = await request.json()
+    
+    if (!query) {
       return NextResponse.json(
-        { error: 'Query is required' },
+        { error: 'Query is vereist' },
         { status: 400 }
       )
     }
 
-    // Rate limiting for anonymous users
+    console.log(`📝 WetUitleg vraag: "${query}"`)
+
+    // Session check
+    const session = await getServerSession(authOptions)
+    const clientIP = getClientIP(request)
+
+    // Rate limiting voor anonieme gebruikers
     if (!session) {
-      const ip = getClientIP(request)
-      const { allowed, remaining } = checkRateLimit(ip)
-      
-      if (!allowed) {
-        const rateLimitMessage = `**Limiet bereikt**
-
-Je hebt het maximum aantal gratis wetsanalyses (4 per dag) bereikt.
-
-**Wat kun je doen?**
-- [Maak een gratis account aan](/auth/signin) voor onbeperkt gebruik
-- Kom morgen terug voor nieuwe gratis analyses
-- Upgrade naar een premium account voor extra functies
-
-**Waarom een account?**
-- Onbeperkte wetsanalyses
-- Geschiedenis van je vragen
-- Favorieten opslaan
-- Prioritaire ondersteuning
-
-[**Gratis account aanmaken →**](/auth/signin)`
-
-        return new Response(rateLimitMessage, {
-          headers: {
-            'Content-Type': 'text/plain; charset=utf-8',
-          },
-        })
+      const rateLimit = checkRateLimit(clientIP)
+      if (!rateLimit.allowed) {
+        return NextResponse.json(
+          { error: 'Te veel verzoeken. Probeer het later opnieuw.' },
+          { status: 429 }
+        )
       }
-      
-      // Increment rate limit
-      incrementRateLimit(ip)
+      incrementRateLimit(clientIP)
+      console.log(`🔒 Anonieme gebruiker (IP: ${clientIP}) - ${rateLimit.remaining} verzoeken over`)
     }
 
-    console.log('', query)
-
-    // STAP 1: Bronnen bepalen 
-    let jsonSources: JsonBron[] = []
-    let googleResults: string = ''
+    // 🧠 STAP 1: ANALYSEER DE JURIDISCHE VRAAG
+    const questionAnalysis = await analyzeJuridicalQuestion(query)
     
-    console.log('')
-    try {
-      jsonSources = await searchJsonSources(query, 10)
-      if (jsonSources.length > 0) {
-        console.log(` ${jsonSources.length} relevante JSON bronnen gevonden`)
-      } else {
-        console.log('')
-      }
-    } catch (error) {
-      console.error(' Fout bij JSON bronnen zoeken:', error)
-    }
-
-    // STAP 2: Evaluatie Google API noodzaak 
-    console.log('')
+    // 📖 STAP 2: ZOEK EXACTE WETTEKSTEN
+    const exactLegalTexts = await findExactLegalTexts(questionAnalysis.articleReferences)
     
-    const needsGoogle = needsGoogleSearch(jsonSources, query)
+    // 🔍 STAP 3: ZOEK AANVULLENDE CONTEXT
+    const searchResults = await comprehensiveSearch(query)
     
-    if (needsGoogle) {
-      console.log('')
-      console.log('Searching Google Custom Search API for:', query)
-      
-      try {
-        const results = await searchGoogleCustomAPI(query)
-        if (results.length > 0) {
-          googleResults = formatGoogleResultsForContext(results)
-          console.log(`${results.length} Google zoekresultaten gevonden`)
-                      console.log(`${results.length} Google resultaten toegevoegd`)
-        } else {
-          console.log('')
-        }
-      } catch (error) {
-        console.error('Fout bij Google zoeken:', error)
-      }
-    } else {
-      console.log('Voldoende JSON dekking - Google API niet nodig')
-      console.log('STAP 3: Google API overgeslagen - voldoende JSON dekking')
-    }
-
-    // STAP 4: Samenstellen input voor ChatGPT
-    console.log('STAP 4: Input samenstelling voor ChatGPT')
-          console.log(`Starting OpenAI request met ${jsonSources.length} JSON bronnen en ${googleResults ? 'Google resultaten' : 'geen Google resultaten'}`)
-
-    // Extract article references for specialized wetuitleg handling
-    const articleReferences = extractArticleReferences(query)
-          console.log('Detected article references:', articleReferences)
-
-    // Validate information reliability
-    const validationInput: LegalQuery = {
-      query,
-      foundSources: jsonSources,
-      googleResults,
-      articleReferences
-    }
-    
-    const validation = validateLegalInformation(validationInput)
-    console.log('', {
-      reliable: validation.isReliable,
-      confidence: validation.confidence,
-      warnings: validation.warnings.length,
-      sources: validation.sourceVerification.sourcesUsed
-    })
-
-    // Generate validation disclaimer
-    const validationDisclaimer = generateValidationDisclaimer(validation)
-    const reliabilityIndicator = getReliabilityIndicator(validation.confidence)
-
-    // Search for literal law texts with enhanced validation (for specific articles)
-    let articleTexts: Array<{ ref: string; text: string; url: string }> = []
-    if (articleReferences.length > 0) {
-      console.log('')
-      articleTexts = await searchLiteralLawText(articleReferences)
-      console.log(` Found ${articleTexts.length} validated articles from wetten.overheid.nl`)
-      
-      // If no results from enhanced search, fall back to original method
-      if (articleTexts.length === 0) {
-        console.log('')
-        articleTexts = await searchArticleTextsViaGoogle(articleReferences)
-        console.log(` Found ${articleTexts.length} articles via fallback search`)
-      }
-    }
-
-    // Find relevant official sources for additional context
-    const officialSources = findRelevantOfficialSources(query, 3)
-    console.log(` Found ${officialSources.length} additional official sources`)
-
-    // Prepare official legal texts section - WETUITLEG SPECIFIC FORMAT
-    let officialTextsSection = ''
-    
-    // Add extracted article texts first (most important)
-    if (articleTexts.length > 0) {
-      officialTextsSection += '\n\n## OFFICIËLE WETTEKSTEN - GEBRUIK DEZE VOLLEDIGE TEKSTEN:\n\n'
-      articleTexts.forEach((article, index) => {
-        officialTextsSection += `ARTIKEL ${article.ref.toUpperCase()}\n`
-        officialTextsSection += `**VOLLEDIGE OFFICIËLE TEKST (GEBRUIK DEZE LETTERLIJK):** ${article.text}\n`
-        officialTextsSection += `**OFFICIËLE BRON:** ${article.url}\n\n`
-        officialTextsSection += `⚠️ INSTRUCTIE: Toon deze volledige tekst letterlijk in je antwoord. NIET samenvatten!\n\n`
-      })
-    }
-    
-    // Add JSON sources 
-    if (jsonSources.length > 0) {
-      officialTextsSection += '\n\n## OFFICIËLE JURIDISCHE BRONNEN:\n\n'
-      jsonSources.forEach((source, index) => {
-        officialTextsSection += `${source.categorie} - ${source.naam}\n`
-        officialTextsSection += `**URL:** ${source.url}\n`
-        if (source.beschrijving) {
-          officialTextsSection += `**Beschrijving:** ${source.beschrijving}\n`
-        }
-        officialTextsSection += '\n'
-      })
-    }
-    
-    // Add Google search results if available
-    if (googleResults) {
-      officialTextsSection += '\n\n## AANVULLENDE JURIDISCHE BRONNEN:\n\n'
-      officialTextsSection += googleResults
-    }
-    
-    // Add additional official sources for context
-    if (officialSources.length > 0) {
-      officialTextsSection += '\n\n## EXTRA JURIDISCHE CONTEXT:\n\n'
-      officialSources.forEach((source, index) => {
-        officialTextsSection += `${source.Topic}\n`
-        officialTextsSection += `**Categorie:** ${source.Categorie}\n`
-        officialTextsSection += `**Bron:** ${source["Bron (naam)"]}\n`
-        officialTextsSection += `**Omschrijving:** ${source.Omschrijving}\n`
-        officialTextsSection += `**URL:** ${source.URL}\n\n`
-      })
-    }
-    
-    if (officialTextsSection) {
-      officialTextsSection += `\n**KRITIEKE INSTRUCTIES VOOR WETTEKSTEN:**
-1. 🚨 TOON ALTIJD VOLLEDIGE WETTEKSTEN - NOOIT samenvattingen of snippets
-2. 📖 Gebruik het exacte format: "📖 **ARTIKEL [X] [WETBOEK] - VOLLEDIGE OFFICIELE TEKST**"
-3. ✅ Kopieer de volledige tekst letterlijk uit de bovenstaande bronnen
-4. ⚠️ Als volledige tekst ontbreekt: vermeld dit duidelijk + verwijs naar wetten.overheid.nl
-5. 🔗 Geef altijd de exacte bron-URL mee
-6. 💡 Voeg NA de volledige tekst je uitleg en context toe
-7. 🎯 Voor APV-vragen: zoek naar specifieke artikelnummers in de bronnen
-8. ❌ Gebruik GEEN emoji's in kopjes of sectietitels\n\n`
-    }
-
-    // Add profession context to system prompt
-    let professionContext = ""
-    if (profession && profession !== 'algemeen') {
-      professionContext = `\n\nJe beantwoordt deze vraag specifiek voor: ${profession}. Pas je antwoord aan op deze doelgroep volgens de profession-specifieke richtlijnen.`
-    }
-
-    // Add validation information to prompt
-    const validationSection = `\n\nBETROUWBAAREIDSSTATUS VOOR DEZE VRAAG:
-${reliabilityIndicator}
-
-Gedetecteerde validatiepunten:
-${validation.warnings.length > 0 ? validation.warnings.map(w => ` ${w}`).join('\n') : ' Geen specifieke waarschuwingen'}
-
-${validation.recommendations.length > 0 ? `\nAanbevelingen:
-      ${validation.recommendations.map(r => `${r}`).join('\n')}` : ''}
-
-VERPLICHTE DISCLAIMER VOOR JE ANTWOORD:
-${validationDisclaimer}
-
-INSTRUCTIE: Integreer deze betrouwbaarheidsinformatie natuurlijk in je antwoord. Gebruik vooral de BRONNEN sectie om de disclaimers op te nemen.`
-
-    // Prepare conversation history with enhanced Wetuitleg system prompt
-    const conversationHistory: ChatMessage[] = [
-      { 
-        role: 'system', 
-        content: WETUITLEG_SYSTEM_PROMPT + professionContext + (officialTextsSection || "") + validationSection
-      },
-      ...(history as ChatMessage[]).slice(-8), // Keep last 8 messages for context
-      { role: 'user', content: query }
-    ]
-
-    console.log('')
-
-    // Create OpenAI completion stream with GPT-4o for better juridical accuracy
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages: conversationHistory,
-      stream: true,
-      temperature: 0.05, // Even lower temperature for maximum precision
-      max_tokens: 4000, // Higher token limit for comprehensive analysis
-      presence_penalty: 0.1, // Encourage more detailed responses
-      frequency_penalty: 0.1, // Prevent repetitive content
-    })
-
-    // Create a readable stream that captures full response
-    let fullResponse = ''
-    let streamClosed = false
-    
+    // Stream response met TRIPLE VALIDATION
     const stream = new ReadableStream({
       async start(controller) {
         const encoder = new TextEncoder()
         
         try {
-          for await (const chunk of completion) {
-            if (streamClosed) break
+          console.log('🤖 Starten gevalideerde OpenAI response...')
+          
+          // Bouw uitgebreide, gevalideerde context
+          let context = `Je bent een Nederlandse juridische expert. Beantwoord de vraag zeer zorgvuldig en accuraat.
+
+BELANGRIJKE INSTRUCTIES:
+- Gebruik ALLEEN de officiële bronnen die zijn verstrekt
+- Als je niet zeker bent, vermeld dit expliciet
+- Verwijs NOOIT naar artikelen als je de exacte tekst niet hebt
+- Geef alleen informatie waar je 100% zeker van bent
+- Vermeld geen bronnen of websites in je antwoord
+
+OFFICIËLE WETTEKSTEN:
+${exactLegalTexts.map(text => `${text.article}: "${text.text}"`).join('\n\n')}
+
+AANVULLENDE CONTEXT:
+${searchResults.map(r => `${r.title}: ${r.snippet}`).join('\n\n')}
+
+VRAAG: "${query}"
+
+Geef een accuraat, betrouwbaar antwoord gebaseerd ALLEEN op de verstrekte officiële informatie.`
+
+          const messages = [
+            {
+              role: 'system',
+              content: context
+            },
+            {
+              role: 'user',
+              content: query
+            }
+          ]
+
+          // Genereer het initiële antwoord
+          const response = await openai.chat.completions.create({
+            model: 'gpt-4o',
+            messages: messages as any,
+            stream: false, // Eerst compleet antwoord voor validatie
+            temperature: 0.1,
+            max_tokens: 2000,
+          })
+
+          const initialAnswer = response.choices[0]?.message?.content || ''
+          
+          // ⚖️ STAP 4: VALIDEER HET ANTWOORD
+          const validation = await validateLegalAnswer(query, initialAnswer, exactLegalTexts)
+          
+          // Bepaal of we het antwoord kunnen geven
+          if (!validation.isValid || validation.confidence === 'low') {
+            console.log('❌ Antwoord faalde validatie')
             
-            const content = chunk.choices[0]?.delta?.content || ''
-            if (content) {
-              fullResponse += content
-              controller.enqueue(encoder.encode(content))
+            const warningMessage = `⚠️ **WAARSCHUWING: Onzekere Informatie**
+
+Ik kan geen betrouwbaar antwoord geven op deze vraag omdat:
+${validation.warnings.map(w => `• ${w}`).join('\n')}
+
+Voor deze specifieke juridische vraag raad ik aan:
+• Raadpleeg een advocaat of juridisch adviseur
+• Bekijk de officiële wetteksten op wetten.overheid.nl
+• Neem contact op met de relevante overheidsinstantie
+
+**Dit is geen juridisch advies. Bij twijfel altijd professioneel juridisch advies inwinnen.**`
+
+            // Stream de waarschuwing
+            const chunks = warningMessage.match(/.{1,50}/g) || [warningMessage]
+            for (const chunk of chunks) {
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content: chunk })}\n\n`))
+              await new Promise(resolve => setTimeout(resolve, 50))
+            }
+          } else {
+            console.log('✅ Antwoord goedgekeurd door validatie')
+            
+            // Voeg validatie-informatie toe aan het antwoord
+            const validatedAnswer = `${initialAnswer}
+
+---
+✅ **Betrouwbaarheid: ${validation.confidence.toUpperCase()}**
+${validation.verifiedFacts.length > 0 ? `\n🔍 **Geverifieerde feiten:**\n${validation.verifiedFacts.map(f => `• ${f}`).join('\n')}` : ''}
+${validation.warnings.length > 0 ? `\n⚠️ **Let op:**\n${validation.warnings.map(w => `• ${w}`).join('\n')}` : ''}
+
+**Dit is geen juridisch advies. Bij twijfel altijd professioneel juridisch advies inwinnen.**`
+
+            // Stream het gevalideerde antwoord
+            const chunks = validatedAnswer.match(/.{1,50}/g) || [validatedAnswer]
+            for (const chunk of chunks) {
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content: chunk })}\n\n`))
+              await new Promise(resolve => setTimeout(resolve, 50))
             }
           }
           
-          if (!streamClosed) {
-            console.log('')
-             
-            // Save to database
-            try {
-              await prisma.query.create({
-                data: {
-                  question: query,
-                  answer: fullResponse,
-                  userId: session?.user?.id || null,
-                  profession: profession,
-                  sources: JSON.stringify({
-                    type: 'WETUITLEG_ENHANCED',
-                    articlesExtracted: articleTexts.length,
-                    articleReferences: articleReferences,
-                    jsonSources: jsonSources.length,
-                    googleResults: googleResults ? 'Used Google API' : 'No Google API used',
-                    officialSources: officialSources.length,
-                    hasOfficialTexts: articleTexts.length > 0,
-                    timestamp: new Date().toISOString()
-                  })
-                }
-              })
-              console.log('')
-            } catch (dbError) {
-              console.error(' Failed to save wetuitleg query:', dbError)
-            }
-            
-            streamClosed = true
-            controller.close()
-          }
+          controller.enqueue(encoder.encode(`data: [DONE]\n\n`))
+          controller.close()
+          
         } catch (error) {
-          if (!streamClosed) {
-            console.error(' Error in wetuitleg stream:', error)
-            streamClosed = true
-            controller.error(error)
-          }
+          console.error('❌ Streaming error:', error)
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: 'Er ging iets mis bij het genereren van het antwoord.' })}\n\n`))
+          controller.enqueue(encoder.encode(`data: [DONE]\n\n`))
+          controller.close()
         }
-      },
-      
-      cancel() {
-        console.log('')
-        streamClosed = true
       }
     })
 
-    console.log('')
+    // Sla query op in database
+    try {
+      await prisma.query.create({
+        data: {
+          question: query,
+          answer: `Gevalideerd antwoord - betrouwbaarheid gecontroleerd`,
+          sources: JSON.stringify([...new Set(searchResults.map(r => r.source))]),
+          userId: session?.user?.id || null,
+          profession: 'algemeen'
+        }
+      })
+    } catch (dbError) {
+      console.error('Database save error:', dbError)
+    }
+
+    console.log(`✅ Gevalideerd WetUitleg antwoord gestream voor: "${query}"`)
+
     return new Response(stream, {
       headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
+        'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         'Connection': 'keep-alive',
       },
     })
 
   } catch (error) {
-    console.error('🔴 Error in POST /api/wetuitleg:', error)
+    console.error('❌ WetUitleg error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Er ging iets mis bij het verwerken van je vraag.' },
       { status: 500 }
     )
   }

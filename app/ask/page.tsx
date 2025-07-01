@@ -42,7 +42,12 @@ import {
   ExternalLink,
   ToggleLeft,
   ToggleRight,
-  Bookmark
+  Bookmark,
+  AlertTriangle,
+  Sparkles,
+  Zap,
+  Plus,
+  MoreHorizontal
 } from 'lucide-react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
@@ -63,521 +68,318 @@ interface Message {
   type: 'user' | 'assistant'
 }
 
-type Profession = 'aspirant' | 'student' | 'politieagent' | 'advocaat' | 'algemeen' | 'boa' | 'rechter' | 'notaris' | 'deurwaarder' | 'bedrijfsjurist' | 'gemeenteambtenaar' | 'belastingadviseur' | 'accountant' | 'makelaar' | 'verzekeringsagent' | 'hr-medewerker' | 'compliance-officer' | 'veiligheidsbeambte' | 'beveiliger' | 'gemeentejurist' | 'trainer' | 'vervoersmedewerker' | 'zorgprofessional'
+type Profession = 'aspirant' | 'student' | 'politieagent' | 'advocaat' | 'algemeen' | 'boa' | 'rechter' | 'notaris' | 'deurwaarder' | 'bedrijfsjurist' | 'gemeenteambtenaar' | 'belastingadviseur' | 'accountant' | 'makelaar' | 'verzekeringsagent' | 'hr-medewerker' | 'compliance-officer' | 'veiligheidsbeambte' | 'beveiliger' | 'gemeentejurist' | 'trainer' | 'vervoersmedewerker' | 'zorgprofessional' | 'officier' | 'juridischmedewerker' | 'parkeercontroleur'
 
 const professionConfig = {
   algemeen: {
     icon: Info,
     label: 'Algemeen/Burger',
     color: 'text-gray-700 bg-gray-50 border-gray-200',
-    description: 'Gericht op begrijpelijke juridische informatie voor iedereen'
+    description: 'Begrijpelijke uitleg van juridische begrippen en praktische toepassingen voor burgers'
   },
   advocaat: {
     icon: Scale,
     label: 'Advocaat',
     color: 'text-purple-700 bg-purple-50 border-purple-200',
-    description: 'Gericht op procesrecht, verdedigingsstrategieën en jurisprudentie'
+    description: 'Diepgaande juridische analyse, processtrategieën, jurisprudentie en verweersmogelijkheden'
   },
   politieagent: {
     icon: Shield,
     label: 'Politieagent',
     color: 'text-indigo-700 bg-indigo-50 border-indigo-200',
-    description: 'Gericht op praktische bevoegdheden en handhavingsprocedures'
+    description: 'Concrete bevoegdheden, handhavingsprocedures, arrestatieprocedures en praktische toepassingen'
   },
   boa: {
     icon: Shield,
     label: 'BOA / Handhaver',
     color: 'text-cyan-700 bg-cyan-50 border-cyan-200',
-    description: 'Gericht op toezichtsbevoegdheden en APV-handhaving'
+    description: 'Specifieke BOA-bevoegdheden, APV-handhaving, processenverbaal en bestuurlijke procedures'
   },
   rechter: {
     icon: Gavel,
-    label: 'Rechter',
+    label: 'Rechter/Magistraat',
     color: 'text-red-700 bg-red-50 border-red-200',
-    description: 'Gericht op procesrecht, bewijsrecht en uitspraakvorming'
+    description: 'Juridische grondslag voor uitspraken, bewijswaardering, straftoemeting en procesrecht'
   },
   notaris: {
     icon: FileText,
     label: 'Notaris',
     color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
-    description: 'Gericht op burgerlijk recht en notariële praktijk'
+    description: 'Burgerlijk recht, contractenrecht, familierecht, vastgoedrecht en notariële praktijk'
   },
   deurwaarder: {
     icon: FileText,
-    label: 'Deurwaarder',
+    label: 'Gerechtsdeurwaarder',
     color: 'text-orange-700 bg-orange-50 border-orange-200',
-    description: 'Gericht op executierecht en beslagprocedures'
+    description: 'Executierecht, beslagprocedures, dwangsom, betekening en gerechtelijke procedures'
   },
   bedrijfsjurist: {
     icon: Building,
     label: 'Bedrijfsjurist',
     color: 'text-slate-700 bg-slate-50 border-slate-200',
-    description: 'Gericht op ondernemingsrecht en compliance-vraagstukken'
+    description: 'Ondernemingsrecht, contractenrecht, compliance, AVG en bedrijfsrechtelijke kwesties'
   },
   gemeenteambtenaar: {
     icon: MapPin,
     label: 'Gemeenteambtenaar',
     color: 'text-green-700 bg-green-50 border-green-200',
-    description: 'Gericht op bestuursrecht en lokale verordeningen'
+    description: 'Bestuurlijke procedures, vergunningen, APV-toepassing en gemeentelijke bevoegdheden'
   },
   gemeentejurist: {
     icon: Building,
     label: 'Gemeentejurist',
     color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
-    description: 'Gericht op gemeentelijk recht en bestuurlijke sancties'
+    description: 'Bestuursrecht, bestuurlijke sancties, bezwaar & beroep en gemeentelijke wetgeving'
   },
   belastingadviseur: {
     icon: Calculator,
     label: 'Belastingadviseur',
     color: 'text-yellow-700 bg-yellow-50 border-yellow-200',
-    description: 'Gericht op fiscaal recht en belastingwetgeving'
+    description: 'Fiscaal recht, belastingwetgeving, procedures bij de Belastingdienst en belastingzaken'
   },
   accountant: {
     icon: Calculator,
     label: 'Accountant',
     color: 'text-blue-700 bg-blue-50 border-blue-200',
-    description: 'Gericht op financieel recht en verslaggeving'
+    description: 'Financieel recht, verslaggeving, boekhoudwetgeving en fiscale aspecten'
   },
   makelaar: {
     icon: Home,
     label: 'Makelaar',
     color: 'text-teal-700 bg-teal-50 border-teal-200',
-    description: 'Gericht op vastgoedrecht en makelaarsrecht'
+    description: 'Vastgoedrecht, makelaarsrecht, koopcontracten en eigendomsoverdracht'
   },
   verzekeringsagent: {
     icon: Shield,
     label: 'Verzekeringsagent',
     color: 'text-purple-700 bg-purple-50 border-purple-200',
-    description: 'Gericht op verzekeringsrecht en aansprakelijkheid'
+    description: 'Verzekeringsrecht, aansprakelijkheid, schadeafhandeling en verzekeringscontracten'
   },
   'hr-medewerker': {
     icon: Users,
     label: 'HR-medewerker',
     color: 'text-pink-700 bg-pink-50 border-pink-200',
-    description: 'Gericht op arbeidsrecht en personeelsbeleid'
+    description: 'Arbeidsrecht, personeelsbeleid, ontslag, AVG-privacy en arbeidsvoorwaarden'
   },
   'compliance-officer': {
     icon: CheckCircle,
     label: 'Compliance Officer',
     color: 'text-indigo-700 bg-indigo-50 border-indigo-200',
-    description: 'Gericht op toezichtrecht en compliance-procedures'
+    description: 'Toezichtrecht, compliance-procedures, risicobeheersing en regelgeving'
   },
   veiligheidsbeambte: {
     icon: Shield,
     label: 'Veiligheidsbeambte',
     color: 'text-red-700 bg-red-50 border-red-200',
-    description: 'Gericht op veiligheidsrecht en preventieve maatregelen'
+    description: 'Veiligheidsrecht, preventieve maatregelen, incidentmanagement en veiligheidsprocedures'
   },
   beveiliger: {
     icon: Shield,
     label: 'Beveiliger',
     color: 'text-orange-700 bg-orange-50 border-orange-200',
-    description: 'Gericht op private beveiliging en eigendomsbescherming'
+    description: 'Private beveiliging, eigendomsbescherming, arrestatiebevoegdheden en bewakingswet'
   },
   trainer: {
     icon: GraduationCap,
-    label: 'Trainer / Opleider',
+    label: 'Trainer/Opleider',
     color: 'text-blue-700 bg-blue-50 border-blue-200',
-    description: 'Gericht op educatieve en gestructureerde juridische uitleg'
+    description: 'Educatieve juridische uitleg, voorbeelden en casus voor training en onderwijs'
   },
   vervoersmedewerker: {
     icon: Users,
     label: 'Vervoersmedewerker',
     color: 'text-green-700 bg-green-50 border-green-200',
-    description: 'Gericht op vervoersrecht en OV-bevoegdheden'
+    description: 'Vervoersrecht, OV-bevoegdheden, controle en handhaving in openbaar vervoer'
   },
   zorgprofessional: {
     icon: Heart,
     label: 'Zorgprofessional',
     color: 'text-pink-700 bg-pink-50 border-pink-200',
-    description: 'Gericht op zorgrecht en privacy-regelgeving'
+    description: 'Zorgrecht, medische privacy, tuchtrecht en patiëntrechten'
   },
   aspirant: {
     icon: UserCheck,
-    label: 'Aspirant',
+    label: 'Aspirant-agent',
     color: 'text-blue-700 bg-blue-50 border-blue-200',
-    description: 'Gericht op uitgebreide uitleg met praktijkvoorbeelden'
+    description: 'Uitgebreide uitleg van politiebevoegdheden met praktijkvoorbeelden en leerdoelen'
   },
   student: {
     icon: GraduationCap,
-    label: 'Student',
-    color: 'text-green-700 bg-green-50 border-green-200',
-    description: 'Gericht op studiemateriaal met bronvermelding en structuur'
+    label: 'Student/Stagiair',
+    color: 'text-blue-700 bg-blue-50 border-blue-200',
+    description: 'Theoretische juridische grondslagen, leermaterialen en begrippenuitleg'
+  },
+  officier: {
+    icon: Shield,
+    label: 'Officier van Justitie',
+    color: 'text-purple-700 bg-purple-50 border-purple-200',
+    description: 'Strafrecht, vervolgingsbeleid, sepot-gronden en strafrechtelijke procedures'
+  },
+  juridischmedewerker: {
+    icon: FileText,
+    label: 'Juridisch Medewerker',
+    color: 'text-slate-700 bg-slate-50 border-slate-200',
+    description: 'Praktische juridische ondersteuning, dossiervoorbereiding en procedurele aspecten'
+  },
+  parkeercontroleur: {
+    icon: MapPin,
+    label: 'Parkeercontroleur',
+    color: 'text-orange-700 bg-orange-50 border-orange-200',
+    description: 'Parkeerreglement, RVV-bepalingen, parkeerboetes en handhavingsprocedures'
   }
 }
 
 const formatText = (text: string): React.ReactElement => {
   if (!text) return <div></div>
   
-  // Step 1: Clean markdown syntax but preserve and enhance links
-  const processedText = text
-    // Remove AI references
-    .replace(/\b(AI|artificial intelligence|machine learning|ML|chatbot|bot|assistant|model)\b/gi, 'systeem')
-    // Remove most markdown formatting but preserve links
-    .replace(/\*\*(.*?)\*\*/g, '$1')  // Bold - remove asterisks
-    .replace(/\*(.*?)\*/g, '$1')      // Italic - remove asterisks  
-    .replace(/`([^`]*)`/g, '$1')      // Inline code - remove backticks
-    .replace(/```[\s\S]*?```/g, '')   // Code blocks - remove completely
-    // Keep markdown links for processing later: [text](url) stays as is
-    .replace(/^>\s*/gm, '')           // Blockquotes - remove > symbols
-    .replace(/^#{1,6}\s*/gm, '')      // Headers - remove # symbols completely
-    .replace(/^[\*\-\+]\s+/gm, '• ')  // Convert bullet points to simple bullets
-    .replace(/^\d+\.\s+/gm, '')       // Remove numbered list markers
-    .replace(/---+/g, '')             // Remove horizontal rules
-    .replace(/\n{3,}/g, '\n\n')       // Clean excessive whitespace
-    .trim()
-
-  const elements: React.ReactElement[] = []
-  let key = 0
-
-  // Helper function to process text and make links clickable
   const processLinksInText = (text: string): React.ReactNode => {
-    // First handle markdown links [text](url)
-    const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g
-    // Then handle plain URLs
-    const urlRegex = /(https?:\/\/[^\s<>"{}|\\^`[\]]+)/g
-    // Handle wetten.overheid.nl specific links
-    const wettenRegex = /(wetten\.overheid\.nl[^\s<>"{}|\\^`[\]]*)/g
+    const urlRegex = /(https?:\/\/[^\s)]+(?:\([^\s)]*\))?[^\s.,;!?)]*)(?![^<]*>)/g
+    const parts = text.split(urlRegex)
     
-    let lastIndex = 0
-    const parts: React.ReactNode[] = []
-    let partKey = 0
-    
-    // Process markdown links first
-    const allMatches: Array<{start: number, end: number, text: string, url: string, type: 'markdown' | 'url' | 'wetten'}> = []
-    
-    // Find markdown links
-    let markdownMatch: RegExpExecArray | null
-    while ((markdownMatch = markdownLinkRegex.exec(text)) !== null) {
-      allMatches.push({
-        start: markdownMatch.index,
-        end: markdownMatch.index + markdownMatch[0].length,
-        text: markdownMatch[1],
-        url: markdownMatch[2],
-        type: 'markdown'
-      })
-    }
-    
-    // Find plain URLs (but not those already in markdown links)
-    markdownLinkRegex.lastIndex = 0 // Reset regex
-    let urlMatch: RegExpExecArray | null
-    while ((urlMatch = urlRegex.exec(text)) !== null) {
-      const isInMarkdownLink = allMatches.some(m => 
-        urlMatch!.index >= m.start && urlMatch!.index < m.end
-      )
-      if (!isInMarkdownLink) {
-        allMatches.push({
-          start: urlMatch.index,
-          end: urlMatch.index + urlMatch[0].length,
-          text: urlMatch[1],
-          url: urlMatch[1],
-          type: 'url'
-        })
+    return parts.map((part, index) => {
+      if (part.match(urlRegex)) {
+        const cleanUrl = part.replace(/[.,;!?]*$/, '')
+        return (
+          <a
+            key={index}
+            href={cleanUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 underline break-all"
+          >
+            {cleanUrl}
+          </a>
+        )
       }
-    }
-    
-    // Find wetten.overheid.nl links (but not those already found)
-    urlRegex.lastIndex = 0 // Reset regex
-    let wettenMatch: RegExpExecArray | null
-    while ((wettenMatch = wettenRegex.exec(text)) !== null) {
-      const isAlreadyFound = allMatches.some(m => 
-        wettenMatch!.index >= m.start && wettenMatch!.index < m.end
-      )
-      if (!isAlreadyFound) {
-        const fullUrl = wettenMatch[1].startsWith('http') ? wettenMatch[1] : `https://${wettenMatch[1]}`
-        allMatches.push({
-          start: wettenMatch.index,
-          end: wettenMatch.index + wettenMatch[0].length,
-          text: wettenMatch[1],
-          url: fullUrl,
-          type: 'wetten'
-        })
-      }
-    }
-    
-    // Sort matches by position
-    allMatches.sort((a, b) => a.start - b.start)
-    
-    // Build the result with clickable links
-    allMatches.forEach(linkMatch => {
-      // Add text before the link
-      if (linkMatch.start > lastIndex) {
-        const beforeText = text.slice(lastIndex, linkMatch.start)
-        if (beforeText) {
-          parts.push(<span key={partKey++}>{beforeText}</span>)
-        }
-      }
-      
-      // Add the clickable link
-      const linkText = linkMatch.text
-      const linkUrl = linkMatch.url
-      
-      // Ensure URL has protocol
-      const finalUrl = linkUrl.startsWith('http') ? linkUrl : `https://${linkUrl}`
-      
-      parts.push(
-        <a
-          key={partKey++}
-          href={finalUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 hover:text-blue-800 underline hover:no-underline transition-colors inline-flex items-center gap-1"
-        >
-          {linkText}
-          <ExternalLink className="h-3 w-3" />
-        </a>
-      )
-      
-      lastIndex = linkMatch.end
+      return part
     })
-    
-    // Add remaining text after the last link
-    if (lastIndex < text.length) {
-      const remainingText = text.slice(lastIndex)
-      if (remainingText) {
-        parts.push(<span key={partKey++}>{remainingText}</span>)
-      }
-    }
-    
-    // If no links were found, return the original text
-    if (parts.length === 0) {
-      return text
-    }
-    
-    return <>{parts}</>
   }
 
-  // Step 2: Split into logical sections by double newlines for natural reading
-  const sections = processedText.split(/\n\n+/).filter(s => s.trim())
-
-  sections.forEach((section, sectionIndex) => {
-    const trimmedSection = section.trim()
-    if (!trimmedSection) return
-
-    // Detect main response sections (KERNANTWOORD, WETTELIJKE BASIS, etc.)
-    const isMainSection = /^(KERNANTWOORD|WETTELIJKE BASIS|PRAKTISCHE TOELICHTING|BRONNEN|GERELATEERDE ARTIKELEN|VOORBEELDEN|SAMENVATTING|CONCLUSIE|PRAKTIJKVOORBEELD|UITLEG|TOELICHTING|LET OP|BELANGRIJK|WAARSCHUWING)/i.test(trimmedSection)
-    
-    // Add extra spacing before main sections (except the first one)
-    if (isMainSection && sectionIndex > 0) {
-      elements.push(
-        <div key={key++} className="h-6"></div> // Extra spacing
-      )
-    }
-
-    // Detect wettelijke grondslag formatting: "De verdachte (art. 47 Sr)"
-    const hasLegalReference = /\b(art\.?\s*\d+|artikel\s*\d+|wetboek|BW|Sr|Sv|AWR|Grondwet|ECLI)\b/i.test(trimmedSection)
-    
-    // Apply natural formatting with wettelijke grondslag integration
-    if (hasLegalReference) {
-      // Enhanced legal text with integrated references
-      const formattedText = trimmedSection.replace(
-        /\b(De\s+(?:verdachte|politie|rechter|officier|deurwaarder|notaris|gemeente|werkgever|werknemer|huurder|verhuurder|eigenaar|bestuur|minister|burgemeester))\s*\(([^)]+)\)/gi,
-        '<span class="text-blue-800">$1 ($2)</span>'
-      )
-      
-      elements.push(
-        <div key={key++} className="my-6 p-6 bg-gradient-to-r from-amber-50 to-yellow-50 border-l-4 border-amber-500 rounded-r-lg shadow-sm">
-          <div className="flex items-start gap-4">
-            <span className="text-amber-600 text-2xl flex-shrink-0 mt-1"></span>
-            <div className="text-gray-800 leading-relaxed">
-              <div className="space-y-2">
-                {processLinksInText(formattedText.replace(/<span class="[^"]*">([^<]*)<\/span>/g, '$1'))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )
-      return
-    }
-
-    // Detect main section headers (KERNANTWOORD, WETTELIJKE BASIS, etc.)
-    if (isMainSection && trimmedSection.length < 150) {
-      const sectionTitle = trimmedSection.replace(/^(KERNANTWOORD|WETTELIJKE BASIS|PRAKTISCHE TOELICHTING|BRONNEN|GERELATEERDE ARTIKELEN|VOORBEELDEN|SAMENVATTING|CONCLUSIE|PRAKTIJKVOORBEELD|UITLEG|TOELICHTING|LET OP|BELANGRIJK|WAARSCHUWING)\s*/i, '$1')
-      
-      elements.push(
-        <div key={key++} className="mt-8 mb-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-            <h3 className="text-lg font-medium text-blue-800 uppercase tracking-wide">
-              {sectionTitle.replace(/:$/, '')}
-            </h3>
-          </div>
-        </div>
-      )
-      return
-    }
-
-    // Detect section headers (natural titles ending with colon)
-    if (trimmedSection.endsWith(':') && trimmedSection.length < 100 && !trimmedSection.includes('.') && !isMainSection) {
-      elements.push(
-        <div key={key++} className="mt-6 mb-4">
-          <h4 className="text-base font-medium text-gray-800 border-b border-gray-200 pb-2">
-            {processLinksInText(trimmedSection.replace(/:$/, ''))}
-          </h4>
-        </div>
-      )
-      return
-    }
-
-    // Detect bullet points - create natural list without excessive styling
-    const lines = trimmedSection.split('\n').filter(l => l.trim())
-    const bulletLines = lines.filter(line => line.trim().startsWith('•'))
-    
-    if (bulletLines.length > 0 && bulletLines.length === lines.length) {
-      elements.push(
-        <div key={key++} className="my-4">
-          <ul className="space-y-2 ml-4">
-            {lines.map((line, idx) => {
-              const cleanLine = line.replace(/^•\s*/, '').trim()
-              return (
-                <li key={idx} className="flex items-start gap-2">
-                  <span className="text-blue-600 text-sm flex-shrink-0 mt-2">•</span>
-                  <span className="text-gray-800 leading-relaxed">
-                    {processLinksInText(cleanLine)}
-                  </span>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      )
-      return
-    }
-
-    // Detect important notes - subtle highlighting without excessive decoration
-    if (/^(let op|belangrijk|n\.?b\.?|opmerking|waarschuwing|attentie|nota bene)/i.test(trimmedSection)) {
-      elements.push(
-        <div key={key++} className="my-5 p-4 bg-blue-50 border-l-3 border-blue-400 rounded-r">
-          <div className="flex items-start gap-3">
-            <span className="text-blue-600 text-lg flex-shrink-0 mt-1"></span>
-            <div className="text-blue-900 leading-relaxed">
-              {processLinksInText(trimmedSection)}
-            </div>
-          </div>
-        </div>
-      )
-      return
-    }
-
-    // Detect conclusions - minimal styling for natural flow
-    if (/^(conclusie|samenvatting|kortom|samenvattend|tot slot|in conclusie)/i.test(trimmedSection)) {
-      elements.push(
-        <div key={key++} className="my-5 p-4 bg-green-50 border-l-3 border-green-400 rounded-r">
-          <div className="flex items-start gap-3">
-            <span className="text-green-600 text-lg flex-shrink-0 mt-1"></span>
-            <div className="text-green-900 leading-relaxed">
-              {processLinksInText(trimmedSection)}
-            </div>
-          </div>
-        </div>
-      )
-      return
-    }
-
-    // Regular paragraphs - natural reading flow with proper spacing
-    // Split long sections into readable paragraphs
-    const sentences = trimmedSection.split(/(?<=[.!?])\s+(?=[A-Z])/)
-    
-    if (sentences.length > 3) {
-      // Group sentences into natural paragraphs
-      const paragraphs: string[] = []
-      let currentPara = ''
-      
-      sentences.forEach((sentence, idx) => {
-        currentPara += sentence + ' '
-        // Create new paragraph every 2-3 sentences for readability
-        if ((idx + 1) % 3 === 0 || idx === sentences.length - 1) {
-          if (currentPara.trim()) {
-            paragraphs.push(currentPara.trim())
-            currentPara = ''
-          }
-        }
-      })
-      
-      paragraphs.forEach(para => {
-        elements.push(
-          <p key={key++} className="text-gray-800 leading-relaxed text-sm mb-4">
-            {processLinksInText(para)}
-          </p>
-        )
-      })
-    } else {
-      // Short section - single paragraph with natural spacing
-      elements.push(
-        <p key={key++} className="text-gray-800 leading-relaxed text-sm mb-4">
-          {processLinksInText(trimmedSection)}
-        </p>
-      )
-    }
-  })
-
-  // Fallback for edge cases
-  if (elements.length === 0) {
+  try {
     return (
-      <div className="space-y-4">
-        <p className="text-gray-800 leading-relaxed text-sm">
-          {processLinksInText(processedText)}
-        </p>
+      <div className="prose prose-sm max-w-none text-gray-800 leading-relaxed">
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          components={{
+            h1: ({ children }) => <h1 className="text-lg font-semibold text-gray-900 mt-4 mb-2 first:mt-0">{children}</h1>,
+            h2: ({ children }) => <h2 className="text-base font-semibold text-gray-900 mt-3 mb-2 first:mt-0">{children}</h2>,
+            h3: ({ children }) => <h3 className="text-sm font-semibold text-gray-900 mt-3 mb-1 first:mt-0">{children}</h3>,
+            h4: ({ children }) => <h4 className="text-sm font-medium text-gray-800 mt-2 mb-1 first:mt-0">{children}</h4>,
+            p: ({ children }) => (
+              <p className="mb-3 last:mb-0 text-gray-800 leading-relaxed">
+                {typeof children === 'string' ? processLinksInText(children) : children}
+              </p>
+            ),
+            ul: ({ children }) => <ul className="list-disc list-inside mb-3 space-y-1 text-gray-800">{children}</ul>,
+            ol: ({ children }) => <ol className="list-decimal list-inside mb-3 space-y-1 text-gray-800">{children}</ol>,
+            li: ({ children }) => <li className="text-gray-800">{children}</li>,
+            strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
+            em: ({ children }) => <em className="italic text-gray-700">{children}</em>,
+            blockquote: ({ children }) => (
+              <blockquote className="border-l-3 border-blue-300 pl-4 py-2 bg-blue-50 rounded-r-md mb-3 text-gray-700 italic">
+                {children}
+              </blockquote>
+            ),
+            code: ({ children, className }) => {
+              const isInline = !className
+              if (isInline) {
+                return <code className="bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded text-sm font-mono">{children}</code>
+              }
+              return (
+                <pre className="bg-gray-100 text-gray-800 p-3 rounded-md overflow-x-auto mb-3">
+                  <code className="text-sm font-mono">{children}</code>
+                </pre>
+              )
+            },
+            a: ({ href, children }) => (
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 underline break-words"
+              >
+                {children}
+              </a>
+            ),
+            table: ({ children }) => (
+              <div className="overflow-x-auto mb-3">
+                <table className="min-w-full border border-gray-300 text-sm">
+                  {children}
+                </table>
+              </div>
+            ),
+            th: ({ children }) => (
+              <th className="border border-gray-300 bg-gray-50 px-3 py-2 text-left font-semibold text-gray-900">
+                {children}
+              </th>
+            ),
+            td: ({ children }) => (
+              <td className="border border-gray-300 px-3 py-2 text-gray-800">
+                {children}
+              </td>
+            ),
+          }}
+        >
+          {text}
+        </ReactMarkdown>
+      </div>
+    )
+  } catch (error) {
+    console.error('Markdown rendering error:', error)
+    return (
+      <div className="text-gray-800 leading-relaxed whitespace-pre-wrap">
+        {text.split('\n').map((line, index) => (
+          <p key={index} className="mb-2 last:mb-0">
+            {typeof line === 'string' ? processLinksInText(line) : line}
+          </p>
+        ))}
       </div>
     )
   }
-
-  return (
-    <div className="space-y-3">
-      {elements}
-    </div>
-  )
 }
 
 const mapProfileToProfession = (profile: string): Profession => {
-  const mapping: Record<string, Profession> = {
-    // Backwards compatibility mappings
-    'juridisch-expert': 'advocaat',
-    'handhaving': 'politieagent',
-    'student': 'student',
-    'algemeen': 'algemeen',
-    'jurist': 'advocaat',
-    'politie': 'politieagent',
-    'boa': 'boa',
-    'overig': 'algemeen',
-    // Direct mappings for all new profession values
-    'advocaat': 'advocaat',
-    'politieagent': 'politieagent',
-    'rechter': 'rechter',
-    'notaris': 'notaris',
-    'deurwaarder': 'deurwaarder',
-    'bedrijfsjurist': 'bedrijfsjurist',
-    'gemeenteambtenaar': 'gemeenteambtenaar',
-    'gemeentejurist': 'gemeentejurist',
-    'belastingadviseur': 'belastingadviseur',
-    'accountant': 'accountant',
-    'makelaar': 'makelaar',
-    'verzekeringsagent': 'verzekeringsagent',
-    'hr-medewerker': 'hr-medewerker',
-    'compliance-officer': 'compliance-officer',
-    'veiligheidsbeambte': 'veiligheidsbeambte',
-    'trainer': 'trainer',
-    'vervoersmedewerker': 'vervoersmedewerker',
-    'zorgprofessional': 'zorgprofessional',
-    'aspirant': 'aspirant',
-    'beveiliger': 'beveiliger'
+  const profileMapping: Record<string, Profession> = {
+    'ASPIRANT': 'aspirant',
+    'POLITIEAGENT': 'politieagent',
+    'ADVOCAAT': 'advocaat',
+    'RECHTER': 'rechter',
+    'STUDENT': 'student',
+    'BOA': 'boa',
+    'NOTARIS': 'notaris',
+    'DEURWAARDER': 'deurwaarder',
+    'BEDRIJFSJURIST': 'bedrijfsjurist',
+    'GEMEENTEAMBTENAAR': 'gemeenteambtenaar',
+    'BELASTINGADVISEUR': 'belastingadviseur',
+    'ACCOUNTANT': 'accountant',
+    'MAKELAAR': 'makelaar',
+    'VERZEKERINGSAGENT': 'verzekeringsagent',
+    'HR_MEDEWERKER': 'hr-medewerker',
+    'COMPLIANCE_OFFICER': 'compliance-officer',
+    'VEILIGHEIDSBEAMBTE': 'veiligheidsbeambte',
+    'BEVEILIGER': 'beveiliger',
+    'GEMEENTEJURIST': 'gemeentejurist',
+    'TRAINER': 'trainer',
+    'VERVOERSMEDEWERKER': 'vervoersmedewerker',
+    'ZORGPROFESSIONAL': 'zorgprofessional',
+    'OFFICIER': 'officier',
+    'JURIDISCHMEDEWERKER': 'juridischmedewerker',
+    'PARKEERCONTROLEUR': 'parkeercontroleur'
   }
-  return mapping[profile] || 'algemeen'
+  
+  return profileMapping[profile.toUpperCase()] || 'algemeen'
 }
 
 function AskPageContent() {
-  const { data: session, status } = useSession()
-  const isDevelopment = process.env.NODE_ENV === 'development'
+  const { data: session } = useSession()
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [profession, setProfession] = useState<Profession>('algemeen')
   const [remainingQuestions, setRemainingQuestions] = useState<number | null>(null)
-  const [userRole, setUserRole] = useState<string>('ANONYMOUS')
-  const [selectedCitationQuery, setSelectedCitationQuery] = useState<{queryId: string, question: string} | null>(null)
+  const [selectedCitationQuery, setSelectedCitationQuery] = useState<Message | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
-  const hasAutoSubmitted = useRef(false)
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -589,264 +391,143 @@ function AskPageContent() {
     scrollToBottom()
   }, [messages])
 
-  // Load conversation from localStorage on mount
   useEffect(() => {
-    const savedMessages = localStorage.getItem('wetHelder_ask_conversation')
+    const searchQuery = searchParams.get('q')
+    const searchProfession = searchParams.get('profession')
     
-    if (savedMessages) {
-      try {
-        const parsedMessages = JSON.parse(savedMessages)
-        // Validate and restore messages
-        const validMessages = parsedMessages.filter((msg: any) => 
-          msg.id && msg.question && msg.timestamp
-        ).map((msg: any) => ({
-          ...msg,
-          timestamp: new Date(msg.timestamp)
-        }))
-        setMessages(validMessages)
-      } catch (error) {
-        console.error('Error loading ask conversation:', error)
-        localStorage.removeItem('wetHelder_ask_conversation')
+    if (searchQuery) {
+      setInput(searchQuery)
+      if (searchProfession && professionConfig[searchProfession as keyof typeof professionConfig]) {
+        setProfession(searchProfession as Profession)
       }
-    }
-  }, [])
-
-  // Save conversation to localStorage whenever messages change
-  useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem('wetHelder_ask_conversation', JSON.stringify(messages))
-    }
-  }, [messages])
-
-  // Load profession from localStorage
-  useEffect(() => {
-    let savedProfession = localStorage.getItem('wetHelder_profession')
-    
-    // Also check for the main screen selected profile for consistency
-    if (!savedProfession) {
-      savedProfession = localStorage.getItem('wetHelder_selected_profile')
-    }
-    
-    // Only set profession from localStorage if no URL profile parameter exists
-    const urlProfile = searchParams.get('profile')
-    if (!urlProfile && savedProfession) {
-      console.log('Loading profession from localStorage:', savedProfession)
-      setProfession(savedProfession as Profession)
+      
+      // Clear URL parameters after setting the form
+      if (window.history?.replaceState) {
+        window.history.replaceState({}, '', '/ask')
+      }
     }
   }, [searchParams])
 
-  // Save profession to localStorage whenever it changes (both keys for consistency)
   useEffect(() => {
-    localStorage.setItem('wetHelder_profession', profession)
-    localStorage.setItem('wetHelder_selected_profile', profession)
-  }, [profession])
+    if (inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [])
 
-  // Check for Wet & Uitleg preference from localStorage and URL parameters
-  // Removed wetUitleg functionality - users can use /wetuitleg route instead
-
-  // Check rate limit status on page load
   useEffect(() => {
-    const checkRateLimit = async () => {
-      if (!session) {
+    if (!session) {
+      const checkRateLimit = async () => {
         try {
-          const response = await fetch('/api/ask', {
-            method: 'GET',
-          })
-          
+          const response = await fetch('/api/ask')
           if (response.ok) {
             const data = await response.json()
             setRemainingQuestions(data.remainingQuestions)
-            setUserRole(data.userRole)
           }
         } catch (error) {
           console.error('Error checking rate limit:', error)
         }
       }
+      
+      checkRateLimit()
     }
-
-    checkRateLimit()
   }, [session])
 
-  // Sync DOM with React state only when necessary (not during clearing)
-  useEffect(() => {
-    if (!isLoading && inputRef.current && input && input !== inputRef.current.value) {
-      inputRef.current.value = input
-    }
-  }, [input, isLoading])
-
-  const handleSubmit = useCallback(async (e: React.FormEvent, overrideProfession?: Profession) => {
+  const handleSubmit = async (e: React.FormEvent, selectedProfession: Profession) => {
     e.preventDefault()
-    
-    // Capture current input value and immediately clear both state and DOM
-    const currentInput = inputRef.current?.value || input
-    if (!currentInput.trim() || isLoading) return
+    if (!input.trim() || isLoading) return
+    if (!session && remainingQuestions === 0) return
 
-    const question = currentInput.trim()
-    const currentProfession = overrideProfession || profession
-    
-    console.log('💬 HandleSubmit called with:', { 
-      question, 
-      overrideProfession, 
-      currentStateProfession: profession, 
-      finalProfession: currentProfession 
-    })
-    
-    // Clear input state immediately
+    const question = input.trim()
     setInput('')
-    
-    // Force DOM clear and trigger synthetic change event
-    if (inputRef.current) {
-      inputRef.current.value = ''
-      
-      // Trigger change event to sync controlled component
-      const event = new Event('change', { bubbles: true })
-      inputRef.current.dispatchEvent(event)
-      
-      inputRef.current.blur()
-    }
-    
     setIsLoading(true)
 
-    const newMessage: Message = {
+    // Create temporary message with loading state
+    const tempMessage: Message = {
       id: Date.now().toString(),
       question,
       answer: '',
       sources: [],
       isLoading: true,
-      profession: currentProfession,
+      profession: selectedProfession,
       timestamp: new Date(),
-      type: 'user'
+      type: 'assistant'
     }
 
-    setMessages(prev => [...prev, newMessage])
+    setMessages(prev => [...prev, tempMessage])
+
+    // Update remaining questions immediately for anonymous users
+    if (!session && remainingQuestions !== null) {
+      setRemainingQuestions(prev => prev !== null ? Math.max(0, prev - 1) : null)
+    }
 
     try {
-      // Build conversation history for API - gebruik ALLE berichten uit de huidige chat
-      const conversationHistory = messages.map(m => ({
-        role: m.type === 'user' ? 'user' as const : 'assistant' as const,
-        content: m.type === 'user' ? m.question : m.answer
-      }))
-
       const response = await fetch('/api/ask', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
+        body: JSON.stringify({ 
           question,
-          profession: currentProfession,
-          history: conversationHistory,
-          wetUitleg: false // Removed - users can use /wetuitleg route instead
+          profession: selectedProfession 
         }),
       })
 
       if (!response.ok) {
-        throw new Error('Er is een fout opgetreden bij het verwerken van je vraag.')
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Er is iets misgegaan')
       }
 
-      const reader = response.body?.getReader()
-      const decoder = new TextDecoder()
-      let answer = ''
-
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read()
-          if (done) break
-
-          const chunk = decoder.decode(value)
-          const lines = chunk.split('\n')
-
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              try {
-                const data = JSON.parse(line.slice(6))
-                if (data.content) {
-                  answer += data.content
-                  setMessages(prev => prev.map(msg => 
-                    msg.id === newMessage.id 
-                      ? { ...msg, answer, isLoading: false }
-                      : msg
-                  ))
-                }
-                if (data.remainingQuestions !== undefined) {
-                  setRemainingQuestions(data.remainingQuestions)
-                }
-              } catch (e) {
-                // Ignore parsing errors for incomplete JSON
-              }
-            }
-          }
-        }
-      }
-
+      const data = await response.json()
+      
+      // Update the message with actual response
       setMessages(prev => prev.map(msg => 
-        msg.id === newMessage.id 
-          ? { ...msg, answer, isLoading: false }
+        msg.id === tempMessage.id 
+          ? {
+              ...msg,
+              answer: data.answer,
+              sources: data.sources || [],
+              isLoading: false,
+              queryId: data.queryId
+            }
           : msg
       ))
+
+      // Update remaining questions for anonymous users
+      if (!session && data.remainingQuestions !== undefined) {
+        setRemainingQuestions(data.remainingQuestions)
+      }
 
     } catch (error) {
       console.error('Error:', error)
+      
+      // Update message with error
       setMessages(prev => prev.map(msg => 
-        msg.id === newMessage.id 
-          ? { 
-              ...msg, 
-              answer: error instanceof Error ? error.message : 'Er is een onbekende fout opgetreden.',
-              isLoading: false 
+        msg.id === tempMessage.id 
+          ? {
+              ...msg,
+              answer: `Sorry, er is een fout opgetreden: ${error instanceof Error ? error.message : 'Onbekende fout'}. Probeer het opnieuw.`,
+              sources: [],
+              isLoading: false
             }
           : msg
       ))
+
+      // Restore remaining questions on error for anonymous users
+      if (!session && remainingQuestions !== null) {
+        setRemainingQuestions(prev => prev !== null ? prev + 1 : null)
+      }
     } finally {
       setIsLoading(false)
     }
-  }, [isLoading, profession, messages, setMessages, setInput, setIsLoading, setRemainingQuestions, input])
-
-  // Handle URL parameters for auto-submit and profile setting
-  useEffect(() => {
-    const urlQuery = searchParams.get('q')
-    const urlProfile = searchParams.get('profile')
-    const shouldAutoSubmit = searchParams.get('autoSubmit') === 'true'
-    
-    console.log(' URL Params:', { urlQuery, urlProfile, shouldAutoSubmit, hasAutoSubmitted: hasAutoSubmitted.current })
-    
-    // ALWAYS set profession if URL has profile (regardless of auto-submit)
-    if (urlProfile) {
-      const mappedProfession = mapProfileToProfession(urlProfile)
-      console.log('Setting profession:', urlProfile, '→', mappedProfession)
-      setProfession(mappedProfession)
-    }
-    
-    // Set input if URL has query AND we haven't processed this URL yet
-    if (urlQuery && !hasAutoSubmitted.current) {
-      console.log('📝 Setting input:', urlQuery)
-      setInput(urlQuery)
-      
-      // Auto-submit ONLY if autoSubmit flag is true
-      if (shouldAutoSubmit) {
-        hasAutoSubmitted.current = true
-        console.log('⚡ Auto-submitting question...')
-        
-        // Wait a bit for state updates, then submit with the correct profession
-        setTimeout(() => {
-          const professionToUse = urlProfile ? mapProfileToProfession(urlProfile) : profession
-          console.log(' Submitting with profession:', professionToUse)
-          
-          const fakeEvent = { preventDefault: () => {} } as React.FormEvent
-          handleSubmit(fakeEvent, professionToUse)
-        }, 100)
-      }
-    }
-
-  }, [searchParams, profession, handleSubmit])
+  }
 
   const clearConversation = () => {
     setMessages([])
-    localStorage.removeItem('wetHelder_ask_conversation')
   }
 
   const handleSearchSelect = (searchTerm: string, profession: string) => {
     setInput(searchTerm)
-    setProfession(mapProfileToProfession(profession))
+    setProfession(profession as Profession)
   }
 
   const copyToClipboard = (text: string) => {
@@ -859,274 +540,313 @@ function AskPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      
-      <div className="container mx-auto px-4 py-6 max-w-4xl">
-        {/* Main Content */}
-        <div className="w-full">
-          {/* Header */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  Juridische Assistent
-                </h1>
-                <p className="text-gray-600">
-                  Stel je juridische vraag en krijg direct een betrouwbaar antwoord
-                </p>
-              </div>
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div className="max-w-4xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-blue-600" />
+                Juridische Assistent
+              </h1>
+              <p className="text-sm text-gray-600 mt-1">Stel je juridische vraag en krijg direct een betrouwbaar antwoord</p>
             </div>
+            
+            {/* Quick actions */}
+            <div className="flex items-center gap-2">
+              <Link href="/wetuitleg">
+                <Button variant="outline" size="sm" className="hidden sm:flex">
+                  <Scale className="h-4 w-4 mr-2" />
+                  Wetuitleg
+                </Button>
+              </Link>
+              {messages.length > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearConversation}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
 
-            {/* Rate limit info - aligned with chat bubbles */}
+      <div className="max-w-4xl mx-auto px-4 pb-32">
+        
+        {/* Empty state */}
+        {messages.length === 0 && (
+          <div className="py-12">
+            {/* Rate limit notification */}
             {!session && remainingQuestions !== null && (
-              <div className="flex items-start gap-3 mb-4">
-                <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
-                  {/* Spacer to align with chat icons */}
-                </div>
-                <div className={`flex-1 p-3 border rounded-lg ${
-                  remainingQuestions === 0 
-                    ? 'bg-red-50 border-red-200' 
-                    : 'bg-amber-50 border-amber-200'
-                }`}>
-                  <p className={`text-sm ${
-                    remainingQuestions === 0 ? 'text-red-800' : 'text-amber-800'
-                  }`}>
-                    <Info className="h-4 w-4 inline mr-1" />
+              <div className={`mb-6 p-4 rounded-lg border-l-4 ${
+                remainingQuestions === 0 
+                  ? 'bg-red-50/50 border-l-red-400 border-red-100' 
+                  : 'bg-slate-50/50 border-l-slate-400 border-slate-100'
+              }`}>
+                <div className="flex items-start gap-3">
+                  <Info className={`h-5 w-5 flex-shrink-0 mt-0.5 ${
+                    remainingQuestions === 0 ? 'text-red-600' : 'text-slate-600'
+                  }`} />
+                  <div>
                     {remainingQuestions === 0 ? (
-                      <>
-                        Je hebt het maximum aantal gratis vragen bereikt.{' '}
-                        <Link href="/auth/signin" className={`ml-1 underline hover:no-underline ${
-                          remainingQuestions === 0 ? 'text-red-900' : 'text-amber-900'
-                        }`}>
-                          Maak een gratis account aan voor onbeperkte vragen
-                        </Link>
-                      </>
+                      <div>
+                        <p className="font-medium text-red-900">Gratis vragen gebruikt</p>
+                        <p className="text-sm mt-1 text-red-800">
+                          Je hebt het maximum aantal gratis vragen bereikt.{' '}
+                          <Link href="/auth/signin" className="underline font-medium hover:no-underline text-red-700">
+                            Maak een gratis account aan voor onbeperkte vragen
+                          </Link>
+                        </p>
+                      </div>
                     ) : (
-                      <>
-                        Je hebt nog {remainingQuestions} gratis vragen over.{' '}
-                        <Link href="/auth/signin" className="ml-1 text-amber-900 underline hover:no-underline">
-                          Log in voor onbeperkte vragen
-                        </Link>
-                      </>
+                      <div>
+                        <p className="font-medium text-slate-900">Nog {remainingQuestions} gratis vragen</p>
+                        <p className="text-sm mt-1 text-slate-700">
+                          <Link href="/auth/signin" className="underline font-medium hover:no-underline text-slate-800">
+                            Log in voor onbeperkte vragen
+                          </Link>
+                        </p>
+                      </div>
                     )}
-                  </p>
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* Professional advice disclaimer - aligned with chat bubbles */}
-            <div className="flex items-start gap-3 mb-4">
-              <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
-                {/* Spacer to align with chat icons */}
+            {/* Welcome message */}
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Bot className="h-8 w-8 text-blue-600" />
               </div>
-              <div className="flex-1 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                <div className="flex items-start gap-3">
-                  <Info className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <div className="flex-1">
-                    <h3 className="text-sm font-semibold text-amber-900 mb-1">Juridisch Advies</h3>
-                    <p className="text-sm text-amber-800 leading-relaxed mb-3">
-                      WetHelder biedt juridische informatie, maar vervangt geen persoonlijk advies van een <strong>juridisch professional</strong>. 
-                      Voor complexe casussen, specifieke situaties of belangrijke juridische beslissingen raadpleeg altijd een advocaat, notaris of andere gekwalificeerde professional.
-                    </p>
-                    <div className="flex items-center gap-3 pt-2 border-t border-amber-200">
-                      <p className="text-sm text-amber-800 flex-1">
-                        <strong>Specifieke wetsartikelen</strong> opzoeken? Gebruik onze uitgebreide analyse:
-                      </p>
-                      <Link href="/wetuitleg">
-                        <Button variant="outline" size="sm" className="text-amber-700 border-amber-300 hover:bg-amber-100">
-                          <Scale className="h-4 w-4 mr-2" />
-                          Wetuitleg
-                        </Button>
-                      </Link>
-                    </div>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Hoe kan ik je helpen?</h2>
+              <p className="text-gray-600 max-w-lg mx-auto">
+                Stel je juridische vraag en krijg direct een betrouwbaar antwoord op basis van Nederlandse wetgeving.
+              </p>
+            </div>
+
+            {/* Quick starter questions */}
+            <div className="grid gap-3 max-w-2xl mx-auto mb-8">
+              <h3 className="text-sm font-medium text-gray-900 mb-3">Populaire vragen:</h3>
+              {[
+                { question: "Mag de politie mijn telefoon controleren?", profession: "algemeen" },
+                { question: "Wat is het verschil tussen aanhouding en arrestatie?", profession: "politieagent" },
+                { question: "Wanneer mag ik als BOA een boete uitschrijven?", profession: "boa" },
+                { question: "Hoe lang duurt een strafrechtelijke procedure?", profession: "advocaat" }
+              ].map((item, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleSearchSelect(item.question, item.profession)}
+                  className="text-left p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-colors group"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-700 group-hover:text-blue-700">{item.question}</span>
+                    <Send className="h-4 w-4 text-gray-400 group-hover:text-blue-600" />
                   </div>
+                </button>
+              ))}
+            </div>
+
+            {/* Disclaimer - Subtiel ontwerp */}
+            <div className="bg-gray-50/50 rounded-lg p-4 border border-gray-200/50">
+              <div className="flex gap-3">
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                    <Info className="h-4 w-4 text-gray-600" />
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-900 mb-1">Juridische Informatie</h3>
+                  <p className="text-sm text-gray-700 leading-relaxed">
+                    WetHelder biedt juridische informatie, maar vervangt geen persoonlijk advies van een 
+                    juridisch professional. Voor complexe casussen raadpleeg altijd een advocaat, 
+                    notaris of andere gekwalificeerde professional.
+                  </p>
                 </div>
               </div>
             </div>
           </div>
+        )}
 
-          {/* Chat Messages */}
-          <div className="space-y-6 mb-6">
+        {/* Chat Messages */}
+        {messages.length > 0 && (
+          <div className="py-6 space-y-6">
             {messages.map((message) => (
               <div key={message.id} className="space-y-4">
                 {/* User Question */}
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                    <User className="h-4 w-4 text-white" />
-                  </div>
-                  <div className="flex-1 bg-white rounded-lg p-4 shadow-sm border">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="font-medium text-gray-900">Je vraag</span>
-                      {message.profession && (
-                        <Badge variant="secondary" className="text-xs">
-                          {professionConfig[message.profession as keyof typeof professionConfig]?.label}
-                        </Badge>
-                      )}
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                      <User className="h-4 w-4 text-white" />
                     </div>
-                    <p className="text-gray-800">{message.question}</p>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="bg-blue-50 rounded-2xl rounded-tl-md p-4 max-w-3xl">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-sm font-medium text-blue-900">Je vraag</span>
+                        {message.profession && (
+                          <Badge variant="secondary" className="text-xs bg-white/80">
+                            {professionConfig[message.profession as keyof typeof professionConfig]?.label}
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-blue-900 leading-relaxed">{message.question}</p>
+                    </div>
                   </div>
                 </div>
 
                 {/* WetHelder Response */}
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
-                    <Bot className="h-4 w-4 text-white" />
-                  </div>
-                  <div className="flex-1 bg-white rounded-lg p-4 shadow-sm border">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="font-medium text-gray-900">WetHelder</span>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => copyToClipboard(message.answer)}
-                          className="h-8 w-8 p-0"
-                          title="Kopieer antwoord"
-                        >
-                          <Copy className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => window.open(`/contact/fout?vraag=${encodeURIComponent(message.question)}&antwoord=${encodeURIComponent(message.answer.substring(0, 200))}...`, '_blank')}
-                          className="h-auto px-2 py-1 text-xs"
-                          title="Fout antwoord melden"
-                        >
-                          <span className="text-orange-600 hover:text-orange-700">Onjuist?</span>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => shareResponse(message.question, message.answer)}
-                          className="h-8 w-8 p-0"
-                          title="Deel antwoord"
-                        >
-                          <Share2 className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0"
-                          title="Favoriet toevoegen"
-                        >
-                          <Heart className="h-3 w-3" />
-                        </Button>
-                      </div>
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center">
+                      <Bot className="h-4 w-4 text-white" />
                     </div>
-                    
-                    {message.isLoading ? (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        <span>Aan het denken...</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="bg-gray-50 rounded-2xl rounded-tl-md p-4 max-w-3xl">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-medium text-gray-900">WetHelder</span>
+                        {!message.isLoading && (
+                          <div className="flex items-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => copyToClipboard(message.answer)}
+                              className="h-8 w-8 p-0 hover:bg-gray-200"
+                              title="Kopieer antwoord"
+                            >
+                              <Copy className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => shareResponse(message.question, message.answer)}
+                              className="h-8 w-8 p-0 hover:bg-gray-200"
+                              title="Deel antwoord"
+                            >
+                              <Share2 className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => window.open(`/contact/fout?vraag=${encodeURIComponent(message.question)}&antwoord=${encodeURIComponent(message.answer.substring(0, 200))}...`, '_blank')}
+                              className="h-8 w-8 p-0 hover:bg-gray-200 text-orange-600"
+                              title="Fout melden"
+                            >
+                              <AlertTriangle className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        )}
                       </div>
-                    ) : (
-                      <div className="text-sm max-w-none">
-                        {formatText(message.answer)}
-                      </div>
-                    )}
+                      
+                      {message.isLoading ? (
+                        <div className="flex items-center gap-3 text-gray-600 py-4">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span className="text-sm">Aan het denken...</span>
+                        </div>
+                      ) : (
+                        <div className="text-sm">
+                          {formatText(message.answer)}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
+        )}
 
-          {/* Input Form */}
-          <Card className="sticky bottom-6 shadow-lg border-2">
-            <CardContent className="p-4">
-              <form onSubmit={(e) => handleSubmit(e, profession)} className="space-y-4">
-                {/* Question Input */}
-                <div className="flex gap-2">
-                  <Textarea
-                    ref={inputRef}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault()
-                        const form = e.currentTarget.closest('form')
-                        if (form) {
-                          const submitEvent = new Event('submit', { bubbles: true, cancelable: true })
-                          form.dispatchEvent(submitEvent)
-                        }
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Fixed Input Form */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 backdrop-blur-md bg-white/95">
+        <div className="max-w-4xl mx-auto p-4">
+          <form onSubmit={(e) => handleSubmit(e, profession)} className="space-y-3">
+            {/* Main input row */}
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <Textarea
+                  ref={inputRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault()
+                      const form = e.currentTarget.closest('form')
+                      if (form) {
+                        const submitEvent = new Event('submit', { bubbles: true, cancelable: true })
+                        form.dispatchEvent(submitEvent)
                       }
-                    }}
-                    placeholder="Stel je juridische vraag... (Shift+Enter voor nieuwe regel)"
-                    className="flex-1 min-h-[80px] resize-none"
-                    rows={3}
-                  />
-                  <Button type="submit" disabled={isLoading || !input.trim() || (!session && remainingQuestions === 0)} className="self-end">
-                    {isLoading ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Send className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
+                    }
+                  }}
+                  placeholder="Stel je juridische vraag... (Shift+Enter voor nieuwe regel)"
+                  className="min-h-[56px] resize-none rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                  rows={1}
+                />
+              </div>
+              <Button 
+                type="submit" 
+                disabled={isLoading || !input.trim() || (!session && remainingQuestions === 0)}
+                className="h-14 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+              >
+                {isLoading ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <Send className="h-5 w-5" />
+                )}
+              </Button>
+            </div>
 
-                {/* Options */}
-                <div className="flex flex-col lg:flex-row gap-3 lg:items-end">
-                  {/* Profession Selector */}
-                  <div className="flex-1 min-w-0">
-                    <label className="block text-xs font-medium text-slate-600 mb-1">
-                      Functieprofiel / Beroep
-                    </label>
-                    <Select value={profession} onValueChange={(value) => setProfession(value as Profession)}>
-                      <SelectTrigger className="w-full h-9">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Object.entries(professionConfig).map(([key, config]) => {
-                          const IconComponent = config.icon
-                          return (
-                            <SelectItem key={key} value={key}>
-                              <div className="flex items-center gap-2">
-                                <IconComponent className="h-4 w-4" />
-                                <span>{config.label}</span>
-                              </div>
-                            </SelectItem>
-                          )
-                        })}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Clear Button */}
-                  {messages.length > 0 && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={clearConversation}
-                      className="h-9 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
-                      title="Wis alle berichten van dit gesprek"
-                    >
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      Wis gesprek
-                    </Button>
-                  )}
-                </div>
-                
-                <div className="text-xs text-gray-500 text-center">
-                  Enter om te verzenden • Shift+Enter voor nieuwe regel
-                  {messages.length > 0 && " • Uw gesprekgeschiedenis wordt automatisch meegenomen"}
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-
-          <div ref={messagesEndRef} />
+            {/* Options row */}
+            <div className="flex items-center justify-between">
+              <div className="flex-1 min-w-0 mr-4">
+                <Select value={profession} onValueChange={(value) => setProfession(value as Profession)}>
+                  <SelectTrigger className="h-9 bg-gray-50 border-gray-200 rounded-lg">
+                    <SelectValue placeholder="Selecteer je beroep" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(professionConfig).map(([key, config]) => {
+                      const IconComponent = config.icon
+                      return (
+                        <SelectItem key={key} value={key}>
+                          <div className="flex items-center gap-2">
+                            <IconComponent className="h-4 w-4" />
+                            <span>{config.label}</span>
+                          </div>
+                        </SelectItem>
+                      )
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex items-center gap-2 text-xs text-gray-500">
+                <kbd className="px-2 py-1 bg-gray-100 rounded text-gray-600">Enter</kbd>
+                <span>verzenden</span>
+                <span>•</span>
+                <kbd className="px-2 py-1 bg-gray-100 rounded text-gray-600">Shift+Enter</kbd>
+                <span>nieuwe regel</span>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
 
       {/* Citation Generator Modal - Placeholder for future implementation */}
       {selectedCitationQuery && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white p-6 rounded-xl max-w-md w-full">
             <h3 className="text-lg font-semibold mb-4">Citatie Generator</h3>
             <p className="text-gray-600 mb-4">
               Citatie functionaliteit voor: {selectedCitationQuery.question}
             </p>
-            <Button onClick={() => setSelectedCitationQuery(null)}>
+            <Button onClick={() => setSelectedCitationQuery(null)} className="w-full">
               Sluiten
             </Button>
           </div>
@@ -1138,9 +858,9 @@ function AskPageContent() {
 
 export default function AskPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">
       <div className="text-center">
-        <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+        <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
         <p className="text-gray-600">Laden...</p>
       </div>
     </div>}>

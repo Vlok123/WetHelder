@@ -38,146 +38,164 @@ import {
 import Link from 'next/link'
 
 // Add profession types and config
-type Profession = 'aspirant' | 'student' | 'politieagent' | 'advocaat' | 'algemeen' | 'boa' | 'rechter' | 'notaris' | 'deurwaarder' | 'bedrijfsjurist' | 'gemeenteambtenaar' | 'belastingadviseur' | 'accountant' | 'makelaar' | 'verzekeringsagent' | 'hr-medewerker' | 'compliance-officer' | 'veiligheidsbeambte' | 'beveiliger' | 'gemeentejurist' | 'trainer' | 'vervoersmedewerker' | 'zorgprofessional'
+type Profession = 'aspirant' | 'student' | 'politieagent' | 'advocaat' | 'algemeen' | 'boa' | 'rechter' | 'notaris' | 'deurwaarder' | 'bedrijfsjurist' | 'gemeenteambtenaar' | 'belastingadviseur' | 'accountant' | 'makelaar' | 'verzekeringsagent' | 'hr-medewerker' | 'compliance-officer' | 'veiligheidsbeambte' | 'beveiliger' | 'gemeentejurist' | 'trainer' | 'vervoersmedewerker' | 'zorgprofessional' | 'ovj' | 'juridisch-medewerker' | 'parkeercontroleur'
 
 const professionConfig = {
   algemeen: {
     icon: Info,
     label: 'Algemeen/Burger',
     color: 'text-gray-700 bg-gray-50 border-gray-200',
-    description: 'Gericht op begrijpelijke juridische informatie voor iedereen'
+    description: 'Begrijpelijke uitleg van juridische begrippen en praktische toepassingen voor burgers'
   },
   advocaat: {
     icon: Scale,
     label: 'Advocaat',
     color: 'text-purple-700 bg-purple-50 border-purple-200',
-    description: 'Gericht op procesrecht, verdedigingsstrategieën en jurisprudentie'
+    description: 'Diepgaande juridische analyse, processtrategieën, jurisprudentie en verweersmogelijkheden'
   },
   politieagent: {
     icon: Shield,
     label: 'Politieagent',
     color: 'text-indigo-700 bg-indigo-50 border-indigo-200',
-    description: 'Gericht op praktische bevoegdheden en handhavingsprocedures'
+    description: 'Concrete bevoegdheden, handhavingsprocedures, arrestatieprocedures en praktische toepassingen'
   },
   boa: {
     icon: Shield,
     label: 'BOA / Handhaver',
     color: 'text-cyan-700 bg-cyan-50 border-cyan-200',
-    description: 'Gericht op toezichtsbevoegdheden en APV-handhaving'
+    description: 'Specifieke BOA-bevoegdheden per domein, APV-handhaving en toezichtsprocedures'
+  },
+  ovj: {
+    icon: Gavel,
+    label: 'Officier van Justitie',
+    color: 'text-red-700 bg-red-50 border-red-200',
+    description: 'Vervolgingsbeleid, strafvordering, sepots en strategische juridische besluitvorming'
   },
   rechter: {
     icon: Gavel,
     label: 'Rechter',
     color: 'text-red-700 bg-red-50 border-red-200',
-    description: 'Gericht op procesrecht, bewijsrecht en uitspraakvorming'
+    description: 'Procesrechtelijke aspecten, bewijswaardering, vonnis-motivering en rechtspraak'
   },
   notaris: {
     icon: FileText,
     label: 'Notaris',
     color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
-    description: 'Gericht op burgerlijk recht en notariële praktijk'
+    description: 'Burgerlijk recht, aktes, registratie en notariële waarborgen en procedures'
   },
   deurwaarder: {
     icon: FileText,
     label: 'Deurwaarder',
     color: 'text-orange-700 bg-orange-50 border-orange-200',
-    description: 'Gericht op executierecht en beslagprocedures'
+    description: 'Executierecht, beslagprocedures, dwangbevelen en invorderingsstrategieën'
   },
-  bedrijfsjurist: {
+  'bedrijfsjurist': {
     icon: Building,
     label: 'Bedrijfsjurist',
     color: 'text-slate-700 bg-slate-50 border-slate-200',
-    description: 'Gericht op ondernemingsrecht en compliance-vraagstukken'
+    description: 'Ondernemingsrecht, contractenrecht, compliance en bedrijfsrechtelijke risico-analyse'
+  },
+  'juridisch-medewerker': {
+    icon: FileText,
+    label: 'Juridisch Medewerker',
+    color: 'text-blue-700 bg-blue-50 border-blue-200',
+    description: 'Praktische ondersteuning, documentvoorbereiding en procedurele werkzaamheden'
   },
   gemeenteambtenaar: {
     icon: MapPin,
     label: 'Gemeenteambtenaar',
     color: 'text-green-700 bg-green-50 border-green-200',
-    description: 'Gericht op bestuursrecht en lokale verordeningen'
+    description: 'Bestuursrecht, vergunningverlening, lokale verordeningen en gemeentelijke procedures'
   },
   gemeentejurist: {
     icon: Building,
     label: 'Gemeentejurist',
     color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
-    description: 'Gericht op gemeentelijk recht en bestuurlijke sancties'
+    description: 'Bestuurlijk sanctierecht, bezwaar en beroep, gemeentelijke rechtspositie'
   },
   belastingadviseur: {
     icon: Calculator,
     label: 'Belastingadviseur',
     color: 'text-yellow-700 bg-yellow-50 border-yellow-200',
-    description: 'Gericht op fiscaal recht en belastingwetgeving'
+    description: 'Fiscaal recht, belastingwetgeving, heffingen en belastingprocedures'
   },
   accountant: {
     icon: Calculator,
     label: 'Accountant',
     color: 'text-blue-700 bg-blue-50 border-blue-200',
-    description: 'Gericht op financieel recht en verslaggeving'
+    description: 'Financieel toezichtrecht, verslaggevingskaders en accountancy-regelgeving'
   },
   makelaar: {
     icon: Home,
     label: 'Makelaar',
     color: 'text-teal-700 bg-teal-50 border-teal-200',
-    description: 'Gericht op vastgoedrecht en makelaarsrecht'
+    description: 'Vastgoedrecht, makelaarsrecht, kooprecht en vastgoedtransacties'
   },
   verzekeringsagent: {
     icon: Shield,
     label: 'Verzekeringsagent',
     color: 'text-purple-700 bg-purple-50 border-purple-200',
-    description: 'Gericht op verzekeringsrecht en aansprakelijkheid'
+    description: 'Verzekeringsrecht, aansprakelijkheidsrecht en schadeafwikkeling'
   },
   'hr-medewerker': {
     icon: Users,
     label: 'HR-medewerker',
     color: 'text-pink-700 bg-pink-50 border-pink-200',
-    description: 'Gericht op arbeidsrecht en personeelsbeleid'
+    description: 'Arbeidsrecht, CAO-bepalingen, personeelsbeleid en arbeidsconflicten'
   },
   'compliance-officer': {
     icon: CheckCircle,
     label: 'Compliance Officer',
     color: 'text-indigo-700 bg-indigo-50 border-indigo-200',
-    description: 'Gericht op toezichtrecht en compliance-procedures'
+    description: 'Toezichtrecht, nalevingsprocedures, integriteitskaders en risicomanagement'
   },
   veiligheidsbeambte: {
     icon: Shield,
     label: 'Veiligheidsbeambte',
     color: 'text-red-700 bg-red-50 border-red-200',
-    description: 'Gericht op veiligheidsrecht en preventieve maatregelen'
+    description: 'Veiligheidsrecht, crisisbeheersing, toegangscontrole en beveiligingsprocedures'
   },
   beveiliger: {
     icon: Shield,
     label: 'Beveiliger',
     color: 'text-orange-700 bg-orange-50 border-orange-200',
-    description: 'Gericht op private beveiliging en eigendomsbescherming'
+    description: 'Private veiligheid, eigendomsbescherming, particuliere recherche en beveiliging'
   },
   trainer: {
     icon: GraduationCap,
     label: 'Trainer / Opleider',
     color: 'text-blue-700 bg-blue-50 border-blue-200',
-    description: 'Gericht op educatieve en gestructureerde juridische uitleg'
+    description: 'Educatieve juridische uitleg, trainingsmateriaal en gestructureerde kennisoverdracht'
   },
   vervoersmedewerker: {
     icon: Users,
     label: 'Vervoersmedewerker',
     color: 'text-green-700 bg-green-50 border-green-200',
-    description: 'Gericht op vervoersrecht en OV-bevoegdheden'
+    description: 'Vervoersrecht, OV-bevoegdheden, controle en handhaving in het openbaar vervoer'
+  },
+  parkeercontroleur: {
+    icon: MapPin,
+    label: 'Parkeercontroleur',
+    color: 'text-indigo-700 bg-indigo-50 border-indigo-200',
+    description: 'RVV-regelgeving, parkeerrecht, boeteprocedures en verkeersovertredingen'
   },
   zorgprofessional: {
     icon: Heart,
     label: 'Zorgprofessional',
     color: 'text-pink-700 bg-pink-50 border-pink-200',
-    description: 'Gericht op zorgrecht en privacy-regelgeving'
+    description: 'Zorgrecht, privacy-wetgeving (AVG), patiëntenrechten en medische procedures'
   },
   aspirant: {
     icon: UserCheck,
     label: 'Aspirant',
     color: 'text-blue-700 bg-blue-50 border-blue-200',
-    description: 'Gericht op uitgebreide uitleg met praktijkvoorbeelden'
+    description: 'Uitgebreide begeleiding met praktijkvoorbeelden, voorbereiding op de functie'
   },
   student: {
     icon: GraduationCap,
     label: 'Student',
     color: 'text-green-700 bg-green-50 border-green-200',
-    description: 'Gestructureerde uitleg met tentamentips'
+    description: 'Gestructureerde uitleg voor studie, tentamenvoorbereiding en juridisch begrip'
   }
 }
 
@@ -417,27 +435,49 @@ function WetUitlegPage() {
 
           const chunk = decoder.decode(value, { stream: true })
           if (chunk) {
-            accumulatedContent += chunk
-            lastUpdateTime = Date.now()
-
-            // Update the analysis with accumulated content
-            setAnalyses(prev => prev.map(analysis => 
-              analysis.id === tempAnalysis.id 
-                ? { 
-                    ...analysis, 
-                    isLoading: false, 
-                    fullResponse: accumulatedContent,
-                    summary: accumulatedContent, // Show the full response as summary
-                    explanation: '', // Clear other fields since we're showing everything in summary
-                    articleText: '',
-                    officialLink: '',
-                    practicalApplication: '',
-                    jurisprudence: '',
-                    relatedArticles: '',
-                    sources: []
+            // Parse Server-Sent Events properly
+            const lines = chunk.split('\n')
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                const dataStr = line.substring(6) // Remove 'data: '
+                if (dataStr === '[DONE]') {
+                  break
+                }
+                try {
+                  const data = JSON.parse(dataStr)
+                  if (data.content) {
+                    accumulatedContent += data.content
                   }
-                : analysis
-            ))
+                } catch (e) {
+                  // Skip invalid JSON
+                }
+              }
+            }
+            
+            // Only update UI every 100ms to avoid too many re-renders
+            const now = Date.now()
+            if (now - lastUpdateTime > 100) {
+              lastUpdateTime = now
+              
+              // Update the analysis with accumulated content
+              setAnalyses(prev => prev.map(analysis => 
+                analysis.id === tempAnalysis.id 
+                  ? { 
+                      ...analysis, 
+                      isLoading: false, 
+                      fullResponse: accumulatedContent,
+                      summary: accumulatedContent, // Show the full response as summary
+                      explanation: '', // Clear other fields since we're showing everything in summary
+                      articleText: '',
+                      officialLink: '',
+                      practicalApplication: '',
+                      jurisprudence: '',
+                      relatedArticles: '',
+                      sources: []
+                    }
+                  : analysis
+              ))
+            }
           }
         } catch (timeoutError) {
           console.error(' Stream timeout:', timeoutError)
@@ -446,6 +486,27 @@ function WetUitlegPage() {
           }
           break // If we have some content, continue with what we have
         }
+      }
+
+      // Final update with the complete accumulated content
+      if (accumulatedContent) {
+        setAnalyses(prev => prev.map(analysis => 
+          analysis.id === tempAnalysis.id 
+            ? { 
+                ...analysis, 
+                isLoading: false, 
+                fullResponse: accumulatedContent,
+                summary: accumulatedContent,
+                explanation: '',
+                articleText: '',
+                officialLink: '',
+                practicalApplication: '',
+                jurisprudence: '',
+                relatedArticles: '',
+                sources: []
+              }
+            : analysis
+        ))
       }
 
       // Update remaining questions if not logged in
