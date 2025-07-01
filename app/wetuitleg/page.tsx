@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, Suspense } from 'react'
+import { useState, useRef, useEffect, useCallback, Suspense } from 'react'
 import { useSession } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -91,7 +91,7 @@ function WetUitlegPage() {
     }
   }, [searchParams, messages.length, isLoading])
 
-  const submitQuery = async (query: string) => {
+  const submitQuery = useCallback(async (query: string) => {
     if (!query.trim() || isLoading) return
 
     const trimmedQuery = query.trim()
@@ -194,7 +194,7 @@ function WetUitlegPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [isLoading, messages, session])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -297,7 +297,7 @@ function WetUitlegPage() {
               <Scale className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500">Stel een vraag over Nederlandse wetgeving</p>
               <p className="text-sm text-gray-400 mt-2">
-                Bijvoorbeeld: "Wat zegt artikel 318 Sr?" of "Leg artikel 27 Sv uit"
+                Bijvoorbeeld: &quot;Wat zegt artikel 318 Sr?&quot; of &quot;Leg artikel 27 Sv uit&quot;
               </p>
             </div>
           ) : (
