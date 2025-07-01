@@ -372,18 +372,25 @@ function WetUitlegPage() {
     setAnalyses(prev => [...prev, tempAnalysis])
 
     try {
-      // Build conversation history for API (last 10 analyses)
-      const userMessages = analyses.slice(-10).map(analysis => ({
-        role: 'user' as const,
-        content: analysis.query
-      }))
+      // Build conversation history for API (last 10 analyses) - chronological order
+      const conversationHistory = []
+      const recentAnalyses = analyses.slice(-5) // Last 5 conversations (10 messages)
       
-      const assistantMessages = analyses.slice(-10).filter(analysis => analysis.fullResponse).map(analysis => ({
-        role: 'assistant' as const,
-        content: analysis.fullResponse || ''
-      }))
-      
-      const conversationHistory = [...userMessages, ...assistantMessages]
+      for (const analysis of recentAnalyses) {
+        // Add user message
+        conversationHistory.push({
+          role: 'user' as const,
+          content: analysis.query
+        })
+        
+        // Add assistant response if available
+        if (analysis.fullResponse) {
+          conversationHistory.push({
+            role: 'assistant' as const,
+            content: analysis.fullResponse
+          })
+        }
+      }
 
       // Add timeout to prevent hanging
       const timeoutId = setTimeout(() => {
@@ -490,20 +497,23 @@ function WetUitlegPage() {
 
       // Final update with the complete accumulated content
       if (accumulatedContent) {
+        // Parse content to extract structured sections
+        const parsedContent = parseAnalysisContent(accumulatedContent)
+        
         setAnalyses(prev => prev.map(analysis => 
           analysis.id === tempAnalysis.id 
             ? { 
                 ...analysis, 
                 isLoading: false, 
                 fullResponse: accumulatedContent,
-                summary: accumulatedContent,
-                explanation: '',
-                articleText: '',
-                officialLink: '',
-                practicalApplication: '',
-                jurisprudence: '',
-                relatedArticles: '',
-                sources: []
+                articleText: parsedContent.articleText,
+                summary: parsedContent.summary || accumulatedContent,
+                explanation: parsedContent.explanation,
+                officialLink: parsedContent.officialLink,
+                practicalApplication: parsedContent.practicalApplication,
+                jurisprudence: parsedContent.jurisprudence,
+                relatedArticles: parsedContent.relatedArticles,
+                sources: parsedContent.sources
               }
             : analysis
         ))
@@ -539,31 +549,43 @@ function WetUitlegPage() {
   }
 
   const parseAnalysisContent = (content: string) => {
-    // Extract exact legal text from markdown code blocks, emoji sections or specific markers
-    const patterns = [
-      /[\s\S]*?(?=|||||$)/g,
-      /\*\* EXACTE WETTEKST\*\*[\s\S]*?(?=\*\*|$)/g,
-      /EXACTE WETTEKST[\s\S]*?(?=JURIDISCHE ANALYSE|$)/g
-    ]
-    
+    // Extract exact legal text from various patterns
     let exactText = ''
-    for (const pattern of patterns) {
-      const matches = content.match(pattern)
-      if (matches && matches.length > 0) {
-        exactText = matches.join('\n\n')
-        break
+    
+    // Look for **WETTEKST:** pattern first (from new API response)
+    const wettekstMatch = content.match(/\*\*WETTEKST:\*\*([\s\S]*?)(?=\n\n|\*\*|$)/)
+    if (wettekstMatch) {
+      exactText = wettekstMatch[1].trim()
+    } else {
+      // Fallback patterns for other formats
+      const patterns = [
+        /\*\*EXACTE WETTEKST\*\*[\s\S]*?(?=\*\*|$)/gi,
+        /EXACTE WETTEKST:?([\s\S]*?)(?=JURIDISCHE ANALYSE|TOELICHTING|$)/gi,
+        /WETTEKST:?([\s\S]*?)(?=ANALYSE|UITLEG|$)/gi
+      ]
+      
+      for (const pattern of patterns) {
+        const matches = content.match(pattern)
+        if (matches && matches.length > 0) {
+          exactText = matches[0].replace(/\*\*(EXACTE )?WETTEKST:?\*\*/gi, '').trim()
+          break
+        }
       }
     }
     
+    // Extract sources from content
+    const sources = extractSources(content)
+    
+    // For now, use the full content as summary (the AI will provide structured responses)
     const sections = {
-      articleText: exactText || extractSection(content, '', '') || extractSection(content, 'EXACTE WETTEKST', 'JURIDISCHE ANALYSE'),
-      summary: extractSection(content, '', '') || extractSection(content, 'JURIDISCHE ANALYSE', 'JURISPRUDENTIE') || content, // Fallback to full content
-      explanation: extractSection(content, '', '') || extractSection(content, 'PRAKTISCHE TOEPASSING', 'GERELATEERDE ARTIKELEN'),
-      practicalApplication: extractSection(content, '', '') || extractSection(content, 'PRAKTISCHE TOEPASSING', 'GERELATEERDE ARTIKELEN'),
-      jurisprudence: extractSection(content, '', '') || extractSection(content, 'JURISPRUDENTIE', 'PRAKTISCHE TOEPASSING'),
-      relatedArticles: extractSection(content, '', '') || extractSection(content, 'GERELATEERDE ARTIKELEN', 'BELANGRIJKE AANDACHTSPUNTEN'),
-      officialLink: extractSection(content, 'LINK:', '') || extractSection(content, 'URL:', '') || extractSection(content, 'Bron:', ''),
-      sources: extractSources(content)
+      articleText: exactText,
+      summary: content,
+      explanation: '',
+      officialLink: '',
+      practicalApplication: '',
+      jurisprudence: '',
+      relatedArticles: '',
+      sources: sources
     }
 
     return sections
@@ -971,243 +993,118 @@ function WetUitlegPage() {
           )}
         </div>
 
-        {/* Analyses */}
-        <div className="space-y-6 mb-6">
+        {/* Chat Berichten */}
+        <div className="space-y-4 mb-6">
           {analyses.map((analysis) => (
-            <div key={analysis.id} className="space-y-4">
-              {/* User Query */}
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                  <Search className="h-4 w-4 text-white" />
-                </div>
-                <div className="flex-1 bg-white rounded-lg p-4 shadow-sm border">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="font-medium text-gray-900">Je vraag</span>
-                    {analysis.profession && (
-                      <Badge variant="secondary" className="text-xs">
-                        {professionConfig[analysis.profession as keyof typeof professionConfig]?.label}
-                      </Badge>
-                    )}
-                    <Badge variant="secondary" className="text-xs">
-                      Wetuitleg
-                    </Badge>
+            <div key={analysis.id} className="space-y-3">
+              {/* User Message */}
+              <div className="flex items-start gap-3 justify-end">
+                <div className="max-w-[80%] bg-blue-500 text-white rounded-2xl rounded-br-md px-4 py-3 shadow-sm">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs opacity-80">
+                      {analysis.profession && professionConfig[analysis.profession as keyof typeof professionConfig]?.label} • 
+                      {new Date(analysis.timestamp).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
                   </div>
-                  <p className="text-gray-800">{analysis.query}</p>
+                  <p className="text-sm leading-relaxed">{analysis.query}</p>
+                </div>
+                <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center shadow-sm">
+                  <Search className="h-4 w-4 text-white" />
                 </div>
               </div>
 
-              {/* WetHelder Analysis */}
+              {/* WetHelder Response */}
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
+                <div className="flex-shrink-0 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center shadow-sm">
                   <Scale className="h-4 w-4 text-white" />
                 </div>
-                <div className="flex-1 bg-white rounded-lg p-6 shadow-sm border">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="font-medium text-gray-900">WetHelder Analyse</span>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => copyToClipboard(analysis.fullResponse || analysis.summary)}
-                        className="h-8 w-8 p-0"
-                        title="Kopieer analyse"
-                      >
-                        <Copy className="h-3 w-3" />
-                      </Button>
-                                             <Button
-                         variant="ghost"
-                         size="sm"
-                         onClick={() => window.open(`/contact/fout?vraag=${encodeURIComponent(analysis.query)}&antwoord=${encodeURIComponent((analysis.fullResponse || analysis.summary).substring(0, 200))}...`, '_blank')}
-                         className="h-auto px-2 py-1 text-xs"
-                         title="Fout antwoord melden"
-                       >
-                         <span className="text-orange-600 hover:text-orange-700">Onjuist?</span>
-                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => shareAnalysis(analysis.query, analysis.summary)}
-                        className="h-8 w-8 p-0"
-                        title="Deel analyse"
-                      >
-                        <Share2 className="h-3 w-3" />
-                      </Button>
+                <div className="flex-1 max-w-[85%]">
+                  <div className="bg-white rounded-2xl rounded-tl-md shadow-sm border border-gray-200">
+                    {/* Header */}
+                    <div className="flex items-center justify-between p-3 border-b border-gray-100">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-gray-900">WetHelder</span>
+                        <span className="text-xs text-gray-500">
+                          {new Date(analysis.timestamp).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => copyToClipboard(analysis.fullResponse || analysis.summary)}
+                          className="h-7 w-7 p-0"
+                          title="Kopieer"
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => window.open(`/contact/fout?vraag=${encodeURIComponent(analysis.query)}&antwoord=${encodeURIComponent((analysis.fullResponse || analysis.summary).substring(0, 200))}...`, '_blank')}
+                          className="h-7 px-2 text-xs"
+                          title="Meld fout"
+                        >
+                          <span className="text-orange-600 hover:text-orange-700">Onjuist?</span>
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                  
-                  {analysis.isLoading ? (
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Analyseren van wetsartikel...</span>
-                    </div>
-                  ) : (
-                    <div className="space-y-6">
-                      {/* Article Text - Premium Legal Text Frame */}
-                      {analysis.articleText && (
-                        <div className="relative bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 border-2 border-blue-300 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                          {/* Decorative elements */}
-                          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-600 rounded-t-xl"></div>
-                          <div className="absolute -top-1 -left-1 w-4 h-4 bg-blue-600 rounded-full shadow-sm"></div>
-                          <div className="absolute -top-1 -right-1 w-4 h-4 bg-indigo-600 rounded-full shadow-sm"></div>
-                          
-                          <div className="flex items-start gap-4 mb-4">
-                            <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
-                              <FileText className="h-5 w-5 text-white" />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="text-xl font-medium text-blue-900 mb-2 flex items-center gap-2">
-                                 Exacte Wettekst
-                              </h3>
-                              <p className="text-sm text-blue-700 bg-blue-100/50 px-3 py-1 rounded-full inline-block">
-                                Officiële tekst zoals gepubliceerd op wetten.overheid.nl
-                              </p>
-                            </div>
-                          </div>
-                          
-                          <div className="bg-white border-2 border-blue-200 rounded-lg p-5 shadow-inner relative overflow-hidden">
-                            {/* Paper texture effect */}
-                            <div className="absolute inset-0 opacity-5 bg-gradient-to-br from-gray-100 to-transparent"></div>
-                            <div className="relative z-10">
-                              <div className="font-serif text-base text-gray-900 leading-relaxed space-y-3">
+
+                    {/* Content */}
+                    <div className="p-4">
+                      {analysis.isLoading ? (
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span>Analyseren van wetsartikel...</span>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          {/* Exacte Wettekst - Als beschikbaar */}
+                          {analysis.articleText && (
+                            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+                              <div className="flex items-center gap-2 mb-2">
+                                <FileText className="h-4 w-4 text-blue-600" />
+                                <h4 className="font-medium text-blue-900">Exacte Wettekst</h4>
+                              </div>
+                              <div className="text-sm text-blue-800 font-mono bg-white p-3 rounded border">
                                 {formatText(analysis.articleText)}
                               </div>
                             </div>
-                          </div>
-                          
-                          <div className="mt-4 flex items-center justify-between">
-                            <div className="flex items-center gap-2 text-xs text-blue-600">
-                              <ExternalLink className="h-3 w-3" />
-                              <span className="font-medium">Bron: Officiële Nederlandse wetgeving</span>
-                            </div>
-                            <div className="flex items-center gap-1 text-xs text-blue-500">
-                              <CheckCircle className="h-3 w-3" />
-                              <span>Geverifieerd</span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
+                          )}
 
-                      {/* Official Link - Enhanced */}
-                      {analysis.officialLink && (
-                        <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4 shadow-sm">
-                          <div className="flex items-center gap-3 mb-3">
-                            <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
-                              <ExternalLink className="h-4 w-4 text-white" />
+                          {/* Hoofdantwoord */}
+                          {analysis.summary && (
+                            <div className="text-sm text-gray-800 leading-relaxed">
+                              {formatText(analysis.summary)}
                             </div>
-                            <h3 className="text-lg font-medium text-gray-900">Officiële Bron</h3>
-                          </div>
-                          <div className="text-gray-800 leading-relaxed">
-                            {formatText(analysis.officialLink)}
-                          </div>
-                        </div>
-                      )}
+                          )}
 
-                      {/* Main Response - Enhanced */}
-                      {analysis.summary && (
-                        <div className="bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200 rounded-lg p-5 shadow-sm">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full flex items-center justify-center">
-                              <Scale className="h-4 w-4 text-white" />
-                            </div>
-                            <h3 className="text-lg font-medium text-gray-900">Juridische Analyse</h3>
-                          </div>
-                          <div className="text-sm max-w-none">
-                            {formatText(analysis.summary)}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Explanation - Enhanced */}
-                      {analysis.explanation && (
-                        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-5 shadow-sm">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center">
-                              <BookOpen className="h-4 w-4 text-white" />
-                            </div>
-                            <h3 className="text-lg font-medium text-gray-900">Toelichting & Bijzonderheden</h3>
-                          </div>
-                          <div className="text-sm max-w-none">
-                            {formatText(analysis.explanation)}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Practical Application - Enhanced */}
-                      {analysis.practicalApplication && (
-                        <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 rounded-lg p-5 shadow-sm">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-600 rounded-full flex items-center justify-center">
-                              <AlertCircle className="h-4 w-4 text-white" />
-                            </div>
-                            <h3 className="text-lg font-medium text-gray-900">Toepassing in de Praktijk</h3>
-                          </div>
-                          <div className="text-sm max-w-none">
-                            {formatText(analysis.practicalApplication)}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Jurisprudence - Enhanced */}
-                      {analysis.jurisprudence && (
-                        <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 rounded-lg p-5 shadow-sm">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-violet-600 rounded-full flex items-center justify-center">
-                              <Gavel className="h-4 w-4 text-white" />
-                            </div>
-                            <h3 className="text-lg font-medium text-gray-900">Relevante Jurisprudentie</h3>
-                          </div>
-                          <div className="text-sm max-w-none">
-                            {formatText(analysis.jurisprudence)}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Related Articles - Enhanced */}
-                      {analysis.relatedArticles && (
-                        <div className="bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200 rounded-lg p-5 shadow-sm">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-full flex items-center justify-center">
-                              <FileText className="h-4 w-4 text-white" />
-                            </div>
-                            <h3 className="text-lg font-medium text-gray-900">Verwante Wetsartikelen</h3>
-                          </div>
-                          <div className="text-sm max-w-none">
-                            {formatText(analysis.relatedArticles)}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Sources - Enhanced */}
-                      {analysis.sources.length > 0 && (
-                        <div className="bg-gradient-to-br from-slate-50 to-gray-50 border border-slate-200 rounded-lg p-5 shadow-sm">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="w-8 h-8 bg-gradient-to-br from-slate-500 to-gray-600 rounded-full flex items-center justify-center">
-                              <ExternalLink className="h-4 w-4 text-white" />
-                            </div>
-                            <h3 className="text-lg font-medium text-gray-900">Geraadpleegde Bronnen</h3>
-                          </div>
-                          <div className="space-y-3">
-                            {analysis.sources.map((source, index) => (
-                              <div key={index} className="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-lg hover:border-slate-300 transition-colors">
-                                <div className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
-                                  <span className="text-xs font-medium text-blue-600">{index + 1}</span>
-                                </div>
-                                <ExternalLink className="h-4 w-4 text-slate-400 flex-shrink-0" />
-                                <a 
-                                  href={source} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="text-sm text-blue-600 hover:text-blue-800 underline hover:no-underline transition-colors flex-1 break-all"
-                                >
-                                  {source}
-                                </a>
+                          {/* Bronnen - Compact */}
+                          {analysis.sources.length > 0 && (
+                            <div className="pt-3 border-t border-gray-100">
+                              <p className="text-xs text-gray-500 mb-2">Bronnen:</p>
+                              <div className="flex flex-wrap gap-2">
+                                {analysis.sources.slice(0, 3).map((source, index) => (
+                                  <a 
+                                    key={index}
+                                    href={source} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 rounded"
+                                  >
+                                    <ExternalLink className="h-3 w-3" />
+                                    {source.includes('wetten.overheid.nl') ? 'Wetten.nl' : 
+                                     source.includes('rechtspraak.nl') ? 'Rechtspraak.nl' : 
+                                     'Officiële bron'}
+                                  </a>
+                                ))}
                               </div>
-                            ))}
-                          </div>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
-                  )}
+                  </div>
                 </div>
               </div>
             </div>

@@ -130,6 +130,56 @@ Geef je antwoord in dit exacte JSON formaat:
   }
 }
 
+// 📜 LETTERLIJKE WETTEKST OPHALER
+async function extractExactLegalText(query: string, analysis: any): Promise<string> {
+  const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY
+  const GOOGLE_CSE_ID = process.env.GOOGLE_CSE_ID
+  
+  if (!GOOGLE_API_KEY || !GOOGLE_CSE_ID) {
+    return ''
+  }
+
+  console.log('📜 Zoeken naar exacte wettekst voor:', query)
+  
+  // Speciale zoekopdrachten voor volledige artikeltekst
+  const articleQueries = []
+  
+  // Als er artikelverwijzingen zijn, zoek specifiek naar die artikelen
+  if (analysis.articleReferences?.length > 0) {
+    for (const article of analysis.articleReferences) {
+      articleQueries.push(`"${article}" site:wetten.overheid.nl`)
+      articleQueries.push(`"${article}" volledig artikel site:wetten.overheid.nl`)
+    }
+  }
+  
+  // Fallback: algemene zoektermen
+  articleQueries.push(`"${query}" site:wetten.overheid.nl`)
+  
+  for (const searchQuery of articleQueries.slice(0, 3)) {
+    try {
+      const url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CSE_ID}&q=${encodeURIComponent(searchQuery)}&num=3`
+      const response = await fetch(url)
+      const data = await response.json()
+      
+      if (data.items?.length > 0) {
+        for (const item of data.items) {
+          // Kijk of de snippet een volledige artikeltekst bevat
+          if (item.snippet && item.snippet.length > 100 && 
+              (item.snippet.includes('lid') || item.snippet.includes('onderdeel') || 
+               item.snippet.includes('wordt gestraft') || item.snippet.includes('verplicht'))) {
+            console.log('📜 Exacte wettekst gevonden')
+            return item.snippet
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Fout bij ophalen wettekst:', error)
+    }
+  }
+  
+  return ''
+}
+
 // 🌐 MULTI-SOURCE INTERNET ZOEKSTRATEGIE
 async function comprehensiveLegalSearch(query: string, analysis: any): Promise<LegalSource[]> {
   const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY
@@ -406,7 +456,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { query } = await request.json()
+    const { query, history } = await request.json()
     
     if (!query) {
       return NextResponse.json(
@@ -437,7 +487,10 @@ export async function POST(request: NextRequest) {
     // 🧠 STAP 1: ANALYSEER DE JURIDISCHE VRAAG
     const questionAnalysis = await analyzeJuridicalQuestion(query)
     
-    // 🔍 STAP 2: UITGEBREIDE INTERNET SEARCH
+    // 📜 STAP 2: HAAL EXACTE WETTEKST OP
+    const exactLegalText = await extractExactLegalText(query, questionAnalysis)
+    
+    // 🔍 STAP 3: UITGEBREIDE INTERNET SEARCH
     const legalSources = await comprehensiveLegalSearch(query, questionAnalysis)
     
     // Stream response met INTERNET-BASED VALIDATION
@@ -448,24 +501,37 @@ export async function POST(request: NextRequest) {
         try {
           console.log('🤖 Starten internet-gebaseerde juridische analyse...')
           
-          // Bouw context met alle internet bronnen
-          const context = `Je bent een Nederlandse juridische expert. Beantwoord de vraag accuraat gebaseerd op de verstrekte internetbronnen.
+          // Bouw conversatie context met geschiedenis
+          let conversationContext = ''
+          if (history && history.length > 0) {
+            conversationContext = `
+GESPREK GESCHIEDENIS (laatste berichten):
+${history.slice(-6).map((msg: any, i: number) => `${i % 2 === 0 ? 'Gebruiker' : 'Assistent'}: ${msg.content.substring(0, 200)}...`).join('\n')}
+
+LET OP: Houd rekening met de vorige vragen en antwoorden in dit gesprek.`
+          }
+          
+          // Bouw context met alle internet bronnen en exacte wettekst
+          const context = `Je bent een Nederlandse juridische expert. Beantwoord de vraag accuraat gebaseerd op de verstrekte bronnen.
 
 BELANGRIJKE INSTRUCTIES:
+- Als er een EXACTE WETTEKST beschikbaar is, citeer deze letterlijk in je antwoord
 - Gebruik ALLEEN de officiële bronnen die zijn gevonden via internet
 - Verwijs naar specifieke artikelen en wetten waar van toepassing
-- Vermeld altijd de bron van je informatie
-- Als informatie ontbreekt, zeg dit expliciet
 - Geef wettelijke onderbouwing voor alle beweringen
+- Houd rekening met de gesprekgeschiedenis voor context
 
-OFFICIËLE INTERNETBRONNEN:
+${exactLegalText ? `EXACTE WETTEKST:
+**WETTEKST:** ${exactLegalText}
+
+` : ''}OFFICIËLE INTERNETBRONNEN:
 ${legalSources.map(source => 
   `📖 ${source.title} (${source.domain}):\n"${source.snippet}"\nBron: ${source.link}\n`
-).join('\n')}
+).join('\n')}${conversationContext}
 
-VRAAG: "${query}"
+HUIDIGE VRAAG: "${query}"
 
-Geef een accurate, wettelijk onderbouwde analyse met bronvermelding.`
+Geef een accurate, wettelijk onderbouwde analyse. Als er een exacte wettekst is, toon deze altijd eerst.`
 
           const messages = [
             {
