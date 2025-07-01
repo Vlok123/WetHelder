@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import OpenAI from 'openai'
-import { findLocalLegalText, LocalLegalText } from '@/lib/localLegalTexts'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -24,6 +23,15 @@ interface ValidationResult {
   warnings: string[]
   verifiedFacts: string[]
   potentialErrors: string[]
+}
+
+interface LegalSource {
+  title: string
+  snippet: string
+  link: string
+  source: string
+  domain: string
+  verified: boolean
 }
 
 const rateLimitMap = new Map<string, RateLimitEntry>()
@@ -66,49 +74,34 @@ function incrementRateLimit(ip: string): void {
   }
 }
 
-// 🔍 JURIDISCHE VRAAG ANALYSE (VERBETERD)
+// 🔍 SLIMME JURIDISCHE VRAAG ANALYSE
 async function analyzeJuridicalQuestion(query: string): Promise<{
   legalConcepts: string[]
   articleReferences: string[]
   lawBooks: string[]
+  searchTerms: string[]
   complexity: 'simple' | 'complex'
   requiresValidation: boolean
 }> {
   console.log('🧠 Analyseren juridische vraag...')
   
-  // Eerst lokale pattern matching voor bekende artikelen
-  const localPatterns = [
-    { pattern: /artikel\s*8\s*wet\s*politiegegevens/i, ref: 'artikel 8 Wet politiegegevens' },
-    { pattern: /artikel\s*8\s*wpg/i, ref: 'artikel 8 Wet politiegegevens' },
-    { pattern: /artikel\s*27\s*(sv|strafvordering)/i, ref: 'artikel 27 Wetboek van Strafvordering' },
-    { pattern: /artikel\s*8a?\s*politiewet/i, ref: 'artikel 8a Politiewet 2012' },
-    { pattern: /artikel\s*2\s*identificatieplicht/i, ref: 'artikel 2 Wet op de identificatieplicht' }
-  ]
-  
-  const foundArticles: string[] = []
-  for (const { pattern, ref } of localPatterns) {
-    if (pattern.test(query)) {
-      foundArticles.push(ref)
-      console.log(`🎯 Lokaal artikel gedetecteerd: ${ref}`)
-    }
-  }
-  
   const analysisPrompt = `Analyseer deze juridische vraag: "${query}"
 
-Identificeer:
-1. Juridische concepten (bijv. aanhouding, huiszoeking, politiegegevens, etc.)
-2. Artikelverwijzingen (bijv. artikel 27 Sr, art 8a Politiewet, artikel 8 Wet politiegegevens)
+Identificeer zeer zorgvuldig:
+1. Juridische concepten (bijv. aanhouding, huiszoeking, politiegegevens, valsheid in geschrifte)
+2. Artikelverwijzingen (bijv. artikel 27 Sr, art 8a Politiewet, artikel 8 Wet politiegegevens, 318 Sr)
 3. Wetboeken (bijv. Strafrecht, Strafvordering, Politiewet, Wet politiegegevens)
-4. Complexiteit (simple/complex)
-5. Of dit een high-risk vraag is die extra validatie vereist
+4. Zoektermen voor internet search (extra variaties en synoniemen)
+5. Complexiteit en validatie-behoefte
 
-LET OP: Als de vraag gaat over "artikel 8 Wet politiegegevens" of soortgelijke specifieke artikelen, zorg ervoor dat deze exact worden opgenomen in articleReferences.
+BELANGRIJK: Herken ook verkorte notaties zoals "318sr", "27sv", "8wpg".
 
 Geef je antwoord in dit exacte JSON formaat:
 {
   "legalConcepts": ["concept1", "concept2"],
   "articleReferences": ["artikel X wetboek", "art Y"],
-  "lawBooks": ["wetboek1", "wetboek2"],
+  "lawBooks": ["wetboek1", "wetboek2"], 
+  "searchTerms": ["zoekterm1", "zoekterm2", "synoniem1"],
   "complexity": "simple",
   "requiresValidation": true
 }`
@@ -118,120 +111,237 @@ Geef je antwoord in dit exacte JSON formaat:
       model: 'gpt-4o',
       messages: [{ role: 'user', content: analysisPrompt }],
       temperature: 0.1,
-      max_tokens: 500
+      max_tokens: 800
     })
 
     const analysis = JSON.parse(response.choices[0]?.message?.content || '{}')
-    
-    // Voeg lokaal gevonden artikelen toe
-    if (foundArticles.length > 0) {
-      analysis.articleReferences = [...new Set([...foundArticles, ...(analysis.articleReferences || [])])]
-    }
-    
     console.log('✅ Vraag geanalyseerd:', analysis)
     return analysis
   } catch (error) {
     console.error('❌ Fout bij vraag analyse:', error)
     return {
       legalConcepts: [],
-      articleReferences: foundArticles, // Gebruik lokaal gevonden artikelen als fallback
+      articleReferences: [],
       lawBooks: [],
+      searchTerms: [query],
       complexity: 'complex',
       requiresValidation: true
     }
   }
 }
 
-// 🔍 SPECIFIEKE WETTEKST ZOEKER (LOKAAL + GOOGLE)
-async function findExactLegalTexts(articleRefs: string[]): Promise<Array<{
-  article: string
-  text: string
-  source: string
-  verified: boolean
-}>> {
-  console.log('📖 Zoeken naar exacte wetteksten...')
+// 🌐 MULTI-SOURCE INTERNET ZOEKSTRATEGIE
+async function comprehensiveLegalSearch(query: string, analysis: any): Promise<LegalSource[]> {
+  const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY
+  const GOOGLE_CSE_ID = process.env.GOOGLE_CSE_ID
   
-  const legalTexts: Array<{
-    article: string
-    text: string
-    source: string
-    verified: boolean
-  }> = []
+  if (!GOOGLE_API_KEY || !GOOGLE_CSE_ID) {
+    console.log('❌ Google API credentials niet beschikbaar')
+    return []
+  }
 
-  for (const articleRef of articleRefs) {
-    let found = false
-    
-    // STAP 1: Zoek eerst in lokale database
-    console.log(`🏠 Zoeken lokaal naar: ${articleRef}`)
-    const localResults = findLocalLegalText(articleRef)
-    
-    if (localResults.length > 0) {
-      const localText = localResults[0]
-      legalTexts.push({
-        article: articleRef,
-        text: localText.fullText,
-        source: localText.source,
-        verified: true // Lokale teksten zijn altijd geverifieerd
-      })
-      console.log(`✅ Lokale wettekst gevonden voor ${articleRef}`)
-      found = true
-    }
-    
-    // STAP 2: Als niet lokaal gevonden, zoek via Google
-    if (!found) {
-      const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY
-      const GOOGLE_CSE_ID = process.env.GOOGLE_CSE_ID
-      
-      if (GOOGLE_API_KEY && GOOGLE_CSE_ID) {
-        try {
-          console.log(`🔍 Google zoeken naar: ${articleRef}`)
-          const query = `"${articleRef}" exacte tekst site:wetten.overheid.nl`
-          const url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CSE_ID}&q=${encodeURIComponent(query)}&num=3`
+  console.log(`🔍 Uitgebreide multi-source zoekactie voor: "${query}"`)
+  
+  const allResults: LegalSource[] = []
+  
+  // 1. PRIORITEIT: Officiële Nederlandse rechtsbronnen
+  const officialSites = [
+    { site: 'wetten.overheid.nl', priority: 10, description: 'Officiële Nederlandse wetgeving' },
+    { site: 'rechtspraak.nl', priority: 9, description: 'Nederlandse jurisprudentie' },
+    { site: 'rijksoverheid.nl', priority: 8, description: 'Overheidsbeleid en uitleg' },
+    { site: 'om.nl', priority: 7, description: 'Openbaar Ministerie richtlijnen' },
+    { site: 'politie.nl', priority: 6, description: 'Politie informatie' }
+  ]
+  
+  // 2. SLIMME ZOEKVARIATIES GENEREREN
+  const searchVariations = generateSmartSearchQueries(query, analysis)
+  
+  // 3. ZOEK PER OFFICIËLE BRON
+  for (const { site, priority, description } of officialSites) {
+    for (const searchQuery of searchVariations.slice(0, 3)) { // Top 3 variaties per site
+      try {
+        console.log(`🏛️ Zoeken op ${site}: "${searchQuery}"`)
+        
+        const siteQuery = `${searchQuery} site:${site}`
+        const url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CSE_ID}&q=${encodeURIComponent(siteQuery)}&num=5`
+        
+        const response = await fetch(url)
+        const data = await response.json()
+        
+        if (data.items?.length > 0) {
+          console.log(`✅ ${data.items.length} resultaten gevonden op ${site}`)
           
-          const response = await fetch(url)
-          const data = await response.json()
-          
-          if (data.items?.length > 0) {
-            const item = data.items[0]
-            legalTexts.push({
-              article: articleRef,
-              text: item.snippet || '',
-              source: item.link || '',
-              verified: item.link?.includes('wetten.overheid.nl') || false
+          data.items.forEach((item: any) => {
+            allResults.push({
+              title: item.title || '',
+              snippet: item.snippet || '',
+              link: item.link || '',
+              source: description,
+              domain: site,
+              verified: priority >= 8 // Hoge prioriteit = geverifieerd
             })
-            console.log(`✅ Google wettekst gevonden voor ${articleRef}`)
-            found = true
-          }
-        } catch (error) {
-          console.error(`❌ Fout bij Google zoeken naar ${articleRef}:`, error)
+          })
         }
+        
+        // Kleine delay om rate limits te voorkomen
+        await new Promise(resolve => setTimeout(resolve, 100))
+        
+      } catch (error) {
+        console.log(`❌ Fout bij zoeken op ${site}:`, error)
       }
     }
-    
-    if (!found) {
-      console.log(`❌ Geen wettekst gevonden voor ${articleRef}`)
-      // Voeg een fallback toe met verwijzing naar de officiële bron
-      legalTexts.push({
-        article: articleRef,
-        text: `Volledige tekst niet beschikbaar in bronnen. Raadpleeg de complete tekst op: https://wetten.overheid.nl`,
-        source: 'https://wetten.overheid.nl',
-        verified: false
+  }
+  
+  // 4. AANVULLENDE ACADEMISCHE/JURIDISCHE BRONNEN
+  const additionalSources = [
+    'navigator.nl', 'iuscommune.eu', 'rechtsorde.nl'
+  ]
+  
+  for (const site of additionalSources) {
+    try {
+      const academicQuery = `${query} site:${site}`
+      const url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CSE_ID}&q=${encodeURIComponent(academicQuery)}&num=3`
+      
+      const response = await fetch(url)
+      const data = await response.json()
+      
+      if (data.items?.length > 0) {
+        data.items.forEach((item: any) => {
+          allResults.push({
+            title: item.title || '',
+            snippet: item.snippet || '',
+            link: item.link || '',
+            source: `Juridische database (${site})`,
+            domain: site,
+            verified: false
+          })
+        })
+      }
+    } catch (error) {
+      console.log(`❌ Fout bij zoeken op ${site}:`, error)
+    }
+  }
+  
+  // 5. RESULTATEN FILTEREN EN RANGSCHIKKEN
+  const uniqueResults = removeDuplicateSources(allResults)
+  const rankedResults = rankSourcesByRelevance(uniqueResults, query, analysis)
+  
+  console.log(`✅ Totaal ${rankedResults.length} unieke bronnen gevonden`)
+  return rankedResults.slice(0, 15) // Top 15 resultaten
+}
+
+// 🎯 SLIMME ZOEKVARIATIES GENEREREN
+function generateSmartSearchQueries(query: string, analysis: any): string[] {
+  const variations = [query]
+  
+  // Voeg artikel-specifieke zoekopdrachten toe
+  if (analysis.articleReferences?.length > 0) {
+    analysis.articleReferences.forEach((article: string) => {
+      variations.push(article)
+      variations.push(`"${article}" volledig`)
+      variations.push(`${article} betekenis uitleg`)
+    })
+  }
+  
+  // Voeg wetboek-specifieke zoekopdrachten toe
+  if (analysis.lawBooks?.length > 0) {
+    analysis.lawBooks.forEach((lawBook: string) => {
+      variations.push(`${query} ${lawBook}`)
+    })
+  }
+  
+  // Juridische synoniemen en variaties
+  const legalSynonyms: { [key: string]: string[] } = {
+    'artikel': ['art', 'art.', 'artikel'],
+    'strafrecht': ['sr', 'wetboek van strafrecht', 'strafrecht'],
+    'strafvordering': ['sv', 'wetboek van strafvordering'],
+    'politiegegevens': ['wpg', 'wet politiegegevens'],
+    'politiewet': ['politiewet 2012'],
+    'aanhouding': ['arrestatie', 'inhechtenisneming'],
+    'fouilleren': ['fouillering', 'veiligheidsfouillering'],
+    'huiszoeking': ['doorzoeking', 'huiszoekingsbevel']
+  }
+  
+  // Genereer synoniemvariaties
+  const queryLower = query.toLowerCase()
+  for (const [term, synonyms] of Object.entries(legalSynonyms)) {
+    if (queryLower.includes(term)) {
+      synonyms.forEach(synonym => {
+        if (synonym !== term) {
+          variations.push(query.replace(new RegExp(term, 'gi'), synonym))
+        }
       })
     }
   }
-
-  return legalTexts
+  
+  // Voeg zoektermen uit analyse toe
+  if (analysis.searchTerms?.length > 0) {
+    variations.push(...analysis.searchTerms)
+  }
+  
+  return [...new Set(variations)].slice(0, 8) // Max 8 unieke variaties
 }
 
-// ⚖️ FACT-CHECKING EN VALIDATIE
+// 🔄 DUPLICATEN VERWIJDEREN
+function removeDuplicateSources(sources: LegalSource[]): LegalSource[] {
+  const seen = new Set<string>()
+  return sources.filter(source => {
+    const key = `${source.link}_${source.title.slice(0, 50)}`
+    if (seen.has(key)) {
+      return false
+    }
+    seen.add(key)
+    return true
+  })
+}
+
+// 📊 BRONNEN RANGSCHIKKEN OP RELEVANTIE
+function rankSourcesByRelevance(sources: LegalSource[], query: string, analysis: any): LegalSource[] {
+  return sources.sort((a, b) => {
+    let scoreA = 0
+    let scoreB = 0
+    
+    // Prioriteit voor geverifieerde bronnen
+    if (a.verified) scoreA += 50
+    if (b.verified) scoreB += 50
+    
+    // Prioriteit voor officiële domeinen
+    const officialDomains = ['wetten.overheid.nl', 'rechtspraak.nl', 'rijksoverheid.nl']
+    if (officialDomains.includes(a.domain)) scoreA += 30
+    if (officialDomains.includes(b.domain)) scoreB += 30
+    
+    // Relevantie op basis van titel en snippet
+    const queryTerms = query.toLowerCase().split(' ')
+    queryTerms.forEach(term => {
+      if (a.title.toLowerCase().includes(term)) scoreA += 10
+      if (a.snippet.toLowerCase().includes(term)) scoreA += 5
+      if (b.title.toLowerCase().includes(term)) scoreB += 10
+      if (b.snippet.toLowerCase().includes(term)) scoreB += 5
+    })
+    
+    // Extra punten voor artikelverwijzingen
+    if (analysis.articleReferences?.length > 0) {
+      analysis.articleReferences.forEach((article: string) => {
+        if (a.title.toLowerCase().includes(article.toLowerCase())) scoreA += 15
+        if (b.title.toLowerCase().includes(article.toLowerCase())) scoreB += 15
+      })
+    }
+    
+    return scoreB - scoreA
+  })
+}
+
+// ⚖️ GEAVANCEERDE JURIDISCHE VALIDATIE
 async function validateLegalAnswer(
   question: string, 
   proposedAnswer: string, 
-  officialSources: Array<{article: string, text: string, source: string}>
+  sources: LegalSource[]
 ): Promise<ValidationResult> {
-  console.log('⚖️ Valideren juridisch antwoord...')
+  console.log('⚖️ Valideren juridisch antwoord met officiële bronnen...')
   
-  const validationPrompt = `Je bent een juridische fact-checker. 
+  const officialSources = sources.filter(s => s.verified).slice(0, 5)
+  
+  const validationPrompt = `Je bent een Nederlandse juridische fact-checker met toegang tot officiële bronnen.
 
 VRAAG: "${question}"
 
@@ -239,18 +349,19 @@ VOORGESTELD ANTWOORD:
 "${proposedAnswer}"
 
 OFFICIËLE BRONNEN:
-${officialSources.map(s => `- ${s.article}: "${s.text}" (Bron: ${s.source})`).join('\n')}
+${officialSources.map(s => `- ${s.title} (${s.domain}): "${s.snippet}"`).join('\n')}
 
 Controleer het antwoord zorgvuldig op:
-1. Juistheid van artikelverwijzingen
-2. Correcte interpretatie van wetteksten
-3. Mogelijke juridische fouten
-4. Betrouwbaarheid van de informatie
+1. Juistheid van artikelverwijzingen en wetteksten
+2. Correcte interpretatie van Nederlandse wetgeving
+3. Betrouwbaarheid van bronnen
+4. Actualiteit van informatie
+5. Mogelijke juridische fouten
 
 Geef je validatie in dit exacte JSON formaat:
 {
   "isValid": true/false,
-  "confidence": "high/medium/low",
+  "confidence": "high/medium/low", 
   "warnings": ["waarschuwing1", "waarschuwing2"],
   "verifiedFacts": ["feit1", "feit2"],
   "potentialErrors": ["fout1", "fout2"]
@@ -260,8 +371,8 @@ Geef je validatie in dit exacte JSON formaat:
     const response = await openai.chat.completions.create({
       model: 'gpt-4o',
       messages: [{ role: 'user', content: validationPrompt }],
-      temperature: 0.0, // Zeer conservatief voor validatie
-      max_tokens: 800
+      temperature: 0.0,
+      max_tokens: 1000
     })
 
     const validation = JSON.parse(response.choices[0]?.message?.content || '{}')
@@ -279,79 +390,6 @@ Geef je validatie in dit exacte JSON formaat:
   }
 }
 
-// 🚀 UITGEBREIDE MULTI-SOURCE ZOEKSTRATEGIE (aangepast)
-async function comprehensiveSearch(query: string): Promise<Array<{ title: string; snippet: string; link: string; source: string }>> {
-  const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY
-  const GOOGLE_CSE_ID = process.env.GOOGLE_CSE_ID
-  
-  if (!GOOGLE_API_KEY || !GOOGLE_CSE_ID) {
-    console.log('❌ Google API credentials niet beschikbaar')
-    return []
-  }
-
-  console.log(`🔍 Uitgebreide zoekactie voor: "${query}"`)
-  
-  const allResults: Array<{ title: string; snippet: string; link: string; source: string }> = []
-  
-  // 1. PRIORITEIT: Officiële bronnen eerst
-  const prioritySites = [
-    'wetten.overheid.nl',
-    'rechtspraak.nl', 
-    'rijksoverheid.nl'
-  ]
-  
-  for (const site of prioritySites) {
-    try {
-      const siteQuery = `${query} site:${site}`
-      console.log(`🏛️ Zoeken op ${site}: "${query}"`)
-      
-      const url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CSE_ID}&q=${encodeURIComponent(siteQuery)}&num=5`
-      const response = await fetch(url)
-      const data = await response.json()
-      
-      if (data.items?.length > 0) {
-        console.log(`✅ ${data.items.length} resultaten gevonden op ${site}`)
-        data.items.forEach((item: any) => {
-          allResults.push({
-            title: item.title || '',
-            snippet: item.snippet || '',
-            link: item.link || '',
-            source: site
-          })
-        })
-      }
-    } catch (error) {
-      console.log(`❌ Fout bij zoeken op ${site}:`, error)
-    }
-  }
-  
-  return allResults.slice(0, 10) // Beperkt aantal voor betere kwaliteit
-}
-
-function generateSearchVariations(query: string): string[] {
-  const variations = [query]
-  
-  const synonyms: { [key: string]: string[] } = {
-    'artikel': ['art', 'art.', 'artikel'],
-    'wetboek': ['wb', 'wetboek van'],
-    'strafrecht': ['sr', 'strafrecht', 'wetboek van strafrecht'],
-    'strafvordering': ['sv', 'strafvordering', 'wetboek van strafvordering'],
-  }
-  
-  let expandedQuery = query.toLowerCase()
-  for (const [key, values] of Object.entries(synonyms)) {
-    if (expandedQuery.includes(key.toLowerCase())) {
-      values.forEach(synonym => {
-        if (synonym !== key) {
-          variations.push(query.replace(new RegExp(key, 'gi'), synonym))
-        }
-      })
-    }
-  }
-  
-  return [...new Set(variations)]
-}
-
 function extractDomain(url: string): string {
   try {
     return new URL(url).hostname
@@ -362,7 +400,7 @@ function extractDomain(url: string): string {
 
 export async function GET(request: NextRequest) {
   return NextResponse.json({ 
-    message: 'WetUitleg API endpoint met uitgebreide validatie. Gebruik POST voor vragen.' 
+    message: 'WetUitleg API - Krachtige internet-gebaseerde juridische analyse. Gebruik POST voor vragen.' 
   })
 }
 
@@ -399,39 +437,35 @@ export async function POST(request: NextRequest) {
     // 🧠 STAP 1: ANALYSEER DE JURIDISCHE VRAAG
     const questionAnalysis = await analyzeJuridicalQuestion(query)
     
-    // 📖 STAP 2: ZOEK EXACTE WETTEKSTEN
-    const exactLegalTexts = await findExactLegalTexts(questionAnalysis.articleReferences)
+    // 🔍 STAP 2: UITGEBREIDE INTERNET SEARCH
+    const legalSources = await comprehensiveLegalSearch(query, questionAnalysis)
     
-    // 🔍 STAP 3: ZOEK AANVULLENDE CONTEXT
-    const searchResults = await comprehensiveSearch(query)
-    
-    // Stream response met TRIPLE VALIDATION
+    // Stream response met INTERNET-BASED VALIDATION
     const stream = new ReadableStream({
       async start(controller) {
         const encoder = new TextEncoder()
         
         try {
-          console.log('🤖 Starten gevalideerde OpenAI response...')
+          console.log('🤖 Starten internet-gebaseerde juridische analyse...')
           
-          // Bouw uitgebreide, gevalideerde context
-          let context = `Je bent een Nederlandse juridische expert. Beantwoord de vraag zeer zorgvuldig en accuraat.
+          // Bouw context met alle internet bronnen
+          const context = `Je bent een Nederlandse juridische expert. Beantwoord de vraag accuraat gebaseerd op de verstrekte internetbronnen.
 
 BELANGRIJKE INSTRUCTIES:
-- Gebruik ALLEEN de officiële bronnen die zijn verstrekt
-- Als je niet zeker bent, vermeld dit expliciet
-- Verwijs NOOIT naar artikelen als je de exacte tekst niet hebt
-- Geef alleen informatie waar je 100% zeker van bent
-- Vermeld geen bronnen of websites in je antwoord
+- Gebruik ALLEEN de officiële bronnen die zijn gevonden via internet
+- Verwijs naar specifieke artikelen en wetten waar van toepassing
+- Vermeld altijd de bron van je informatie
+- Als informatie ontbreekt, zeg dit expliciet
+- Geef wettelijke onderbouwing voor alle beweringen
 
-OFFICIËLE WETTEKSTEN:
-${exactLegalTexts.map(text => `${text.article}: "${text.text}"`).join('\n\n')}
-
-AANVULLENDE CONTEXT:
-${searchResults.map(r => `${r.title}: ${r.snippet}`).join('\n\n')}
+OFFICIËLE INTERNETBRONNEN:
+${legalSources.map(source => 
+  `📖 ${source.title} (${source.domain}):\n"${source.snippet}"\nBron: ${source.link}\n`
+).join('\n')}
 
 VRAAG: "${query}"
 
-Geef een accuraat, betrouwbaar antwoord gebaseerd ALLEEN op de verstrekte officiële informatie.`
+Geef een accurate, wettelijk onderbouwde analyse met bronvermelding.`
 
           const messages = [
             {
@@ -439,40 +473,43 @@ Geef een accuraat, betrouwbaar antwoord gebaseerd ALLEEN op de verstrekte offici
               content: context
             },
             {
-              role: 'user',
+              role: 'user', 
               content: query
             }
           ]
 
-          // Genereer het initiële antwoord
+          // Genereer antwoord op basis van internet bronnen
           const response = await openai.chat.completions.create({
             model: 'gpt-4o',
             messages: messages as any,
-            stream: false, // Eerst compleet antwoord voor validatie
+            stream: false,
             temperature: 0.1,
-            max_tokens: 2000,
+            max_tokens: 2500,
           })
 
           const initialAnswer = response.choices[0]?.message?.content || ''
           
-          // ⚖️ STAP 4: VALIDEER HET ANTWOORD
-          const validation = await validateLegalAnswer(query, initialAnswer, exactLegalTexts)
+          // ⚖️ STAP 3: VALIDEER MET INTERNET BRONNEN
+          const validation = await validateLegalAnswer(query, initialAnswer, legalSources)
           
-          // Bepaal of we het antwoord kunnen geven
-          if (!validation.isValid || validation.confidence === 'low') {
+          // Bepaal output gebaseerd op validatie
+          if (!validation.isValid && validation.confidence === 'low') {
             console.log('❌ Antwoord faalde validatie')
             
-            const warningMessage = `⚠️ **WAARSCHUWING: Onzekere Informatie**
+            const warningMessage = `⚠️ **ONVOLLEDIGE INFORMATIE**
 
-Ik kan geen betrouwbaar antwoord geven op deze vraag omdat:
+Gebaseerd op de beschikbare internetbronnen kan ik geen volledig betrouwbaar antwoord geven omdat:
 ${validation.warnings.map(w => `• ${w}`).join('\n')}
 
-Voor deze specifieke juridische vraag raad ik aan:
-• Raadpleeg een advocaat of juridisch adviseur
-• Bekijk de officiële wetteksten op wetten.overheid.nl
-• Neem contact op met de relevante overheidsinstantie
+**Beschikbare bronnen:**
+${legalSources.slice(0, 3).map(s => `• ${s.title} - ${s.link}`).join('\n')}
 
-**Dit is geen juridisch advies. Bij twijfel altijd professioneel juridisch advies inwinnen.**`
+**Aanbeveling:**
+• Raadpleeg de volledige wettekst op wetten.overheid.nl
+• Neem contact op met een juridisch adviseur
+• Bekijk de specifieke overheidswebsite voor actuele informatie
+
+**Dit is geen juridisch advies.**`
 
             // Stream de waarschuwing
             const chunks = warningMessage.match(/.{1,50}/g) || [warningMessage]
@@ -483,15 +520,20 @@ Voor deze specifieke juridische vraag raad ik aan:
           } else {
             console.log('✅ Antwoord goedgekeurd door validatie')
             
-            // Voeg validatie-informatie toe aan het antwoord
+            // Voeg bronvermelding en validatie-info toe
             const validatedAnswer = `${initialAnswer}
 
 ---
+**📚 BRONVERMELDING:**
+${legalSources.filter(s => s.verified).slice(0, 5).map(s => 
+  `• ${s.title} - ${s.link}`
+).join('\n')}
+
 ✅ **Betrouwbaarheid: ${validation.confidence.toUpperCase()}**
 ${validation.verifiedFacts.length > 0 ? `\n🔍 **Geverifieerde feiten:**\n${validation.verifiedFacts.map(f => `• ${f}`).join('\n')}` : ''}
 ${validation.warnings.length > 0 ? `\n⚠️ **Let op:**\n${validation.warnings.map(w => `• ${w}`).join('\n')}` : ''}
 
-**Dit is geen juridisch advies. Bij twijfel altijd professioneel juridisch advies inwinnen.**`
+**Dit is geen juridisch advies. Raadpleeg altijd een professionele juridisch adviseur voor uw specifieke situatie.**`
 
             // Stream het gevalideerde antwoord
             const chunks = validatedAnswer.match(/.{1,50}/g) || [validatedAnswer]
@@ -506,7 +548,7 @@ ${validation.warnings.length > 0 ? `\n⚠️ **Let op:**\n${validation.warnings.
           
         } catch (error) {
           console.error('❌ Streaming error:', error)
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: 'Er ging iets mis bij het genereren van het antwoord.' })}\n\n`))
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: 'Er ging iets mis bij het analyseren van internetbronnen.' })}\n\n`))
           controller.enqueue(encoder.encode(`data: [DONE]\n\n`))
           controller.close()
         }
@@ -518,8 +560,8 @@ ${validation.warnings.length > 0 ? `\n⚠️ **Let op:**\n${validation.warnings.
       await prisma.query.create({
         data: {
           question: query,
-          answer: `Gevalideerd antwoord - betrouwbaarheid gecontroleerd`,
-          sources: JSON.stringify([...new Set(searchResults.map(r => r.source))]),
+          answer: `Internet-gebaseerde analyse met ${legalSources.length} bronnen`,
+          sources: JSON.stringify(legalSources.map(s => s.link)),
           userId: session?.user?.id || null,
           profession: 'algemeen'
         }
@@ -528,7 +570,7 @@ ${validation.warnings.length > 0 ? `\n⚠️ **Let op:**\n${validation.warnings.
       console.error('Database save error:', dbError)
     }
 
-    console.log(`✅ Gevalideerd WetUitleg antwoord gestream voor: "${query}"`)
+    console.log(`✅ Internet-gebaseerde WetUitleg antwoord gestream voor: "${query}"`)
 
     return new Response(stream, {
       headers: {
