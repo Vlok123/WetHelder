@@ -646,200 +646,89 @@ function WetUitlegPage() {
   const formatText = (text: string): React.ReactElement => {
     if (!text) return <div></div>
 
-    // Handle HTML details blocks first (from API responses that still contain them)
-    const detailsPattern = /<details[^>]*>([\s\S]*?)<\/details>/g
-    let processedText = text
-    const detailsBlocks: Array<{ content: string; summary: string }> = []
-    
-    let match
-    while ((match = detailsPattern.exec(text)) !== null) {
-      const fullMatch = match[0]
-      const content = match[1]
-      
-      // Extract summary
-      const summaryMatch = content.match(/<summary[^>]*>(.*?)<\/summary>([\s\S]*)/)
-      if (summaryMatch) {
-        detailsBlocks.push({
-          summary: summaryMatch[1].trim(),
-          content: summaryMatch[2].trim()
-        })
-        // Remove the details block from processed text
-        processedText = processedText.replace(fullMatch, `\n\n**${summaryMatch[1]}**\n${summaryMatch[2]}\n\n`)
-      }
-    }
-
-    // Check if this is a legal text that starts with **WETTEKST:**
-    const wettekstMatch = processedText.match(/^\*\*WETTEKST:\*\*([\s\S]*?)(?=\*\*[A-Z\s]+:\*\*|\n###|$)/i)
+    // Detecteer **WETTEKST:** patroon
+    const wettekstMatch = text.match(/\*\*WETTEKST:\*\*([\s\S]*?)(?=\n\n[A-Z]|\n\*\*|$)/i)
     
     if (wettekstMatch) {
       const wettekstContent = wettekstMatch[1].trim()
-      const restOfText = processedText.replace(wettekstMatch[0], '').trim()
+      const restOfText = text.replace(wettekstMatch[0], '').trim()
       
       return (
-        <div className="space-y-6">
-          {/* Prominent Legal Text Frame */}
-          <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border-2 border-blue-300 rounded-xl p-6 shadow-lg">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center shadow-md">
-                <FileText className="h-5 w-5 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-medium text-blue-900 mb-1">
-                  OFFICIËLE WETTEKST
-                </h3>
-                <p className="text-sm text-blue-700">
-                  Exacte tekst zoals vastgesteld door de wetgever
-                </p>
-              </div>
+        <div className="space-y-4">
+          {/* Wettekst in prominente box */}
+          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg">
+            <div className="flex items-center gap-2 mb-3">
+              <FileText className="h-4 w-4 text-blue-600" />
+              <h4 className="font-medium text-blue-900">Officiële Wettekst</h4>
             </div>
-            
-            <details className="bg-white/80 backdrop-blur-sm border border-blue-200 rounded-lg shadow-sm">
-              <summary className="p-4 cursor-pointer font-medium text-blue-900 hover:bg-blue-50 rounded-t-lg">
-                Officiële tekst (klik om te tonen/verbergen)
-              </summary>
-              <div className="p-4 pt-0 font-mono text-gray-900 leading-relaxed whitespace-pre-wrap text-sm border-t border-blue-200">
-                {wettekstContent}
-              </div>
-            </details>
-            
-            <div className="flex items-center gap-2 mt-3 text-xs text-blue-600">
+            <div className="bg-white p-4 rounded border font-mono text-sm text-gray-900 leading-relaxed whitespace-pre-line">
+              {wettekstContent}
+            </div>
+            <div className="flex items-center gap-1 mt-2 text-xs text-blue-600">
               <ExternalLink className="h-3 w-3" />
               <span>Bron: wetten.overheid.nl</span>
             </div>
           </div>
           
-          {/* Rest of the analysis */}
+          {/* Rest van de uitleg */}
           {restOfText && formatTextContent(restOfText)}
         </div>
       )
     }
     
-    return formatTextContent(processedText)
+    return formatTextContent(text)
   }
 
   const formatTextContent = (text: string): React.ReactElement => {
-    // Clean up the text and split into paragraphs
+    // Clean up the text 
     const cleanText = text
-      // Remove code block markers
-      .replace(/```[\w]*\n?/g, '')
+      .replace(/```[\w]*\n?/g, '') // Remove code blocks
       .replace(/```/g, '')
-      // Clean up common formatting issues
       .replace(/\*\*\s*\*\*/g, '') // Remove empty ** pairs
-      // Remove section headers that might appear in content (don't make these bold)
-      .replace(/\*\*(SAMENVATTING|WETSARTIKEL|LINK|TOELICHTING|PRAKTIJK|JURISPRUDENTIE|VERWANTE ARTIKELEN|BRONNEN|EXACTE WETTEKST|JURIDISCHE ANALYSE|KERN IN ÉÉN ZIN|WAT BETEKENT DIT|HOE PAS JE DIT TOE|LET OP):\*\*/g, '$1:') 
-      // Remove ** around headers that end with : (but keep the colon)
-      .replace(/\*\*([^*\n]+):\*\*/g, '$1:')
-      .trim()
+      .replace(/^\s+|\s+$/g, '') // Trim
     
-    // Split into paragraphs (double newlines)
-    const paragraphs = cleanText.split(/\n\s*\n/).filter(p => p.trim())
+    // Split into meaningful sections
+    const sections = cleanText.split(/\n\s*\n/).filter(p => p.trim())
     
     return (
-      <div className="text-sm max-w-none">
-        {paragraphs.map((paragraph, index) => {
-          const trimmedParagraph = paragraph.trim()
+      <div className="space-y-4">
+        {sections.map((section, index) => {
+          const trimmed = section.trim()
           
-          // Check if it's a header (starts with ### or is an all-caps section title)
-          if (trimmedParagraph.startsWith('###')) {
-            const headerText = trimmedParagraph.replace(/^###\s*/, '').replace(/\*\*/g, '')
+          // Koppen die beginnen met ###
+          if (trimmed.startsWith('###')) {
             return (
-              <h3 key={index} className="text-base font-medium text-gray-900 mt-6 mb-4 border-b border-gray-200 pb-2">
-                {headerText}
+              <h3 key={index} className="text-base font-semibold text-gray-900 mt-6 mb-3 border-b border-gray-200 pb-2">
+                {trimmed.replace(/^###\s*/, '').replace(/\*\*/g, '')}
               </h3>
             )
           }
           
-          // Check for section headers (like "Kern in één zin:", "Wat betekent dit?", etc.)
-          if (trimmedParagraph.match(/^(Kern in één zin|Wat betekent dit|Hoe pas je dit toe|Let op|KERN IN ÉÉN ZIN|WAT BETEKENT DIT|HOE PAS JE DIT TOE|LET OP):/i)) {
-            const headerText = trimmedParagraph.split(':')[0].trim()
-            const contentText = trimmedParagraph.substring(trimmedParagraph.indexOf(':') + 1).trim()
+          // Sectie headers (hoofdletters met dubbele punt)
+          if (trimmed.match(/^[A-Z\s]{3,}:/)) {
+            const parts = trimmed.split(':')
+            const header = parts[0].trim()
+            const content = parts.slice(1).join(':').trim()
             
             return (
-              <div key={index} className="mb-6">
-                <h4 className="text-sm font-medium text-gray-900 mb-3 text-blue-800">
-                  {headerText}
+              <div key={index} className="mb-4">
+                <h4 className="text-sm font-semibold text-blue-800 mb-2">
+                  {header}
                 </h4>
-                {contentText && (
-                  <div className="text-gray-800 leading-relaxed">
-                    {formatInlineText(contentText)}
+                {content && (
+                  <div className="text-gray-800 leading-relaxed text-sm">
+                    {formatInlineText(content)}
                   </div>
                 )}
               </div>
             )
           }
           
-          // Check if it's a list (contains bullet points or numbers)
-          if (trimmedParagraph.includes('\n- ') || trimmedParagraph.includes('\n• ') || trimmedParagraph.match(/\n\d+\./)) {
-            const lines = trimmedParagraph.split('\n')
-            const listItems: React.ReactNode[] = []
-            let currentParagraph = ''
-            
-            lines.forEach((line, lineIndex) => {
-              const trimmedLine = line.trim()
-              if (trimmedLine.startsWith('- ') || trimmedLine.startsWith('• ')) {
-                // Add any accumulated paragraph before the list
-                if (currentParagraph) {
-                  listItems.push(
-                    <p key={`p-${lineIndex}`} className="text-gray-800 leading-relaxed mb-4 text-sm">
-                      {formatInlineText(currentParagraph)}
-                    </p>
-                  )
-                  currentParagraph = ''
-                }
-                // Add list item
-                listItems.push(
-                  <li key={`li-${lineIndex}`} className="text-gray-800 leading-relaxed mb-2 text-sm">
-                    {formatInlineText(trimmedLine.substring(2))}
-                  </li>
-                )
-              } else if (trimmedLine.match(/^\d+\./)) {
-                // Add any accumulated paragraph before the list
-                if (currentParagraph) {
-                  listItems.push(
-                    <p key={`p-${lineIndex}`} className="text-gray-800 leading-relaxed mb-4 text-sm">
-                      {formatInlineText(currentParagraph)}
-                    </p>
-                  )
-                  currentParagraph = ''
-                }
-                // Add numbered list item
-                listItems.push(
-                  <li key={`li-${lineIndex}`} className="text-gray-800 leading-relaxed mb-2 text-sm">
-                    {formatInlineText(trimmedLine.replace(/^\d+\.\s*/, ''))}
-                  </li>
-                )
-              } else if (trimmedLine) {
-                currentParagraph += (currentParagraph ? ' ' : '') + trimmedLine
-              }
-            })
-            
-            // Add any remaining paragraph
-            if (currentParagraph) {
-              listItems.push(
-                <p key={`p-final`} className="text-gray-800 leading-relaxed mb-4 text-sm">
-                  {formatInlineText(currentParagraph)}
-                </p>
-              )
-            }
-            
-            return (
-              <div key={index} className="mb-6">
-                {listItems.some(item => React.isValidElement(item) && item.type === 'li') ? (
-                  <ul className="list-disc list-inside space-y-2 ml-4">
-                    {listItems}
-                  </ul>
-                ) : (
-                  <div>{listItems}</div>
-                )}
-              </div>
-            )
-          }
-          
-          // Regular paragraph
+          // Normale paragraaf
           return (
-            <p key={index} className="text-gray-800 leading-relaxed mb-4 text-sm">
-              {formatInlineText(trimmedParagraph)}
-            </p>
+            <div key={index} className="text-gray-800 leading-relaxed text-sm">
+              {formatInlineText(trimmed)}
+            </div>
           )
         })}
       </div>
@@ -1059,20 +948,7 @@ function WetUitlegPage() {
                         </div>
                       ) : (
                         <div className="space-y-4">
-                          {/* Exacte Wettekst - Als beschikbaar */}
-                          {analysis.articleText && (
-                            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
-                              <div className="flex items-center gap-2 mb-2">
-                                <FileText className="h-4 w-4 text-blue-600" />
-                                <h4 className="font-medium text-blue-900">Exacte Wettekst</h4>
-                              </div>
-                              <div className="text-sm text-blue-800 font-mono bg-white p-3 rounded border">
-                                {formatText(analysis.articleText)}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Hoofdantwoord */}
+                          {/* Hoofdantwoord - Met geïntegreerde wettekst */}
                           {analysis.summary && (
                             <div className="text-sm text-gray-800 leading-relaxed">
                               {formatText(analysis.summary)}
