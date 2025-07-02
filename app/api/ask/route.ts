@@ -47,7 +47,7 @@ function getSessionId(userId: string | null, request: NextRequest): string {
 async function checkLegalRelevance(question: string): Promise<boolean> {
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini', // Use the faster, cheaper model for this quick check
+      model: 'gpt-4o', // Use the high-accuracy model for better legal relevance detection
       messages: [{
         role: 'system',
         content: `Je bent een filter die bepaalt of vragen juridisch relevant zijn voor een Nederlandse juridische AI-assistent.
