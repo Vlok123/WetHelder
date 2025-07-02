@@ -6,6 +6,7 @@ import OpenAI from 'openai'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getBrancheAdvies, zoekBrancheRegels } from '@/lib/brancheRegels'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -26,19 +27,59 @@ interface ChatMessage {
   content: string
 }
 
+// Enhanced IP detection for corporate/Citrix environments
+function getEnhancedClientIP(request: NextRequest): string {
+  // Try multiple headers commonly used in corporate environments
+  const forwarded = request.headers.get('x-forwarded-for')
+  const real = request.headers.get('x-real-ip')
+  const clientIp = request.headers.get('cf-connecting-ip') // Cloudflare
+  const xForwardedHost = request.headers.get('x-forwarded-host')
+  
+  if (forwarded) {
+    // Take the first IP from comma-separated list
+    const firstIP = forwarded.split(',')[0].trim()
+    if (firstIP !== '127.0.0.1' && firstIP !== 'localhost') {
+      return firstIP
+    }
+  }
+  
+  if (real && real !== '127.0.0.1') {
+    return real.trim()
+  }
+  
+  if (clientIp) {
+    return clientIp.trim()
+  }
+  
+  // Fallback to a more unique identifier for corporate environments
+  const userAgent = request.headers.get('user-agent') || 'unknown'
+  const acceptLanguage = request.headers.get('accept-language') || 'unknown'
+  
+  // Create a hash-like identifier from headers for better tracking
+  const fingerprint = `${userAgent}-${acceptLanguage}-${xForwardedHost || 'unknown'}`
+    .replace(/[^a-zA-Z0-9-]/g, '')
+    .substring(0, 50)
+  
+  return `corp-${fingerprint}`
+}
+
 function getSessionId(userId: string | null, request: NextRequest): string {
   if (userId) {
     return `user-${userId}`
   }
   
-  // For anonymous users, create session based on IP + User-Agent
+  // Enhanced session identification for anonymous users in corporate environments
   const ip = request.headers.get('x-forwarded-for') || 
             request.headers.get('x-real-ip') || 
+            request.headers.get('cf-connecting-ip') || // Cloudflare
             'unknown'
   const userAgent = request.headers.get('user-agent') || 'unknown'
+  const acceptLanguage = request.headers.get('accept-language') || 'unknown'
+  const xForwardedHost = request.headers.get('x-forwarded-host') || 'unknown'
   
-  // Create a simple hash-like ID
-  const sessionData = `${ip}-${userAgent}`
+  // Enhanced fingerprinting for corporate/Citrix environments
+  // These environments often have similar IPs but different session characteristics
+  const sessionData = `${ip}-${userAgent}-${acceptLanguage}-${xForwardedHost}`
   const sessionId = sessionData.replace(/[^a-zA-Z0-9-]/g, '').substring(0, 50)
   return `anon-${sessionId}`
 }
@@ -112,14 +153,12 @@ export async function POST(request: NextRequest) {
     const session = await getServerSession(authOptions)
     const userId = session?.user?.id || null
 
-    // Rate limit check for anonymous users
-    const clientIp = request.headers.get('x-forwarded-for') || 
-                     request.headers.get('x-real-ip') || 
-                     'unknown'
+    // Enhanced IP detection for corporate/Citrix environments
+    const clientIp = getEnhancedClientIP(request)
     let recentQuestions = 0
 
     if (!session?.user) {
-      // Check how many questions this IP has asked in the last 24 hours
+      // Enhanced rate limiting with better corporate environment support
       const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
       
       recentQuestions = await prisma.query.count({
@@ -128,10 +167,18 @@ export async function POST(request: NextRequest) {
           createdAt: {
             gte: twentyFourHoursAgo
           },
-          // Use IP-based tracking (storing in sources field for now)
-          sources: {
-            contains: clientIp
-          },
+          // Enhanced search in sources field for IP tracking
+          OR: [
+            {
+              sources: {
+                contains: clientIp
+              }
+            },
+            // Also check for the old format for backwards compatibility
+            {
+              sources: clientIp
+            }
+          ],
           // Exclude rate limit messages from counting towards rate limit
           answer: {
             not: {
@@ -141,7 +188,7 @@ export async function POST(request: NextRequest) {
         }
       })
 
-      console.log(` Anonymous user (IP: ${clientIp}) has asked ${recentQuestions} questions in last 24h`)
+      console.log(` Enhanced tracking - Anonymous user (IP: ${clientIp}) has asked ${recentQuestions} questions in last 24h`)
 
       if (recentQuestions >= 4) {
         console.log(' Rate limit exceeded for anonymous user')
@@ -199,14 +246,17 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
     const sessionId = getSessionId(userId, request)
     const existingContext = conversationCache.get(sessionId)
 
+    // Check for relevant branch/industry rules
+    const relevanteRegels = zoekBrancheRegels(question)
+    
     // Build conversation history from the request
     const conversationHistory: ChatMessage[] = []
     
     // Add system message with profession context
     const professionContext = getProfessionContext(profession)
-    conversationHistory.push({
-      role: 'system',
-      content: `Je bent WetHelder, een Nederlandse juridische AI-assistent gespecialiseerd in het beantwoorden van juridische vragen.
+    
+    // Enhanced system prompt with branch rules capability
+    let systemPrompt = `Je bent WetHelder, een Nederlandse juridische AI-assistent gespecialiseerd in het beantwoorden van juridische vragen.
 
 ${professionContext}
 
@@ -217,6 +267,7 @@ ANTWOORDSTIJL:
 - Geef praktische stappen en handelingsperspectieven
 - Gebruik Nederlandse wetgeving en jurisprudentie
 - Verwijs naar eerdere gesprekspunten wanneer relevant
+- **BELANGRIJK: Controleer altijd op brancheregels die kunnen afwijken van wettelijke bepalingen**
 
 STRUCTUUR:
 Gebruik deze structuur voor je antwoorden:
@@ -225,15 +276,37 @@ Gebruik deze structuur voor je antwoorden:
 [Relevante wetsartikelen en juridische grondslag]
 
 **PRAKTISCHE BETEKENIS:**
-[Wat dit concreet betekent voor de vraagsteller]
+[Wat dit concreet betekent voor de vraagsteller]`
+
+    // Add branch rules section if relevant rules found
+    if (relevanteRegels.length > 0) {
+      systemPrompt += `
+
+**BRANCHEREGELS:**
+[Specifieke regels van brancheorganisaties die van toepassing kunnen zijn]`
+      
+      // Add found rules to prompt context
+      systemPrompt += `
+
+BESCHIKBARE BRANCHEREGELS VOOR DEZE VRAAG:
+${relevanteRegels.map(regel => 
+  `- ${regel.organisatie}: ${regel.regel}\n  ${regel.omschrijving}\n  Gevolgen: ${regel.gevolgen}`
+).join('\n\n')}`
+    }
+
+    systemPrompt += `
 
 **HANDELINGSPERSPECTIEF:**
 [Concrete stappen en adviezen]
 
 **AANDACHTSPUNTEN:**
-[Belangrijke juridische overwegingen]
+[Belangrijke juridische overwegingen${relevanteRegels.length > 0 ? ' en mogelijke conflicten tussen wet en brancheregels' : ''}]
 
-Wees altijd accuraat, concreet en praktisch gericht. Bouw voort op eerdere vragen in het gesprek.`
+Wees altijd accuraat, concreet en praktisch gericht. Bouw voort op eerdere vragen in het gesprek.${relevanteRegels.length > 0 ? ' Let op mogelijke verschillen tussen wettelijke bepalingen en brancheregels!' : ''}`
+
+    conversationHistory.push({
+      role: 'system',
+      content: systemPrompt
     })
     
     // Add conversation history if provided
@@ -475,11 +548,18 @@ async function saveQueryToDatabase(
         answer,
         profession,
         userId,
-        sources: clientIp || 'unknown', // Store IP for rate limiting
+        // Enhanced tracking info - use sources field to store metadata
+        sources: JSON.stringify({
+          clientIp: clientIp || 'unknown',
+          apiEndpoint: 'ask',
+          timestamp: new Date().toISOString(),
+          environment: clientIp?.startsWith('corp-') ? 'corporate' : 'standard'
+        }),
       }
     })
+    console.log(`📝 Query saved to database (userId: ${userId || 'anonymous'}, ip: ${clientIp})`)
   } catch (error) {
-    console.error('Error saving query to database:', error)
+    console.error('❌ Error saving query to database:', error)
     throw error
   }
 }

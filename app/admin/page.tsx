@@ -60,6 +60,15 @@ interface AdminStats {
   systemHealth: 'healthy' | 'warning' | 'error'
   databaseSize: string
   lastBackup: string
+  diagnostics?: {
+    corporateQueries: number
+    citrixQueries: number
+    askApiQueries: number
+    wetuitlegApiQueries: number
+    queriesWithoutProperSources: number
+    rateLimitMessages: number
+    querySourceDistribution: Array<{ source: string; count: number }>
+  }
 }
 
 interface UserData {
@@ -779,6 +788,123 @@ export default function AdminDashboard() {
                     </div>
                   ))}
                 </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Diagnostics Section */}
+          {stats?.diagnostics && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5" />
+                  Tracking Diagnostics
+                </CardTitle>
+                <CardDescription>
+                  Gedetailleerde analyse van verkeersregistratie en mogelijke tracking problemen
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="space-y-4">
+                    <h4 className="font-semibold text-sm text-muted-foreground">API GEBRUIK</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Ask API:</span>
+                        <Badge variant="secondary">{stats.diagnostics.askApiQueries}</Badge>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">WetUitleg API:</span>
+                        <Badge variant="secondary">{stats.diagnostics.wetuitlegApiQueries}</Badge>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Rate Limits:</span>
+                        <Badge variant={stats.diagnostics.rateLimitMessages > 0 ? "destructive" : "secondary"}>
+                          {stats.diagnostics.rateLimitMessages}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="font-semibold text-sm text-muted-foreground">OMGEVING DETECTIE</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Corporate/Citrix:</span>
+                        <Badge variant="outline">{stats.diagnostics.corporateQueries}</Badge>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Citrix Specifiek:</span>
+                        <Badge variant="outline">{stats.diagnostics.citrixQueries}</Badge>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Zonder Tracking:</span>
+                        <Badge variant={stats.diagnostics.queriesWithoutProperSources > 0 ? "destructive" : "outline"}>
+                          {stats.diagnostics.queriesWithoutProperSources}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="font-semibold text-sm text-muted-foreground">POTENTIËLE PROBLEMEN</h4>
+                    <div className="space-y-2">
+                      {stats.diagnostics.queriesWithoutProperSources > 0 && (
+                        <div className="text-sm text-orange-600">
+                          ⚠️ {stats.diagnostics.queriesWithoutProperSources} vragen zonder juiste tracking
+                        </div>
+                      )}
+                      {stats.diagnostics.rateLimitMessages > 50 && (
+                        <div className="text-sm text-red-600">
+                          🚫 Veel rate limiting ({stats.diagnostics.rateLimitMessages})
+                        </div>
+                      )}
+                      {stats.diagnostics.corporateQueries > 0 && (
+                        <div className="text-sm text-blue-600">
+                          🏢 Corporate omgevingen gedetecteerd
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="font-semibold text-sm text-muted-foreground">AANBEVELINGEN</h4>
+                    <div className="space-y-2 text-sm">
+                      {stats.diagnostics.queriesWithoutProperSources > 0 && (
+                        <div className="text-orange-600">
+                          • Check tracking implementatie
+                        </div>
+                      )}
+                      {stats.diagnostics.corporateQueries > 0 && (
+                        <div className="text-blue-600">
+                          • Corporate tracking werkt goed
+                        </div>
+                      )}
+                      {stats.diagnostics.citrixQueries > 0 && (
+                        <div className="text-green-600">
+                          • Citrix detectie actief
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Source Distribution */}
+                {stats.diagnostics.querySourceDistribution.length > 0 && (
+                  <div className="mt-6 pt-6 border-t">
+                    <h4 className="font-semibold mb-4">Top 10 Query Sources</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {stats.diagnostics.querySourceDistribution.map((item, index) => (
+                        <div key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                          <span className="text-sm font-mono truncate flex-1 mr-2">
+                            {item.source === 'null' ? 'Geen tracking data' : item.source}
+                          </span>
+                          <Badge variant="secondary">{item.count}</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}

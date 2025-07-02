@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 import OpenAI from 'openai'
+import { getBrancheAdvies, zoekBrancheRegels } from '@/lib/brancheRegels'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -17,19 +19,72 @@ const rateLimits = new Map<string, RateLimitEntry>()
 const DAILY_LIMIT = 4
 const RATE_LIMIT_WINDOW = 24 * 60 * 60 * 1000 // 24 uur
 
+// Add database logging function
+async function saveQueryToDatabase(
+  question: string, 
+  answer: string, 
+  profession: string, 
+  userId: string | null,
+  clientIp: string | null = null,
+  userAgent: string | null = null
+) {
+  try {
+    await prisma.query.create({
+      data: {
+        question,
+        answer,
+        profession,
+        userId,
+        // Store tracking info for anonymous users in sources field
+        sources: JSON.stringify({
+          clientIp: clientIp || 'unknown',
+          userAgent: userAgent || 'unknown',
+          apiEndpoint: 'wetuitleg',
+          timestamp: new Date().toISOString()
+        }),
+      }
+    })
+    console.log(`📝 Query saved to database (userId: ${userId || 'anonymous'})`)
+  } catch (error) {
+    console.error('❌ Error saving query to database:', error)
+    // Don't throw error to avoid breaking the response
+  }
+}
+
 function getClientIP(request: NextRequest): string {
+  // Enhanced IP detection for corporate/Citrix environments
   const forwarded = request.headers.get('x-forwarded-for')
   const real = request.headers.get('x-real-ip')
+  const clientIp = request.headers.get('cf-connecting-ip') // Cloudflare
+  const xForwardedHost = request.headers.get('x-forwarded-host')
   
+  // Try multiple headers commonly used in corporate environments
   if (forwarded) {
-    return forwarded.split(',')[0].trim()
+    // Take the first IP from comma-separated list
+    const firstIP = forwarded.split(',')[0].trim()
+    if (firstIP !== '127.0.0.1' && firstIP !== 'localhost') {
+      return firstIP
+    }
   }
   
-  if (real) {
+  if (real && real !== '127.0.0.1') {
     return real.trim()
   }
   
-  return 'unknown'
+  if (clientIp) {
+    return clientIp.trim()
+  }
+  
+  // Fallback to a more unique identifier for corporate environments
+  const userAgent = request.headers.get('user-agent') || 'unknown'
+  const acceptLanguage = request.headers.get('accept-language') || 'unknown'
+  
+  // Create a hash-like identifier from headers for better tracking
+  const fingerprint = `${userAgent}-${acceptLanguage}-${xForwardedHost || 'unknown'}`
+    .replace(/[^a-zA-Z0-9-]/g, '')
+    .substring(0, 50)
+  
+  return `corp-${fingerprint}`
 }
 
 function checkRateLimit(ip: string): { allowed: boolean; remaining: number } {
@@ -127,12 +182,20 @@ BELANGRIJKE INSTRUCTIES:
 - Geef praktische voorbeelden en toepassingen
 - Leg juridische concepten helder uit
 - Gebruik geen externe bronnen - werk vanuit je juridische kennis
+- **BELANGRIJK: Controleer altijd op brancheregels die kunnen afwijken van wettelijke bepalingen**
 
 ANTWOORD STRUCTUUR:
 1. **WETTEKST:** [letterlijke artikeltekst indien van toepassing]
 2. **UITLEG:** Uitgebreide juridische analyse
 3. **PRAKTIJK:** Hoe dit in de praktijk werkt
-4. **GERELATEERD:** Verwante artikelen en bepalingen
+4. **BRANCHEREGELS:** [indien van toepassing - specifieke regels van brancheorganisaties]
+5. **GERELATEERD:** Verwante artikelen en bepalingen
+
+AANDACHT VOOR BRANCHEREGELS:
+- Veel sectoren hebben eigen regels die strenger kunnen zijn dan de wet
+- Bijvoorbeeld: NVM-regels voor makelaars, NBA-regels voor advocaten, etc.
+- Wijs altijd op mogelijke conflicten tussen wet en brancheregels
+- Adviseer om de strengste regel te volgen
 
 Geef altijd professionele, accurate en uitgebreide juridische uitleg.
 `
@@ -170,6 +233,7 @@ export async function POST(request: NextRequest) {
     // Session check
     const session = await getServerSession(authOptions)
     const clientIP = getClientIP(request)
+    const userAgent = request.headers.get('user-agent')
 
     // Rate limiting voor anonieme gebruikers
     if (!session) {
@@ -186,6 +250,9 @@ export async function POST(request: NextRequest) {
     // Profession-specific context
     const professionContext = getProfessionContext(profession)
     
+    // Check for relevant branch/industry rules
+    const relevanteRegels = zoekBrancheRegels(query)
+    
     // Bouw gesprekgeschiedenis
     let conversationHistory = ''
     if (history && history.length > 0) {
@@ -200,6 +267,9 @@ ${recentHistory.map((msg: any) =>
 CONTEXT: Dit is een doorlopend gesprek. Verwijs naar eerdere punten waar relevant en bouw voort op de context.`
     }
 
+    // Variable to collect the complete response for database storage
+    let completeResponse = ''
+
     // Stream response
     const stream = new ReadableStream({
       async start(controller) {
@@ -208,15 +278,34 @@ CONTEXT: Dit is een doorlopend gesprek. Verwijs naar eerdere punten waar relevan
         try {
           console.log('🤖 Genereren juridische analyse...')
           
-          const prompt = `${LEGAL_KNOWLEDGE}
+          // Enhanced prompt with branch rules
+          let prompt = `${LEGAL_KNOWLEDGE}
 
 ${professionContext}
 
-${conversationHistory}
+${conversationHistory}`
+
+          // Add branch rules section if relevant rules found
+          if (relevanteRegels.length > 0) {
+            prompt += `
+
+BRANCHEREGELS BESCHIKBAAR:
+De volgende brancheregels zijn relevant voor deze vraag:
+${relevanteRegels.map(regel => 
+  `- ${regel.organisatie}: ${regel.regel}
+  Omschrijving: ${regel.omschrijving}
+  Gevolgen bij overtreding: ${regel.gevolgen}
+  Bron: ${regel.bron}`
+).join('\n\n')}
+
+BELANGRIJK: Let goed op mogelijke verschillen tussen wettelijke bepalingen en brancheregels. Behandel beide in je antwoord.`
+          }
+
+          prompt += `
 
 VRAAG: "${query}"
 
-Geef een uitgebreide, goed gestructureerde juridische analyse die aansluit bij het profiel van de gebruiker.`
+Geef een uitgebreide, goed gestructureerde juridische analyse die aansluit bij het profiel van de gebruiker.${relevanteRegels.length > 0 ? ' Integreer relevante brancheregels in je antwoord en wijs op eventuele conflicten met wettelijke bepalingen.' : ''}`
 
           const completion = await openai.chat.completions.create({
             model: 'gpt-4o',
@@ -229,9 +318,22 @@ Geef een uitgebreide, goed gestructureerde juridische analyse die aansluit bij h
           for await (const chunk of completion) {
             const content = chunk.choices[0]?.delta?.content || ''
             if (content) {
+              completeResponse += content // Collect response for database
               const data = JSON.stringify({ content })
               controller.enqueue(encoder.encode(`data: ${data}\n\n`))
             }
+          }
+
+          // Save to database after streaming is complete
+          if (completeResponse.trim()) {
+            await saveQueryToDatabase(
+              query,
+              completeResponse,
+              profession,
+              session?.user?.id || null,
+              clientIP,
+              userAgent
+            )
           }
 
           controller.enqueue(encoder.encode('data: [DONE]\n\n'))

@@ -148,6 +148,77 @@ export async function GET(request: NextRequest) {
       _count: true
     })
 
+    // Enhanced diagnostics for traffic visibility issues
+    // Check for different source patterns to identify potential tracking gaps
+    const corporateQueries = await prisma.query.count({
+      where: {
+        userId: null,
+        sources: {
+          contains: 'corp-'
+        }
+      }
+    })
+
+    const citrixQueries = await prisma.query.count({
+      where: {
+        userId: null,
+        OR: [
+          { sources: { contains: 'citrix' } },
+          { sources: { contains: 'ica-tcp' } },
+          { sources: { contains: 'receiver' } }
+        ]
+      }
+    })
+
+    const askApiQueries = await prisma.query.count({
+      where: {
+        sources: {
+          contains: 'apiEndpoint":"ask'
+        }
+      }
+    })
+
+    const wetuitlegApiQueries = await prisma.query.count({
+      where: {
+        sources: {
+          contains: 'apiEndpoint":"wetuitleg'
+        }
+      }
+    })
+
+    // Check for potential gaps in logging
+    const queriesWithoutProperSources = await prisma.query.count({
+      where: {
+        userId: null,
+        sources: {
+          not: {
+            contains: 'apiEndpoint'
+          }
+        }
+      }
+    })
+
+    // Rate limit analysis
+    const rateLimitMessages = await prisma.query.count({
+      where: {
+        answer: {
+          contains: 'Dagelijkse limiet bereikt'
+        }
+      }
+    })
+
+    // Get distribution of query sources for diagnostics
+    const querySourceDistribution = await prisma.query.groupBy({
+      by: ['sources'],
+      _count: true,
+      orderBy: {
+        _count: {
+          sources: 'desc'
+        }
+      },
+      take: 10
+    })
+
     // System health check (simplified)
     let systemHealth: 'healthy' | 'warning' | 'error' = 'healthy'
     try {
@@ -184,6 +255,19 @@ export async function GET(request: NextRequest) {
         delictType: item.delictType,
         count: item._count
       })),
+      // Enhanced diagnostics
+      diagnostics: {
+        corporateQueries,
+        citrixQueries,
+        askApiQueries,
+        wetuitlegApiQueries,
+        queriesWithoutProperSources,
+        rateLimitMessages,
+        querySourceDistribution: querySourceDistribution.map(item => ({
+          source: item.sources?.substring(0, 100) || 'null', // Truncate for readability
+          count: item._count
+        }))
+      },
       systemHealth,
       databaseSize,
       lastBackup
