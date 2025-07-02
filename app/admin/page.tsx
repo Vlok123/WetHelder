@@ -67,7 +67,7 @@ interface AdminStats {
     wetuitlegApiQueries: number
     queriesWithoutProperSources: number
     rateLimitMessages: number
-    querySourceDistribution: Array<{ source: string; count: number }>
+    querySourceDistribution: Array<{ source: string; detail: string; count: number }>
   }
 }
 
@@ -892,14 +892,31 @@ export default function AdminDashboard() {
                 {/* Source Distribution */}
                 {stats.diagnostics.querySourceDistribution.length > 0 && (
                   <div className="mt-6 pt-6 border-t">
-                    <h4 className="font-semibold mb-4">Top 10 Query Sources</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <h4 className="font-semibold mb-4">Top 10 Query Sources (Gecategoriseerd)</h4>
+                    <div className="space-y-3">
                       {stats.diagnostics.querySourceDistribution.map((item, index) => (
-                        <div key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                          <span className="text-sm font-mono truncate flex-1 mr-2">
-                            {item.source === 'null' ? 'Geen tracking data' : item.source}
-                          </span>
-                          <Badge variant="secondary">{item.count}</Badge>
+                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Badge variant="outline" className="text-xs">
+                                {item.source}
+                              </Badge>
+                              <span className="text-sm font-bold text-gray-900">
+                                {item.count} vragen
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-600 truncate">
+                              {item.detail}
+                            </p>
+                          </div>
+                          <div className="text-right ml-4">
+                            <div className="text-lg font-mono font-bold text-blue-600">
+                              {item.count}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              #{index + 1}
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>

@@ -3,6 +3,64 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
+// Function to parse and categorize sources data
+function parseSourceData(sources: string | null): { category: string; detail: string } {
+  if (!sources) {
+    return { category: 'Onbekend', detail: 'Geen tracking data' }
+  }
+
+  try {
+    // Try to parse as JSON first (old format)
+    const parsed = JSON.parse(sources)
+    
+    if (parsed.type === 'wetuitleg') {
+      return { 
+        category: 'WetUitleg API', 
+        detail: `${parsed.searchResults || 0} zoekresultaten` 
+      }
+    }
+    
+    if (parsed.jsonSources) {
+      const sourceCount = Array.isArray(parsed.jsonSources) ? parsed.jsonSources.length : 0
+      return { 
+        category: 'Ask API (JSON)', 
+        detail: `${sourceCount} juridische bronnen` 
+      }
+    }
+    
+    if (parsed.clientIp || parsed.apiEndpoint) {
+      return { 
+        category: `${parsed.apiEndpoint || 'API'} - Enhanced Tracking`, 
+        detail: `IP: ${parsed.clientIp || 'onbekend'}` 
+      }
+    }
+    
+    return { category: 'JSON Data', detail: sources.substring(0, 50) + '...' }
+    
+  } catch (e) {
+    // Not JSON, check for patterns
+    
+    // IP address pattern
+    const ipPattern = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/
+    if (ipPattern.test(sources.trim())) {
+      return { category: 'IP Adres', detail: sources.trim() }
+    }
+    
+    // Corporate/Citrix patterns
+    if (sources.includes('corp-') || sources.includes('citrix')) {
+      return { category: 'Corporate Network', detail: sources.substring(0, 30) + '...' }
+    }
+    
+    // API endpoint patterns
+    if (sources.includes('apiEndpoint')) {
+      return { category: 'API Tracking', detail: sources.substring(0, 50) + '...' }
+    }
+    
+    // Default
+    return { category: 'Overig', detail: sources.substring(0, 50) + '...' }
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
@@ -208,7 +266,7 @@ export async function GET(request: NextRequest) {
     })
 
     // Get distribution of query sources for diagnostics
-    const querySourceDistribution = await prisma.query.groupBy({
+    const rawQuerySources = await prisma.query.groupBy({
       by: ['sources'],
       _count: true,
       orderBy: {
@@ -216,8 +274,40 @@ export async function GET(request: NextRequest) {
           sources: 'desc'
         }
       },
-      take: 10
+      take: 50 // Get more to have better data after processing
     })
+
+    // Process and categorize sources
+    const sourceCategories = new Map<string, { detail: string; count: number }>()
+    
+    rawQuerySources.forEach(item => {
+      const parsed = parseSourceData(item.sources)
+      const key = parsed.category
+      
+      if (sourceCategories.has(key)) {
+        const existing = sourceCategories.get(key)!
+        existing.count += item._count
+        // Keep the most common detail for this category
+        if (item._count > (existing.detail.match(/\d+/) ? parseInt(existing.detail.match(/\d+/)![0]) : 0)) {
+          existing.detail = parsed.detail
+        }
+      } else {
+        sourceCategories.set(key, {
+          detail: parsed.detail,
+          count: item._count
+        })
+      }
+    })
+
+    // Convert to array and sort by count
+    const querySourceDistribution = Array.from(sourceCategories.entries())
+      .map(([category, data]) => ({
+        source: category,
+        detail: data.detail,
+        count: data.count
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10) // Top 10
 
     // System health check (simplified)
     let systemHealth: 'healthy' | 'warning' | 'error' = 'healthy'
@@ -264,8 +354,9 @@ export async function GET(request: NextRequest) {
         queriesWithoutProperSources,
         rateLimitMessages,
         querySourceDistribution: querySourceDistribution.map(item => ({
-          source: item.sources?.substring(0, 100) || 'null', // Truncate for readability
-          count: item._count
+          source: item.source,
+          detail: item.detail,
+          count: item.count
         }))
       },
       systemHealth,
