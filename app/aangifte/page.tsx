@@ -20,7 +20,8 @@ import {
   Clock,
   Trash2,
   Info,
-  Loader2
+  Loader2,
+  Search
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -412,6 +413,183 @@ Beoordeel de juridische kwaliteit realistisch:
       console.error('Fout bij juridische analyse:', error)
       return generateFallbackAnalyse(gegevens)
     }
+  }
+
+  // Analyseer "Anders" zoekopdracht en genereer aangepast delicttype + vragen
+  const analyseAndersZoekopdracht = async (zoekopdracht: string): Promise<{ aangepastDelict: DelictType; aangepassteVragen: Vraag[] }> => {
+    try {
+      const response = await fetch('/api/debug-prompt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [{
+            role: 'user',
+            content: `Analyseer deze beschrijving van een mogelijk strafbaar feit en bepaal het juiste delicttype met aangepaste vragen.
+
+BESCHRIJVING VAN GEBRUIKER:
+"${zoekopdracht}"
+
+INSTRUCTIES:
+- Identificeer het meest waarschijnlijke strafbare feit op basis van de beschrijving
+- Bepaal de juridische basis (welk wetsartikel)
+- Bedenk de juridische bestanddelen die bewezen moeten worden
+- Genereer 4-6 specifieke vragen die nodig zijn om alle juridische elementen te verzamelen
+
+Geef het resultaat in exact dit JSON formaat (geen extra tekst):
+{
+  "aangepastDelict": {
+    "id": "aangepast_delict",
+    "naam": "[Naam van het delict, bijv. 'Computervredebreuk', 'Huisvredebreuk', 'Stalking']",
+    "beschrijving": "[Korte beschrijving van het delict]",
+    "categorie": "[vermogensdelict/geweldsdelict/zedenfeit/overig]",
+    "juridischeBasis": "[Welk artikel uit welk wetboek, bijv. 'Artikel 138a Wetboek van Strafrecht']",
+    "bestanddelen": ["[lijst van juridische bestanddelen die bewezen moeten worden]"]
+  },
+  "aangepassteVragen": [
+    {
+      "id": "vraag1",
+      "tekst": "[Specifieke vraag over tijd/plaats]",
+      "hint": "[Uitleg waarom dit belangrijk is]",
+      "verplicht": true,
+      "type": "tekst"
+    },
+    {
+      "id": "vraag2", 
+      "tekst": "[Specifieke vraag over de handeling/gedraging]",
+      "hint": "[Uitleg over juridische relevantie]",
+      "verplicht": true,
+      "type": "langeTekst"
+    },
+    {
+      "id": "vraag3",
+      "tekst": "[Vraag over schade/gevolgen]",
+      "hint": "[Waarom dit relevant is voor het delict]",
+      "verplicht": true,
+      "type": "langeTekst"
+    },
+    {
+      "id": "vraag4",
+      "tekst": "[Vraag over verdachte/dader]",
+      "hint": "[Belang van daderidentificatie]",
+      "verplicht": false,
+      "type": "langeTekst"
+    }
+  ]
+}
+
+LET OP:
+- Maak de vragen specifiek voor dit delicttype
+- Zorg dat alle juridische bestanddelen gedekt worden
+- Gebruik begrijpelijke taal, geen juridisch jargon
+- Geef praktische hints bij elke vraag`
+          }]
+        }),
+      })
+
+      const data = await response.json()
+      
+      if (data.response) {
+        try {
+          const jsonMatch = data.response.match(/\{[\s\S]*\}/)
+          if (jsonMatch) {
+            const analyseData = JSON.parse(jsonMatch[0])
+            return {
+              aangepastDelict: analyseData.aangepastDelict,
+              aangepassteVragen: analyseData.aangepassteVragen
+            }
+          }
+        } catch (parseError) {
+          console.error('Fout bij parseren anders-analyse:', parseError)
+        }
+      }
+      
+      // Fallback bij falen van API
+      return generateFallbackAndersAnalyse(zoekopdracht)
+      
+    } catch (error) {
+      console.error('Fout bij anders-analyse:', error)
+      return generateFallbackAndersAnalyse(zoekopdracht)
+    }
+  }
+
+  // Fallback voor "anders" analyse
+  const generateFallbackAndersAnalyse = (zoekopdracht: string): { aangepastDelict: DelictType; aangepassteVragen: Vraag[] } => {
+    // Eenvoudige keyword detectie voor fallback
+    const beschrijving = zoekopdracht.toLowerCase()
+    
+    let delictNaam = 'Onbekend delict'
+    let juridischeBasis = 'Nader te bepalen'
+    let categorie = 'overig'
+    let bestanddelen = ['Strafbaar feit', 'Opzet of schuld', 'Geen rechtvaardigingsgrond']
+    
+    // Probeer delicttype te raden op basis van keywords
+    if (beschrijving.includes('computer') || beschrijving.includes('internet') || beschrijving.includes('hack')) {
+      delictNaam = 'Computervredebreuk'
+      juridischeBasis = 'Artikel 138a Wetboek van Strafrecht'
+      categorie = 'overig'
+      bestanddelen = ['Opzettelijk inbreuk maken', 'Geautomatiseerd werk', 'Wederrechtelijk']
+    } else if (beschrijving.includes('stal') || beschrijving.includes('volgen') || beschrijving.includes('achtervolgen')) {
+      delictNaam = 'Stalking'
+      juridischeBasis = 'Artikel 285b Wetboek van Strafrecht'
+      categorie = 'geweldsdelict'
+      bestanddelen = ['Wederrechtelijk', 'Stelselmatig', 'Belagen', 'Dwingend gedrag']
+    } else if (beschrijving.includes('thuis') || beschrijving.includes('huis') || beschrijving.includes('woning') || beschrijving.includes('binnen')) {
+      delictNaam = 'Huisvredebreuk'
+      juridischeBasis = 'Artikel 138 Wetboek van Strafrecht'
+      categorie = 'overig'
+      bestanddelen = ['Wederrechtelijk', 'Binnentreden', 'Besloten plaats', 'Tegen de wil']
+    }
+    
+    const aangepastDelict: DelictType = {
+      id: 'aangepast_delict',
+      naam: delictNaam,
+      beschrijving: `Aangepast delicttype op basis van: ${zoekopdracht.substring(0, 100)}...`,
+      categorie,
+      juridischeBasis,
+      bestanddelen
+    }
+    
+    const aangepassteVragen: Vraag[] = [
+      {
+        id: 'wanneer_waar',
+        tekst: 'Wanneer en waar vond het incident plaats?',
+        hint: 'Datum, tijd en locatie zo nauwkeurig mogelijk',
+        verplicht: true,
+        type: 'tekst'
+      },
+      {
+        id: 'wat_gebeurde',
+        tekst: 'Wat is er precies gebeurd?',
+        hint: 'Beschrijf stap voor stap wat er gebeurde',
+        verplicht: true,
+        type: 'langeTekst'
+      },
+      {
+        id: 'schade_gevolgen',
+        tekst: 'Welke schade of gevolgen heeft u ondervonden?',
+        hint: 'Materiële schade, emotionele impact, kosten',
+        verplicht: true,
+        type: 'langeTekst'
+      },
+      {
+        id: 'verdachte_info',
+        tekst: 'Wat weet u over de verdachte/dader?',
+        hint: 'Signalement, naam, relatie tot u, contactgegevens',
+        verplicht: false,
+        type: 'langeTekst'
+      },
+      {
+        id: 'bewijs',
+        tekst: 'Welk bewijs heeft u?',
+        hint: 'Foto\'s, berichten, getuigen, documenten',
+        verplicht: false,
+        type: 'langeTekst'
+      }
+    ]
+    
+    return { aangepastDelict, aangepassteVragen }
   }
 
   // Fallback analyse voor als API faalt
@@ -1092,119 +1270,58 @@ export default function AngifteAssistentPage() {
                       <div className="mt-3">
                         <Button
                           onClick={async () => {
+                            if (!angifteGegevens.zoekopdracht) return
+                            
                             updateAngifteGegevens({ isGenererend: true })
                             try {
-                              const response = await fetch('/api/debug-prompt', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                  messages: [{
-                                    role: 'user',
-                                    content: `Analyseer de volgende situatie en bepaal:
-1. Het meest waarschijnlijke delicttype met juridische basis
-2. Genereer 4-6 specifieke vragen die nodig zijn voor een aangifte van dit delicttype
-
-Situatie: "${angifteGegevens.zoekopdracht}"
-
-Geef het antwoord in dit exacte JSON formaat:
-{
-  "delictType": {
-    "id": "uniek_id",
-    "naam": "Delictnaam",
-    "beschrijving": "Korte beschrijving",
-    "categorie": "type delict",
-    "juridischeBasis": "Artikel X Wetboek",
-    "bestanddelen": ["element1", "element2"]
-  },
-  "vragen": [
-    {
-      "id": "vraag1",
-      "tekst": "Wanneer vond het incident plaats?",
-      "hint": "Datum en tijdstip",
-      "verplicht": true,
-      "type": "tekst"
-    }
-  ]
-}`
-                                  }]
-                                })
+                              const result = await analyseAndersZoekopdracht(angifteGegevens.zoekopdracht)
+                              updateAngifteGegevens({
+                                aangepastDelict: result.aangepastDelict,
+                                aangepassteVragen: result.aangepassteVragen,
+                                isGenererend: false
                               })
-                              
-                              const data = await response.json()
-                              
-                              try {
-                                const parsed = JSON.parse(data.response)
-                                updateAngifteGegevens({
-                                  aangepastDelict: parsed.delictType,
-                                  aangepassteVragen: parsed.vragen,
-                                  isGenererend: false
-                                })
-                              } catch {
-                                // Fallback als JSON parsing mislukt
-                                updateAngifteGegevens({
-                                  aangepastDelict: {
-                                    id: 'aangepast',
-                                    naam: 'Aangepast delicttype',
-                                    beschrijving: 'Op basis van uw beschrijving',
-                                    categorie: 'aangepast',
-                                    juridischeBasis: 'Wordt automatisch bepaald',
-                                    bestanddelen: ['wordt bepaald']
-                                  },
-                                  aangepassteVragen: [
-                                    {
-                                      id: 'wanneer',
-                                      tekst: 'Wanneer vond het incident plaats?',
-                                      hint: 'Datum en tijdstip zo nauwkeurig mogelijk',
-                                      verplicht: true,
-                                      type: 'tekst'
-                                    },
-                                    {
-                                      id: 'waar',
-                                      tekst: 'Waar vond het incident plaats?',
-                                      hint: 'Adres of locatiebeschrijving',
-                                      verplicht: true,
-                                      type: 'tekst'
-                                    },
-                                    {
-                                      id: 'wat',
-                                      tekst: 'Wat is er precies gebeurd?',
-                                      hint: 'Korte beschrijving van de gebeurtenis',
-                                      verplicht: true,
-                                      type: 'langeTekst'
-                                    }
-                                  ],
-                                  isGenererend: false
-                                })
-                              }
                             } catch (error) {
+                              console.error('Fout bij analyse:', error)
                               updateAngifteGegevens({ isGenererend: false })
                             }
                           }}
-                          disabled={angifteGegevens.isGenererend}
+                          disabled={angifteGegevens.isGenererend || !angifteGegevens.zoekopdracht || (angifteGegevens.zoekopdracht?.length || 0) < 20}
+                          className="w-full"
                         >
                           {angifteGegevens.isGenererend ? (
                             <>
-                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
                               Analyseren...
                             </>
                           ) : (
-                            'Analyseer situatie'
+                            <>
+                              <Search className="h-4 w-4 mr-2" />
+                              Analyseer situatie
+                            </>
                           )}
                         </Button>
                       </div>
                     )}
-                  </div>
-                )}
-
-                {/* Toon aangepast delicttype */}
-                {angifteGegevens.aangepastDelict && (
-                  <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                    <h4 className="font-semibold text-green-900 mb-2">Geïdentificeerd delicttype:</h4>
-                    <div className="text-sm text-green-800">
-                      <p><strong>{angifteGegevens.aangepastDelict.naam}</strong></p>
-                      <p className="mt-1">{angifteGegevens.aangepastDelict.beschrijving}</p>
-                      <p className="mt-1 text-xs">{angifteGegevens.aangepastDelict.juridischeBasis}</p>
-                    </div>
+                    
+                    {/* Weergave van geanalyseerd delicttype */}
+                    {angifteGegevens.aangepastDelict && (
+                      <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex items-start gap-2">
+                          <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                          <div>
+                            <h5 className="font-semibold text-green-900">Geïdentificeerd delicttype:</h5>
+                            <p className="font-medium text-green-800">{angifteGegevens.aangepastDelict.naam}</p>
+                            <p className="text-sm text-green-700 mt-1">{angifteGegevens.aangepastDelict.beschrijving}</p>
+                            <p className="text-xs text-green-600 mt-1">{angifteGegevens.aangepastDelict.juridischeBasis}</p>
+                            {angifteGegevens.aangepassteVragen && (
+                              <p className="text-xs text-green-600 mt-2">
+                                {angifteGegevens.aangepassteVragen.length} aangepaste vragen opgesteld voor stap 2
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

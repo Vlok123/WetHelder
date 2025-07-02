@@ -468,33 +468,60 @@ function AskPageContent() {
         },
         body: JSON.stringify({ 
           question,
-          profession: selectedProfession 
+          profession: selectedProfession,
+          history: messages.slice(-6).map(msg => ({
+            role: msg.type === 'user' ? 'user' : 'assistant',
+            content: msg.type === 'user' ? msg.question : msg.answer
+          }))
         }),
       })
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Er is iets misgegaan')
+        const errorText = await response.text()
+        throw new Error(`HTTP ${response.status}: ${errorText}`)
       }
 
-      const data = await response.json()
-      
-      // Update the message with actual response
-      setMessages(prev => prev.map(msg => 
-        msg.id === tempMessage.id 
-          ? {
-              ...msg,
-              answer: data.answer,
-              sources: data.sources || [],
-              isLoading: false,
-              queryId: data.queryId
-            }
-          : msg
-      ))
+      const reader = response.body?.getReader()
+      if (!reader) throw new Error('No reader available')
 
-      // Update remaining questions for anonymous users
-      if (!session && data.remainingQuestions !== undefined) {
-        setRemainingQuestions(data.remainingQuestions)
+      let accumulatedContent = ''
+      const decoder = new TextDecoder()
+
+      while (true) {
+        const { done, value } = await reader.read()
+        
+        if (done) break
+
+        const chunk = decoder.decode(value, { stream: true })
+        const lines = chunk.split('\n')
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const dataStr = line.substring(6)
+            if (dataStr === '[DONE]') break
+            
+            try {
+              const data = JSON.parse(dataStr)
+              if (data.content) {
+                accumulatedContent += data.content
+                
+                // Update message with streaming content
+                setMessages(prev => prev.map(msg => 
+                  msg.id === tempMessage.id 
+                    ? { ...msg, answer: accumulatedContent, isLoading: false }
+                    : msg
+                ))
+              }
+              
+              // Update remaining questions for anonymous users
+              if (!session && data.remainingQuestions !== undefined) {
+                setRemainingQuestions(data.remainingQuestions)
+              }
+            } catch (e) {
+              // Skip invalid JSON
+            }
+          }
+        }
       }
 
     } catch (error) {
