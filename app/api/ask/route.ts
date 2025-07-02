@@ -43,51 +43,59 @@ function getSessionId(userId: string | null, request: NextRequest): string {
   return `anon-${sessionId}`
 }
 
-// Check if a question is legally relevant using a quick OpenAI call
-async function checkLegalRelevance(question: string): Promise<boolean> {
-  try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o', // Use the high-accuracy model for better legal relevance detection
-      messages: [{
-        role: 'system',
-        content: `Je bent een filter die bepaalt of vragen juridisch relevant zijn voor een Nederlandse juridische AI-assistent.
-
-JURIDISCH RELEVANT zijn vragen over:
-- Nederlandse wetten en regelgeving
-- Strafrecht, burgerlijk recht, arbeidsrecht, verkeersrecht, bestuursrecht
-- Juridische procedures, aangifte, rechtszaken
-- Contracten, aansprakelijkheid, rechten en plichten
-- Boetes, overtredingen, juridische gevolgen
-- Echtscheiding, erfrecht, huurrecht
-- Bedrijfsrecht, btw, belastingen (juridische aspecten)
-
-NIET JURIDISCH RELEVANT zijn vragen over:
-- Koken, recepten, voeding
-- Sport, entertainment, hobby's
-- Technologie (tenzij juridische aspecten)
-- Medische adviezen
-- Reisadviezen
-- Algemene levensvragen
-- Weersomstandigheden
-- Educatie (tenzij juridische rechten)
-
-Antwoord alleen met "JA" als de vraag juridisch relevant is, of "NEE" als dit niet het case is.`
-      }, {
-        role: 'user',
-        content: question
-      }],
-      temperature: 0.1,
-      max_tokens: 5,
-    })
-
-    const answer = response.choices[0]?.message?.content?.trim().toLowerCase()
-    return answer === 'ja' || answer === 'yes'
-    
-  } catch (error) {
-    console.error('Error checking legal relevance:', error)
-    // If there's an error, err on the side of allowing the question
+// Check if a question is legally relevant - much more permissive approach
+function checkLegalRelevance(question: string, conversationHistory: any[] = []): boolean {
+  const lowerQuestion = question.toLowerCase()
+  
+  // If there's conversation history, assume follow-up questions are relevant
+  if (conversationHistory && conversationHistory.length > 0) {
     return true
   }
+  
+  // Always allow questions with legal keywords or procedural terms
+  const legalKeywords = [
+    'wet', 'artikel', 'recht', 'juridisch', 'advocaat', 'rechter', 'politie', 'boa',
+    'contract', 'aansprakelijk', 'straf', 'boete', 'procedure', 'aangifte', 'bezwaar',
+    'beroep', 'vonnis', 'uitspraak', 'rechtbank', 'hof', 'cassatie', 'wetboek',
+    'grondwet', 'wetgeving', 'regelgeving', 'verordening', 'besluit', 'ministerieel',
+    'gemeente', 'provincie', 'staat', 'overheid', 'bestuur', 'handhaving',
+    'dwangsom', 'executie', 'beslag', 'faillissement', 'surseance', 'schuldsanering',
+    'alimentatie', 'echtscheiding', 'erfenis', 'testament', 'notaris', 'hypotheek',
+    'huur', 'koop', 'eigendom', 'bezit', 'pacht', 'erfpacht', 'opstal',
+    'arbeid', 'ontslag', 'cao', 'werkgever', 'werknemer', 'vakbond',
+    'btw', 'belasting', 'fiscaal', 'douane', 'accijns', 'successie',
+    'verzekering', 'schade', 'letselschade', 'smartengeld', 'schadevergoeding',
+    'privacy', 'avg', 'gdpr', 'persoonsgegevens', 'toestemming',
+    'intellectueel', 'auteursrecht', 'patent', 'merk', 'octrooi',
+    'milieurecht', 'omgevingsrecht', 'bestemmingsplan', 'vergunning',
+    'vreemdelingenrecht', 'naturalisatie', 'verblijfsvergunning', 'asiel',
+    // Common follow-up question words
+    'stappen', 'procedure', 'voldoet', 'handhaven', 'naleven', 'overtreding',
+    'sanctie', 'maatregel', 'verbod', 'gebod', 'voorschrift', 'norm',
+    'vervolgstappen', 'wat nu', 'verder', 'volgende', 'daarna', 'dan',
+    'gevolgen', 'consequenties', 'kan ik', 'moet ik', 'mag ik'
+  ]
+  
+  // Check if question contains legal keywords
+  if (legalKeywords.some(keyword => lowerQuestion.includes(keyword))) {
+    return true
+  }
+  
+  // Block only very obvious non-legal questions
+  const obviousNonLegal = [
+    'appeltaart bakken', 'hoe bak je', 'recept voor', 'ingrediënten',
+    'voetbal wedstrijd', 'sport uitslagen', 'spelregels voetbal',
+    'weer vandaag', 'temperatuur', 'gaat het regenen',
+    'vakantie boeken', 'hotel reserveren', 'vliegtickets',
+    'computer installeren', 'software downloaden', 'programmeren',
+    'medicijn nemen', 'symptomen ziekte', 'medisch advies'
+  ]
+  
+  // Only block if it's clearly about these non-legal topics AND not a follow-up
+  const isObviouslyNonLegal = obviousNonLegal.some(term => lowerQuestion.includes(term))
+  
+  // Be very permissive - only block obvious non-legal standalone questions
+  return !isObviouslyNonLegal
 }
 
 export async function POST(request: NextRequest) {
@@ -244,8 +252,8 @@ Wees altijd accuraat, concreet en praktisch gericht. Bouw voort op eerdere vrage
       content: question
     })
 
-    // First check if the question is legally relevant
-    const isLegallyRelevant = await checkLegalRelevance(question)
+    // First check if the question is legally relevant - but be much more permissive for follow-up questions
+    const isLegallyRelevant = checkLegalRelevance(question, history)
     
     if (!isLegallyRelevant) {
       // Create a polite response for non-legal questions
