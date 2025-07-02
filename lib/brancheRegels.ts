@@ -170,7 +170,7 @@ export function getBrancheAdvies(query: string, wettelijkePositie: string): Bran
   const relevanteRegels = zoekBrancheRegels(query)
   
   let advies = ''
-  let conflicten: string[] = []
+  const conflicten: string[] = []
   
   if (relevanteRegels.length > 0) {
     advies = `**WETTELIJKE POSITIE:** ${wettelijkePositie}\n\n**BRANCHEREGELS:**\n\n`
