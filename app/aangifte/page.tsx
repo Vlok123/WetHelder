@@ -341,7 +341,9 @@ const vragenPerDelict: Record<string, Vraag[]> = {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          prompt: `Analyseer de juridische volledigheid van deze aangifte. Controleer ALLE beschikbare informatie uit zowel de beantwoorde vragen als de vrije tekst. Beoordeel of alle belangrijke juridische elementen aanwezig zijn en stel concrete aanvullende vragen voor waar informatie ontbreekt.
+          messages: [{
+            role: 'user',
+            content: `Analyseer de juridische volledigheid van deze aangifte. Controleer ALLE beschikbare informatie uit zowel de beantwoorde vragen als de vrije tekst. Beoordeel of alle belangrijke juridische elementen aanwezig zijn en stel concrete aanvullende vragen voor waar informatie ontbreekt.
 
 DELICTTYPE: ${alleInformatie.delictType}
 JURIDISCHE BASIS: ${alleInformatie.juridischeBasis}
@@ -379,15 +381,16 @@ Beoordeel de juridische kwaliteit realistisch:
 - "goed" alleen als alle essentiële elementen aanwezig zijn EN geen verdere verbeteringen nodig
 - "voldoende" als essentiële elementen aanwezig maar er nog verbeteringen mogelijk zijn
 - "onvoldoende" als belangrijke juridische elementen ontbreken`
+          }]
         }),
       })
 
       const data = await response.json()
       
-      if (data.answer) {
+      if (data.response) {
         try {
           // Probeer JSON te parseren uit de respons
-          const jsonMatch = data.answer.match(/\{[\s\S]*\}/)
+          const jsonMatch = data.response.match(/\{[\s\S]*\}/)
           if (jsonMatch) {
             const analyseData = JSON.parse(jsonMatch[0])
             return {
