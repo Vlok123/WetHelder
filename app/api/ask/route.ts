@@ -43,6 +43,53 @@ function getSessionId(userId: string | null, request: NextRequest): string {
   return `anon-${sessionId}`
 }
 
+// Check if a question is legally relevant using a quick OpenAI call
+async function checkLegalRelevance(question: string): Promise<boolean> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini', // Use the faster, cheaper model for this quick check
+      messages: [{
+        role: 'system',
+        content: `Je bent een filter die bepaalt of vragen juridisch relevant zijn voor een Nederlandse juridische AI-assistent.
+
+JURIDISCH RELEVANT zijn vragen over:
+- Nederlandse wetten en regelgeving
+- Strafrecht, burgerlijk recht, arbeidsrecht, verkeersrecht, bestuursrecht
+- Juridische procedures, aangifte, rechtszaken
+- Contracten, aansprakelijkheid, rechten en plichten
+- Boetes, overtredingen, juridische gevolgen
+- Echtscheiding, erfrecht, huurrecht
+- Bedrijfsrecht, btw, belastingen (juridische aspecten)
+
+NIET JURIDISCH RELEVANT zijn vragen over:
+- Koken, recepten, voeding
+- Sport, entertainment, hobby's
+- Technologie (tenzij juridische aspecten)
+- Medische adviezen
+- Reisadviezen
+- Algemene levensvragen
+- Weersomstandigheden
+- Educatie (tenzij juridische rechten)
+
+Antwoord alleen met "JA" als de vraag juridisch relevant is, of "NEE" als dit niet het case is.`
+      }, {
+        role: 'user',
+        content: question
+      }],
+      temperature: 0.1,
+      max_tokens: 5,
+    })
+
+    const answer = response.choices[0]?.message?.content?.trim().toLowerCase()
+    return answer === 'ja' || answer === 'yes'
+    
+  } catch (error) {
+    console.error('Error checking legal relevance:', error)
+    // If there's an error, err on the side of allowing the question
+    return true
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { question, profession = 'algemeen', history = [] } = await request.json()
@@ -162,6 +209,49 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
       role: 'user',
       content: question
     })
+
+    // First check if the question is legally relevant
+    const isLegallyRelevant = await checkLegalRelevance(question)
+    
+    if (!isLegallyRelevant) {
+      // Create a polite response for non-legal questions
+      const nonLegalResponse = `Bedankt voor je vraag! 
+
+WetHelder is gespecialiseerd in het beantwoorden van **juridische vragen** over Nederlandse wetgeving, zoals:
+
+🏛️ **Strafrecht** - Aangifte, boetes, strafbare feiten  
+🏠 **Burgerlijk recht** - Contracten, aansprakelijkheid, schade  
+💼 **Arbeidsrecht** - Ontslag, arbeidsovereenkomsten, rechten  
+🚗 **Verkeersrecht** - Verkeersovertredingen, schade, verzekering  
+🏘️ **Bestuursrecht** - Bezwaar, beroep, vergunningen  
+
+Voor andere vragen raad ik je aan om te zoeken op **Google** of andere gespecialiseerde bronnen te raadplegen.
+
+**Heb je wel een juridische vraag?** Stel deze gerust! Bijvoorbeeld:
+- "Mag mijn werkgever me zonder reden ontslaan?"
+- "Wat moet ik doen na een verkeersongeval?"
+- "Hoe dien ik bezwaar in tegen een boete?"
+
+Ik help je graag met alle juridische vraagstukken! 🏛️⚖️`
+
+      // Create streaming response for non-legal questions
+      const stream = new ReadableStream({
+        start(controller) {
+          const encoder = new TextEncoder()
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content: nonLegalResponse })}\n\n`))
+          controller.enqueue(encoder.encode(`data: [DONE]\n\n`))
+          controller.close()
+        }
+      })
+
+      return new NextResponse(stream, {
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+        }
+      })
+    }
 
     // Create profession-specific system message
     const professionContext = getProfessionContext(profession)
