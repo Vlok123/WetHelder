@@ -469,7 +469,7 @@ function AskPageContent() {
         body: JSON.stringify({ 
           question,
           profession: selectedProfession,
-          history: messages.slice(-6).map(msg => ({
+          history: messages.slice(-8).map(msg => ({
             role: msg.type === 'user' ? 'user' : 'assistant',
             content: msg.type === 'user' ? msg.question : msg.answer
           }))

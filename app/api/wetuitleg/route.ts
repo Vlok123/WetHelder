@@ -55,6 +55,66 @@ function incrementRateLimit(ip: string): void {
   }
 }
 
+function getProfessionContext(profession: string): string {
+  switch (profession) {
+    case 'advocaat':
+      return `Je beantwoordt vragen voor een advocaat. Focus op:
+- Diepgaande juridische analyse en jurisprudentie
+- Processtrategieën en verweersmogelijkheden
+- Relevante rechtspraak en precedenten
+- Strategische processtappen en argumentatie`
+
+    case 'politieagent':
+      return `Je beantwoordt vragen voor een politieagent. Focus op:
+- Concrete bevoegdheden en procedures
+- Handhavingsaspecten en praktische toepassing
+- Arrestatie- en aanhoudinsprocedures
+- Operationele juridische aspecten`
+
+    case 'boa':
+      return `Je beantwoordt vragen voor een BOA/handhaver. Focus op:
+- Specifieke BOA-bevoegdheden per domein
+- APV-handhaving en bestuurlijke procedures
+- Processenverbaal opstellen
+- Praktische handhavingssituaties`
+
+    case 'rechter':
+      return `Je beantwoordt vragen voor een rechter/magistraat. Focus op:
+- Juridische grondslag voor uitspraken
+- Bewijswaardering en motivering
+- Straftoemeting en sancties
+- Procesrechtelijke aspecten`
+
+    case 'notaris':
+      return `Je beantwoordt vragen voor een notaris. Focus op:
+- Burgerlijk recht en familierecht
+- Contractenrecht en vastgoedrecht
+- Notariële praktijk en procedures
+- Authentieke akten en registers`
+
+    case 'bedrijfsjurist':
+      return `Je beantwoordt vragen voor een bedrijfsjurist. Focus op:
+- Ondernemingsrecht en compliance
+- Contractenrecht en aansprakelijkheid
+- AVG en privacy-wetgeving
+- Bedrijfsrechtelijke procedures`
+
+    case 'gemeenteambtenaar':
+      return `Je beantwoordt vragen voor een gemeenteambtenaar. Focus op:
+- Bestuurlijke procedures en vergunningen
+- APV-toepassing en gemeentelijke bevoegdheden
+- Bezwaar en beroepsprocedures
+- Praktische gemeentelijke vraagstukken`
+
+    default:
+      return `Je beantwoordt vragen voor een burger/algemeen publiek. Focus op:
+- Begrijpelijke uitleg van juridische begrippen
+- Praktische toepassingen en gevolgen
+- Concrete stappen en handelingsperspectieven
+- Toegankelijke juridische informatie`
+  }
+}
+
 // Nederlandse wetgeving kennisbank
 const LEGAL_KNOWLEDGE = `
 Je bent een Nederlandse juridische expert. Je geeft uitgebreide, accurate uitleg over Nederlandse wetgeving.
@@ -96,7 +156,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { query, history } = await request.json()
+    const { query, history, profession = 'algemeen' } = await request.json()
     
     if (!query) {
       return NextResponse.json(
@@ -123,17 +183,21 @@ export async function POST(request: NextRequest) {
       incrementRateLimit(clientIP)
     }
 
+    // Profession-specific context
+    const professionContext = getProfessionContext(profession)
+    
     // Bouw gesprekgeschiedenis
-    let conversationContext = ''
+    let conversationHistory = ''
     if (history && history.length > 0) {
-      conversationContext = `
-      
-GESPREKGESCHIEDENIS:
-${history.slice(-4).map((msg: any, i: number) => 
-  `${i % 2 === 0 ? 'Gebruiker' : 'Assistent'}: ${msg.content.substring(0, 300)}...`
-).join('\n')}
+      const recentHistory = history.slice(-6) // Keep last 6 messages for better context
+      conversationHistory = `
 
-LET OP: Houd rekening met de vorige vragen en antwoorden.`
+GESPREKGESCHIEDENIS:
+${recentHistory.map((msg: any) => 
+  `${msg.role === 'user' ? 'Gebruiker' : 'Assistent'}: ${msg.content.substring(0, 400)}`
+).join('\n\n')}
+
+CONTEXT: Dit is een doorlopend gesprek. Verwijs naar eerdere punten waar relevant en bouw voort op de context.`
     }
 
     // Stream response
@@ -144,11 +208,15 @@ LET OP: Houd rekening met de vorige vragen en antwoorden.`
         try {
           console.log('🤖 Genereren juridische analyse...')
           
-          const prompt = `${LEGAL_KNOWLEDGE}${conversationContext}
+          const prompt = `${LEGAL_KNOWLEDGE}
+
+${professionContext}
+
+${conversationHistory}
 
 VRAAG: "${query}"
 
-Geef een uitgebreide, goed gestructureerde juridische analyse.`
+Geef een uitgebreide, goed gestructureerde juridische analyse die aansluit bij het profiel van de gebruiker.`
 
           const completion = await openai.chat.completions.create({
             model: 'gpt-4o',

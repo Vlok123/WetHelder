@@ -435,7 +435,9 @@ INSTRUCTIES:
 - Identificeer het meest waarschijnlijke strafbare feit op basis van de beschrijving
 - Bepaal de juridische basis (welk wetsartikel)
 - Bedenk de juridische bestanddelen die bewezen moeten worden
-- Genereer 4-6 specifieke vragen die nodig zijn om alle juridische elementen te verzamelen
+- Genereer 4-10 relevante vragen die nodig zijn om alle juridische elementen te verzamelen
+- Stel alleen ECHT RELEVANTE vragen - niet meer dan nodig voor dit specifieke delict
+- Voor eenvoudige delicten kunnen 4-5 vragen genoeg zijn, voor complexe delicten tot 10 vragen
 
 Geef het resultaat in exact dit JSON formaat (geen extra tekst):
 {
@@ -473,6 +475,13 @@ Geef het resultaat in exact dit JSON formaat (geen extra tekst):
       "id": "vraag4",
       "tekst": "[Vraag over verdachte/dader]",
       "hint": "[Belang van daderidentificatie]",
+      "verplicht": false,
+      "type": "langeTekst"
+    },
+    {
+      "id": "vraag5",
+      "tekst": "[Extra relevante vraag indien nodig]",
+      "hint": "[Juridische relevantie]",
       "verplicht": false,
       "type": "langeTekst"
     }
@@ -551,43 +560,55 @@ LET OP:
       bestanddelen
     }
     
-    const aangepassteVragen: Vraag[] = [
-      {
-        id: 'wanneer_waar',
-        tekst: 'Wanneer en waar vond het incident plaats?',
-        hint: 'Datum, tijd en locatie zo nauwkeurig mogelijk',
-        verplicht: true,
-        type: 'tekst'
-      },
-      {
-        id: 'wat_gebeurde',
-        tekst: 'Wat is er precies gebeurd?',
-        hint: 'Beschrijf stap voor stap wat er gebeurde',
-        verplicht: true,
-        type: 'langeTekst'
-      },
-      {
-        id: 'schade_gevolgen',
-        tekst: 'Welke schade of gevolgen heeft u ondervonden?',
-        hint: 'Materiële schade, emotionele impact, kosten',
-        verplicht: true,
-        type: 'langeTekst'
-      },
-      {
-        id: 'verdachte_info',
-        tekst: 'Wat weet u over de verdachte/dader?',
-        hint: 'Signalement, naam, relatie tot u, contactgegevens',
-        verplicht: false,
-        type: 'langeTekst'
-      },
-      {
-        id: 'bewijs',
-        tekst: 'Welk bewijs heeft u?',
-        hint: 'Foto\'s, berichten, getuigen, documenten',
-        verplicht: false,
-        type: 'langeTekst'
-      }
-    ]
+    // Genereer delict-specifieke vragen
+    let aangepassteVragen: Vraag[] = []
+    
+    if (delictNaam === 'Computervredebreuk') {
+      aangepassteVragen = [
+        { id: 'wanneer_waar', tekst: 'Wanneer en waar vond de computervredebreuk plaats?', hint: 'Datum, tijd en locatie van uw computer', verplicht: true, type: 'tekst' },
+        { id: 'wat_systeem', tekst: 'Welk systeem/computer werd aangevallen?', hint: 'Type computer, apparaat, netwerk', verplicht: true, type: 'langeTekst' },
+        { id: 'hoe_toegang', tekst: 'Hoe kreeg de dader toegang tot uw systeem?', hint: 'Phishing, malware, gestolen wachtwoord, etc.', verplicht: true, type: 'langeTekst' },
+        { id: 'wat_gedaan', tekst: 'Wat heeft de dader gedaan in uw systeem?', hint: 'Bestanden bekeken, gestolen, gewijzigd, verwijderd', verplicht: true, type: 'langeTekst' },
+        { id: 'schade', tekst: 'Welke schade is er ontstaan?', hint: 'Gestolen data, kosten, downtime', verplicht: true, type: 'langeTekst' },
+        { id: 'bewijs_technisch', tekst: 'Welk technisch bewijs heeft u?', hint: 'Logbestanden, screenshots, forensisch onderzoek', verplicht: false, type: 'langeTekst' },
+        { id: 'beveiliging', tekst: 'Welke beveiligingsmaatregelen waren er?', hint: 'Antivirus, firewall, wachtwoordbeleid', verplicht: false, type: 'langeTekst' },
+        { id: 'verdachte_info', tekst: 'Weet u wie de dader kan zijn?', hint: 'IP-adressen, e-mailadressen, verdachte contacten', verplicht: false, type: 'langeTekst' }
+      ]
+    } else if (delictNaam === 'Stalking') {
+      aangepassteVragen = [
+        { id: 'wanneer_begonnen', tekst: 'Wanneer begon de stalking?', hint: 'Eerste incident en periode van stalking', verplicht: true, type: 'tekst' },
+        { id: 'hoe_belagen', tekst: 'Hoe wordt u belaagd?', hint: 'Volgen, bellen, berichten, opwachten, etc.', verplicht: true, type: 'langeTekst' },
+        { id: 'frequentie', tekst: 'Hoe vaak gebeurt dit?', hint: 'Dagelijks, wekelijks, aantal keren per dag', verplicht: true, type: 'tekst' },
+        { id: 'locaties', tekst: 'Waar vindt de stalking plaats?', hint: 'Thuis, werk, onderweg, online', verplicht: true, type: 'langeTekst' },
+        { id: 'relatie_dader', tekst: 'Wat is uw relatie tot de stalker?', hint: 'Ex-partner, collega, onbekende, etc.', verplicht: true, type: 'langeTekst' },
+        { id: 'impact', tekst: 'Welke impact heeft dit op uw leven?', hint: 'Angst, gedragsverandering, slaapproblemen', verplicht: true, type: 'langeTekst' },
+        { id: 'bewijs_stalking', tekst: 'Welk bewijs heeft u van de stalking?', hint: 'Berichten, foto\'s, getuigen, video\'s', verplicht: false, type: 'langeTekst' },
+        { id: 'maatregelen', tekst: 'Welke maatregelen heeft u al genomen?', hint: 'Contactverbod gevraagd, route veranderd, beveiligingsmaatregelen', verplicht: false, type: 'langeTekst' }
+      ]
+    } else if (delictNaam === 'Huisvredebreuk') {
+      aangepassteVragen = [
+        { id: 'wanneer_waar', tekst: 'Wanneer en waar vond de huisvredebreuk plaats?', hint: 'Datum, tijd en exacte locatie', verplicht: true, type: 'tekst' },
+        { id: 'wat_voor_plaats', tekst: 'Wat voor besloten plaats betreft het?', hint: 'Woning, tuin, bedrijfspand, kantoor', verplicht: true, type: 'tekst' },
+        { id: 'hoe_binnengetreden', tekst: 'Hoe is de dader binnengetreden?', hint: 'Door deur, raam, over hek, met geweld', verplicht: true, type: 'langeTekst' },
+        { id: 'toestemming', tekst: 'Had de dader toestemming om binnen te komen?', hint: 'Expliciet verboden, nooit toegestaan, toegang ingetrokken', verplicht: true, type: 'langeTekst' },
+        { id: 'wat_gedaan_binnen', tekst: 'Wat heeft de dader gedaan nadat hij binnen was?', hint: 'Rondgelopen, spullen aangeraakt, gedreigd, gestolen', verplicht: true, type: 'langeTekst' },
+        { id: 'getuigen', tekst: 'Waren er getuigen aanwezig?', hint: 'Namen en contactgegevens van getuigen', verplicht: false, type: 'langeTekst' },
+        { id: 'schade', tekst: 'Is er schade ontstaan?', hint: 'Braakschade, kapotte spullen, vervuiling', verplicht: false, type: 'langeTekst' },
+        { id: 'relatie_dader', tekst: 'Kent u de dader?', hint: 'Ex-partner, buur, collega, onbekende', verplicht: false, type: 'langeTekst' }
+      ]
+    } else {
+      // Algemene fallback vragen voor onbekende delicten
+      aangepassteVragen = [
+        { id: 'wanneer_waar', tekst: 'Wanneer en waar vond het incident plaats?', hint: 'Datum, tijd en locatie zo nauwkeurig mogelijk', verplicht: true, type: 'tekst' },
+        { id: 'wat_gebeurde', tekst: 'Wat is er precies gebeurd?', hint: 'Beschrijf stap voor stap wat er gebeurde', verplicht: true, type: 'langeTekst' },
+        { id: 'hoe_ontdekt', tekst: 'Hoe heeft u het incident ontdekt?', hint: 'Direct gezien, later bemerkt, door anderen verteld', verplicht: true, type: 'langeTekst' },
+        { id: 'schade_gevolgen', tekst: 'Welke schade of gevolgen heeft u ondervonden?', hint: 'Materiële schade, emotionele impact, kosten', verplicht: true, type: 'langeTekst' },
+        { id: 'verdachte_info', tekst: 'Wat weet u over de verdachte/dader?', hint: 'Signalement, naam, relatie tot u, contactgegevens', verplicht: false, type: 'langeTekst' },
+        { id: 'bewijs', tekst: 'Welk bewijs heeft u?', hint: 'Foto\'s, berichten, getuigen, documenten', verplicht: false, type: 'langeTekst' },
+        { id: 'eerder_gebeurd', tekst: 'Is dit eerder gebeurd?', hint: 'Eerdere incidenten, patroon, escalatie', verplicht: false, type: 'langeTekst' },
+        { id: 'maatregelen', tekst: 'Welke maatregelen heeft u al genomen?', hint: 'Politie geïnformeerd, beveiligingsmaatregelen, juridische stappen', verplicht: false, type: 'langeTekst' }
+      ]
+    }
     
     return { aangepastDelict, aangepassteVragen }
   }

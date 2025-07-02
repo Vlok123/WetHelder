@@ -194,10 +194,44 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
     // Build conversation history from the request
     const conversationHistory: ChatMessage[] = []
     
+    // Add system message with profession context
+    const professionContext = getProfessionContext(profession)
+    conversationHistory.push({
+      role: 'system',
+      content: `Je bent WetHelder, een Nederlandse juridische AI-assistent gespecialiseerd in het beantwoorden van juridische vragen.
+
+${professionContext}
+
+ANTWOORDSTIJL:
+- Geef altijd concrete, praktische juridische adviezen
+- Verwijs naar specifieke wetsartikelen met precieze cijfers (bijv. "artikel 318 Sr")
+- Leg juridische begrippen helder uit
+- Geef praktische stappen en handelingsperspectieven
+- Gebruik Nederlandse wetgeving en jurisprudentie
+- Verwijs naar eerdere gesprekspunten wanneer relevant
+
+STRUCTUUR:
+Gebruik deze structuur voor je antwoorden:
+
+**JURIDISCHE BASIS:**
+[Relevante wetsartikelen en juridische grondslag]
+
+**PRAKTISCHE BETEKENIS:**
+[Wat dit concreet betekent voor de vraagsteller]
+
+**HANDELINGSPERSPECTIEF:**
+[Concrete stappen en adviezen]
+
+**AANDACHTSPUNTEN:**
+[Belangrijke juridische overwegingen]
+
+Wees altijd accuraat, concreet en praktisch gericht. Bouw voort op eerdere vragen in het gesprek.`
+    })
+    
     // Add conversation history if provided
     if (history && history.length > 0) {
-      // Take last 6 messages to keep context manageable
-      const recentHistory = history.slice(-6)
+      // Take last 8 messages to keep more context
+      const recentHistory = history.slice(-8)
       conversationHistory.push(...recentHistory.map((msg: any) => ({
         role: msg.role || (msg.isUser ? 'user' : 'assistant'),
         content: msg.content || msg.text || msg.question || msg.answer || ''
@@ -253,39 +287,7 @@ Ik help je graag met alle juridische vraagstukken! 🏛️⚖️`
       })
     }
 
-    // Create profession-specific system message
-    const professionContext = getProfessionContext(profession)
-    
-    const systemMessage = {
-      role: 'system' as const,
-      content: `Je bent WetHelder, een Nederlandse juridische AI-assistent gespecialiseerd in het beantwoorden van juridische vragen.
-
-${professionContext}
-
-ANTWOORDSTIJL:
-- Geef altijd concrete, praktische juridische adviezen
-- Verwijs naar specifieke wetsartikelen met precieze cijfers (bijv. "artikel 318 Sr")
-- Leg juridische begrippen helder uit
-- Geef praktische stappen en handelingsperspectieven
-- Gebruik Nederlandse wetgeving en jurisprudentie
-
-STRUCTUUR:
-Gebruik deze structuur voor je antwoorden:
-
-**JURIDISCHE BASIS:**
-[Relevante wetsartikelen en juridische grondslag]
-
-**PRAKTISCHE BETEKENIS:**
-[Wat dit concreet betekent voor de vraagsteller]
-
-**HANDELINGSPERSPECTIEF:**
-[Concrete stappen en adviezen]
-
-**AANDACHTSPUNTEN:**
-[Belangrijke juridische overwegingen]
-
-Wees altijd accuraat, concreet en praktisch gericht.`
-    }
+    // System message is already added to conversationHistory above
 
     // Create streaming response
     const stream = new ReadableStream({
@@ -296,7 +298,7 @@ Wees altijd accuraat, concreet en praktisch gericht.`
           // Create OpenAI stream
           const openaiStream = await openai.chat.completions.create({
             model: 'gpt-4o',
-            messages: [systemMessage, ...conversationHistory],
+            messages: conversationHistory,
             temperature: 0.3,
             max_tokens: 2000,
             stream: true,

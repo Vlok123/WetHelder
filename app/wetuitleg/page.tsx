@@ -7,8 +7,22 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Scale, Search, Send, Loader2, Trash2, Copy, FileText, User } from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Scale, Search, Send, Loader2, Trash2, Copy, FileText, User, Shield, Gavel, Building, Info } from 'lucide-react'
 import Link from 'next/link'
+
+type Profession = 'algemeen' | 'advocaat' | 'politieagent' | 'boa' | 'rechter' | 'notaris' | 'bedrijfsjurist' | 'gemeenteambtenaar'
+
+const professionConfig = {
+  algemeen: { label: 'Algemeen/Burger', icon: Info },
+  advocaat: { label: 'Advocaat', icon: Scale },
+  politieagent: { label: 'Politieagent', icon: Shield },
+  boa: { label: 'BOA/Handhaver', icon: Shield },
+  rechter: { label: 'Rechter/Magistraat', icon: Gavel },
+  notaris: { label: 'Notaris', icon: FileText },
+  bedrijfsjurist: { label: 'Bedrijfsjurist', icon: Building },
+  gemeenteambtenaar: { label: 'Gemeenteambtenaar', icon: Building }
+}
 
 interface ChatMessage {
   id: string
@@ -23,6 +37,7 @@ function WetUitlegPage() {
   const searchParams = useSearchParams()
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
+  const [profession, setProfession] = useState<Profession>('algemeen')
   const [isLoading, setIsLoading] = useState(false)
   const [remainingQuestions, setRemainingQuestions] = useState<number | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -78,19 +93,6 @@ function WetUitlegPage() {
     checkRateLimit()
   }, [session])
 
-  // Handle URL query
-  useEffect(() => {
-    const urlQuery = searchParams.get('q')
-    if (urlQuery && messages.length === 0) {
-      setInput(urlQuery)
-      setTimeout(() => {
-        if (!isLoading) {
-          submitQuery(urlQuery)
-        }
-      }, 500)
-    }
-  }, [searchParams, messages.length, isLoading])
-
   const submitQuery = useCallback(async (query: string) => {
     if (!query.trim() || isLoading) return
 
@@ -129,7 +131,8 @@ function WetUitlegPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           query: trimmedQuery,
-          history: history
+          history: history,
+          profession: profession
         }),
       })
 
@@ -194,7 +197,20 @@ function WetUitlegPage() {
     } finally {
       setIsLoading(false)
     }
-  }, [isLoading, messages, session])
+  }, [isLoading, messages, session, profession])
+
+  // Handle URL query
+  useEffect(() => {
+    const urlQuery = searchParams.get('q')
+    if (urlQuery && messages.length === 0) {
+      setInput(urlQuery)
+      setTimeout(() => {
+        if (!isLoading) {
+          submitQuery(urlQuery)
+        }
+      }, 500)
+    }
+  }, [searchParams, messages.length, isLoading, submitQuery])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -369,6 +385,53 @@ function WetUitlegPage() {
         <Card className="sticky bottom-4 shadow-lg">
           <CardContent className="p-4">
             <form onSubmit={handleSubmit} className="space-y-3">
+              {/* Profession Selector */}
+              <div className="flex items-center gap-3">
+                <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
+                  Profiel:
+                </label>
+                <Select value={profession} onValueChange={(value: Profession) => setProfession(value)}>
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue>
+                      {(() => {
+                        const IconComponent = professionConfig[profession].icon
+                        return (
+                          <div className="flex items-center gap-2">
+                            <IconComponent className="h-4 w-4" />
+                            {professionConfig[profession].label}
+                          </div>
+                        )
+                      })()}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(professionConfig).map(([key, config]) => {
+                      const IconComponent = config.icon
+                      return (
+                        <SelectItem key={key} value={key}>
+                          <div className="flex items-center gap-2">
+                            <IconComponent className="h-4 w-4" />
+                            {config.label}
+                          </div>
+                        </SelectItem>
+                      )
+                    })}
+                  </SelectContent>
+                </Select>
+                {messages.length > 0 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={clearMessages}
+                    className="ml-auto"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Wissen
+                  </Button>
+                )}
+              </div>
+              
               <div className="flex gap-3">
                 <Input
                   ref={inputRef}
