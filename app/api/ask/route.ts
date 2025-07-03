@@ -264,6 +264,9 @@ STRAATINTIMIDATIE valt vanaf 1 juli 2024 onder het NIEUWE artikel 429ter Sr (NIE
 **ARTIKEL 429ter Sr - STRAATINTIMIDATIE (vanaf 1 juli 2024):**
 "Degene die in het openbaar een ander indringend seksueel benadert door middel van opmerkingen, gebaren, geluiden of aanrakingen op een wijze die vreesaanjagend, vernederend, kwetsend of onterend is te achten, wordt gestraft met hechtenis van ten hoogste drie maanden of geldboete van de derde categorie."
 
+**SPECIFIEKE FRAUDETYPEN:**
+**BANKHELPDESKFRAUDE** - Dit is oplichting (artikel 326 Sr) waarbij criminelen zich voordoen als bankmedewerkers. Kenmerken: contact via telefoon/e-mail/sms, beweren van verdachte transacties, vragen om software te installeren (AnyDesk/TeamViewer), of het delen van persoonlijke gegevens/codes. Valt onder oplichting maar heeft specifieke modus operandi.
+
 **BELANGRIJKE INSTRUCTIES:**
 - Geef volledige, accurate antwoorden op basis van Nederlandse wetgeving
 - Wees praktisch gericht en geef concrete adviezen
