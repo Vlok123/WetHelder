@@ -1591,6 +1591,9 @@ export default function AngifteAssistentPage() {
                      {' '}<strong>{(angifteGegevens.aangepastDelict?.naam || angifteGegevens.delictType?.naam)?.toLowerCase()}</strong> te dekken volgens 
                      {' '}{angifteGegevens.aangepastDelict?.juridischeBasis || angifteGegevens.delictType?.juridischeBasis}.
                    </p>
+                   <p className="text-xs text-blue-700 bg-blue-100 p-2 rounded mb-2">
+                     <strong>Debug info:</strong> Aantal vragen geladen: {huidigeVragen.length}
+                   </p>
                    <p className="text-xs text-blue-700 bg-blue-100 p-2 rounded">
                      <strong>Tip:</strong> Geef korte, bondige antwoorden. Bij stap 3 krijgt u de gelegenheid om uw volledige verhaal te vertellen.
                    </p>
