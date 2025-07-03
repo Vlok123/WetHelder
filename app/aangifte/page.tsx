@@ -107,6 +107,14 @@ const delictTypen: DelictType[] = [
     bestanddelen: ['bedreiging', 'geweld tegen persoon of goed', 'voorwaardelijk opzet']
   },
   {
+    id: 'straatintimidatie',
+    naam: 'Straatintimidatie',
+    beschrijving: 'Indringend seksueel benaderen in het openbaar op vreesaanjagende, vernederende, kwetsende of onterende wijze',
+    categorie: 'zedenfeit',
+    juridischeBasis: 'Artikel 429ter Wetboek van Strafrecht (sinds 1 juli 2024)',
+    bestanddelen: ['in het openbaar', 'indringend seksueel benaderen', 'via opmerkingen/gebaren/geluiden/aanrakingen', 'vreesaanjagend/vernederend/kwetsend/onterend']
+  },
+  {
     id: 'anders',
     naam: 'Anders / Zelf opzoeken',
     beschrijving: 'Het delict staat niet in de lijst hierboven',
@@ -316,6 +324,64 @@ const vragenPerDelict: Record<string, Vraag[]> = {
       verplicht: false,
       type: 'langeTekst'
     }
+  ],
+  straatintimidatie: [
+    {
+      id: 'wanneer',
+      tekst: 'Wanneer vond de straatintimidatie plaats?',
+      hint: 'Datum en tijdstip van het incident',
+      verplicht: true,
+      type: 'tekst'
+    },
+    {
+      id: 'waar_openbaar',
+      tekst: 'Waar in de openbare ruimte gebeurde dit?',
+      hint: 'Straat, plein, park, openbaar vervoer, winkelcentrum, etc.',
+      verplicht: true,
+      type: 'tekst'
+    },
+    {
+      id: 'wat_gedaan',
+      tekst: 'Wat deed de dader precies?',
+      hint: 'Beschrijf de seksuele opmerkingen, gebaren, geluiden of aanrakingen',
+      verplicht: true,
+      type: 'langeTekst'
+    },
+    {
+      id: 'hoe_indringend',
+      tekst: 'Hoe was het gedrag indringend en seksueel van aard?',
+      hint: 'Waarom ervaarde u dit als indringend seksueel gedrag?',
+      verplicht: true,
+      type: 'langeTekst'
+    },
+    {
+      id: 'impact_gevoel',
+      tekst: 'Hoe heeft dit u geraakt?',
+      hint: 'Voelde u zich vreesaanjagend, vernederd, gekwetst of onterend behandeld?',
+      verplicht: true,
+      type: 'langeTekst'
+    },
+    {
+      id: 'verdachte_beschrijving',
+      tekst: 'Kunt u de dader beschrijven?',
+      hint: 'Geslacht, geschatte leeftijd, lengte, kleding, bijzondere kenmerken',
+      verplicht: false,
+      type: 'langeTekst'
+    },
+    {
+      id: 'getuigen',
+      tekst: 'Waren er getuigen aanwezig?',
+      hint: 'Namen en contactgegevens van eventuele getuigen',
+      verplicht: false,
+      type: 'langeTekst'
+    },
+    {
+      id: 'eerder_gebeurd',
+      tekst: 'Is dit eerder gebeurd door dezelfde persoon?',
+      hint: 'Eventuele eerdere incidenten of patroon van gedrag',
+      verplicht: false,
+      type: 'langeTekst'
+    }
   ]
 }
 
@@ -431,9 +497,14 @@ Beoordeel de juridische kwaliteit realistisch:
 BESCHRIJVING VAN GEBRUIKER:
 "${zoekopdracht}"
 
+BELANGRIJKE WETSWIJZIGING (SINDS 1 JULI 2024):
+STRAATINTIMIDATIE valt vanaf 1 juli 2024 onder het NIEUWE artikel 429ter Sr (NIET meer artikel 266 Sr):
+"Degene die in het openbaar een ander indringend seksueel benadert door middel van opmerkingen, gebaren, geluiden of aanrakingen op een wijze die vreesaanjagend, vernederend, kwetsend of onterend is te achten, wordt gestraft met hechtenis van ten hoogste drie maanden of geldboete van de derde categorie."
+
 INSTRUCTIES:
 - Identificeer het meest waarschijnlijke strafbare feit op basis van de beschrijving
 - Bepaal de juridische basis (welk wetsartikel)
+- Bij straatintimidatie: Gebruik ALTIJD artikel 429ter Sr (vanaf 1 juli 2024)
 - Bedenk de juridische bestanddelen die bewezen moeten worden
 - Genereer 4-10 relevante vragen die nodig zijn om alle juridische elementen te verzamelen
 - Stel alleen ECHT RELEVANTE vragen - niet meer dan nodig voor dit specifieke delict
@@ -443,10 +514,10 @@ Geef het resultaat in exact dit JSON formaat (geen extra tekst):
 {
   "aangepastDelict": {
     "id": "aangepast_delict",
-    "naam": "[Naam van het delict, bijv. 'Computervredebreuk', 'Huisvredebreuk', 'Stalking']",
+    "naam": "[Naam van het delict, bijv. 'Straatintimidatie', 'Computervredebreuk', 'Huisvredebreuk', 'Stalking']",
     "beschrijving": "[Korte beschrijving van het delict]",
     "categorie": "[vermogensdelict/geweldsdelict/zedenfeit/overig]",
-    "juridischeBasis": "[Welk artikel uit welk wetboek, bijv. 'Artikel 138a Wetboek van Strafrecht']",
+    "juridischeBasis": "[Welk artikel uit welk wetboek, bijv. 'Artikel 429ter Wetboek van Strafrecht (sinds 1 juli 2024)' voor straatintimidatie]",
     "bestanddelen": ["[lijst van juridische bestanddelen die bewezen moeten worden]"]
   },
   "aangepassteVragen": [
@@ -492,7 +563,8 @@ LET OP:
 - Maak de vragen specifiek voor dit delicttype
 - Zorg dat alle juridische bestanddelen gedekt worden
 - Gebruik begrijpelijke taal, geen juridisch jargon
-- Geef praktische hints bij elke vraag`
+- Geef praktische hints bij elke vraag
+- Voor straatintimidatie: Focus op openbare ruimte, indringend seksueel gedrag, impact op slachtoffer`
           }]
         }),
       })
@@ -534,7 +606,15 @@ LET OP:
     let bestanddelen = ['Strafbaar feit', 'Opzet of schuld', 'Geen rechtvaardigingsgrond']
     
     // Probeer delicttype te raden op basis van keywords
-    if (beschrijving.includes('computer') || beschrijving.includes('internet') || beschrijving.includes('hack')) {
+    if (beschrijving.includes('straatintimidatie') || beschrijving.includes('straat intimidatie') || 
+        (beschrijving.includes('straat') && (beschrijving.includes('seksueel') || beschrijving.includes('aanranding') || 
+        beschrijving.includes('lastigvallen') || beschrijving.includes('nafluiten') || beschrijving.includes('naroepen') ||
+        beschrijving.includes('betasten') || beschrijving.includes('intimideren')))) {
+      delictNaam = 'Straatintimidatie'
+      juridischeBasis = 'Artikel 429ter Wetboek van Strafrecht (sinds 1 juli 2024)'
+      categorie = 'zedenfeit'
+      bestanddelen = ['in het openbaar', 'indringend seksueel benaderen', 'via opmerkingen/gebaren/geluiden/aanrakingen', 'vreesaanjagend/vernederend/kwetsend/onterend']
+    } else if (beschrijving.includes('computer') || beschrijving.includes('internet') || beschrijving.includes('hack')) {
       delictNaam = 'Computervredebreuk'
       juridischeBasis = 'Artikel 138a Wetboek van Strafrecht'
       categorie = 'overig'
@@ -563,16 +643,25 @@ LET OP:
     // Genereer delict-specifieke vragen
     let aangepassteVragen: Vraag[] = []
     
-    if (delictNaam === 'Computervredebreuk') {
+    if (delictNaam === 'Straatintimidatie') {
       aangepassteVragen = [
-        { id: 'wanneer_waar', tekst: 'Wanneer en waar vond de computervredebreuk plaats?', hint: 'Datum, tijd en locatie van uw computer', verplicht: true, type: 'tekst' },
-        { id: 'wat_systeem', tekst: 'Welk systeem/computer werd aangevallen?', hint: 'Type computer, apparaat, netwerk', verplicht: true, type: 'langeTekst' },
-        { id: 'hoe_toegang', tekst: 'Hoe kreeg de dader toegang tot uw systeem?', hint: 'Phishing, malware, gestolen wachtwoord, etc.', verplicht: true, type: 'langeTekst' },
-        { id: 'wat_gedaan', tekst: 'Wat heeft de dader gedaan in uw systeem?', hint: 'Bestanden bekeken, gestolen, gewijzigd, verwijderd', verplicht: true, type: 'langeTekst' },
-        { id: 'schade', tekst: 'Welke schade is er ontstaan?', hint: 'Gestolen data, kosten, downtime', verplicht: true, type: 'langeTekst' },
-        { id: 'bewijs_technisch', tekst: 'Welk technisch bewijs heeft u?', hint: 'Logbestanden, screenshots, forensisch onderzoek', verplicht: false, type: 'langeTekst' },
-        { id: 'beveiliging', tekst: 'Welke beveiligingsmaatregelen waren er?', hint: 'Antivirus, firewall, wachtwoordbeleid', verplicht: false, type: 'langeTekst' },
-        { id: 'verdachte_info', tekst: 'Weet u wie de dader kan zijn?', hint: 'IP-adressen, e-mailadressen, verdachte contacten', verplicht: false, type: 'langeTekst' }
+        { id: 'wanneer', tekst: 'Wanneer vond de straatintimidatie plaats?', hint: 'Datum en tijdstip van het incident', verplicht: true, type: 'tekst' },
+        { id: 'waar_openbaar', tekst: 'Waar in de openbare ruimte gebeurde dit?', hint: 'Straat, plein, park, openbaar vervoer, winkelcentrum, etc.', verplicht: true, type: 'tekst' },
+        { id: 'wat_gedaan', tekst: 'Wat deed de dader precies?', hint: 'Beschrijf de seksuele opmerkingen, gebaren, geluiden of aanrakingen', verplicht: true, type: 'langeTekst' },
+        { id: 'hoe_indringend', tekst: 'Hoe was het gedrag indringend en seksueel van aard?', hint: 'Waarom ervaarde u dit als indringend seksueel gedrag?', verplicht: true, type: 'langeTekst' },
+        { id: 'impact_gevoel', tekst: 'Hoe heeft dit u geraakt?', hint: 'Voelde u zich vreesaanjagend, vernederd, gekwetst of onterend behandeld?', verplicht: true, type: 'langeTekst' },
+        { id: 'verdachte_beschrijving', tekst: 'Kunt u de dader beschrijven?', hint: 'Geslacht, geschatte leeftijd, lengte, kleding, bijzondere kenmerken', verplicht: false, type: 'langeTekst' },
+        { id: 'getuigen', tekst: 'Waren er getuigen aanwezig?', hint: 'Namen en contactgegevens van eventuele getuigen', verplicht: false, type: 'langeTekst' },
+        { id: 'eerder_gebeurd', tekst: 'Is dit eerder gebeurd door dezelfde persoon?', hint: 'Eventuele eerdere incidenten of patroon van gedrag', verplicht: false, type: 'langeTekst' }
+      ]
+    } else if (delictNaam === 'Computervredebreuk') {
+      aangepassteVragen = [
+        { id: 'wanneer_waar', tekst: 'Wanneer en waar vond de computervredebreuk plaats?', hint: 'Datum, tijd en welk systeem werd gehackt', verplicht: true, type: 'tekst' },
+        { id: 'hoe_ingebroken', tekst: 'Hoe werd er ingebroken in het systeem?', hint: 'Via e-mail, phishing, directe hack, malware, etc.', verplicht: true, type: 'langeTekst' },
+        { id: 'wat_gedaan', tekst: 'Wat heeft de dader gedaan nadat hij toegang had?', hint: 'Bestanden bekeken, gedownload, gewijzigd, verwijderd', verplicht: true, type: 'langeTekst' },
+        { id: 'schade', tekst: 'Welke schade is er ontstaan?', hint: 'Financiële schade, datalek, reputatieschade, uitvaltijd', verplicht: true, type: 'langeTekst' },
+        { id: 'bewijs', tekst: 'Welk bewijs heeft u van de inbraak?', hint: 'Logbestanden, screenshots, e-mails, getuigen', verplicht: false, type: 'langeTekst' },
+        { id: 'verdachte', tekst: 'Heeft u een vermoeden wie de dader is?', hint: 'Ex-medewerker, concurrent, onbekende, etc.', verplicht: false, type: 'langeTekst' }
       ]
     } else if (delictNaam === 'Stalking') {
       aangepassteVragen = [
@@ -634,14 +723,35 @@ LET OP:
     
     // Basis controles per delicttype - controleer ALLE beschikbare informatie
     switch (effectiefDelict.id) {
-      case 'diefstal':
-        // Check waarde in alle velden
-        if (!alleTekst.includes('€') && !alleTekst.includes('euro') && !alleTekst.includes('waarde')) {
-          aanvullendeVragen.push('Wat is de geschatte waarde van de gestolen spullen?')
+      case 'straatintimidatie':
+        // Specifieke controles voor straatintimidatie (artikel 429ter Sr)
+        if (!alleTekst.includes('openbaar') && !alleTekst.includes('straat') && !alleTekst.includes('publiek')) {
+          ontbrekendeElementen.push('Locatie in openbare ruimte niet duidelijk')
+          aanvullendeVragen.push('Waar precies in de openbare ruimte vond dit plaats?')
         }
-        // Check signalement
-        if (!gegevens.antwoorden.verdachte && !alleTekst.includes('signalement') && !alleTekst.includes('uiterlijk')) {
-          aanvullendeVragen.push('Heeft u een signalement van de verdachte?')
+        if (!alleTekst.includes('seksueel') && !alleTekst.includes('indringend') && !alleTekst.includes('intimiderend')) {
+          ontbrekendeElementen.push('Seksuele aard van het gedrag niet beschreven')
+          aanvullendeVragen.push('Wat maakte het gedrag seksueel en indringend?')
+        }
+        if (!alleTekst.includes('vreesaanjagend') && !alleTekst.includes('vernederend') && !alleTekst.includes('kwetsend') && !alleTekst.includes('onterend') && !alleTekst.includes('impact') && !alleTekst.includes('gevoel')) {
+          ontbrekendeElementen.push('Impact op slachtoffer (vreesaanjagend/vernederend/kwetsend/onterend) ontbreekt')
+          aanvullendeVragen.push('Hoe heeft dit gedrag u geraakt - voelde u zich vreesaanjagend, vernederd, gekwetst of onterend behandeld?')
+        }
+        if (!alleTekst.includes('opmerking') && !alleTekst.includes('gebaar') && !alleTekst.includes('geluid') && !alleTekst.includes('aanraking') && !alleTekst.includes('zei') && !alleTekst.includes('deed')) {
+          ontbrekendeElementen.push('Concrete gedragingen (opmerkingen/gebaren/geluiden/aanrakingen) ontbreken')
+          aanvullendeVragen.push('Wat deed of zei de dader precies? Welke opmerkingen, gebaren, geluiden of aanrakingen?')
+        }
+        break
+        
+      case 'diefstal':
+        // Specifieke controles voor diefstal
+        if (!alleTekst.includes('gestolen') && !alleTekst.includes('weggenomen') && !alleTekst.includes('meegenomen')) {
+          ontbrekendeElementen.push('Duidelijke beschrijving van wegneming ontbreekt')
+          aanvullendeVragen.push('Wat precies is er weggenomen en hoe?')
+        }
+        if (!alleTekst.includes('waarde') && !alleTekst.includes('euro') && !alleTekst.includes('€') && !alleTekst.includes('prijs')) {
+          ontbrekendeElementen.push('Waarde van gestolen goederen onbekend')
+          aanvullendeVragen.push('Wat is de geschatte waarde van de gestolen spullen?')
         }
         break
         
@@ -741,6 +851,10 @@ LET OP:
 
 TAAK: Stel een complete, professionele aangifte op op basis van de verstrekte informatie.
 
+BELANGRIJKE WETSWIJZIGING (SINDS 1 JULI 2024):
+STRAATINTIMIDATIE valt vanaf 1 juli 2024 onder het NIEUWE artikel 429ter Sr (NIET meer artikel 266 Sr):
+"Degene die in het openbaar een ander indringend seksueel benadert door middel van opmerkingen, gebaren, geluiden of aanrakingen op een wijze die vreesaanjagend, vernederend, kwetsend of onterend is te achten, wordt gestraft met hechtenis van ten hoogste drie maanden of geldboete van de derde categorie."
+
 DELICTTYPE: ${effectiefDelict.naam}
 JURIDISCHE BASIS: ${effectiefDelict.juridischeBasis}
 BESTANDDELEN: ${effectiefDelict.bestanddelen.join(', ')}
@@ -758,11 +872,12 @@ INSTRUCTIES:
 1. Schrijf een professionele aangifte in lopende tekst in de IK-VORM
 2. Gebruik juridisch correcte terminologie
 3. Zorg dat alle wettelijke bestanddelen van ${effectiefDelict.naam} aan bod komen
-4. Structureer als: introductie, feitelijke omschrijving, schade/gevolgen, conclusie
-5. Gebruik de 1e persoon ("Ik doe hierbij aangifte..." "Ik verklaar dat...")
-6. Schrijf in correct Nederlands zonder jargon
-7. Vermeld specifieke details zoals datum, tijd, plaats, bedragen
-8. Maak het geschikt voor kopiëren en plakken in de online aangifte van politie.nl
+4. Bij straatintimidatie: Gebruik artikel 429ter Sr (vanaf 1 juli 2024) als juridische basis
+5. Structureer als: introductie, feitelijke omschrijving, schade/gevolgen, conclusie
+6. Gebruik de 1e persoon ("Ik doe hierbij aangifte..." "Ik verklaar dat...")
+7. Schrijf in correct Nederlands zonder jargon
+8. Vermeld specifieke details zoals datum, tijd, plaats, bedragen
+9. Maak het geschikt voor kopiëren en plakken in de online aangifte van politie.nl
 
 Begin de aangifte met: "Ik doe hierbij aangifte van ${effectiefDelict.naam.toLowerCase()} en verklaar het volgende:"`
 
@@ -1230,36 +1345,38 @@ export default function AngifteAssistentPage() {
                   we stellen om een complete aangifte op te kunnen stellen.
                 </p>
                 
-                <div className="grid gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {delictTypen.map((delict) => (
                     <div
                       key={delict.id}
-                      className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                        angifteGegevens.delictType?.id === delict.id
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200 hover:border-gray-300'
+                                             onClick={() => updateAngifteGegevens({ delictType: delict })}
+                      className={`p-4 border rounded-lg cursor-pointer transition-all hover:shadow-md ${
+                        delict.categorie === 'vermogensdelict' ? 'border-blue-200 hover:border-blue-400 hover:bg-blue-50' :
+                        delict.categorie === 'geweldsdelict' ? 'border-red-200 hover:border-red-400 hover:bg-red-50' :
+                        delict.categorie === 'zedenfeit' ? 'border-purple-200 hover:border-purple-400 hover:bg-purple-50' :
+                        'border-gray-200 hover:border-gray-400 hover:bg-gray-50'
                       }`}
-                      onClick={() => updateAngifteGegevens({ delictType: delict })}
                     >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900 mb-1">{delict.naam}</h3>
-                          <p className="text-sm text-gray-600 mb-2">{delict.beschrijving}</p>
-                          <p className="text-xs text-gray-500 mb-2">{delict.juridischeBasis}</p>
-                          <div className="flex gap-2">
-                            <Badge variant="secondary" className="text-xs">
-                              {delict.categorie}
-                            </Badge>
-                          </div>
-                        </div>
-                        {angifteGegevens.delictType?.id === delict.id && (
-                          <CheckCircle className="h-5 w-5 text-blue-600 flex-shrink-0" />
-                        )}
+                      <h3 className="font-semibold text-lg mb-2">{delict.naam}</h3>
+                      <p className="text-gray-600 text-sm mb-2">{delict.beschrijving}</p>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          delict.categorie === 'vermogensdelict' ? 'bg-blue-100 text-blue-800' :
+                          delict.categorie === 'geweldsdelict' ? 'bg-red-100 text-red-800' :
+                          delict.categorie === 'zedenfeit' ? 'bg-purple-100 text-purple-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {delict.categorie === 'vermogensdelict' ? 'Vermogensdelict' :
+                           delict.categorie === 'geweldsdelict' ? 'Geweldsdelict' :
+                           delict.categorie === 'zedenfeit' ? 'Zedenfeit' :
+                           'Overig'}
+                        </span>
                       </div>
+                      <p className="text-xs text-gray-500">{delict.juridischeBasis}</p>
                     </div>
                   ))}
                 </div>
-
+                
                 {/* Zoekfunctie voor andere delicten */}
                 {angifteGegevens.delictType?.id === 'anders' && (
                   <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">

@@ -52,13 +52,12 @@ async function saveQueryToDatabase(
 }
 
 function getClientIP(request: NextRequest): string {
-  // Enhanced IP detection for corporate/Citrix environments
+  // Try multiple headers commonly used in corporate environments
   const forwarded = request.headers.get('x-forwarded-for')
   const real = request.headers.get('x-real-ip')
   const clientIp = request.headers.get('cf-connecting-ip') // Cloudflare
   const xForwardedHost = request.headers.get('x-forwarded-host')
   
-  // Try multiple headers commonly used in corporate environments
   if (forwarded) {
     // Take the first IP from comma-separated list
     const firstIP = forwarded.split(',')[0].trim()
@@ -174,6 +173,12 @@ function getProfessionContext(profession: string): string {
 const LEGAL_KNOWLEDGE = `
 Je bent een Nederlandse juridische expert. Je geeft uitgebreide, accurate uitleg over Nederlandse wetgeving.
 
+BELANGRIJKE WETSWIJZIGING (SINDS 1 JULI 2024):
+STRAATINTIMIDATIE valt vanaf 1 juli 2024 onder het NIEUWE artikel 429ter Sr (NIET meer artikel 266 Sr):
+
+**ARTIKEL 429ter Sr - STRAATINTIMIDATIE (vanaf 1 juli 2024):**
+"Degene die in het openbaar een ander indringend seksueel benadert door middel van opmerkingen, gebaren, geluiden of aanrakingen op een wijze die vreesaanjagend, vernederend, kwetsend of onterend is te achten, wordt gestraft met hechtenis van ten hoogste drie maanden of geldboete van de derde categorie."
+
 BELANGRIJKE INSTRUCTIES:
 - Geef altijd uitgebreide antwoorden (minimaal 200 woorden)
 - Begin met de letterlijke wettekst als er naar een specifiek artikel wordt gevraagd
@@ -183,6 +188,7 @@ BELANGRIJKE INSTRUCTIES:
 - Leg juridische concepten helder uit
 - Gebruik geen externe bronnen - werk vanuit je juridische kennis
 - **BELANGRIJK: Controleer altijd op brancheregels die kunnen afwijken van wettelijke bepalingen**
+- **Bij vragen over straatintimidatie: Verwijs ALTIJD naar artikel 429ter Sr (vanaf 1 juli 2024)**
 
 ANTWOORD STRUCTUUR:
 1. **WETTEKST:** [letterlijke artikeltekst indien van toepassing]
