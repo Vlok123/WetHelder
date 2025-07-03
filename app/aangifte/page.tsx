@@ -1280,6 +1280,31 @@ export default function AngifteAssistentPage() {
             </CardContent>
           </Card>
 
+          {/* BROWSER CACHE WAARSCHUWING */}
+          <Card className="mb-4 sm:mb-8 border-red-200 bg-red-50">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-start gap-3 sm:gap-4">
+                <div className="h-5 w-5 sm:h-6 sm:w-6 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                  <span className="text-white text-xs font-bold">!</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-red-900 mb-2 text-sm sm:text-base">BELANGRIJK: Browser cache clearen</h3>
+                  <p className="text-red-800 mb-2 sm:mb-3 text-sm sm:text-base">
+                    <strong>Indien u oude tegels ziet (zoals &quot;Bankhelpdeskfraude&quot;)</strong>, clear dan uw browser cache:
+                  </p>
+                  <ul className="text-red-800 text-xs sm:text-sm list-disc ml-4 space-y-1">
+                    <li><strong>Chrome/Safari:</strong> Druk Cmd+Shift+R (Mac) of Ctrl+Shift+R (Windows)</li>
+                    <li><strong>Firefox:</strong> Druk Ctrl+F5 of Cmd+Shift+R</li>
+                    <li><strong>Of:</strong> Ga naar Instellingen → Privacy → Browsing data wissen</li>
+                  </ul>
+                  <p className="text-red-800 text-xs sm:text-sm mt-2 font-semibold">
+                    U zou alleen 6 tegels moeten zien + &quot;Anders / Zelf opzoeken&quot; voor speciale fraudetypen.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Contact informatie */}
           <Card className="mb-4 sm:mb-8 border-blue-200 bg-blue-50">
             <CardContent className="p-4 sm:p-6">
