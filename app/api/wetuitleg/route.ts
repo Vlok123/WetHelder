@@ -296,6 +296,8 @@ STRAATINTIMIDATIE valt vanaf 1 juli 2024 onder het NIEUWE artikel 429ter Sr (NIE
 **SPECIFIEKE FRAUDETYPEN:**
 **BANKHELPDESKFRAUDE** - Dit is oplichting (artikel 326 Sr) waarbij criminelen zich voordoen als bankmedewerkers. Kenmerken: contact via telefoon/e-mail/sms, beweren van verdachte transacties, vragen om software te installeren (AnyDesk/TeamViewer), of het delen van persoonlijke gegevens/codes. Valt onder oplichting maar heeft specifieke modus operandi.
 
+**VRIEND-IN-NOOD FRAUDE** - Dit is oplichting (artikel 326 Sr) waarbij criminelen zich voordoen als bekenden (zoon, dochter, vriend, familie). Kenmerken: contact via WhatsApp/SMS met onbekend nummer, beweren telefoon kwijt te zijn, dringend verzoek om geld, emotionele manipulatie door vertrouwde relatie te misbruiken. Valt onder oplichting maar misbruikt vertrouwensrelaties.
+
 **BELANGRIJKE INSTRUCTIES:**
 - Geef altijd uitgebreide antwoorden (minimaal 200 woorden)
 - Begin met de letterlijke wettekst als er naar een specifiek artikel wordt gevraagd

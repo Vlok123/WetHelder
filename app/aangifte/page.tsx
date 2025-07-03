@@ -496,11 +496,14 @@ STRAATINTIMIDATIE valt vanaf 1 juli 2024 onder het NIEUWE artikel 429ter Sr (NIE
 SPECIFIEKE FRAUDETYPEN:
 BANKHELPDESKFRAUDE: Dit is een vorm van oplichting (artikel 326 Sr) waarbij criminelen zich voordoen als bankmedewerkers. Ze benaderen slachtoffers telefonisch, via e-mail, sms of pop-ups en beweren dat er verdachte transacties zijn of dat de rekening beveiligd moet worden. Vaak vragen ze om software te installeren (AnyDesk, TeamViewer) of om persoonlijke gegevens/codes te delen. Dit valt onder oplichting maar vereist specifieke vragen over de modus operandi.
 
+VRIEND-IN-NOOD FRAUDE: Dit is oplichting (artikel 326 Sr) waarbij criminelen zich voordoen als bekenden (zoon, dochter, vriend, familie). Ze benaderen via WhatsApp/SMS met onbekend nummer, beweren telefoon kwijt te zijn, en vragen dringend om geld. Ze misbruiken emotionele band en vertrouwen. Vereist specifieke vragen over identiteitsmisleiding en het misbruik van de vertrouwensrelatie.
+
 INSTRUCTIES:
 - Identificeer het meest waarschijnlijke strafbare feit op basis van de beschrijving
 - Bepaal de juridische basis (welk wetsartikel)
 - Bij straatintimidatie: Gebruik ALTIJD artikel 429ter Sr (vanaf 1 juli 2024)
 - Bij bankhelpdeskfraude: Gebruik artikel 326 Sr (oplichting) maar stel specifieke vragen over de fraudemethode
+- Bij vriend-in-nood fraude: Gebruik artikel 326 Sr (oplichting) maar focus op identiteitsmisleiding en vertrouwensrelatie
 - Bedenk de juridische bestanddelen die bewezen moeten worden
 - Genereer 4-12 relevante vragen die nodig zijn om alle juridische elementen te verzamelen
 - Stel alleen ECHT RELEVANTE vragen - niet meer dan nodig voor dit specifieke delict
@@ -510,7 +513,7 @@ Geef het resultaat in exact dit JSON formaat (geen extra tekst):
 {
   "aangepastDelict": {
     "id": "aangepast_delict",
-    "naam": "[Naam van het delict, bijv. 'Bankhelpdeskfraude', 'Straatintimidatie', 'Computervredebreuk', 'Huisvredebreuk', 'Stalking']",
+    "naam": "[Naam van het delict, bijv. 'Vriend-in-nood fraude', 'Bankhelpdeskfraude', 'Straatintimidatie', 'Computervredebreuk', 'Huisvredebreuk', 'Stalking']",
     "beschrijving": "[Korte beschrijving van het delict]",
     "categorie": "[vermogensdelict/geweldsdelict/zedenfeit/overig]",
     "juridischeBasis": "[Welk artikel uit welk wetboek, bijv. 'Artikel 429ter Wetboek van Strafrecht (sinds 1 juli 2024)' voor straatintimidatie]",
@@ -561,7 +564,8 @@ LET OP:
 - Gebruik begrijpelijke taal, geen juridisch jargon
 - Geef praktische hints bij elke vraag
 - Voor straatintimidatie: Focus op openbare ruimte, indringend seksueel gedrag, impact op slachtoffer
-- Voor bankhelpdeskfraude: Focus op contactwijze, misleiding, software/toegang, gedeelde gegevens, financiële schade`
+- Voor bankhelpdeskfraude: Focus op contactwijze, misleiding, software/toegang, gedeelde gegevens, financiële schade
+- Voor vriend-in-nood fraude: Focus op contactplatform, identiteitsmisleiding, vertrouwensrelatie, urgentie, financiële schade`
           }]
         }),
       })
@@ -603,7 +607,17 @@ LET OP:
     let bestanddelen = ['Strafbaar feit', 'Opzet of schuld', 'Geen rechtvaardigingsgrond']
     
     // Probeer delicttype te raden op basis van keywords
-    if (beschrijving.includes('bankhelpdeskfraude') || beschrijving.includes('bank helpdesk fraude') ||
+    if (beschrijving.includes('vriend in nood') || beschrijving.includes('vriendinnood') || beschrijving.includes('vriend-in-nood') ||
+        (beschrijving.includes('whatsapp') && (beschrijving.includes('oplichting') || beschrijving.includes('fraude') || beschrijving.includes('nep'))) ||
+        (beschrijving.includes('whatsapp') && (beschrijving.includes('zoon') || beschrijving.includes('dochter') || beschrijving.includes('kind') || beschrijving.includes('familie'))) ||
+        (beschrijving.includes('sms') && (beschrijving.includes('bekende') || beschrijving.includes('familie') || beschrijving.includes('vriend'))) ||
+        (beschrijving.includes('nieuw nummer') || beschrijving.includes('telefoon kwijt') || beschrijving.includes('nieuwe telefoon')) && beschrijving.includes('geld') ||
+        (beschrijving.includes('dringend') && beschrijving.includes('geld') && (beschrijving.includes('whatsapp') || beschrijving.includes('sms')))) {
+      delictNaam = 'Vriend-in-nood fraude'
+      juridischeBasis = 'Artikel 326 Wetboek van Strafrecht (Oplichting)'
+      categorie = 'vermogensdelict'
+      bestanddelen = ['misleiding', 'voorwenden van bekende identiteit', 'bewegen tot afgifte', 'geld/goed', 'opzet tot wederrechtelijk voordeel']
+    } else if (beschrijving.includes('bankhelpdeskfraude') || beschrijving.includes('bank helpdesk fraude') ||
         (beschrijving.includes('bank') && (beschrijving.includes('helpdesk') || beschrijving.includes('medewerker') || beschrijving.includes('bellen'))) ||
         (beschrijving.includes('phishing') && beschrijving.includes('bank')) ||
         (beschrijving.includes('nep') && (beschrijving.includes('bank') || beschrijving.includes('medewerker'))) ||
@@ -651,7 +665,20 @@ LET OP:
     // Genereer delict-specifieke vragen
     let aangepassteVragen: Vraag[] = []
     
-    if (delictNaam === 'Bankhelpdeskfraude') {
+    if (delictNaam === 'Vriend-in-nood fraude') {
+      aangepassteVragen = [
+        { id: 'hoe_benaderd_bekende', tekst: 'Hoe werd u benaderd door de zogenaamde bekende?', hint: 'Bijv. via WhatsApp, sms, e-mail, Instagram, Facebook', verplicht: true, type: 'langeTekst' },
+        { id: 'verhaal_afzender', tekst: 'Wat was het verhaal dat de afzender vertelde?', hint: 'Bijv. telefoon kwijt, betaalpas kapot, spoedbetaling nodig, medische noodsituatie', verplicht: true, type: 'langeTekst' },
+        { id: 'dacht_echte_bekende', tekst: 'Dacht u dat u echt met een bekende sprak? Zo ja, met wie dacht u contact te hebben?', hint: 'Naam en relatie: zoon, dochter, vriend, collega', verplicht: true, type: 'langeTekst' },
+        { id: 'druk_spoed', tekst: 'Werd er druk uitgeoefend of spoed gesuggereerd bij het overmaken van geld?', hint: 'Bijv. "het moet echt vandaag", "ik zit in nood", "ik kan niemand anders vragen"', verplicht: true, type: 'langeTekst' },
+        { id: 'contact_ander_kanaal', tekst: 'Heeft u geprobeerd contact op te nemen met de persoon zelf via een ander kanaal?', hint: 'Bijv. gebeld, voicemail ingesproken, geappt op het oude nummer', verplicht: true, type: 'langeTekst' },
+        { id: 'rekeningnummer_bedrag', tekst: 'Op welk rekeningnummer heeft u geld overgemaakt en welk bedrag ging het om?', hint: 'Noteer zoveel mogelijk: rekeningnummer, tenaamstelling, bedrag, datum, tijdstip', verplicht: true, type: 'langeTekst' },
+        { id: 'meerdere_keren', tekst: 'Heeft u meerdere keren geld overgemaakt of alleen één keer?', hint: 'Zo ja: geef per transactie details', verplicht: true, type: 'langeTekst' },
+        { id: 'wanneer_ontdekt', tekst: 'Wanneer kwam u erachter dat het om oplichting ging? En hoe?', hint: 'Bijv. echte persoon nam contact op, bank waarschuwde, u werd zelf achterdochtig', verplicht: true, type: 'langeTekst' },
+        { id: 'account_bekijken', tekst: 'Heeft u het account nog kunnen bekijken nadat u wist dat het nep was?', hint: 'Bijv. profielfoto of naamgebruik noteren, of een screenshot gemaakt?', verplicht: false, type: 'langeTekst' },
+        { id: 'melding_bank_persoon', tekst: 'Heeft u inmiddels melding gedaan bij uw bank of de echte persoon ingelicht?', hint: 'Reactie van bank en echte persoon, vervolgacties', verplicht: false, type: 'langeTekst' }
+      ]
+    } else if (delictNaam === 'Bankhelpdeskfraude') {
       aangepassteVragen = [
         { id: 'hoe_benaderd', tekst: 'Hoe werd u benaderd door de zogenaamde bankmedewerker?', hint: 'Bijvoorbeeld telefonisch, via sms, e-mail of een pop-up op uw computer', verplicht: true, type: 'langeTekst' },
         { id: 'wat_beweerd', tekst: 'Wat werd er precies gezegd of beweerd door de oplichter?', hint: 'Bijv. verdachte transacties, hulp bij \'beveiliging\', melding dat uw geld \'veiliggesteld\' moest worden', verplicht: true, type: 'langeTekst' },
@@ -661,7 +688,7 @@ LET OP:
         { id: 'bedragen_verdwenen', tekst: 'Welke bedragen zijn verdwenen en op welke manier?', hint: 'Bijvoorbeeld via overboeking, via pintransacties met een opgestuurde pas', verplicht: true, type: 'langeTekst' },
         { id: 'contact_bank', tekst: 'Heeft u later contact opgenomen met uw echte bank? Zo ja, wanneer en wat zeiden zij?', hint: 'Reactie van de bank en eventuele vervolgacties', verplicht: true, type: 'langeTekst' },
         { id: 'verdachte_transacties', tekst: 'Heeft u verdachte transacties of geldstromen gezien op uw rekening?', hint: 'Zo ja: noteer tijdstip, bedragen en eventueel rekeningnummers', verplicht: true, type: 'langeTekst' },
-        { id: 'aangifte_melding', tekst: 'Heeft u aangifte gedaan bij uw bank of melding gemaakt bij een ander meldpunt?', hint: 'Zoals de Fraudehelpdesk of andere instanties', verplicht: false, type: 'langeTekst' },
+        { id: 'aangifte_melding', tekst: 'Heeft u aangifte gedaan bij uw bank of melding gemaakt bij een ander meldpunt?', hint: 'Zoals de Fraudehelpdesk of andere instanties - welke reactie kreeg u en welke stappen zijn ondernomen?', verplicht: false, type: 'langeTekst' },
         { id: 'totaal_schade', tekst: 'Kunt u een schatting geven van het totaal verloren bedrag en/of geleden schade?', hint: 'Directe financiële schade en eventuele vervolgschade', verplicht: true, type: 'langeTekst' },
         { id: 'tijdlijn', tekst: 'Kunt u een tijdlijn geven van alle gebeurtenissen?', hint: 'Van eerste contact tot ontdekking van de fraude', verplicht: false, type: 'langeTekst' },
         { id: 'bewijs', tekst: 'Welk bewijs heeft u van de fraude?', hint: 'Screenshots, e-mails, telefoonnummers, bankafschriften', verplicht: false, type: 'langeTekst' }
@@ -746,31 +773,57 @@ LET OP:
     
     // Basis controles per delicttype - controleer ALLE beschikbare informatie
     switch (effectiefDelict.id) {
+      case 'vriend-in-nood fraude':
+        // Specifieke controles voor vriend-in-nood fraude (artikel 326 Sr - oplichting)
+        if (!alleTekst.includes('whatsapp') && !alleTekst.includes('sms') && !alleTekst.includes('bericht') && !alleTekst.includes('contact')) {
+          ontbrekendeElementen.push('Contactwijze (WhatsApp/SMS/etc.) niet duidelijk')
+          aanvullendeVragen.push('Via welk platform werd u benaderd (WhatsApp, SMS, etc.)?')
+        }
+        if (!alleTekst.includes('zoon') && !alleTekst.includes('dochter') && !alleTekst.includes('vriend') && !alleTekst.includes('familie') && !alleTekst.includes('bekende') && !alleTekst.includes('relatie')) {
+          ontbrekendeElementen.push('Wie de oplichter beweerde te zijn ontbreekt')
+          aanvullendeVragen.push('Voor wie deed de oplichter zich uit (zoon, dochter, vriend, etc.)?')
+        }
+        if (!alleTekst.includes('telefoon kwijt') && !alleTekst.includes('nieuw nummer') && !alleTekst.includes('verhaal') && !alleTekst.includes('smoes') && !alleTekst.includes('reden')) {
+          ontbrekendeElementen.push('Het verhaal/de smoes van de oplichter ontbreekt')
+          aanvullendeVragen.push('Wat was het verhaal dat de oplichter vertelde (telefoon kwijt, spoedbetaling, etc.)?')
+        }
+        if (!alleTekst.includes('dringend') && !alleTekst.includes('spoed') && !alleTekst.includes('snel') && !alleTekst.includes('nood') && !alleTekst.includes('haast')) {
+          ontbrekendeElementen.push('Druk/spoed-element niet beschreven')
+          aanvullendeVragen.push('Werd er druk uitgeoefend of spoed gesuggereerd?')
+        }
+        if (!alleTekst.includes('bedrag') && !alleTekst.includes('euro') && !alleTekst.includes('€') && !alleTekst.includes('geld') && !alleTekst.includes('overgemaakt')) {
+          ontbrekendeElementen.push('Overgemaakt bedrag niet gespecificeerd')
+          aanvullendeVragen.push('Welk bedrag heeft u overgemaakt?')
+        }
+        if (!alleTekst.includes('rekening') && !alleTekst.includes('iban') && !alleTekst.includes('rekeningnummer')) {
+          ontbrekendeElementen.push('Rekeningnummer van oplichter ontbreekt')
+          aanvullendeVragen.push('Op welk rekeningnummer heeft u geld overgemaakt?')
+        }
+        if (!alleTekst.includes('ontdekt') && !alleTekst.includes('doorhad') && !alleTekst.includes('besefte') && !alleTekst.includes('oplichting') && !alleTekst.includes('fraude')) {
+          ontbrekendeElementen.push('Hoe u de fraude ontdekte ontbreekt')
+          aanvullendeVragen.push('Hoe kwam u erachter dat het om oplichting ging?')
+        }
+        break
+        
       case 'bankhelpdeskfraude':
         // Specifieke controles voor bankhelpdeskfraude (artikel 326 Sr - oplichting)
-        if (!alleTekst.includes('bank') && !alleTekst.includes('medewerker') && !alleTekst.includes('helpdesk')) {
-          ontbrekendeElementen.push('Bankidentiteit van daders niet duidelijk')
+        // Alleen vragen als echt kritieke informatie ontbreekt
+        if (!alleTekst.includes('bank') && !alleTekst.includes('medewerker') && !alleTekst.includes('helpdesk') && !alleTekst.includes('klantenservice')) {
+          ontbrekendeElementen.push('Niet duidelijk dat daders zich voordeden als bank')
           aanvullendeVragen.push('Hoe deden de daders zich voor als bankmedewerkers?')
         }
-        if (!alleTekst.includes('bel') && !alleTekst.includes('telefoon') && !alleTekst.includes('mail') && !alleTekst.includes('sms') && !alleTekst.includes('contact')) {
-          ontbrekendeElementen.push('Contactwijze ontbreekt')
+        if (!alleTekst.includes('bel') && !alleTekst.includes('telefoon') && !alleTekst.includes('mail') && !alleTekst.includes('sms') && !alleTekst.includes('contact') && !alleTekst.includes('app')) {
+          ontbrekendeElementen.push('Contactwijze volledig onduidelijk')
           aanvullendeVragen.push('Hoe werd u benaderd door de zogenaamde bankmedewerker?')
         }
-        if (!alleTekst.includes('software') && !alleTekst.includes('toegang') && !alleTekst.includes('teamviewer') && !alleTekst.includes('anydesk') && !alleTekst.includes('installeren')) {
-          ontbrekendeElementen.push('Software-installatie of toegang op afstand niet vermeld')
+        // Alleen vragen naar software als er geen enkele vermelding is van computer/toegang/software
+        if (!alleTekst.includes('software') && !alleTekst.includes('toegang') && !alleTekst.includes('teamviewer') && !alleTekst.includes('anydesk') && !alleTekst.includes('installeren') && !alleTekst.includes('computer') && !alleTekst.includes('scherm') && !alleTekst.includes('afstand')) {
           aanvullendeVragen.push('Heeft u software geïnstalleerd of toegang op afstand gegeven?')
         }
-        if (!alleTekst.includes('gegevens') && !alleTekst.includes('code') && !alleTekst.includes('wachtwoord') && !alleTekst.includes('pincode') && !alleTekst.includes('login')) {
-          ontbrekendeElementen.push('Gedeelde persoonlijke/beveiligingsgegevens ontbreken')
-          aanvullendeVragen.push('Welke persoonlijke gegevens of codes heeft u gedeeld?')
-        }
-        if (!alleTekst.includes('bedrag') && !alleTekst.includes('euro') && !alleTekst.includes('€') && !alleTekst.includes('schade') && !alleTekst.includes('verlies')) {
-          ontbrekendeElementen.push('Financiële schade niet gespecificeerd')
+        // Alleen vragen naar schade als echt geen enkele financiële impact genoemd is
+        if (!alleTekst.includes('bedrag') && !alleTekst.includes('euro') && !alleTekst.includes('€') && !alleTekst.includes('schade') && !alleTekst.includes('verlies') && !alleTekst.includes('geld') && !alleTekst.includes('kosten')) {
+          ontbrekendeElementen.push('Financiële schade volledig onbekend')
           aanvullendeVragen.push('Wat is het totale verloren bedrag en financiële schade?')
-        }
-        if (!alleTekst.includes('verdacht') && !alleTekst.includes('transactie') && !alleTekst.includes('rekening') && !alleTekst.includes('afschrift')) {
-          ontbrekendeElementen.push('Verdachte transacties of rekening-activiteiten ontbreken')
-          aanvullendeVragen.push('Welke verdachte transacties heeft u gezien op uw rekening?')
         }
         break
         
@@ -906,8 +959,10 @@ BELANGRIJKE WETSWIJZIGING (SINDS 1 JULI 2024):
 STRAATINTIMIDATIE valt vanaf 1 juli 2024 onder het NIEUWE artikel 429ter Sr (NIET meer artikel 266 Sr):
 "Degene die in het openbaar een ander indringend seksueel benadert door middel van opmerkingen, gebaren, geluiden of aanrakingen op een wijze die vreesaanjagend, vernederend, kwetsend of onterend is te achten, wordt gestraft met hechtenis van ten hoogste drie maanden of geldboete van de derde categorie."
 
-BANKHELPDESKFRAUDE:
-Dit is een vorm van oplichting (artikel 326 Sr) waarbij criminelen zich voordoen als bankmedewerkers. Belangrijke elementen: misleiding door bankidentiteit, contact via telefoon/mail/sms, vaak software-installatie (TeamViewer/AnyDesk), deling van persoonlijke gegevens/codes, en financiële schade door overboeking of misbruik van toegang.
+SPECIFIEKE FRAUDETYPEN:
+BANKHELPDESKFRAUDE: Dit is een vorm van oplichting (artikel 326 Sr) waarbij criminelen zich voordoen als bankmedewerkers. Ze benaderen slachtoffers telefonisch, via e-mail, sms of pop-ups en beweren dat er verdachte transacties zijn of dat de rekening beveiligd moet worden. Vaak vragen ze om software te installeren (AnyDesk, TeamViewer) of om persoonlijke gegevens/codes te delen. Dit valt onder oplichting maar vereist specifieke vragen over de modus operandi.
+
+VRIEND-IN-NOOD FRAUDE: Dit is oplichting (artikel 326 Sr) waarbij criminelen zich voordoen als bekenden (zoon, dochter, vriend, familie). Kenmerken: contact via WhatsApp/SMS met onbekend nummer, beweren telefoon kwijt te zijn, dringend verzoek om geld, emotionele manipulatie door vertrouwde relatie te misbruiken.
 
 DELICTTYPE: ${effectiefDelict.naam}
 JURIDISCHE BASIS: ${effectiefDelict.juridischeBasis}
@@ -919,20 +974,24 @@ ${Object.entries(antwoorden).map(([vraagId, antwoord]) => {
   return `${vraag?.tekst}: ${antwoord}`
 }).join('\n')}
 
-AANVULLENDE BESCHRIJVING VAN AANGEVER:
+UITGEBREIDE BESCHRIJVING VAN AANGEVER (ZEER BELANGRIJK - GEBRUIK ALLE DETAILS):
 ${vrijeTekst}
 
 INSTRUCTIES:
 1. Schrijf een professionele aangifte in lopende tekst in de IK-VORM
-2. Gebruik juridisch correcte terminologie
-3. Zorg dat alle wettelijke bestanddelen van ${effectiefDelict.naam} aan bod komen
-4. Bij straatintimidatie: Gebruik artikel 429ter Sr (vanaf 1 juli 2024) als juridische basis
-5. Bij bankhelpdeskfraude: Gebruik artikel 326 Sr (oplichting) en vermeld de specifieke fraudemethode
-6. Structureer als: introductie, feitelijke omschrijving, schade/gevolgen, conclusie
-7. Gebruik de 1e persoon ("Ik doe hierbij aangifte..." "Ik verklaar dat...")
-8. Schrijf in correct Nederlands zonder jargon
-9. Vermeld specifieke details zoals datum, tijd, plaats, bedragen
-10. Maak het geschikt voor kopiëren en plakken in de online aangifte van politie.nl
+2. **BELANGRIJK: Integreer ALLE details uit de "Uitgebreide beschrijving" in de aangifte**
+3. **Combineer informatie uit zowel de vragen als de vrije tekst tot één samenhangende aangifte**
+4. **Zorg dat belangrijke details uit de vrije tekst NIET verloren gaan - gebruik ze actief**
+5. Gebruik juridisch correcte terminologie
+6. Zorg dat alle wettelijke bestanddelen van ${effectiefDelict.naam} aan bod komen
+7. Bij straatintimidatie: Gebruik artikel 429ter Sr (vanaf 1 juli 2024) als juridische basis
+8. Bij bankhelpdeskfraude: Gebruik artikel 326 Sr (oplichting) en vermeld de specifieke fraudemethode
+9. Bij vriend-in-nood fraude: Gebruik artikel 326 Sr (oplichting) en vermeld specifiek de identiteitsmisleiding
+10. Structureer als: introductie, feitelijke omschrijving, schade/gevolgen, conclusie
+11. Gebruik de 1e persoon ("Ik doe hierbij aangifte..." "Ik verklaar dat...")
+12. Schrijf in correct Nederlands zonder jargon
+13. Vermeld specifieke details zoals datum, tijd, plaats, bedragen
+14. Maak het geschikt voor kopiëren en plakken in de online aangifte van politie.nl
 
 Begin de aangifte met: "Ik doe hierbij aangifte van ${effectiefDelict.naam.toLowerCase()} en verklaar het volgende:"`
 
