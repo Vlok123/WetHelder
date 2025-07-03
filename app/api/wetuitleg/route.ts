@@ -111,61 +111,214 @@ function incrementRateLimit(ip: string): void {
 
 function getProfessionContext(profession: string): string {
   switch (profession) {
-    case 'advocaat':
-      return `Je beantwoordt vragen voor een advocaat. Focus op:
-- Diepgaande juridische analyse en jurisprudentie
-- Processtrategieën en verweersmogelijkheden
-- Relevante rechtspraak en precedenten
-- Strategische processtappen en argumentatie`
+    case 'aspirant':
+      return `Je beantwoordt vragen voor een aspirant-agent. Focus op:
+- Uitgebreide uitleg van politiebevoegdheden met praktijkvoorbeelden
+- Stapsgewijze procedures en protocollen  
+- Leerdoelen en examenstof voor politieopleidingen
+- Theoretische onderbouwing van handhavingsacties
+- Casusgerichte oefeningen en voorbeelden`
+
+    case 'student':
+      return `Je beantwoordt vragen voor een student/stagiair. Focus op:
+- Theoretische juridische grondslagen en leermaterialen
+- Begrippenuitleg met definities en voorbeelden
+- Structuur voor verslagen en juridische analyses
+- Uitgebreide bronvermelding en jurisprudentie
+- Examengericht materiaal en casussen`
 
     case 'politieagent':
       return `Je beantwoordt vragen voor een politieagent. Focus op:
-- Concrete bevoegdheden en procedures
-- Handhavingsaspecten en praktische toepassing
-- Arrestatie- en aanhoudinsprocedures
-- Operationele juridische aspecten`
+- Concrete bevoegdheden en dwangmiddelen (Politiewet 2012)
+- Handhavingsprocedures en arrestatie-aanhouding
+- Ambtsinstructie en operationele protocollen
+- Proces-verbaal en rapportage
+- Praktische toepassingen in het dagelijkse werk`
+
+    case 'advocaat':
+      return `Je beantwoordt vragen voor een advocaat. Focus op:
+- Diepgaande juridische analyse en jurisprudentie
+- Processtrategieën en verweersmogelijkheden  
+- Relevante rechtspraak en ECLI-nummers
+- Strategische processtappen en argumentatie
+- Termijnen, rechtsmiddelen en cliëntadvies`
 
     case 'boa':
       return `Je beantwoordt vragen voor een BOA/handhaver. Focus op:
-- Specifieke BOA-bevoegdheden per domein
+- Specifieke BOA-bevoegdheden per domein (I-V)
 - APV-handhaving en bestuurlijke procedures
-- Processenverbaal opstellen
-- Praktische handhavingssituaties`
+- Processenverbaal opstellen en rapportage
+- Praktische handhavingssituaties en escalatie
+- Verschil met politiebevoegdheden`
 
     case 'rechter':
       return `Je beantwoordt vragen voor een rechter/magistraat. Focus op:
-- Juridische grondslag voor uitspraken
-- Bewijswaardering en motivering
-- Straftoemeting en sancties
-- Procesrechtelijke aspecten`
+- Juridische grondslag voor uitspraken en motivering
+- Bewijswaardering en procesbeslissingen
+- Straftoemeting en sanctiebeleid
+- Procesrechtelijke aspecten en vormvoorschriften
+- Jurisprudentie en precedentwerking`
 
     case 'notaris':
       return `Je beantwoordt vragen voor een notaris. Focus op:
-- Burgerlijk recht en familierecht
-- Contractenrecht en vastgoedrecht
-- Notariële praktijk en procedures
-- Authentieke akten en registers`
+- Burgerlijk recht, familierecht en erfrecht
+- Contractenrecht en vastgoedtransacties
+- Notariële praktijk en authentieke akten
+- Kadaster, hypotheken en eigendomsoverdracht
+- Notariswet en tuchtrecht`
+
+    case 'deurwaarder':
+      return `Je beantwoordt vragen voor een gerechtsdeurwaarder. Focus op:
+- Executierecht en beslagprocedures
+- Dwangsom en gedwongen tenuitvoerlegging
+- Betekening en gerechtelijke procedures
+- Gerechtsdeurwaarderswet en tarieven
+- Praktische invorderingsstappen`
 
     case 'bedrijfsjurist':
       return `Je beantwoordt vragen voor een bedrijfsjurist. Focus op:
-- Ondernemingsrecht en compliance
+- Ondernemingsrecht en corporate governance
 - Contractenrecht en aansprakelijkheid
-- AVG en privacy-wetgeving
-- Bedrijfsrechtelijke procedures`
+- Compliance en risicobeheersing
+- AVG/GDPR en privacy-wetgeving
+- Arbeidsrecht en bedrijfsrechtelijke procedures`
 
     case 'gemeenteambtenaar':
       return `Je beantwoordt vragen voor een gemeenteambtenaar. Focus op:
-- Bestuurlijke procedures en vergunningen
+- Bestuurlijke procedures en vergunningverlening
 - APV-toepassing en gemeentelijke bevoegdheden
-- Bezwaar en beroepsprocedures
-- Praktische gemeentelijke vraagstukken`
+- Bezwaar en beroepsprocedures (Awb)
+- Praktische gemeentelijke vraagstukken
+- Omgevingswet en lokale regelgeving`
 
+    case 'gemeentejurist':
+      return `Je beantwoordt vragen voor een gemeentejurist. Focus op:
+- Bestuursrecht en bestuurlijke sancties
+- APVs, verordeningen en Gemeentewet
+- Bezwaar & beroep en bestuurlijke handhaving
+- Omgevingswet en ruimtelijke ordening
+- Bestuursdwang en dwangsom`
+
+    case 'belastingadviseur':
+      return `Je beantwoordt vragen voor een belastingadviseur. Focus op:
+- Fiscaal recht en belastingwetgeving
+- Procedures bij de Belastingdienst
+- Bezwaar en beroep in belastingzaken
+- Wet IB 2001, Wet VPB 1969, Wet OB 1968
+- Fiscale compliance en planning`
+
+    case 'accountant':
+      return `Je beantwoordt vragen voor een accountant. Focus op:
+- Financieel recht en verslaggevingswetgeving
+- Boekhoudwetgeving (Boek 2 BW)
+- Wet op het accountantsberoep (Wab)
+- Fiscale aspecten van bedrijfsvoering
+- Controle en assurance werkzaamheden`
+
+    case 'makelaar':
+      return `Je beantwoordt vragen voor een makelaar. Focus op:
+- Vastgoedrecht en eigendomsoverdracht
+- Makelaarsrecht en NVM-regels
+- Koopcontracten en leveringsvoorwaarden
+- Hypotheekrecht en financieringsvoorwaarden
+- Wft en zorgplicht makelaars`
+
+    case 'verzekeringsagent':
+      return `Je beantwoordt vragen voor een verzekeringsagent. Focus op:
+- Verzekeringsrecht en verzekeringscontracten
+- Aansprakelijkheid en schadeafhandeling
+- Wft en zorgplicht verzekeraars
+- Wet op het financieel toezicht
+- Claims en uitkeringsprocedures`
+
+    case 'hr-medewerker':
+      return `Je beantwoordt vragen voor een HR-medewerker. Focus op:
+- Arbeidsrecht en personeelsbeleid
+- Ontslag, reorganisatie en arbeidsvoorwaarden
+- AVG-privacy en personeelsadministratie
+- Wet gelijke behandeling en discriminatie
+- CAO's en individuele arbeidscontracten`
+
+    case 'compliance-officer':
+      return `Je beantwoordt vragen voor een compliance officer. Focus op:
+- Toezichtrecht en compliance procedures
+- Risicobeheersing en interne controle
+- Wwb, Wft en sectorspecifieke regelgeving
+- Meldingsverplichtingen en incidentrapportage
+- Corporate governance en integriteit`
+
+    case 'veiligheidsbeambte':
+      return `Je beantwoordt vragen voor een veiligheidsbeambte. Focus op:
+- Veiligheidsrecht en preventieve maatregelen
+- Incidentmanagement en crisisbeheersing
+- Veiligheidsprocedures en risico-analyse
+- Wet veiligheidsregio's en rampenbestrijding
+- Evenementenbeveiliging en crowd control`
+
+    case 'beveiliger':
+      return `Je beantwoordt vragen voor een beveiliger. Focus op:
+- Wet particuliere beveiligingsorganisaties (WPBR)
+- Private beveiliging en eigendomsbescherming
+- Arrestatiebevoegdheden en burgerarrest (art. 53 Sv)
+- Proportionaliteit en zelfverdediging
+- Verschil publieke en private handhaving`
+
+    case 'trainer':
+      return `Je beantwoordt vragen voor een trainer/opleider. Focus op:
+- Educatieve juridische uitleg met voorbeelden
+- Gestructureerde leermaterialen en casussen
+- Praktijkgerichte training en oefeningen
+- Verschillende leerstijlen en didactiek
+- Volledig uitgewerkte antwoorden voor cursisten`
+
+    case 'vervoersmedewerker':
+      return `Je beantwoordt vragen voor een vervoersmedewerker. Focus op:
+- Wet personenvervoer 2000 en Spoorwegwet
+- OV-bevoegdheden en controle in openbaar vervoer
+- Vervoersvoorwaarden en sanctiebeleid
+- Incidentafhandeling en conflictdeëscalatie
+- Samenwerking met politie en BOA's`
+
+    case 'zorgprofessional':
+      return `Je beantwoordt vragen voor een zorgprofessional. Focus op:
+- Wet verplichte geestelijke gezondheidszorg (Wvggz)
+- Wet zorg en dwang (Wzd) en dwangtoepassing
+- AVG/WGBO bij gegevensuitwisseling in de zorg
+- Tuchtrecht en beroepsuitoefening
+- Meldcode huiselijk geweld en kindermishandeling`
+
+    case 'officier':
+      return `Je beantwoordt vragen voor een officier van justitie. Focus op:
+- Strafrecht en vervolgingsbeleid
+- Sepot-gronden en transactievoorstellen
+- Strafrechtelijke procedures en bewijsvoering
+- Aanwijzingen van het College van PG's
+- Internationale rechtshulp en uitlevering`
+
+    case 'juridischmedewerker':
+      return `Je beantwoordt vragen voor een juridisch medewerker. Focus op:
+- Juridische ondersteuning en procesvoering
+- Dossiervoorbereiding en processtukken
+- Rechtsbijstand en cliëntencontact
+- Wet op de rechtsbijstand (Wrb)
+- Praktische juridische werkzaamheden`
+
+    case 'parkeercontroleur':
+      return `Je beantwoordt vragen voor een parkeercontroleur. Focus op:
+- Wegenverkeerswet en verkeersvoorschriften
+- Parkeerregulering en naheffingsaanslagen
+- APV-bepalingen over parkeren
+- Bezwaar en beroepsprocedures verkeer
+- Praktische handhaving parkeerbeleid`
+
+    case 'algemeen':
     default:
       return `Je beantwoordt vragen voor een burger/algemeen publiek. Focus op:
-- Begrijpelijke uitleg van juridische begrippen
-- Praktische toepassingen en gevolgen
-- Concrete stappen en handelingsperspectieven
-- Toegankelijke juridische informatie`
+- Begrijpelijke uitleg van juridische begrippen zonder jargon
+- Praktische toepassingen en concrete gevolgen
+- Stapsgewijze handelingsperspectieven en vervolgacties
+- Toegankelijke juridische informatie met voorbeelden
+- Rechten en plichten van burgers in het dagelijks leven`
   }
 }
 
