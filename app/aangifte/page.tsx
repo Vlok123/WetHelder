@@ -317,64 +317,7 @@ const vragenPerDelict: Record<string, Vraag[]> = {
       type: 'langeTekst'
     }
   ],
-  straatintimidatie: [
-    {
-      id: 'wanneer',
-      tekst: 'Wanneer vond de straatintimidatie plaats?',
-      hint: 'Datum en tijdstip van het incident',
-      verplicht: true,
-      type: 'tekst'
-    },
-    {
-      id: 'waar_openbaar',
-      tekst: 'Waar in de openbare ruimte gebeurde dit?',
-      hint: 'Straat, plein, park, openbaar vervoer, winkelcentrum, etc.',
-      verplicht: true,
-      type: 'tekst'
-    },
-    {
-      id: 'wat_gedaan',
-      tekst: 'Wat deed de dader precies?',
-      hint: 'Beschrijf de seksuele opmerkingen, gebaren, geluiden of aanrakingen',
-      verplicht: true,
-      type: 'langeTekst'
-    },
-    {
-      id: 'hoe_indringend',
-      tekst: 'Hoe was het gedrag indringend en seksueel van aard?',
-      hint: 'Waarom ervaarde u dit als indringend seksueel gedrag?',
-      verplicht: true,
-      type: 'langeTekst'
-    },
-    {
-      id: 'impact_gevoel',
-      tekst: 'Hoe heeft dit u geraakt?',
-      hint: 'Voelde u zich vreesaanjagend, vernederd, gekwetst of onterend behandeld?',
-      verplicht: true,
-      type: 'langeTekst'
-    },
-    {
-      id: 'verdachte_beschrijving',
-      tekst: 'Kunt u de dader beschrijven?',
-      hint: 'Geslacht, geschatte leeftijd, lengte, kleding, bijzondere kenmerken',
-      verplicht: false,
-      type: 'langeTekst'
-    },
-    {
-      id: 'getuigen',
-      tekst: 'Waren er getuigen aanwezig?',
-      hint: 'Namen en contactgegevens van eventuele getuigen',
-      verplicht: false,
-      type: 'langeTekst'
-    },
-    {
-      id: 'eerder_gebeurd',
-      tekst: 'Is dit eerder gebeurd door dezelfde persoon?',
-      hint: 'Eventuele eerdere incidenten of patroon van gedrag',
-      verplicht: false,
-      type: 'langeTekst'
-    }
-  ]
+
 }
 
 // Analyseer juridische volledigheid van de aangifte
@@ -505,9 +448,11 @@ INSTRUCTIES:
 - Bij bankhelpdeskfraude: Gebruik artikel 326 Sr (oplichting) maar stel specifieke vragen over de fraudemethode
 - Bij vriend-in-nood fraude: Gebruik artikel 326 Sr (oplichting) maar focus op identiteitsmisleiding en vertrouwensrelatie
 - Bedenk de juridische bestanddelen die bewezen moeten worden
-- Genereer 4-12 relevante vragen die nodig zijn om alle juridische elementen te verzamelen
-- Stel alleen ECHT RELEVANTE vragen - niet meer dan nodig voor dit specifieke delict
-- Voor eenvoudige delicten kunnen 4-5 vragen genoeg zijn, voor complexe fraude tot 12 vragen
+- Genereer ALLE relevante vragen die nodig zijn om alle juridische elementen te verzamelen
+- Voor bankhelpdeskfraude: genereer exact 12 specifieke vragen
+- Voor vriend-in-nood fraude: genereer exact 10 specifieke vragen  
+- Voor straatintimidatie: genereer exact 8 specifieke vragen
+- Voor andere delicten: 6-10 vragen afhankelijk van complexiteit
 
 Geef het resultaat in exact dit JSON formaat (geen extra tekst):
 {
@@ -554,7 +499,10 @@ Geef het resultaat in exact dit JSON formaat (geen extra tekst):
       "hint": "[Juridische relevantie]",
       "verplicht": false,
       "type": "langeTekst"
-    }
+    },
+    // Voor bankhelpdeskfraude: voeg vraag 6-12 toe
+    // Voor vriend-in-nood fraude: voeg vraag 6-10 toe
+    // Voor straatintimidatie: voeg vraag 6-8 toe
   ]
 }
 
@@ -1280,30 +1228,7 @@ export default function AngifteAssistentPage() {
             </CardContent>
           </Card>
 
-          {/* BROWSER CACHE WAARSCHUWING */}
-          <Card className="mb-4 sm:mb-8 border-red-200 bg-red-50">
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex items-start gap-3 sm:gap-4">
-                <div className="h-5 w-5 sm:h-6 sm:w-6 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <span className="text-white text-xs font-bold">!</span>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-red-900 mb-2 text-sm sm:text-base">BELANGRIJK: Browser cache clearen</h3>
-                  <p className="text-red-800 mb-2 sm:mb-3 text-sm sm:text-base">
-                    <strong>Indien u oude tegels ziet (zoals &quot;Bankhelpdeskfraude&quot;)</strong>, clear dan uw browser cache:
-                  </p>
-                  <ul className="text-red-800 text-xs sm:text-sm list-disc ml-4 space-y-1">
-                    <li><strong>Chrome/Safari:</strong> Druk Cmd+Shift+R (Mac) of Ctrl+Shift+R (Windows)</li>
-                    <li><strong>Firefox:</strong> Druk Ctrl+F5 of Cmd+Shift+R</li>
-                    <li><strong>Of:</strong> Ga naar Instellingen → Privacy → Browsing data wissen</li>
-                  </ul>
-                  <p className="text-red-800 text-xs sm:text-sm mt-2 font-semibold">
-                    U zou alleen 6 tegels moeten zien + &quot;Anders / Zelf opzoeken&quot; voor speciale fraudetypen.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+
 
           {/* Contact informatie */}
           <Card className="mb-4 sm:mb-8 border-blue-200 bg-blue-50">
@@ -1521,8 +1446,11 @@ export default function AngifteAssistentPage() {
                   <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <h4 className="font-semibold text-yellow-900 mb-3">Beschrijf uw situatie</h4>
                     <p className="text-sm text-yellow-800 mb-3">
-                      Beschrijf kort wat er is gebeurd (minimaal 20 karakters). Het systeem zal het juiste delicttype identificeren en passende vragen opstellen.
+                      Beschrijf kort wat er is gebeurd (minimaal 20 karakters). Het systeem analyseert uw situatie en stelt de juiste vragen op.
                     </p>
+                    <div className="text-xs text-yellow-700 bg-yellow-100 p-2 rounded mb-3">
+                      Beschrijf uw situatie in gewone taal, bijvoorbeeld: &quot;Ik werd gebeld door de bank, dit bleek een oplichter&quot; of &quot;Iemand reed tegen mijn auto aan en is doorgereden&quot;
+                    </div>
                     <textarea
                       className="w-full p-3 border border-yellow-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                       rows={3}
