@@ -49,6 +49,7 @@ import {
   Plus,
   MoreHorizontal
 } from 'lucide-react'
+import { BetaDisclaimer } from '@/components/ui/beta-disclaimer'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -862,6 +863,24 @@ function AskPageContent() {
               </div>
             </div>
           </form>
+          
+          {/* Beta Disclaimer */}
+          <div className="mt-3">
+            <BetaDisclaimer variant="chat" />
+          </div>
+          
+          {/* Juridische Informatie Disclaimer */}
+          <div className="mt-2 px-3 py-2 bg-blue-50/30 rounded-lg border border-blue-100">
+            <div className="flex items-start gap-2 text-xs text-blue-700">
+              <Info className="h-3 w-3 text-blue-600 mt-0.5 flex-shrink-0" />
+              <div className="leading-relaxed">
+                <span className="font-medium">Juridische Informatie:</span>
+                <span className="ml-1">
+                  WetHelder biedt juridische informatie, maar vervangt geen persoonlijk advies van een juridisch professional. Voor complexe casussen raadpleeg altijd een advocaat, notaris of andere gekwalificeerde professional.
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

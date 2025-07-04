@@ -5,7 +5,13 @@ import { AlertTriangle, X, Info, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 
-export default function LegalDisclaimer() {
+interface LegalDisclaimerProps {
+  variant?: 'chat' | 'wetuitleg'
+  className?: string
+}
+
+export function LegalDisclaimer({ variant = 'chat', className = '' }: LegalDisclaimerProps) {
+  const isChat = variant === 'chat'
   const [showDetailedModal, setShowDetailedModal] = useState(false)
 
   return (
@@ -15,7 +21,9 @@ export default function LegalDisclaimer() {
         <div className="container mx-auto">
           <div className="flex items-center justify-center gap-3 text-sm text-amber-800">
             <Info className="h-4 w-4 flex-shrink-0" />
-            <span className="font-medium">Informatie ≠ juridisch advies</span>
+            <span className="font-medium">
+              {isChat ? 'WetHelder Chat' : 'WetUitleg'} is momenteel in bètafase.
+            </span>
             <span className="hidden sm:inline">•</span>
             <span className="hidden sm:inline">Raadpleeg een professional voor bindende stappen</span>
             <Button 

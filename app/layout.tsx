@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import Providers from './providers'
 import { Analytics } from '@vercel/analytics/next'
-import LegalDisclaimer from '@/components/legal-disclaimer'
+import { LegalDisclaimer } from '@/components/legal-disclaimer'
 import CookieBanner from '@/components/cookie-banner'
 import { Navigation } from '@/components/navigation'
 
