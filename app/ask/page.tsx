@@ -50,6 +50,7 @@ import {
   MoreHorizontal
 } from 'lucide-react'
 import { BetaDisclaimer } from '@/components/ui/beta-disclaimer'
+import { WettenOverzicht } from '@/components/wetten-overzicht'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -645,6 +646,36 @@ function AskPageContent() {
                 </div>
               </div>
             )}
+
+            {/* Wets-gebaseerd kader */}
+            <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="h-5 w-5 text-emerald-600 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium text-emerald-900">Gebaseerd op Nederlandse wetgeving</h3>
+                      <p className="text-sm text-emerald-700 mt-1">
+                        Alle antwoorden zijn direct gebaseerd op officiële wetsartikelen en regelgeving. 
+                        Dit maakt WetHelder betrouwbaarder dan algemene AI-modellen voor juridische vragen.
+                      </p>
+                    </div>
+                    <div className="ml-4">
+                      <WettenOverzicht />
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-emerald-200">
+                    <p className="text-xs text-emerald-600">
+                      <strong>Ontbreekt er wetgeving?</strong> Laat het ons weten via het{' '}
+                      <Link href="/contact" className="underline hover:no-underline font-medium">
+                        contactformulier
+                      </Link>
+                      . We voegen regelmatig nieuwe wetten toe.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* Welcome message */}
             <div className="text-center mb-8">

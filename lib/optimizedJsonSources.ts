@@ -150,7 +150,7 @@ export async function searchOptimizedJsonSources(query: string): Promise<{
     const queryLower = query.toLowerCase()
     
     // ENHANCED: Check for Boek 6 patterns first (6:x:x format)
-    let boek6Match = queryLower.match(/artikel\s*6:(\d+):(\d+[a-z]*)\s*(?:lid\s*\d+[a-z]*)?\s*(sr|strafrecht|sv|strafvordering|wetboek\s+van\s+strafvordering)?/i)
+    const boek6Match = queryLower.match(/artikel\s*6:(\d+):(\d+[a-z]*)\s*(?:lid\s*\d+[a-z]*)?\s*(sr|strafrecht|sv|strafvordering|wetboek\s+van\s+strafvordering)?/i)
     
     if (boek6Match) {
       const boek6Number = `6:${boek6Match[1]}:${boek6Match[2]}`

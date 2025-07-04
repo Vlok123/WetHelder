@@ -8,8 +8,9 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Scale, Search, Send, Loader2, Trash2, Copy, FileText, User, Shield, Gavel, Building, Info } from 'lucide-react'
+import { Scale, Search, Send, Loader2, Trash2, Copy, FileText, User, Shield, Gavel, Building, Info, CheckCircle2 } from 'lucide-react'
 import { BetaDisclaimer } from '@/components/ui/beta-disclaimer'
+import { WettenOverzicht } from '@/components/wetten-overzicht'
 import Link from 'next/link'
 
 type Profession = 'algemeen' | 'advocaat' | 'politieagent' | 'boa' | 'rechter' | 'notaris' | 'bedrijfsjurist' | 'gemeenteambtenaar'
@@ -331,6 +332,36 @@ function WetUitlegPage() {
           <p className="text-gray-600">
             Snelle juridische uitleg van Nederlandse wetsartikelen
           </p>
+        </div>
+
+        {/* Wets-gebaseerd kader */}
+        <div className="mb-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+          <div className="flex items-start gap-3">
+            <CheckCircle2 className="h-5 w-5 text-emerald-600 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-medium text-emerald-900">Gebaseerd op Nederlandse wetgeving</h3>
+                  <p className="text-sm text-emerald-700 mt-1">
+                    Alle antwoorden zijn direct gebaseerd op officiële wetsartikelen en regelgeving. 
+                    Dit maakt WetHelder betrouwbaarder dan algemene AI-modellen voor juridische vragen.
+                  </p>
+                </div>
+                <div className="ml-4">
+                  <WettenOverzicht />
+                </div>
+              </div>
+              <div className="mt-3 pt-3 border-t border-emerald-200">
+                <p className="text-xs text-emerald-600">
+                  <strong>Ontbreekt er wetgeving?</strong> Laat het ons weten via het{' '}
+                  <Link href="/contact" className="underline hover:no-underline font-medium">
+                    contactformulier
+                  </Link>
+                  . We voegen regelmatig nieuwe wetten toe.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Rate limit info */}
