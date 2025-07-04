@@ -604,8 +604,8 @@ function AskPageContent() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 pb-32">
-        
+      {/* Main Content */}
+      <div className="max-w-4xl mx-auto px-4 pb-60">
         {/* Empty state */}
         {messages.length === 0 && (
           <div className="py-12">
@@ -648,12 +648,12 @@ function AskPageContent() {
 
             {/* Welcome message */}
             <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Bot className="h-8 w-8 text-blue-600" />
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                <MessageSquare className="h-8 w-8 text-white" />
               </div>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Hoe kan ik je helpen?</h2>
-              <p className="text-gray-600 max-w-lg mx-auto">
-                Stel je juridische vraag en krijg direct een betrouwbaar antwoord op basis van Nederlandse wetgeving.
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Welkom bij de Juridische Assistent</h2>
+              <p className="text-gray-600 max-w-md mx-auto">
+                Stel je juridische vraag en krijg direct een betrouwbaar antwoord gebaseerd op Nederlandse wetgeving.
               </p>
             </div>
 

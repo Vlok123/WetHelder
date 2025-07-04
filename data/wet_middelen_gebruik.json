@@ -1,0 +1,21 @@
+{
+  "wetgeving": {
+    "basiswet": {
+      "citeertitel": "Wet middelen gebruik bij geweld",
+      "artikel": [
+        {
+          "kop": {
+            "nr": "1"
+          },
+          "al": "Het is verboden geweld toe te passen onder invloed van middelen.",
+          "lid": [
+            {
+              "lidnr": "1",
+              "al": "Een functionaris past geen geweld toe indien hij onder invloed is van een middel dat de uitvoering beïnvloedt."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

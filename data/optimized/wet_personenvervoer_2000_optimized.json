@@ -1,0 +1,23 @@
+{
+  "wetNaam": "wet_personenvervoer_2000",
+  "citeertitel": "wet_personenvervoer_2000",
+  "intitule": "",
+  "url": "https://wetten.overheid.nl/",
+  "categorie": "Wetgeving – nationaal",
+  "scope": "NL",
+  "laatstGewijzigd": "2025-07-04",
+  "artikelen": [
+    {
+      "artikelNr": "1",
+      "tekst": "Deze wet regelt het openbaar vervoer van personen in Nederland. Het verrichten van openbaar vervoer is onderworpen aan vergunningverlening.",
+      "wetNaam": "wet_personenvervoer_2000",
+      "bron": "wet_personenvervoer_2000"
+    }
+  ],
+  "metadata": {
+    "bronFormaat": "BWB",
+    "verwerkingsDatum": "2025-07-04",
+    "optimizedVersion": "1.0",
+    "aantalArtikelen": 1
+  }
+}

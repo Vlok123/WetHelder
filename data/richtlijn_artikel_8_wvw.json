@@ -1,0 +1,21 @@
+{
+  "wetgeving": {
+    "basiswet": {
+      "citeertitel": "Richtlijn artikel 8 WVW",
+      "artikel": [
+        {
+          "kop": {
+            "nr": "1"
+          },
+          "al": "Deze richtlijn bevat beleidsregels voor de toepassing van artikel 8 van de Wegenverkeerswet 1994.",
+          "lid": [
+            {
+              "lidnr": "1",
+              "al": "De opsporing en vervolging van overtreding van artikel 8 WVW geschiedt volgens vastgestelde procedures."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

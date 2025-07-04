@@ -7,6 +7,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getBrancheAdvies, zoekBrancheRegels } from '@/lib/brancheRegels'
+import { searchPriorityJsonSources } from '@/lib/jsonSources'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -147,7 +148,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Vraag is verplicht' }, { status: 400 })
     }
 
-    console.log('WetHelder.nl Ask gestart voor vraag:', question)
+    console.log(`WetHelder.nl Ask gestart voor vraag: "${question}" (Beroep: ${profession})`)
 
     // Get user session (optional for anonymous users)
     const session = await getServerSession(authOptions)
@@ -249,6 +250,87 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
     // Check for relevant branch/industry rules
     const relevanteRegels = zoekBrancheRegels(question)
     
+    // 🔍 HYBRIDE PRIORITAIRE JSON SEARCH - Snelheid + Betrouwbaarheid (same as wetuitleg)
+    console.log('🔍 Ask: Checking priority JSON sources (hybrid approach)...')
+    
+    // STAP 1: Probeer eerst geoptimaliseerde bestanden (95% sneller)
+    let jsonSearchResult: {
+      foundInJson: boolean,
+      sources: any[],
+      recommendation: 'use_json' | 'use_google' | 'use_both',
+      suggestion?: string
+    }
+    try {
+      const { searchOptimizedJsonSourcesWithVerification } = await import('../../../lib/optimizedJsonSources')
+      const optimizedResult = await searchOptimizedJsonSourcesWithVerification(question)
+      
+      if (optimizedResult.foundInJson && optimizedResult.sources.length > 0) {
+        console.log(`⚡ Found ${optimizedResult.sources.length} sources in optimized format (fast path)`)
+        
+        // Convert optimized format to BWB format for consistency
+        const convertedSources = optimizedResult.sources.map(source => ({
+          id: source['Bron (naam)'],
+          naam: source['Bron (naam)'],
+          url: source['URL'],
+          beschrijving: source['Omschrijving'],
+          categorie: source['Categorie'],
+          betrouwbaarheid: 'hoog' as const,
+          trefwoorden: [source['Topic']],
+          type: 'wetgeving' as const,
+          topic: source['Topic'],
+          scope: source['Scope']
+        }))
+        
+        jsonSearchResult = {
+          foundInJson: true,
+          sources: convertedSources,
+          recommendation: optimizedResult.recommendation,
+          suggestion: optimizedResult.suggestion
+        }
+      } else {
+        console.log('ℹ️  No matches in optimized sources, falling back to full BWB parsing...')
+        
+        // Add suggestion to fallback result if we have one
+        if (optimizedResult.suggestion) {
+          console.log(`💡 Suggestion: ${optimizedResult.suggestion}`)
+        }
+        
+        // STAP 2: Fall back naar volledige BWB parsing (betrouwbaarheid)
+        const { searchPriorityJsonSources } = await import('../../../lib/jsonSources')
+        const bwbResult = await searchPriorityJsonSources(question)
+        jsonSearchResult = {
+          ...bwbResult,
+          suggestion: optimizedResult.suggestion
+        }
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      console.log('⚠️  Optimized sources not available, using BWB parsing:', errorMessage)
+      // STAP 2: Fall back naar volledige BWB parsing als backup
+      const { searchPriorityJsonSources } = await import('../../../lib/jsonSources')
+      jsonSearchResult = await searchPriorityJsonSources(question)
+    }
+    
+    let jsonSourcesContext = ''
+    
+    if (jsonSearchResult.foundInJson && jsonSearchResult.sources.length > 0) {
+      console.log(`✅ Ask: Found ${jsonSearchResult.sources.length} priority JSON sources`)
+      const { formatJsonSourcesForDirectAnswer } = await import('../../../lib/jsonSources')
+      jsonSourcesContext = formatJsonSourcesForDirectAnswer(jsonSearchResult.sources)
+      
+      // Add suggestion context if available
+      if (jsonSearchResult?.suggestion) {
+        jsonSourcesContext += `\n\n**BELANGRIJKE OPMERKING**: ${jsonSearchResult.suggestion}\n`
+      }
+    } else {
+      console.log('ℹ️ Ask: No priority JSON sources found, will use general knowledge')
+      
+      // Even if no sources found, include suggestion if available
+      if (jsonSearchResult?.suggestion) {
+        jsonSourcesContext = `**BELANGRIJKE OPMERKING**: ${jsonSearchResult.suggestion}\n\n`
+      }
+    }
+
     // Build conversation history from the request
     const conversationHistory: ChatMessage[] = []
     
@@ -257,6 +339,11 @@ WetHelder blijft **volledig gratis** te gebruiken! We vragen alleen een account 
     
     // Enhanced conversation context with legal AI
     let systemPrompt = `Je bent een gespecialiseerde Nederlandse juridische AI-assistent.
+
+**🎯 BEROEPSPECIFIEKE FOCUS:**
+${professionContext}
+
+**BELANGRIJK: Beantwoord ALTIJD vanuit het perspectief en de behoeften van dit specifieke beroep. Pas je taalgebruik, diepgang en focus aan op deze doelgroep.**
 
 KRITIEKE WETSWIJZIGING (SINDS 1 JULI 2024):
 STRAATINTIMIDATIE valt vanaf 1 juli 2024 onder het NIEUWE artikel 429ter Sr (NIET meer artikel 266 Sr):
@@ -270,13 +357,32 @@ STRAATINTIMIDATIE valt vanaf 1 juli 2024 onder het NIEUWE artikel 429ter Sr (NIE
 **VRIEND-IN-NOOD FRAUDE** - Dit is oplichting (artikel 326 Sr) waarbij criminelen zich voordoen als bekenden (zoon, dochter, vriend, familie). Kenmerken: contact via WhatsApp/SMS met onbekend nummer, beweren telefoon kwijt te zijn, dringend verzoek om geld, emotionele manipulatie door vertrouwde relatie te misbruiken. Valt onder oplichting maar misbruikt vertrouwensrelaties.
 
 **BELANGRIJKE INSTRUCTIES:**
-- Geef volledige, accurate antwoorden op basis van Nederlandse wetgeving
-- Wees praktisch gericht en geef concrete adviezen
-- Verwijs naar relevante wetsartikelen met exacte nummers
+- **KRITIEK: VERMELD ALTIJD SPECIFIEKE WETSARTIKELEN MET EXACTE NUMMERS**
+- Als je zegt "de politie heeft de bevoegdheid", MOET je zeggen "artikel 96b Sv" erbij
+- Als je zegt "dit is strafbaar", MOET je het exacte artikel noemen (bijv. "artikel 326 Sr")
+- Als je zegt "er geldt een boete", MOET je het artikel noemen (bijv. "artikel 62 WVW")
+- **CONTROLEER ALTIJD OF JE HET JUISTE ARTIKELNUMMER GEBRUIKT:**
+  • Artikel 159 WVW = opsporingsbevoegdheden (wie mag opsporen)
+  • Artikel 160 WVW = stopteken en controle (verplicht stoppen)
+  • Artikel 182 Sr = dwang/wederspannigheid door MEERDERE personen
+  • Artikel 207 Sr = MEINEED (valse verklaring onder ede)
+  • Artikel 96b Sv = dwangmiddelen, inbeslagname, doorzoeking
+  • Artikel 326 Sr = oplichting (ook bankhelpdeskfraude, vriend-in-nood fraude)
+  • Artikel 27 Sv = aanhouding (niet verwarren met andere artikelen)
+  • GEBRUIK NOOIT artikel 159 voor stoptekens - dat is artikel 160 WVW!
+  • GEBRUIK NOOIT artikel 182 voor meineed - dat is artikel 207 Sr!
 - Bij vragen over straatintimidatie: Verwijs ALTIJD naar artikel 429ter Sr (vanaf 1 juli 2024)
-- Leg juridische termen helder uit voor leken
-- Geef stap-voor-stap handelingsperspectieven
-- Controleer ook altijd op relevante brancheregels die kunnen afwijken van wettelijke bepalingen
+- **ARTIKEL VERIFICATIE PROTOCOL:**
+  • BIJ ARTIKELVRAGEN: Begin ALTIJD met exacte wettekst uit de brondata
+  • VERIFIEER eerst dat je het juiste artikel hebt voordat je uitleg geeft
+  • Als je de exacte tekst niet hebt uit de bronnen: zeg dit expliciet
+  • GEEN interpretatie zonder bronverificatie
+- **FLEXIBEL ANTWOORDFORMAT:**
+  • PAS JE ANTWOORD AAN BIJ DE VRAAG - gebruik GEEN rigide structuur
+  • Geef directe, praktische antwoorden aangepast aan de gebruiker
+  • ALTIJD: Vermeld exacte artikelnummers bij juridische stellingen
+  • Leg juridische termen helder uit voor leken
+  • Controleer op relevante brancheregels die kunnen afwijken van wettelijke bepalingen
 
 **GESPREK ONTHOUDEN:**
 - Bouw voort op eerdere vragen in dit gesprek
@@ -285,10 +391,10 @@ STRAATINTIMIDATIE valt vanaf 1 juli 2024 onder het NIEUWE artikel 429ter Sr (NIE
 
 **ANTWOORD INDELING:**
 **JURIDISCHE BASIS:**
-[Relevante wetsartikelen en bepalingen]
+[Relevante wetsartikelen en bepalingen MET EXACTE NUMMERS]
 
 **PRAKTISCHE BETEKENIS:**
-[Wat dit betekent in dagelijks leven]
+[Wat dit betekent in dagelijks leven MET VERWIJZING NAAR ARTIKELEN]
 
 **VERVOLGSTAPPEN:**
 [Concrete acties die ondernomen kunnen worden]`
@@ -318,6 +424,14 @@ ${relevanteRegels.map(regel =>
 [Belangrijke juridische overwegingen${relevanteRegels.length > 0 ? ' en mogelijke conflicten tussen wet en brancheregels' : ''}]
 
 Wees altijd accuraat, concreet en praktisch gericht. Bouw voort op eerdere vragen in het gesprek.${relevanteRegels.length > 0 ? ' Let op mogelijke verschillen tussen wettelijke bepalingen en brancheregels!' : ''}`
+
+    // Add JSON sources context if available (PRIORITY)
+    if (jsonSourcesContext) {
+      systemPrompt += `
+
+PRIORITAIRE WETGEVING (JSON DATABASE - GEBRUIK DEZE EERST):
+${jsonSourcesContext}`
+    }
 
     conversationHistory.push({
       role: 'system',

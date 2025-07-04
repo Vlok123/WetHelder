@@ -1,0 +1,36 @@
+{
+  "wetgeving": {
+    "basiswet": {
+      "citeertitel": "Besluit alcoholonderzoeken",
+      "artikel": [
+        {
+          "kop": {
+            "nr": "1"
+          },
+          "al": "In dit besluit wordt verstaan onder: ademanalyse, ademanalyse-apparaat, bloedafname...",
+          "lid": [
+            {
+              "lidnr": "1",
+              "al": "ademanalyse: het vaststellen van het alcoholgehalte..."
+            },
+            {
+              "lidnr": "2",
+              "al": "ademanalyse-apparaat: een apparaat, bestemd voor het verrichten van ademanalyse..."
+            },
+            {
+              "lidnr": "3",
+              "al": "bloedafname: het afnemen van een hoeveelheid bloed..."
+            }
+          ]
+        },
+        {
+          "kop": {
+            "nr": "2"
+          },
+          "al": "Onze Minister van Veiligheid en Justitie wijst de apparatuur aan...",
+          "lid": []
+        }
+      ]
+    }
+  }
+}

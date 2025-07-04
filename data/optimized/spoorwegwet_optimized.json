@@ -1,0 +1,29 @@
+{
+  "wetNaam": "spoorwegwet",
+  "citeertitel": "spoorwegwet",
+  "intitule": "",
+  "url": "https://wetten.overheid.nl/",
+  "categorie": "Wetgeving – nationaal",
+  "scope": "NL",
+  "laatstGewijzigd": "2025-07-04",
+  "artikelen": [
+    {
+      "artikelNr": "1",
+      "tekst": "In deze wet en de daarop berustende bepalingen wordt verstaan onder: aangemelde instantie: conformiteitsbeoordelingsinstantie die overeenkomstig artikel 37 van de interoperabiliteitsrichtlijn is aangemeld bij de Europese Commissie. aangewezen instantie: conformiteitsbeoordelingsinstantie die op grond van artikel 26v, eerste lid, door Onze Minister is aangewezen.",
+      "wetNaam": "spoorwegwet",
+      "bron": "spoorwegwet"
+    },
+    {
+      "artikelNr": "2",
+      "tekst": "Deze wet is van toepassing op bij koninklijk besluit aangewezen hoofdspoorwegen en op bijzondere spoorwegen. Deze wet is van toepassing op als zodanig bij koninklijk besluit aangewezen hoofdspoorwegen en op bijzondere spoorwegen.",
+      "wetNaam": "spoorwegwet",
+      "bron": "spoorwegwet"
+    }
+  ],
+  "metadata": {
+    "bronFormaat": "BWB",
+    "verwerkingsDatum": "2025-07-04",
+    "optimizedVersion": "1.0",
+    "aantalArtikelen": 2
+  }
+}

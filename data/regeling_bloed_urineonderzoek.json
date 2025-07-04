@@ -1,0 +1,41 @@
+{
+  "wetgeving": {
+    "basiswet": {
+      "citeertitel": "Regeling bloed- en urineonderzoek",
+      "artikel": [
+        {
+          "kop": {
+            "nr": "1"
+          },
+          "al": "In deze regeling wordt verstaan onder: het besluit, bloedafname, politie...",
+          "lid": [
+            {
+              "lidnr": "a",
+              "al": "het besluit: het Besluit alcoholonderzoeken;"
+            },
+            {
+              "lidnr": "b",
+              "al": "bloedafname: het afnemen van een hoeveelheid bloed ten behoeve van een onderzoek..."
+            },
+            {
+              "lidnr": "c",
+              "al": "politie: de ambtenaar van politie zoals bedoeld in de Politiewet 2012..."
+            }
+          ]
+        },
+        {
+          "kop": {
+            "nr": "2"
+          },
+          "al": "Als ambtenaren worden aangewezen de ambtenaren van politie, benoemd in schaal 8 of hoger.",
+          "lid": [
+            {
+              "lidnr": "1",
+              "al": "Zij oefenen hun bevoegdheid niet uit als een hulpofficier beschikbaar is."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,3 @@
+{
+  "fout": "Fout bij verwerken van /mnt/data/Regeling wapens en munitie.xml: 'NoneType' object has no attribute 'strip'"
+}

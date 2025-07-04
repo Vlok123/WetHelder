@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import OpenAI from 'openai'
 import { getBrancheAdvies, zoekBrancheRegels } from '@/lib/brancheRegels'
+import { searchPriorityJsonSources, formatJsonSourcesForDirectAnswer, JsonBron } from '@/lib/jsonSources'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -336,6 +337,10 @@ BELANGRIJKE INSTRUCTIES:
 - Geef altijd uitgebreide antwoorden (minimaal 200 woorden)
 - Begin met de letterlijke wettekst als er naar een specifiek artikel wordt gevraagd
 - Gebruik het format: **WETTEKST:** [letterlijke tekst] gevolgd door uitgebreide uitleg
+- **KRITIEK: VERMELD ALTIJD SPECIFIEKE WETSARTIKELEN MET EXACTE NUMMERS**
+- Als je zegt "de politie heeft de bevoegdheid", MOET je zeggen "artikel 96b Sv" erbij
+- Als je zegt "dit is strafbaar", MOET je het exacte artikel noemen (bijv. "artikel 326 Sr")
+- Als je zegt "er geldt een boete", MOET je het artikel noemen (bijv. "artikel 62 WVW")
 - Verwijs naar gerelateerde artikelen waar relevant
 - Geef praktische voorbeelden en toepassingen
 - Leg juridische concepten helder uit
@@ -345,10 +350,10 @@ BELANGRIJKE INSTRUCTIES:
 
 ANTWOORD STRUCTUUR:
 1. **WETTEKST:** [letterlijke artikeltekst indien van toepassing]
-2. **UITLEG:** Uitgebreide juridische analyse
-3. **PRAKTIJK:** Hoe dit in de praktijk werkt
+2. **UITLEG:** Uitgebreide juridische analyse MET SPECIFIEKE ARTIKELNUMMERS
+3. **PRAKTIJK:** Hoe dit in de praktijk werkt MET VERWIJZING NAAR RELEVANTE ARTIKELEN
 4. **BRANCHEREGELS:** [indien van toepassing - specifieke regels van brancheorganisaties]
-5. **GERELATEERD:** Verwante artikelen en bepalingen
+5. **GERELATEERD:** Verwante artikelen en bepalingen MET EXACTE NUMMERS
 
 AANDACHT VOOR BRANCHEREGELS:
 - Veel sectoren hebben eigen regels die strenger kunnen zijn dan de wet
@@ -387,7 +392,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log(`📝 WetUitleg vraag: "${query}"`)
+    console.log(`📝 WetUitleg vraag: "${query}" (Beroep: ${profession})`)
 
     // Session check
     const session = await getServerSession(authOptions)
@@ -408,6 +413,86 @@ export async function POST(request: NextRequest) {
 
     // Profession-specific context
     const professionContext = getProfessionContext(profession)
+    
+    // 🔍 HYBRIDE PRIORITAIRE JSON SEARCH - Snelheid + Betrouwbaarheid
+    console.log('🔍 WetUitleg: Checking priority JSON sources (hybrid approach)...')
+    
+    // STAP 1: Probeer eerst geoptimaliseerde bestanden met ARTIKEL VERIFICATIE
+    let jsonSearchResult: {
+      foundInJson: boolean,
+      sources: JsonBron[],
+      recommendation: 'use_json' | 'use_google' | 'use_both',
+      suggestion?: string
+    }
+    try {
+      const { searchOptimizedJsonSourcesWithVerification } = await import('../../../lib/optimizedJsonSources')
+      const optimizedResult = await searchOptimizedJsonSourcesWithVerification(query)
+      
+      if (optimizedResult.foundInJson && optimizedResult.sources.length > 0) {
+        console.log(`⚡ Found ${optimizedResult.sources.length} sources in optimized format (fast path)`)
+        
+        // Convert optimized format to BWB format for consistency
+        const convertedSources = optimizedResult.sources.map(source => ({
+          id: source['Bron (naam)'],
+          naam: source['Bron (naam)'],
+          url: source['URL'],
+          beschrijving: source['Omschrijving'],
+          categorie: source['Categorie'],
+          betrouwbaarheid: 'hoog' as const,
+          trefwoorden: [source['Topic']],
+          type: 'wetgeving' as const,
+          topic: source['Topic'],
+          scope: source['Scope']
+        }))
+        
+        jsonSearchResult = {
+          foundInJson: true,
+          sources: convertedSources,
+          recommendation: optimizedResult.recommendation,
+          suggestion: optimizedResult.suggestion
+        }
+      } else {
+        console.log('ℹ️  No matches in optimized sources, falling back to full BWB parsing...')
+        
+        // Add suggestion to fallback result if we have one
+        if (optimizedResult.suggestion) {
+          console.log(`💡 Suggestion: ${optimizedResult.suggestion}`)
+        }
+        
+        // STAP 2: Fall back naar volledige BWB parsing (betrouwbaarheid)
+        const bwbResult = await searchPriorityJsonSources(query)
+        jsonSearchResult = {
+          ...bwbResult,
+          suggestion: optimizedResult.suggestion
+        } as typeof jsonSearchResult
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      console.log('⚠️  Optimized sources not available, using BWB parsing:', errorMessage)
+      // STAP 2: Fall back naar volledige BWB parsing als backup
+      jsonSearchResult = await searchPriorityJsonSources(query)
+    }
+    
+    let jsonSourcesContext = ''
+    let sourcesList: JsonBron[] = []
+    
+    if (jsonSearchResult.foundInJson && jsonSearchResult.sources.length > 0) {
+      console.log(`✅ WetUitleg: Found ${jsonSearchResult.sources.length} priority JSON sources`)
+      sourcesList = jsonSearchResult.sources
+      jsonSourcesContext = formatJsonSourcesForDirectAnswer(jsonSearchResult.sources)
+      
+      // Add suggestion context if available
+      if (jsonSearchResult?.suggestion) {
+        jsonSourcesContext += `\n\n**BELANGRIJKE OPMERKING**: ${jsonSearchResult.suggestion}\n`
+      }
+    } else {
+      console.log('ℹ️ WetUitleg: No priority JSON sources found, will use general knowledge')
+      
+      // Even if no sources found, include suggestion if available
+      if (jsonSearchResult?.suggestion) {
+        jsonSourcesContext = `**BELANGRIJKE OPMERKING**: ${jsonSearchResult.suggestion}\n\n`
+      }
+    }
     
     // Check for relevant branch/industry rules
     const relevanteRegels = zoekBrancheRegels(query)
@@ -440,34 +525,86 @@ CONTEXT: Dit is een doorlopend gesprek. Verwijs naar eerdere punten waar relevan
           // Enhanced conversation context with legal AI
           const systemPrompt = `Je bent een gespecialiseerde Nederlandse juridische AI-assistent.
 
+**🎯 BEROEPSPECIFIEKE FOCUS:**
+${professionContext}
+
+**BELANGRIJK: Beantwoord ALTIJD vanuit het perspectief en de behoeften van dit specifieke beroep. Pas je taalgebruik, diepgang en focus aan op deze doelgroep.**
+
 KRITIEKE WETSWIJZIGING (SINDS 1 JULI 2024):
 STRAATINTIMIDATIE valt vanaf 1 juli 2024 onder het NIEUWE artikel 429ter Sr (NIET meer artikel 266 Sr):
 
 **ARTIKEL 429ter Sr - STRAATINTIMIDATIE (vanaf 1 juli 2024):**
 "Degene die in het openbaar een ander indringend seksueel benadert door middel van opmerkingen, gebaren, geluiden of aanrakingen op een wijze die vreesaanjagend, vernederend, kwetsend of onterend is te achten, wordt gestraft met hechtenis van ten hoogste drie maanden of geldboete van de derde categorie."
 
+**KRITIEKE JURIDISCHE TERMINOLOGIE (ZEER BELANGRIJK):**
+- **VERDACHTE** = persoon tegen wie een verdenking van strafbaar feit bestaat (VÓÓr veroordeling)
+- **VEROORDEELDE** = persoon tegen wie een onherroepelijk vonnis is gewezen (NÁ veroordeling)
+- **GEDETINEERDE** = persoon die vrijheidsstraf ondergaat
+- **OPENSTAAND VONNIS** = persoon is al veroordeeld, dus GEBRUIK NOOIT "verdachte" maar "veroordeelde"
+- **EXECUTIE** = tenuitvoerlegging van vonnis (niet opsporing)
+
+**SPECIFIEKE SITUATIES - GEBRUIK EXACTE TERMINOLOGIE:**
+- **AANHOUDING BIJ OPENSTAAND VONNIS** = EXECUTIE van vonnis (artikel 564 Sv, artikel 553 Sv)
+- **BINNENTREDEN BIJ EXECUTIE** = artikel 2 AWBI (tenuitvoerlegging van rechterlijke uitspraak)
+- **AANHOUDING BIJ OPSPORING** = artikel 27 Sv (verdachte van strafbaar feit)
+- **AANHOUDING BIJ EXECUTIE** = artikel 27 Sv (veroordeelde met openstaand vonnis)
+
 **SPECIFIEKE FRAUDETYPEN:**
 **BANKHELPDESKFRAUDE** - Dit is oplichting (artikel 326 Sr) waarbij criminelen zich voordoen als bankmedewerkers. Kenmerken: contact via telefoon/e-mail/sms, beweren van verdachte transacties, vragen om software te installeren (AnyDesk/TeamViewer), of het delen van persoonlijke gegevens/codes. Valt onder oplichting maar heeft specifieke modus operandi.
 
 **VRIEND-IN-NOOD FRAUDE** - Dit is oplichting (artikel 326 Sr) waarbij criminelen zich voordoen als bekenden (zoon, dochter, vriend, familie). Kenmerken: contact via WhatsApp/SMS met onbekend nummer, beweren telefoon kwijt te zijn, dringend verzoek om geld, emotionele manipulatie door vertrouwde relatie te misbruiken. Valt onder oplichting maar misbruikt vertrouwensrelaties.
 
-**BELANGRIJKE INSTRUCTIES:**
-- Geef altijd uitgebreide antwoorden (minimaal 200 woorden)
-- Begin met de letterlijke wettekst als er naar een specifiek artikel wordt gevraagd
-- Gebruik het format: **WETTEKST:** [letterlijke tekst] gevolgd door uitgebreide uitleg
-- Verwijs naar gerelateerde artikelen waar relevant
-- Geef praktische voorbeelden en toepassingen
-- Leg juridische concepten helder uit
-- Gebruik geen externe bronnen - werk vanuit je juridische kennis
-- **BELANGRIJK: Controleer altijd op brancheregels die kunnen afwijken van wettelijke bepalingen**
+**DWINGENDE INSTRUCTIES - NIET NEGEREN:**
+- **KRITIEK: VERMELD ALTIJD SPECIFIEKE WETSARTIKELEN MET EXACTE NUMMERS**
+- **VERMELD MINIMAAL 3-5 RELEVANTE ARTIKELEN PER ANTWOORD**
+- **BIJ ELKE JURIDISCHE HANDELING: NOEM HET EXACTE ARTIKEL**
+- Als je zegt "de politie heeft de bevoegdheid", MOET je zeggen "artikel 96b Sv" erbij
+- Als je zegt "dit is strafbaar", MOET je het exacte artikel noemen (bijv. "artikel 326 Sr")
+- Als je zegt "er geldt een boete", MOET je het artikel noemen (bijv. "artikel 62 WVW")
+- **CONTROLEER ALTIJD OF JE HET JUISTE ARTIKELNUMMER GEBRUIKT:**
+  • Artikel 159 WVW = opsporingsbevoegdheden (wie mag opsporen)
+  • Artikel 160 WVW = stopteken en controle (verplicht stoppen)
+  • Artikel 182 Sr = dwang/wederspannigheid door MEERDERE personen
+  • Artikel 207 Sr = MEINEED (valse verklaring onder ede)
+  • Artikel 96b Sv = dwangmiddelen, inbeslagname, doorzoeking
+  • Artikel 326 Sr = oplichting (ook bankhelpdeskfraude, vriend-in-nood fraude)
+  • Artikel 27 Sv = aanhouding (verdachte OF veroordeelde)
+  • Artikel 553 Sv = executie van vrijheidsstraf
+  • Artikel 564 Sv = tenuitvoerlegging van vonnis
+  • Artikel 2 AWBI = binnentreden voor tenuitvoerlegging rechterlijke uitspraak
+  • GEBRUIK NOOIT artikel 159 voor stoptekens - dat is artikel 160 WVW!
+  • GEBRUIK NOOIT artikel 182 voor meineed - dat is artikel 207 Sr!
 - **Bij vragen over straatintimidatie: Verwijs ALTIJD naar artikel 429ter Sr (vanaf 1 juli 2024)**
 
-ANTWOORD STRUCTUUR:
-1. **WETTEKST:** [letterlijke artikeltekst indien van toepassing]
-2. **UITLEG:** Uitgebreide juridische analyse
-3. **PRAKTIJK:** Hoe dit in de praktijk werkt
-4. **BRANCHEREGELS:** [indien van toepassing - specifieke regels van brancheorganisaties]
-5. **GERELATEERD:** Verwante artikelen en bepalingen
+**ARTIKEL VERIFICATIE PROTOCOL:**
+- BIJ ARTIKELVRAGEN: Begin ALTIJD met exacte wettekst uit de brondata
+- VERIFIEER eerst dat je het juiste artikel hebt voordat je uitleg geeft
+- Als je de exacte tekst niet hebt uit de bronnen: zeg dit expliciet
+- GEEN interpretatie zonder bronverificatie
+
+**ARTIKEL EISEN:**
+- **BENOEM RELEVANTE ARTIKELEN WAAR NODIG** (niet geforceerd meerdere)
+- **ELKE JURIDISCHE HANDELING = EXACT ARTIKEL**
+- **ELKE BEVOEGDHEID = EXACT ARTIKEL**
+- **ELKE STRAFBEPALING = EXACT ARTIKEL**
+- **ELKE PROCEDURE = EXACT ARTIKEL**
+
+**FLEXIBEL ANTWOORDFORMAT:**
+- PAS JE ANTWOORD AAN BIJ DE VRAAG - gebruik GEEN standaard structuur
+- Bij specifieke artikelvragen: Begin met letterlijke wettekst
+- Bij algemene vragen: Geef directe, praktische antwoorden
+- **KRITIEK: VERMELD BIJ ELKE JURIDISCHE STELLING HET EXACTE ARTIKEL:**
+  • Niet: "Er geldt een termijn van 6 dagen"
+  • Wel: "Volgens artikel 16, lid 1 van de Wet op de lijkbezorging geldt een termijn van 6 dagen"
+  • Niet: "De politie mag dit controleren"
+  • Wel: "Volgens artikel 160 WVW mag de politie dit controleren"
+  • Niet: "Bij een openstaand vonnis kan de verdachte worden aangehouden"
+  • Wel: "Bij een openstaand vonnis kan de veroordeelde worden aangehouden op grond van artikel 564 Sv (tenuitvoerlegging) en artikel 27 Sv (aanhouding)"
+- **UI FORMATTING:**
+  • Gebruik **dikgedrukte tekst** voor belangrijke kopjes
+  • GEEN #### kopjes - gebruik gewoon **Kopje:**
+  • Gebruik • voor bullet points
+- Wees beknopt bij simpele vragen, uitgebreid bij complexe vragen
 
 AANDACHT VOOR BRANCHEREGELS:
 - Veel sectoren hebben eigen regels die strenger kunnen zijn dan de wet
@@ -478,12 +615,19 @@ AANDACHT VOOR BRANCHEREGELS:
 Geef altijd professionele, accurate en uitgebreide juridische uitleg.
 `
 
-          // Enhanced prompt with branch rules
+          // Enhanced prompt with JSON sources and branch rules
           let prompt = `${systemPrompt}
 
 ${professionContext}
 
 ${conversationHistory}`
+
+          // Add JSON sources context if available (PRIORITY)
+          if (jsonSourcesContext) {
+            prompt += `
+
+${jsonSourcesContext}`
+          }
 
           // Add branch rules section if relevant rules found
           if (relevanteRegels.length > 0) {

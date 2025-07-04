@@ -1,0 +1,4813 @@
+{
+	"toestand": {
+		"bwb-inputbestand": "",
+		"bwb-wijzigingen": "",
+		"redactionele-correcties": "",
+		"wetgeving": {
+			"intitule": {
+				"meta-data": {
+					"brondata": {
+						"oorspronkelijk": {
+							"publicatie": {
+								"publicatiejaar": "1993",
+								"publicatienr": "660",
+								"ondertekeningsdatum": {
+									"_isodatum": "1993-12-09",
+									"__text": "09-12-1993"
+								},
+								"dossierref": {
+									"_dossier": "22694",
+									"__text": "22694"
+								},
+								"_effect": "nieuwe-regeling",
+								"_soort": "Stb",
+								"_urlidentifier": ""
+							}
+						},
+						"inwerkingtreding": {
+							"publicatie": {
+								"publicatiejaar": "1994",
+								"publicatienr": "190",
+								"uitgiftedatum": {
+									"_isodatum": "1994-03-24",
+									"__text": "24-03-1994"
+								},
+								"ondertekeningsdatum": {
+									"_isodatum": "1994-03-09",
+									"__text": "09-03-1994"
+								},
+								"_effect": "nieuwe-regeling",
+								"_soort": "Stb",
+								"_urlidentifier": ""
+							},
+							"inwerkingtreding.datum": {
+								"_isodatum": "1994-06-01",
+								"__text": "01-06-1994"
+							}
+						}
+					}
+				},
+				"_bwb-ng-variabel-deel": "/Intitule",
+				"_stam-id": "2090443",
+				"_versie-id": "3139312",
+				"_id": "C31148051",
+				"_label-id": "2038004",
+				"_inwerking": "1994-06-01",
+				"_bron": "Stb.1993-660",
+				"_effect": "nieuwe-regeling",
+				"_ondertekening_bron": "1993-12-09",
+				"_publicatie_iwt": "1994-03-24",
+				"_status": "goed",
+				"__text": "Wet van 9 december 1993, tot aanwijzing van documenten dienende ter vaststelling van de identiteit van personen alsmede aanwijzing van enige gevallen waarin de identiteit van personen aan de hand van deze documenten kan worden vastgesteld"
+			},
+			"citeertitel": {
+				"meta-data": {
+					"brondata": {
+						"oorspronkelijk": {
+							"publicatie": {
+								"publicatiejaar": "1993",
+								"publicatienr": "660",
+								"ondertekeningsdatum": {
+									"_isodatum": "1993-12-09",
+									"__text": "09-12-1993"
+								},
+								"dossierref": {
+									"_dossier": "22694",
+									"__text": "22694"
+								},
+								"_effect": "nieuwe-regeling",
+								"_soort": "Stb",
+								"_urlidentifier": ""
+							}
+						},
+						"inwerkingtreding": {
+							"publicatie": {
+								"publicatiejaar": "1994",
+								"publicatienr": "190",
+								"uitgiftedatum": {
+									"_isodatum": "1994-03-24",
+									"__text": "24-03-1994"
+								},
+								"ondertekeningsdatum": {
+									"_isodatum": "1994-03-09",
+									"__text": "09-03-1994"
+								},
+								"_effect": "nieuwe-regeling",
+								"_soort": "Stb",
+								"_urlidentifier": ""
+							},
+							"inwerkingtreding.datum": {
+								"_isodatum": "1994-06-01",
+								"__text": "01-06-1994"
+							}
+						}
+					}
+				},
+				"_bwb-ng-variabel-deel": "/Citeertitel",
+				"_status": "officieel",
+				"_stam-id": "2090453",
+				"_versie-id": "3139322",
+				"_id": "C31147851",
+				"_label-id": "2038014",
+				"_inwerking": "1994-06-01",
+				"_bron": "Stb.1993-660",
+				"_effect": "nieuwe-regeling",
+				"_ondertekening_bron": "1993-12-09",
+				"_publicatie_iwt": "1994-03-24",
+				"__text": "Wet op de identificatieplicht"
+			},
+			"wet-besluit": {
+				"aanhef": {
+					"wij": "Wij Beatrix, bij de gratie Gods, Koningin der Nederlanden, Prinses van Oranje-Nassau, enz. enz. enz.",
+					"considerans": {
+						"considerans.al": [
+							"Allen, die deze zullen zien of horen lezen, saluut! doen te weten:",
+							"Alzo Wij in overweging genomen hebben, dat het ter verbetering van de handhaving van regelingen voor de uitvoering waarvan bekendheid met de identiteit van een persoon van belang is, wenselijk is te bepalen met welke documenten de identiteit van personen in bij de wet aangewezen gevallen kan worden vastgesteld alsmede enige van deze gevallen aan te wijzen;"
+						]
+					},
+					"afkondiging": {
+						"al": "Zo is het, dat Wij, de Raad van State gehoord, en met gemeen overleg der Staten-Generaal, hebben goedgevonden en verstaan, gelijk Wij goedvinden en verstaan bij deze:"
+					},
+					"meta-data": {
+						"brondata": {
+							"oorspronkelijk": {
+								"publicatie": {
+									"publicatiejaar": "1993",
+									"publicatienr": "660",
+									"ondertekeningsdatum": {
+										"_isodatum": "1993-12-09",
+										"__text": "09-12-1993"
+									},
+									"dossierref": {
+										"_dossier": "22694",
+										"__text": "22694"
+									},
+									"_effect": "nieuwe-regeling",
+									"_soort": "Stb",
+									"_urlidentifier": ""
+								}
+							},
+							"inwerkingtreding": {
+								"publicatie": {
+									"publicatiejaar": "1994",
+									"publicatienr": "190",
+									"uitgiftedatum": {
+										"_isodatum": "1994-03-24",
+										"__text": "24-03-1994"
+									},
+									"ondertekeningsdatum": {
+										"_isodatum": "1994-03-09",
+										"__text": "09-03-1994"
+									},
+									"_effect": "nieuwe-regeling",
+									"_soort": "Stb",
+									"_urlidentifier": ""
+								},
+								"inwerkingtreding.datum": {
+									"_isodatum": "1994-06-01",
+									"__text": "01-06-1994"
+								}
+							}
+						}
+					},
+					"_bwb-ng-variabel-deel": "/Aanhef",
+					"_stam-id": "2090463",
+					"_versie-id": "3139332",
+					"_id": "C31147921",
+					"_label-id": "2038024",
+					"_inwerking": "1994-06-01",
+					"_bron": "Stb.1993-660",
+					"_effect": "nieuwe-regeling",
+					"_ondertekening_bron": "1993-12-09",
+					"_publicatie_iwt": "1994-03-24",
+					"_status": "goed"
+				},
+				"wettekst": {
+					"hoofdstuk": [
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": {
+									"_status": "officieel",
+									"__text": "I"
+								},
+								"titel": {
+									"_status": "officieel",
+									"__text": "Aanwijzing van documenten"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": {
+										"_status": "officieel",
+										"__text": "1"
+									}
+								},
+								"lid": [
+									{
+										"lidnr": {
+											"_status": "officieel",
+											"__text": "1"
+										},
+										"al": "Als documenten waarmee in bij de wet aangewezen gevallen de identiteit van personen kan worden vastgesteld, worden aangewezen:",
+										"lijst": {
+											"li": [
+												{
+													"li.nr": "1°.",
+													"al": {
+														"extref": {
+															"_doc": "jci1.3:c:BWBR0005212&artikel=2",
+															"_label-id": "164604",
+															"_verwijzing-id": "2618581",
+															"_bwb-id": "BWBR0005212",
+															"__text": "artikel 2, eerste lid, onder a, b, c, d, e en g"
+														},
+														"__text": "een geldig reisdocument als bedoeld in \n, of een Nederlandse identiteitskaart en vervangende Nederlandse identiteitskaart als bedoeld in artikel 2, tweede lid, van de Paspoortwet;"
+													},
+													"meta-data": {
+														"jcis": {
+															"jci": {
+																"_versie": "1.3",
+																"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=I&artikel=1&lid=1&o=1&z=2017-03-01&g=2017-03-01",
+																"_onderdeel": "o=1"
+															}
+														}
+													},
+													"_bwb-ng-variabel-deel": "/HoofdstukI/Artikel1/Lid1/Onderdeel1"
+												},
+												{
+													"li.nr": "2°.",
+													"al": {
+														"extref": {
+															"_doc": "jci1.3:c:BWBR0011823",
+															"_label-id": "1385854",
+															"_verwijzing-id": "825255",
+															"_bwb-id": "BWBR0011823",
+															"__text": "Vreemdelingenwet 2000"
+														},
+														"__text": "de documenten waarover een vreemdeling ingevolge de \n moet beschikken ter vaststelling van zijn identiteit, nationaliteit en verblijfsrechtelijke positie;"
+													},
+													"meta-data": {
+														"jcis": {
+															"jci": {
+																"_versie": "1.3",
+																"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=I&artikel=1&lid=1&o=2&z=2017-03-01&g=2017-03-01",
+																"_onderdeel": "o=2"
+															}
+														}
+													},
+													"_bwb-ng-variabel-deel": "/HoofdstukI/Artikel1/Lid1/Onderdeel2"
+												},
+												{
+													"li.nr": "3°.",
+													"al": "een geldig nationaal, diplomatiek of dienstpaspoort dat is afgegeven door het daartoe bevoegde gezag in een andere lidstaat van de Europese Gemeenschappen of in een andere staat die partij is bij de Overeenkomst betreffende de Europese Economische Ruimte, voor zover de houder de nationaliteit van die andere lidstaat bezit;",
+													"meta-data": {
+														"jcis": {
+															"jci": {
+																"_versie": "1.3",
+																"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=I&artikel=1&lid=1&o=3&z=2017-03-01&g=2017-03-01",
+																"_onderdeel": "o=3"
+															}
+														}
+													},
+													"_bwb-ng-variabel-deel": "/HoofdstukI/Artikel1/Lid1/Onderdeel3"
+												},
+												{
+													"li.nr": "4°.",
+													"al": {
+														"extref": [
+															{
+																"_doc": "jci1.3:c:BWBR0006622&artikel=107",
+																"_label-id": "2958274",
+																"_verwijzing-id": "2023079",
+																"_bwb-id": "BWBR0006622",
+																"__text": "artikel 107 van de Wegenverkeerswet 1994"
+															},
+															{
+																"_doc": "onbekend",
+																"_label-id": "2959334",
+																"_verwijzing-id": "2023080",
+																"_bwb-id": "BWBR0006622",
+																"__text": "Wegenverkeerswet 1994"
+															},
+															{
+																"_doc": "jci1.3:c:BWBR0006622&paragraaf=9",
+																"_label-id": "2958674",
+																"_verwijzing-id": "2023077",
+																"_bwb-id": "BWBR0006622",
+																"__text": "paragraaf 9 van hoofdstuk VI van de Wegenverkeerswet 1994"
+															},
+															{
+																"_doc": "jci1.3:c:BWBR0006622&artikel=179",
+																"_label-id": "2959194",
+																"_verwijzing-id": "2023081",
+																"_bwb-id": "BWBR0006622",
+																"__text": "artikel 179 van die wet"
+															}
+														],
+														"__text": "een geldig rijbewijs dat is afgegeven op basis van de Wegenverkeerswet, een geldig rijbewijs als bedoeld in \n of een rijbewijs dat is afgegeven door het daartoe bevoegde gezag in een andere lidstaat van de Europese Gemeenschappen of in een andere staat die partij is bij de Overeenkomst betreffende de Europese Economische Ruimte, waarvan de houder in Nederland woonachtig is, zolang de bij de \n vastgestelde termijn van geldigheid in Nederland niet is verstreken, aan de houder geen administratieve maatregel bedoeld in \n is opgelegd of aan hem niet de bijkomende straf bedoeld in \n is opgelegd en mits het rijbewijs is voorzien van een pasfoto van de houder."
+													},
+													"meta-data": {
+														"jcis": {
+															"jci": {
+																"_versie": "1.3",
+																"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=I&artikel=1&lid=1&o=4&z=2017-03-01&g=2017-03-01",
+																"_onderdeel": "o=4"
+															}
+														}
+													},
+													"_bwb-ng-variabel-deel": "/HoofdstukI/Artikel1/Lid1/Onderdeel4"
+												}
+											],
+											"_level": "single",
+											"_nr-sluiting": ".",
+											"_start": "1",
+											"_type": "expliciet"
+										},
+										"meta-data": {
+											"jcis": {
+												"jci": {
+													"_versie": "1.3",
+													"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=I&artikel=1&lid=1&z=2017-03-01&g=2017-03-01",
+													"_onderdeel": "lid=1"
+												}
+											}
+										},
+										"_bwb-ng-variabel-deel": "/HoofdstukI/Artikel1/Lid1",
+										"_label-id": "2038034L1"
+									},
+									{
+										"lidnr": {
+											"_status": "officieel",
+											"__text": "2"
+										},
+										"al": "Onze Minister van Veiligheid en Justitie kan, al dan niet voor een bepaald tijdvak, andere dan de in het eerste lid bedoelde documenten aanwijzen ter vaststelling van de identiteit van personen.",
+										"meta-data": {
+											"jcis": {
+												"jci": {
+													"_versie": "1.3",
+													"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=I&artikel=1&lid=2&z=2017-03-01&g=2017-03-01",
+													"_onderdeel": "lid=2"
+												}
+											}
+										},
+										"_bwb-ng-variabel-deel": "/HoofdstukI/Artikel1/Lid2",
+										"_label-id": "2038034L2"
+									}
+								],
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2017",
+												"publicatienr": "53",
+												"uitgiftedatum": {
+													"_isodatum": "2017-02-22",
+													"__text": "22-02-2017"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2017-02-10",
+													"__text": "10-02-2017"
+												},
+												"dossierref": {
+													"_dossier": "34358",
+													"__text": "34358"
+												},
+												"_effect": "wijziging",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2017-53"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2017",
+												"publicatienr": "65",
+												"uitgiftedatum": {
+													"_isodatum": "2017-02-27",
+													"__text": "27-02-2017"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2017-02-17",
+													"__text": "17-02-2017"
+												},
+												"_effect": "wijziging",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2017-65"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2017-03-01",
+												"__text": "01-03-2017"
+											}
+										},
+										"opmerkingen-inhoud": {
+											"al": "Treedt in werking op het tijdstip waarop artikel 3 van de\n    Tijdelijke wet bestuurlijke maatregelen terrorismebestrijding in\n    werking treedt."
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=1&g=2017-03-01",
+												"_onderdeel": "artikel=1",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=1"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=I&artikel=1&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=1",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=1"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukI/Artikel1",
+								"_stam-id": "2090473",
+								"_versie-id": "23879432",
+								"_id": "C34415391",
+								"_label-id": "2038034",
+								"_inwerking": "2017-03-01",
+								"_label": "Artikel 1",
+								"_bron": "Stb.2017-53",
+								"_effect": "wijziging",
+								"_ondertekening_bron": "2017-02-10",
+								"_publicatie_bron": "2017-02-22",
+								"_publicatie_iwt": "2017-02-27",
+								"_status": "goed"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "1993",
+											"publicatienr": "660",
+											"ondertekeningsdatum": {
+												"_isodatum": "1993-12-09",
+												"__text": "09-12-1993"
+											},
+											"dossierref": {
+												"_dossier": "22694",
+												"__text": "22694"
+											},
+											"_effect": "nieuwe-regeling",
+											"_soort": "Stb",
+											"_urlidentifier": ""
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "1994",
+											"publicatienr": "190",
+											"uitgiftedatum": {
+												"_isodatum": "1994-03-24",
+												"__text": "24-03-1994"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "1994-03-09",
+												"__text": "09-03-1994"
+											},
+											"_effect": "nieuwe-regeling",
+											"_soort": "Stb",
+											"_urlidentifier": ""
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "1994-06-01",
+											"__text": "01-06-1994"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=I&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=I",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=I"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=I&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=I",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=I"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukI",
+							"_stam-id": "2090483",
+							"_versie-id": "3139352",
+							"_id": "C31148071",
+							"_label-id": "2038044",
+							"_inwerking": "1994-06-01",
+							"_label": "Hoofdstuk I",
+							"_bron": "Stb.1993-660",
+							"_effect": "nieuwe-regeling",
+							"_ondertekening_bron": "1993-12-09",
+							"_publicatie_iwt": "1994-03-24",
+							"_status": "goed"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "II",
+								"titel": "Toonplicht"
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": {
+										"_status": "officieel",
+										"__text": "2"
+									}
+								},
+								"al": {
+									"extref": [
+										{
+											"_doc": "jci1.3:c:BWBR0031788&artikel=8",
+											"_verwijzing-id": "2506074",
+											"_bwb-id": "BWBR0031788",
+											"_label-id": "11763034",
+											"__text": "artikel 8 van de Politiewet 2012"
+										},
+										{
+											"_doc": "jci1.3:c:BWBR0019919&artikel=6a",
+											"_verwijzing-id": "2506075",
+											"_bwb-id": "BWBR0019919",
+											"_label-id": "9431744",
+											"__text": "artikel 6a van de Wet op de bijzondere opsporingsdiensten"
+										}
+									],
+									"intref": {
+										"_verwijzing-id": "1854928",
+										"_doc": "jci1.3:c:BWBR0006297&hoofdstuk=I&artikel=1&z=2017-03-01&g=2017-03-01",
+										"_bwb-id": "BWBR0006297",
+										"_label-id": "2038034",
+										"_bwb-ng-variabel-deel": "/HoofdstukI/Artikel1",
+										"__text": "artikel 1"
+									},
+									"__text": "Een ieder die de leeftijd van veertien jaar heeft bereikt, is verplicht op de eerste vordering van een ambtenaar als bedoeld in \n of \n, een identiteitsbewijs als bedoeld in \n ter inzage aan te bieden. Deze verplichting geldt ook indien de vordering wordt gedaan door een toezichthouder."
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2012",
+												"publicatienr": "316",
+												"uitgiftedatum": {
+													"_isodatum": "2012-07-16",
+													"__text": "16-07-2012"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2012-07-12",
+													"__text": "12-07-2012"
+												},
+												"dossierref": {
+													"_dossier": "32822",
+													"__text": "32822"
+												},
+												"_effect": "wijziging",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2012-316"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2012",
+												"publicatienr": "317",
+												"uitgiftedatum": {
+													"_isodatum": "2012-07-16",
+													"__text": "16-07-2012"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2012-07-12",
+													"__text": "12-07-2012"
+												},
+												"_effect": "wijziging",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2012-317"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2013-01-01",
+												"__text": "01-01-2013"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=2&g=2017-03-01",
+												"_onderdeel": "artikel=2",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=2"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=II&artikel=2&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=2",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=2"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukII/Artikel2",
+								"_code": "n1-2",
+								"_stam-id": "2090493",
+								"_versie-id": "19519902",
+								"_id": "C28234251",
+								"_label-id": "2038054",
+								"_inwerking": "2013-01-01",
+								"_label": "Artikel 2",
+								"_bron": "Stb.2012-316",
+								"_effect": "wijziging",
+								"_ondertekening_bron": "2012-07-12",
+								"_publicatie_bron": "2012-07-16",
+								"_publicatie_iwt": "2012-07-16",
+								"_status": "goed"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "wijziging",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "wijziging",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=II&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=II",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=II"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=II&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=II",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=II"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukII",
+							"_stam-id": "2090503",
+							"_versie-id": "10534632",
+							"_id": "C14876141",
+							"_label-id": "2038064",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk II",
+							"_bron": "Stb.2004-300",
+							"_effect": "wijziging",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "goed"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "III",
+								"titel": {
+									"_status": "officieel",
+									"__text": "Wijziging van de Organisatiewet Sociale Verzekering"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "3"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=3&g=2017-03-01",
+												"_onderdeel": "artikel=3",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=3"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=III&artikel=3&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=3",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=3"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukIII/Artikel3",
+								"_code": "a-3",
+								"_stam-id": "2090513",
+								"_versie-id": "10534742",
+								"_id": "C14876151",
+								"_label-id": "2038074",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 3",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=III&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=III",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=III"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=III&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=III",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=III"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukIII",
+							"_stam-id": "2090523",
+							"_versie-id": "10534752",
+							"_id": "C14876161",
+							"_label-id": "2038084",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk III",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "IV",
+								"titel": {
+									"_status": "officieel",
+									"__text": "Wijziging van de Wet op de Sociale Verzekeringsbank"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "4"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=4&g=2017-03-01",
+												"_onderdeel": "artikel=4",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=4"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=IV&artikel=4&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=4",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=4"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukIV/Artikel4",
+								"_code": "a-4",
+								"_stam-id": "2090533",
+								"_versie-id": "10534762",
+								"_id": "C14876171",
+								"_label-id": "2038094",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 4",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=IV&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=IV",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=IV"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=IV&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=IV",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=IV"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukIV",
+							"_stam-id": "2090543",
+							"_versie-id": "10534772",
+							"_id": "C14876181",
+							"_label-id": "2038104",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk IV",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "V",
+								"titel": {
+									"extref": {
+										"_doc": "onbekend",
+										"_verwijzing-id": "825257",
+										"__text": "Algemene Bijstandswet"
+									},
+									"_status": "officieel",
+									"__text": "Wijziging van de"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "5"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=5&g=2017-03-01",
+												"_onderdeel": "artikel=5",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=5"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=V&artikel=5&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=5",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=5"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukV/Artikel5",
+								"_code": "a-5",
+								"_stam-id": "2090553",
+								"_versie-id": "10534782",
+								"_id": "C14876191",
+								"_label-id": "2038114",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 5",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=V&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=V",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=V"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=V&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=V",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=V"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukV",
+							"_stam-id": "2090563",
+							"_versie-id": "10534792",
+							"_id": "C14876201",
+							"_label-id": "2038124",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk V",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "VI",
+								"titel": {
+									"extref": {
+										"_doc": "onbekend",
+										"_verwijzing-id": "825258",
+										"__text": "Wet inkomensvoorziening oudere en gedeeltelijk arbeidsongeschikte werkloze werknemers"
+									},
+									"_status": "officieel",
+									"__text": "Wijziging van de"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "6"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=6&g=2017-03-01",
+												"_onderdeel": "artikel=6",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=6"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=VI&artikel=6&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=6",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=6"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukVI/Artikel6",
+								"_code": "a-6",
+								"_stam-id": "2090573",
+								"_versie-id": "10534802",
+								"_id": "C14876211",
+								"_label-id": "2038134",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 6",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=VI&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=VI",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=VI"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=VI&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=VI",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=VI"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukVI",
+							"_stam-id": "2090583",
+							"_versie-id": "10534812",
+							"_id": "C14876231",
+							"_label-id": "2038144",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk VI",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "VII",
+								"titel": {
+									"extref": {
+										"_doc": "onbekend",
+										"_verwijzing-id": "825259",
+										"__text": "Wet inkomensvoorziening oudere en gedeeltelijk arbeidsongeschikte gewezen zelfstandigen"
+									},
+									"_status": "officieel",
+									"__text": "Wijziging van de"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "7"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=7&g=2017-03-01",
+												"_onderdeel": "artikel=7",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=7"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=VII&artikel=7&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=7",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=7"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukVII/Artikel7",
+								"_code": "a-7",
+								"_stam-id": "2090593",
+								"_versie-id": "10534822",
+								"_id": "C14876241",
+								"_label-id": "2038154",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 7",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=VII&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=VII",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=VII"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=VII&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=VII",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=VII"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukVII",
+							"_stam-id": "2090603",
+							"_versie-id": "10534832",
+							"_id": "C14876251",
+							"_label-id": "2038164",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk VII",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "VIII",
+								"titel": {
+									"extref": {
+										"_doc": "onbekend",
+										"_verwijzing-id": "825260",
+										"__text": "Arbeidsvoorzieningswet"
+									},
+									"_status": "officieel",
+									"__text": "Wijziging van de"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "8"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=8&g=2017-03-01",
+												"_onderdeel": "artikel=8",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=8"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=VIII&artikel=8&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=8",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=8"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukVIII/Artikel8",
+								"_code": "a-8",
+								"_stam-id": "2090613",
+								"_versie-id": "10534842",
+								"_id": "C14876121",
+								"_label-id": "2038174",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 8",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=VIII&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=VIII",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=VIII"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=VIII&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=VIII",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=VIII"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukVIII",
+							"_stam-id": "2090623",
+							"_versie-id": "10534852",
+							"_id": "C14876261",
+							"_label-id": "2038184",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk VIII",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "IX",
+								"titel": {
+									"extref": {
+										"_doc": "onbekend",
+										"_verwijzing-id": "825261",
+										"__text": "Algemene Ouderdomswet"
+									},
+									"_status": "officieel",
+									"__text": "Wijziging van de"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "9"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=9&g=2017-03-01",
+												"_onderdeel": "artikel=9",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=9"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=IX&artikel=9&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=9",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=9"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukIX/Artikel9",
+								"_code": "a-9",
+								"_stam-id": "2090633",
+								"_versie-id": "10534872",
+								"_id": "C14876281",
+								"_label-id": "2038194",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 9",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=IX&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=IX",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=IX"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=IX&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=IX",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=IX"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukIX",
+							"_stam-id": "2090643",
+							"_versie-id": "10534882",
+							"_id": "C14876291",
+							"_label-id": "2038204",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk IX",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "X",
+								"titel": {
+									"extref": {
+										"_doc": "onbekend",
+										"_verwijzing-id": "825262",
+										"__text": "Algemene Weduwen- en Wezenwet"
+									},
+									"_status": "officieel",
+									"__text": "Wijziging van de"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "10"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=10&g=2017-03-01",
+												"_onderdeel": "artikel=10",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=10"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=X&artikel=10&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=10",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=10"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukX/Artikel10",
+								"_code": "a-10",
+								"_stam-id": "2090653",
+								"_versie-id": "10534892",
+								"_id": "C14876221",
+								"_label-id": "2038214",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 10",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=X&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=X",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=X"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=X&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=X",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=X"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukX",
+							"_stam-id": "2090663",
+							"_versie-id": "10534902",
+							"_id": "C14876271",
+							"_label-id": "2038224",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk X",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "XI",
+								"titel": {
+									"extref": {
+										"_doc": "onbekend",
+										"_verwijzing-id": "825263",
+										"__text": "Algemene Nabestaandenwet"
+									},
+									"_status": "officieel",
+									"__text": "Wijziging van de"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "11"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=11&g=2017-03-01",
+												"_onderdeel": "artikel=11",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=11"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XI&artikel=11&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=11",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=11"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukXI/Artikel11",
+								"_code": "a-11",
+								"_stam-id": "2090673",
+								"_versie-id": "10534912",
+								"_id": "C14876301",
+								"_label-id": "2038234",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 11",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XI&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XI",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XI"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XI&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XI",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XI"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukXI",
+							"_stam-id": "2090683",
+							"_versie-id": "10534922",
+							"_id": "C14876311",
+							"_label-id": "2038244",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk XI",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "XII",
+								"titel": {
+									"extref": {
+										"_doc": "onbekend",
+										"_verwijzing-id": "825264",
+										"__text": "Algemene Kinderbijslagwet"
+									},
+									"_status": "officieel",
+									"__text": "Wijziging van de"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "12"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=12&g=2017-03-01",
+												"_onderdeel": "artikel=12",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=12"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XII&artikel=12&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=12",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=12"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukXII/Artikel12",
+								"_code": "a-12",
+								"_stam-id": "2090693",
+								"_versie-id": "10535052",
+								"_id": "C14876321",
+								"_label-id": "2038254",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 12",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XII&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XII",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XII"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XII&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XII",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XII"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukXII",
+							"_stam-id": "2090703",
+							"_versie-id": "10535062",
+							"_id": "C14876331",
+							"_label-id": "2038264",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk XII",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "XIII",
+								"titel": {
+									"_status": "officieel",
+									"__text": "Wijziging van de Wet arbeid buitenlandse werknemers"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "13"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=13&g=2017-03-01",
+												"_onderdeel": "artikel=13",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=13"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XIII&artikel=13&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=13",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=13"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukXIII/Artikel13",
+								"_code": "a-13",
+								"_stam-id": "2090713",
+								"_versie-id": "10535072",
+								"_id": "C14876341",
+								"_label-id": "2038274",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 13",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XIII&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XIII",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XIII"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XIII&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XIII",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XIII"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukXIII",
+							"_stam-id": "2090723",
+							"_versie-id": "10535082",
+							"_id": "C14876351",
+							"_label-id": "2038284",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk XIII",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "XIV",
+								"titel": {
+									"extref": {
+										"_doc": "onbekend",
+										"_verwijzing-id": "825265",
+										"__text": "Wet op de loonbelasting 1964"
+									},
+									"_status": "officieel",
+									"__text": "Wijziging van de"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "14"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=14&g=2017-03-01",
+												"_onderdeel": "artikel=14",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=14"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XIV&artikel=14&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=14",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=14"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukXIV/Artikel14",
+								"_code": "a-14",
+								"_stam-id": "2090733",
+								"_versie-id": "10535092",
+								"_id": "C14876361",
+								"_label-id": "2038294",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 14",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XIV&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XIV",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XIV"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XIV&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XIV",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XIV"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukXIV",
+							"_stam-id": "2090743",
+							"_versie-id": "10535102",
+							"_id": "C14876371",
+							"_label-id": "2038304",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk XIV",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "XV",
+								"titel": {
+									"extref": {
+										"_doc": "onbekend",
+										"_verwijzing-id": "825266",
+										"__text": "Algemene wet inzake rijksbelastingen"
+									},
+									"_status": "officieel",
+									"__text": "Wijziging van de"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "15"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=15&g=2017-03-01",
+												"_onderdeel": "artikel=15",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=15"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XV&artikel=15&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=15",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=15"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukXV/Artikel15",
+								"_code": "a-15",
+								"_stam-id": "2090753",
+								"_versie-id": "10535112",
+								"_id": "C14876381",
+								"_label-id": "2038314",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 15",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XV&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XV",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XV"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XV&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XV",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XV"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukXV",
+							"_stam-id": "2090763",
+							"_versie-id": "10535122",
+							"_id": "C14876391",
+							"_label-id": "2038324",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk XV",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "XVI",
+								"titel": {
+									"extref": {
+										"_doc": "onbekend",
+										"_verwijzing-id": "825267",
+										"__text": "Wet inzake spaarbewijzen"
+									},
+									"_status": "officieel",
+									"__text": "Wijziging van de"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "16"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=16&g=2017-03-01",
+												"_onderdeel": "artikel=16",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=16"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XVI&artikel=16&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=16",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=16"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukXVI/Artikel16",
+								"_code": "a-16",
+								"_stam-id": "2090773",
+								"_versie-id": "10535132",
+								"_id": "C14876401",
+								"_label-id": "2038334",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 16",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XVI&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XVI",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XVI"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XVI&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XVI",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XVI"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukXVI",
+							"_stam-id": "2090783",
+							"_versie-id": "10535142",
+							"_id": "C14876411",
+							"_label-id": "2038344",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk XVI",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "XVII",
+								"titel": {
+									"_status": "officieel",
+									"__text": "Wijziging van de Wet identiteitsvaststelling bij financiële dienstverlening"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "17"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=17&g=2017-03-01",
+												"_onderdeel": "artikel=17",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=17"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XVII&artikel=17&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=17",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=17"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukXVII/Artikel17",
+								"_code": "a-17",
+								"_stam-id": "2090793",
+								"_versie-id": "10535152",
+								"_id": "C14876421",
+								"_label-id": "2038354",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 17",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XVII&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XVII",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XVII"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XVII&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XVII",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XVII"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukXVII",
+							"_stam-id": "2090803",
+							"_versie-id": "10535162",
+							"_id": "C14876431",
+							"_label-id": "2038364",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk XVII",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "XVIII",
+								"titel": {
+									"extref": {
+										"_doc": "onbekend",
+										"_verwijzing-id": "825268",
+										"__text": "Wet op de economische delicten"
+									},
+									"_status": "officieel",
+									"__text": "Wijziging van de"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "18"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=18&g=2017-03-01",
+												"_onderdeel": "artikel=18",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=18"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XVIII&artikel=18&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=18",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=18"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukXVIII/Artikel18",
+								"_code": "a-18",
+								"_stam-id": "2090813",
+								"_versie-id": "10536532",
+								"_id": "C14876441",
+								"_label-id": "2038374",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 18",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XVIII&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XVIII",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XVIII"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XVIII&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XVIII",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XVIII"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukXVIII",
+							"_stam-id": "2090823",
+							"_versie-id": "10536552",
+							"_id": "C14876451",
+							"_label-id": "2038384",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk XVIII",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "XIX",
+								"titel": {
+									"extref": {
+										"_doc": "onbekend",
+										"_verwijzing-id": "825269",
+										"__text": "Vreemdelingenwet"
+									},
+									"_status": "officieel",
+									"__text": "Wijziging van de"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "19"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=19&g=2017-03-01",
+												"_onderdeel": "artikel=19",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=19"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XIX&artikel=19&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=19",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=19"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukXIX/Artikel19",
+								"_code": "a-19",
+								"_stam-id": "2090833",
+								"_versie-id": "10536572",
+								"_id": "C14876461",
+								"_label-id": "2038394",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 19",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XIX&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XIX",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XIX"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XIX&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XIX",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XIX"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukXIX",
+							"_stam-id": "2090843",
+							"_versie-id": "10536582",
+							"_id": "C14876471",
+							"_label-id": "2038404",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk XIX",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "XX",
+								"titel": {
+									"extref": {
+										"_doc": "onbekend",
+										"_verwijzing-id": "825270",
+										"__text": "Wet op het Notarisambt"
+									},
+									"_status": "officieel",
+									"__text": "Wijziging van de"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "20"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=20&g=2017-03-01",
+												"_onderdeel": "artikel=20",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=20"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XX&artikel=20&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=20",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=20"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukXX/Artikel20",
+								"_code": "a-20",
+								"_stam-id": "2090853",
+								"_versie-id": "10536592",
+								"_id": "C14876481",
+								"_label-id": "2038414",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 20",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XX&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XX",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XX"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XX&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XX",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XX"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukXX",
+							"_stam-id": "2090863",
+							"_versie-id": "10536602",
+							"_id": "C14876491",
+							"_label-id": "2038424",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk XX",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "XXI",
+								"titel": {
+									"extref": {
+										"_doc": "onbekend",
+										"_verwijzing-id": "825271",
+										"__text": "Wet personenvervoer"
+									},
+									"_status": "officieel",
+									"__text": "Wijziging van de"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "21"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=21&g=2017-03-01",
+												"_onderdeel": "artikel=21",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=21"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XXI&artikel=21&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=21",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=21"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukXXI/Artikel21",
+								"_code": "a-21",
+								"_stam-id": "2090873",
+								"_versie-id": "10536612",
+								"_id": "C14876501",
+								"_label-id": "2038434",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 21",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XXI&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XXI",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XXI"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XXI&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XXI",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XXI"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukXXI",
+							"_stam-id": "2090883",
+							"_versie-id": "10536622",
+							"_id": "C14876511",
+							"_label-id": "2038444",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk XXI",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": "XXII",
+								"titel": {
+									"extref": {
+										"_doc": "onbekend",
+										"_verwijzing-id": "825272",
+										"__text": "Wet persoonsregistraties"
+									},
+									"_status": "officieel",
+									"__text": "Wijziging van de"
+								}
+							},
+							"artikel": {
+								"kop": {
+									"label": "Artikel",
+									"nr": "22"
+								},
+								"al": {
+									"redactie": {
+										"_type": "vervanging",
+										"__text": "Vervallen"
+									}
+								},
+								"meta-data": {
+									"brondata": {
+										"oorspronkelijk": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "300",
+												"uitgiftedatum": {
+													"_isodatum": "2004-07-06",
+													"__text": "06-07-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-06-24",
+													"__text": "24-06-2004"
+												},
+												"dossierref": {
+													"_dossier": "29218",
+													"__text": "29218"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-300"
+											}
+										},
+										"inwerkingtreding": {
+											"publicatie": {
+												"publicatiejaar": "2004",
+												"publicatienr": "583",
+												"uitgiftedatum": {
+													"_isodatum": "2004-11-18",
+													"__text": "18-11-2004"
+												},
+												"ondertekeningsdatum": {
+													"_isodatum": "2004-11-09",
+													"__text": "09-11-2004"
+												},
+												"_effect": "vervallen",
+												"_soort": "Stb",
+												"_urlidentifier": "stb-2004-583"
+											},
+											"inwerkingtreding.datum": {
+												"_isodatum": "2005-01-01",
+												"__text": "01-01-2005"
+											}
+										}
+									},
+									"jcis": {
+										"jci": [
+											{
+												"_versie": "1.0",
+												"_verwijzing": "1.0:c:BWBR0006297&artikel=22&g=2017-03-01",
+												"_onderdeel": "artikel=22",
+												"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=22"
+											},
+											{
+												"_versie": "1.3",
+												"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XXII&artikel=22&z=2017-03-01&g=2017-03-01",
+												"_onderdeel": "artikel=22",
+												"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=22"
+											}
+										]
+									}
+								},
+								"_bwb-ng-variabel-deel": "/HoofdstukXXII/Artikel22",
+								"_code": "a-22",
+								"_stam-id": "2090893",
+								"_versie-id": "10536632",
+								"_id": "C14876521",
+								"_label-id": "2038454",
+								"_inwerking": "2005-01-01",
+								"_label": "Artikel 22",
+								"_bron": "Stb.2004-300",
+								"_effect": "vervallen",
+								"_ondertekening_bron": "2004-06-24",
+								"_publicatie_bron": "2004-07-06",
+								"_publicatie_iwt": "2004-11-18",
+								"_status": "vervallen"
+							},
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "300",
+											"uitgiftedatum": {
+												"_isodatum": "2004-07-06",
+												"__text": "06-07-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-06-24",
+												"__text": "24-06-2004"
+											},
+											"dossierref": {
+												"_dossier": "29218",
+												"__text": "29218"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-300"
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "2004",
+											"publicatienr": "583",
+											"uitgiftedatum": {
+												"_isodatum": "2004-11-18",
+												"__text": "18-11-2004"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "2004-11-09",
+												"__text": "09-11-2004"
+											},
+											"_effect": "vervallen",
+											"_soort": "Stb",
+											"_urlidentifier": "stb-2004-583"
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "2005-01-01",
+											"__text": "01-01-2005"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XXII&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XXII",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XXII"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XXII&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XXII",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XXII"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukXXII",
+							"_stam-id": "2090903",
+							"_versie-id": "10536642",
+							"_id": "C14876531",
+							"_label-id": "2038464",
+							"_inwerking": "2005-01-01",
+							"_label": "Hoofdstuk XXII",
+							"_bron": "Stb.2004-300",
+							"_effect": "vervallen",
+							"_ondertekening_bron": "2004-06-24",
+							"_publicatie_bron": "2004-07-06",
+							"_publicatie_iwt": "2004-11-18",
+							"_status": "vervallen"
+						},
+						{
+							"kop": {
+								"label": "Hoofdstuk",
+								"nr": {
+									"_status": "officieel",
+									"__text": "XXIII"
+								},
+								"titel": {
+									"_status": "officieel",
+									"__text": "Slotbepalingen"
+								}
+							},
+							"artikel": [
+								{
+									"kop": {
+										"label": "Artikel",
+										"nr": {
+											"_status": "officieel",
+											"__text": "23"
+										}
+									},
+									"lid": [
+										{
+											"lidnr": {
+												"_status": "officieel",
+												"__text": "1"
+											},
+											"al": {
+												"nadruk": {
+													"_type": "cur",
+													"__text": "b"
+												},
+												"__text": "Artikel 50\n, derde lid, van de Organisatiewet Sociale Verzekering, zoals dat artikel bij deze wet is gewijzigd, is uitsluitend van toepassing ten aanzien van verzekerden die hun werkzaamheden zijn aangevangen of die loon zijn gaan genieten op of na het tijdstip van inwerkingtreding van deze wet."
+											},
+											"meta-data": {
+												"jcis": {
+													"jci": {
+														"_versie": "1.3",
+														"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XXIII&artikel=23&lid=1&z=2017-03-01&g=2017-03-01",
+														"_onderdeel": "lid=1"
+													}
+												}
+											},
+											"_bwb-ng-variabel-deel": "/HoofdstukXXIII/Artikel23/Lid1",
+											"_label-id": "2038474L1"
+										},
+										{
+											"lidnr": {
+												"_status": "officieel",
+												"__text": "2"
+											},
+											"al": {
+												"intref": {
+													"_doc": "jci1.3:c:BWBR0006297&hoofdstuk=I&artikel=1&z=2017-03-01&g=2017-03-01",
+													"_label-id": "2038034",
+													"_verwijzing-id": "825273",
+													"_bwb-id": "BWBR0006297",
+													"_bwb-ng-variabel-deel": "/HoofdstukI/Artikel1",
+													"__text": "artikel 1 van de Wet op de identificatieplicht"
+												},
+												"__text": "Onze Minister van Sociale Zaken en Werkgelegenheid stelt, na overleg met Onze Minister van Financiën en gehoord de Sociale Verzekeringsraad, een termijn, aanvangende op het tijdstip van inwerkingtreding van deze wet, waarbinnen de verzekerden die hun werkzaamheden zijn aangevangen of die loon zijn gaan genieten voor het tijdstip van inwerkingtreding van deze wet, een document als bedoeld in \n ter inzage dienen te verstrekken aan de werkgever teneinde deze in staat te stellen de aard en het nummer van dit document in de administratie op te nemen."
+											},
+											"meta-data": {
+												"jcis": {
+													"jci": {
+														"_versie": "1.3",
+														"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XXIII&artikel=23&lid=2&z=2017-03-01&g=2017-03-01",
+														"_onderdeel": "lid=2"
+													}
+												}
+											},
+											"_bwb-ng-variabel-deel": "/HoofdstukXXIII/Artikel23/Lid2",
+											"_label-id": "2038474L2"
+										},
+										{
+											"lidnr": {
+												"_status": "officieel",
+												"__text": "3"
+											},
+											"al": {
+												"nadruk": {
+													"_type": "cur",
+													"__text": "c"
+												},
+												"__text": "De verplichting bedoeld in het tweede lid geldt als een verplichting van de verzekerde als bedoeld in artikel 50\n, tweede lid, van de Organisatiewet Sociale Verzekering, zoals dat artikel bij deze wet is gewijzigd."
+											},
+											"meta-data": {
+												"jcis": {
+													"jci": {
+														"_versie": "1.3",
+														"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XXIII&artikel=23&lid=3&z=2017-03-01&g=2017-03-01",
+														"_onderdeel": "lid=3"
+													}
+												}
+											},
+											"_bwb-ng-variabel-deel": "/HoofdstukXXIII/Artikel23/Lid3",
+											"_label-id": "2038474L3"
+										}
+									],
+									"meta-data": {
+										"brondata": {
+											"oorspronkelijk": {
+												"publicatie": {
+													"publicatiejaar": "1993",
+													"publicatienr": "660",
+													"ondertekeningsdatum": {
+														"_isodatum": "1993-12-09",
+														"__text": "09-12-1993"
+													},
+													"dossierref": {
+														"_dossier": "22694",
+														"__text": "22694"
+													},
+													"_effect": "nieuwe-regeling",
+													"_soort": "Stb",
+													"_urlidentifier": ""
+												}
+											},
+											"inwerkingtreding": {
+												"publicatie": {
+													"publicatiejaar": "1994",
+													"publicatienr": "190",
+													"uitgiftedatum": {
+														"_isodatum": "1994-03-24",
+														"__text": "24-03-1994"
+													},
+													"ondertekeningsdatum": {
+														"_isodatum": "1994-03-09",
+														"__text": "09-03-1994"
+													},
+													"_effect": "nieuwe-regeling",
+													"_soort": "Stb",
+													"_urlidentifier": ""
+												},
+												"inwerkingtreding.datum": {
+													"_isodatum": "1994-06-01",
+													"__text": "01-06-1994"
+												}
+											}
+										},
+										"jcis": {
+											"jci": [
+												{
+													"_versie": "1.0",
+													"_verwijzing": "1.0:c:BWBR0006297&artikel=23&g=2017-03-01",
+													"_onderdeel": "artikel=23",
+													"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=23"
+												},
+												{
+													"_versie": "1.3",
+													"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XXIII&artikel=23&z=2017-03-01&g=2017-03-01",
+													"_onderdeel": "artikel=23",
+													"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=23"
+												}
+											]
+										}
+									},
+									"_bwb-ng-variabel-deel": "/HoofdstukXXIII/Artikel23",
+									"_stam-id": "2090913",
+									"_versie-id": "3139782",
+									"_id": "C31147971",
+									"_label-id": "2038474",
+									"_inwerking": "1994-06-01",
+									"_label": "Artikel 23",
+									"_bron": "Stb.1993-660",
+									"_effect": "nieuwe-regeling",
+									"_ondertekening_bron": "1993-12-09",
+									"_publicatie_iwt": "1994-03-24",
+									"_status": "goed"
+								},
+								{
+									"kop": {
+										"label": "Artikel",
+										"nr": {
+											"_status": "officieel",
+											"__text": "24"
+										}
+									},
+									"al": "De artikelen van deze wet treden in werking op een bij koninklijk besluit te bepalen tijdstip, dat voor de verschillende artikelen of onderdelen daarvan verschillend kan worden vastgesteld.",
+									"meta-data": {
+										"brondata": {
+											"oorspronkelijk": {
+												"publicatie": {
+													"publicatiejaar": "1993",
+													"publicatienr": "660",
+													"ondertekeningsdatum": {
+														"_isodatum": "1993-12-09",
+														"__text": "09-12-1993"
+													},
+													"dossierref": {
+														"_dossier": "22694",
+														"__text": "22694"
+													},
+													"_effect": "nieuwe-regeling",
+													"_soort": "Stb",
+													"_urlidentifier": ""
+												}
+											},
+											"inwerkingtreding": {
+												"publicatie": {
+													"publicatiejaar": "1994",
+													"publicatienr": "190",
+													"uitgiftedatum": {
+														"_isodatum": "1994-03-24",
+														"__text": "24-03-1994"
+													},
+													"ondertekeningsdatum": {
+														"_isodatum": "1994-03-09",
+														"__text": "09-03-1994"
+													},
+													"_effect": "nieuwe-regeling",
+													"_soort": "Stb",
+													"_urlidentifier": ""
+												},
+												"inwerkingtreding.datum": {
+													"_isodatum": "1994-06-01",
+													"__text": "01-06-1994"
+												}
+											}
+										},
+										"jcis": {
+											"jci": [
+												{
+													"_versie": "1.0",
+													"_verwijzing": "1.0:c:BWBR0006297&artikel=24&g=2017-03-01",
+													"_onderdeel": "artikel=24",
+													"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=24"
+												},
+												{
+													"_versie": "1.3",
+													"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XXIII&artikel=24&z=2017-03-01&g=2017-03-01",
+													"_onderdeel": "artikel=24",
+													"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=24"
+												}
+											]
+										}
+									},
+									"_bwb-ng-variabel-deel": "/HoofdstukXXIII/Artikel24",
+									"_stam-id": "2090923",
+									"_versie-id": "3139792",
+									"_id": "C31148081",
+									"_label-id": "2038484",
+									"_inwerking": "1994-06-01",
+									"_label": "Artikel 24",
+									"_bron": "Stb.1993-660",
+									"_effect": "nieuwe-regeling",
+									"_ondertekening_bron": "1993-12-09",
+									"_publicatie_iwt": "1994-03-24",
+									"_status": "goed"
+								},
+								{
+									"kop": {
+										"label": "Artikel",
+										"nr": {
+											"_status": "officieel",
+											"__text": "25"
+										}
+									},
+									"al": "Deze wet kan worden aangehaald als \"Wet op de identificatieplicht\".",
+									"meta-data": {
+										"brondata": {
+											"oorspronkelijk": {
+												"publicatie": {
+													"publicatiejaar": "1993",
+													"publicatienr": "660",
+													"ondertekeningsdatum": {
+														"_isodatum": "1993-12-09",
+														"__text": "09-12-1993"
+													},
+													"dossierref": {
+														"_dossier": "22694",
+														"__text": "22694"
+													},
+													"_effect": "nieuwe-regeling",
+													"_soort": "Stb",
+													"_urlidentifier": ""
+												}
+											},
+											"inwerkingtreding": {
+												"publicatie": {
+													"publicatiejaar": "1994",
+													"publicatienr": "190",
+													"uitgiftedatum": {
+														"_isodatum": "1994-03-24",
+														"__text": "24-03-1994"
+													},
+													"ondertekeningsdatum": {
+														"_isodatum": "1994-03-09",
+														"__text": "09-03-1994"
+													},
+													"_effect": "nieuwe-regeling",
+													"_soort": "Stb",
+													"_urlidentifier": ""
+												},
+												"inwerkingtreding.datum": {
+													"_isodatum": "1994-06-01",
+													"__text": "01-06-1994"
+												}
+											}
+										},
+										"jcis": {
+											"jci": [
+												{
+													"_versie": "1.0",
+													"_verwijzing": "1.0:c:BWBR0006297&artikel=25&g=2017-03-01",
+													"_onderdeel": "artikel=25",
+													"_korte-verwijzing": "1.0:c:BWBR0006297&artikel=25"
+												},
+												{
+													"_versie": "1.3",
+													"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XXIII&artikel=25&z=2017-03-01&g=2017-03-01",
+													"_onderdeel": "artikel=25",
+													"_korte-verwijzing": "jci1.3:c:BWBR0006297&artikel=25"
+												}
+											]
+										}
+									},
+									"_bwb-ng-variabel-deel": "/HoofdstukXXIII/Artikel25",
+									"_stam-id": "2090933",
+									"_versie-id": "3139802",
+									"_id": "C31147881",
+									"_label-id": "2038494",
+									"_inwerking": "1994-06-01",
+									"_label": "Artikel 25",
+									"_bron": "Stb.1993-660",
+									"_effect": "nieuwe-regeling",
+									"_ondertekening_bron": "1993-12-09",
+									"_publicatie_iwt": "1994-03-24",
+									"_status": "goed"
+								}
+							],
+							"meta-data": {
+								"brondata": {
+									"oorspronkelijk": {
+										"publicatie": {
+											"publicatiejaar": "1993",
+											"publicatienr": "660",
+											"ondertekeningsdatum": {
+												"_isodatum": "1993-12-09",
+												"__text": "09-12-1993"
+											},
+											"dossierref": {
+												"_dossier": "22694",
+												"__text": "22694"
+											},
+											"_effect": "nieuwe-regeling",
+											"_soort": "Stb",
+											"_urlidentifier": ""
+										}
+									},
+									"inwerkingtreding": {
+										"publicatie": {
+											"publicatiejaar": "1994",
+											"publicatienr": "190",
+											"uitgiftedatum": {
+												"_isodatum": "1994-03-24",
+												"__text": "24-03-1994"
+											},
+											"ondertekeningsdatum": {
+												"_isodatum": "1994-03-09",
+												"__text": "09-03-1994"
+											},
+											"_effect": "nieuwe-regeling",
+											"_soort": "Stb",
+											"_urlidentifier": ""
+										},
+										"inwerkingtreding.datum": {
+											"_isodatum": "1994-06-01",
+											"__text": "01-06-1994"
+										}
+									}
+								},
+								"jcis": {
+									"jci": [
+										{
+											"_versie": "1.0",
+											"_verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XXIII&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XXIII",
+											"_korte-verwijzing": "1.0:c:BWBR0006297&hoofdstuk=XXIII"
+										},
+										{
+											"_versie": "1.3",
+											"_verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XXIII&z=2017-03-01&g=2017-03-01",
+											"_onderdeel": "hoofdstuk=XXIII",
+											"_korte-verwijzing": "jci1.3:c:BWBR0006297&hoofdstuk=XXIII"
+										}
+									]
+								}
+							},
+							"_bwb-ng-variabel-deel": "/HoofdstukXXIII",
+							"_stam-id": "2090943",
+							"_versie-id": "3139812",
+							"_id": "C31148261",
+							"_label-id": "2038504",
+							"_inwerking": "1994-06-01",
+							"_label": "Hoofdstuk XXIII",
+							"_bron": "Stb.1993-660",
+							"_effect": "nieuwe-regeling",
+							"_ondertekening_bron": "1993-12-09",
+							"_publicatie_iwt": "1994-03-24",
+							"_status": "goed"
+						}
+					]
+				},
+				"wetsluiting": {
+					"slotformulering": {
+						"al": {
+							"nadruk": {
+								"_type": "cur",
+								"__text": "Staatsblad"
+							},
+							"__text": "Lasten en bevelen dat deze in het \n zal worden geplaatst en dat alle ministeries, autoriteiten, colleges en ambtenaren wie zulks aangaat, aan de nauwkeurige uitvoering de hand zullen houden."
+						}
+					},
+					"gegeven": {
+						"dagtekening": {
+							"plaats": "Gegeven te ’s-Gravenhage",
+							"datum": {
+								"_isodatum": "",
+								"__text": "9 december 1993"
+							}
+						},
+						"koning": "Beatrix"
+					},
+					"ondertekening": {
+						"functie": "De Minister van Justitie,",
+						"naam": {
+							"achternaam": "E. M. H. Hirsch Ballin"
+						}
+					},
+					"uitgifte": {
+						"datum": {
+							"_isodatum": "",
+							"__text": "de drieëntwintigste december 1993"
+						},
+						"ondertekening": {
+							"functie": "De Minister van Justitie,",
+							"naam": {
+								"achternaam": "E. M. H. Hirsch Ballin"
+							}
+						}
+					},
+					"meta-data": {
+						"brondata": {
+							"oorspronkelijk": {
+								"publicatie": {
+									"publicatiejaar": "1993",
+									"publicatienr": "660",
+									"ondertekeningsdatum": {
+										"_isodatum": "1993-12-09",
+										"__text": "09-12-1993"
+									},
+									"dossierref": {
+										"_dossier": "22694",
+										"__text": "22694"
+									},
+									"_effect": "nieuwe-regeling",
+									"_soort": "Stb",
+									"_urlidentifier": ""
+								}
+							},
+							"inwerkingtreding": {
+								"publicatie": {
+									"publicatiejaar": "1994",
+									"publicatienr": "190",
+									"uitgiftedatum": {
+										"_isodatum": "1994-03-24",
+										"__text": "24-03-1994"
+									},
+									"ondertekeningsdatum": {
+										"_isodatum": "1994-03-09",
+										"__text": "09-03-1994"
+									},
+									"_effect": "nieuwe-regeling",
+									"_soort": "Stb",
+									"_urlidentifier": ""
+								},
+								"inwerkingtreding.datum": {
+									"_isodatum": "1994-06-01",
+									"__text": "01-06-1994"
+								}
+							}
+						}
+					},
+					"_bwb-ng-variabel-deel": "/SlotformulierEnOndertekening",
+					"_stam-id": "2090953",
+					"_versie-id": "3139822",
+					"_id": "C31147831",
+					"_label-id": "2038514",
+					"_inwerking": "1994-06-01",
+					"_bron": "Stb.1993-660",
+					"_effect": "nieuwe-regeling",
+					"_ondertekening_bron": "1993-12-09",
+					"_publicatie_iwt": "1994-03-24",
+					"_status": "goed"
+				}
+			},
+			"meta-data": {
+				"brondata": {
+					"oorspronkelijk": {
+						"publicatie": {
+							"publicatiejaar": "1993",
+							"publicatienr": "660",
+							"ondertekeningsdatum": {
+								"_isodatum": "1993-12-09",
+								"__text": "09-12-1993"
+							},
+							"dossierref": {
+								"_dossier": "22694",
+								"__text": "22694"
+							},
+							"_effect": "nieuwe-regeling",
+							"_soort": "Stb",
+							"_urlidentifier": ""
+						}
+					},
+					"inwerkingtreding": {
+						"publicatie": {
+							"publicatiejaar": "1994",
+							"publicatienr": "190",
+							"uitgiftedatum": {
+								"_isodatum": "1994-03-24",
+								"__text": "24-03-1994"
+							},
+							"ondertekeningsdatum": {
+								"_isodatum": "1994-03-09",
+								"__text": "09-03-1994"
+							},
+							"_effect": "nieuwe-regeling",
+							"_soort": "Stb",
+							"_urlidentifier": ""
+						},
+						"inwerkingtreding.datum": {
+							"_isodatum": "1994-06-01",
+							"__text": "01-06-1994"
+						}
+					}
+				},
+				"jcis": {
+					"jci": [
+						{
+							"_versie": "1.0",
+							"_verwijzing": "1.0:c:BWBR0006297&g=2017-03-01",
+							"_onderdeel": "wetgeving",
+							"_korte-verwijzing": "1.0:c:BWBR0006297"
+						},
+						{
+							"_versie": "1.3",
+							"_verwijzing": "jci1.3:c:BWBR0006297&z=2017-03-01&g=2017-03-01",
+							"_onderdeel": "wetgeving",
+							"_korte-verwijzing": "jci1.3:c:BWBR0006297"
+						}
+					]
+				}
+			},
+			"_dtdversie": "2.0",
+			"_soort": "wet",
+			"_xml:lang": "nl",
+			"_stam-id": "2090413",
+			"_versie-id": "3139832",
+			"_id": "C31147841",
+			"_label-id": "2038524",
+			"_inwerkingtredingsdatum": "1994-06-01"
+		},
+		"_xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+		"_bwb-ng-vast-deel": "http://wetten.overheid.nl/id/BWBR0006297/2017-03-01/0",
+		"_xsi:noNamespaceSchemaLocation": "https://repository.officiele-overheidspublicaties.nl/Schema/BWB-toestand/2016-1/xsd/toestand_2016-1.xsd",
+		"_bwb-id": "BWBR0006297",
+		"_inwerkingtreding": "2017-03-01"
+	}
+}

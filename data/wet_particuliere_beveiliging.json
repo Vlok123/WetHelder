@@ -1,0 +1,37 @@
+{
+  "wetgeving": {
+    "basiswet": {
+      "citeertitel": "Wet particuliere beveiligingsorganisaties en recherchebureaus",
+      "artikel": [
+        {
+          "kop": {
+            "nr": "1"
+          },
+          "al": "In deze wet wordt verstaan onder:",
+          "lid": [
+            {
+              "lidnr": "1",
+              "al": "Onze Minister: Onze Minister van Veiligheid en Justitie."
+            },
+            {
+              "lidnr": "2",
+              "al": "beveiligingsorganisatie: particuliere organisatie gericht op het verrichten van beveiligingswerkzaamheden."
+            }
+          ]
+        },
+        {
+          "kop": {
+            "nr": "2"
+          },
+          "al": "Het is verboden zonder vergunning van Onze Minister beveiligingswerkzaamheden of recherchewerkzaamheden te verrichten.",
+          "lid": [
+            {
+              "lidnr": "1",
+              "al": "Verbod zonder vergunning beveiligings- of recherchewerkzaamheden te verrichten of aan te bieden."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

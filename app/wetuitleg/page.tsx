@@ -227,6 +227,55 @@ function WetUitlegPage() {
     navigator.clipboard.writeText(text)
   }
 
+  // Convert markdown to JSX elements
+  const parseMarkdown = (text: string) => {
+    const parts: (string | React.ReactElement)[] = []
+    let lastIndex = 0
+    
+    // Process **bold** text
+    const boldRegex = /\*\*(.*?)\*\*/g
+    let match
+    
+    while ((match = boldRegex.exec(text)) !== null) {
+      // Add text before the match
+      if (match.index > lastIndex) {
+        parts.push(text.slice(lastIndex, match.index))
+      }
+      
+      // Add bold element
+      parts.push(
+        <strong key={`bold-${match.index}`} className="font-semibold text-gray-900">
+          {match[1]}
+        </strong>
+      )
+      
+      lastIndex = match.index + match[0].length
+    }
+    
+    // Add remaining text
+    if (lastIndex < text.length) {
+      parts.push(text.slice(lastIndex))
+    }
+    
+    return parts
+  }
+
+  const formatParagraph = (paragraph: string, index: number) => {
+    // Check if it's a bullet point
+    if (paragraph.trim().startsWith('•') || paragraph.trim().startsWith('-')) {
+      const bulletText = paragraph.replace(/^[•-]\s*/, '').trim()
+      return (
+        <div key={index} className="flex items-start gap-2 ml-4">
+          <span className="text-blue-600 mt-1 text-xs">•</span>
+          <span className="flex-1">{parseMarkdown(bulletText)}</span>
+        </div>
+      )
+    }
+    
+    // Regular paragraph
+    return <p key={index}>{parseMarkdown(paragraph)}</p>
+  }
+
   const formatMessage = (text: string) => {
     // Detect **WETTEKST:** pattern and format it nicely
     const wettekstMatch = text.match(/\*\*WETTEKST:\*\*([\s\S]*?)(?=\n\n|\*\*|$)/)
@@ -251,21 +300,21 @@ function WetUitlegPage() {
           {/* Rest of content */}
           {restContent && (
             <div className="text-sm text-gray-800 space-y-3 leading-relaxed">
-              {restContent.split('\n\n').map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
+              {restContent.split('\n\n').map((paragraph, index) => 
+                formatParagraph(paragraph, index)
+              )}
             </div>
           )}
         </div>
       )
     }
     
-    // Regular message formatting
+    // Regular message formatting with markdown support
     return (
       <div className="text-sm text-gray-800 space-y-3 leading-relaxed">
-        {text.split('\n\n').map((paragraph, index) => (
-          <p key={index}>{paragraph}</p>
-        ))}
+        {text.split('\n\n').map((paragraph, index) => 
+          formatParagraph(paragraph, index)
+        )}
       </div>
     )
   }

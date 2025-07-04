@@ -60,95 +60,30 @@ export interface BoeteDocument {
 }
 
 // === OFFICIËLE BRONNEN CACHE ===
-let officialSourcesCache: OfficialSourceItem[] | null = null
+// REMOVED: loadOfficialSources function - officiele_bronnen.json has been deleted by user
 
-// Laad het officiele_bronnen.json bestand
-export function loadOfficialSources(): OfficialSourceItem[] {
-  if (officialSourcesCache !== null) {
-    return officialSourcesCache
-  }
-
-  try {
-    const filePath = path.join(process.cwd(), 'data', 'officiele_bronnen.json')
-    const fileContent = fs.readFileSync(filePath, 'utf-8')
-    const data = JSON.parse(fileContent)
-    
-    const sources = data.Sheet1 || []
-    officialSourcesCache = sources
-    console.log(` Loaded ${sources.length} official sources from officiele_bronnen.json`)
-    return sources
-  } catch (error) {
-    console.error('Error loading officiele_bronnen.json:', error)
-    officialSourcesCache = []
-    return []
-  }
-}
-
-// Zoek relevante bronnen gebaseerd op query
-export function findRelevantOfficialSources(query: string, maxResults: number = 5): OfficialSourceItem[] {
-  const sources = loadOfficialSources()
-  const queryLower = query.toLowerCase()
-  
-  // Score elke bron op relevantie
-  const scoredSources = sources.map(source => {
-    let score = 0
-    
-    // Exacte matches krijgen hoge score
-    if (source.Topic.toLowerCase().includes(queryLower)) score += 10
-    if (source.Omschrijving.toLowerCase().includes(queryLower)) score += 8
-    if (source.Categorie.toLowerCase().includes(queryLower)) score += 6
-    if (source["Bron (naam)"].toLowerCase().includes(queryLower)) score += 5
-    
-    // Specifieke trefwoorden detecteren
-    const keywords = extractQueryKeywords(queryLower)
-    for (const keyword of keywords) {
-      if (source.Topic.toLowerCase().includes(keyword)) score += 3
-      if (source.Omschrijving.toLowerCase().includes(keyword)) score += 2
-    }
-    
-    return { source, score }
-  })
-  
-  // Sorteer op score en return top resultaten
-  return scoredSources
-    .filter(item => item.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, maxResults)
-    .map(item => item.source)
+// Zoek relevante bronnen gebaseerd op query - now uses only JSON sources
+export function findRelevantOfficialSources(query: string, maxResults: number = 5): any[] {
+  console.warn('⚠️ officiele_bronnen.json has been removed - using JSON sources instead')
+  return [] // Return empty array since officiele_bronnen.json no longer exists
 }
 
 // Zoek specifieke categorieën
-export function findSourcesByCategory(category: string): OfficialSourceItem[] {
-  const sources = loadOfficialSources()
-  return sources.filter(source => 
-    source.Categorie.toLowerCase().includes(category.toLowerCase())
-  )
+export function findSourcesByCategory(category: string): any[] {
+  console.warn('⚠️ officiele_bronnen.json has been removed - returning empty array')
+  return []
 }
 
 // Zoek APV/lokale regelgeving bronnen
-export function findAPVOfficialSources(): OfficialSourceItem[] {
-  const sources = loadOfficialSources()
-  
-  return sources.filter(source => 
-    source.Topic.toLowerCase().includes('apv') ||
-    source.Topic.toLowerCase().includes('lokale') ||
-    source.Topic.toLowerCase().includes('gemeente') ||
-    source.Omschrijving.toLowerCase().includes('plaatselijke') ||
-    source.Omschrijving.toLowerCase().includes('gemeente')
-  )
+export function findAPVOfficialSources(): any[] {
+  console.warn('⚠️ officiele_bronnen.json has been removed - returning empty array')
+  return []
 }
 
 // Zoek handhavingsbronnen (voor BOA's/politie)
-export function findHandhavingsOfficialSources(): OfficialSourceItem[] {
-  const sources = loadOfficialSources()
-  
-  return sources.filter(source => 
-    source.Categorie.toLowerCase().includes('handhaving') ||
-    source.Topic.toLowerCase().includes('politie') ||
-    source.Topic.toLowerCase().includes('boete') ||
-    source.Omschrijving.toLowerCase().includes('handhaving') ||
-    source.Omschrijving.toLowerCase().includes('politie')
-  )
+export function findHandhavingsOfficialSources(): any[] {
+  console.warn('⚠️ officiele_bronnen.json has been removed - returning empty array')
+  return []
 }
 
 // Automatische APV-bron generator voor ALLE Nederlandse gemeentes

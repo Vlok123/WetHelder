@@ -1,0 +1,21 @@
+{
+  "wetgeving": {
+    "basiswet": {
+      "citeertitel": "Wet personenvervoer 2000",
+      "artikel": [
+        {
+          "kop": {
+            "nr": "1"
+          },
+          "al": "Deze wet regelt het openbaar vervoer van personen in Nederland.",
+          "lid": [
+            {
+              "lidnr": "1",
+              "al": "Het verrichten van openbaar vervoer is onderworpen aan vergunningverlening."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

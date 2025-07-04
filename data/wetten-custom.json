@@ -1,0 +1,20 @@
+{
+  "Sheet1": [
+    {
+      "Categorie": "Wetgeving – nationaal",
+      "Topic": "Voorbeeld Wet",
+      "Bron (naam)": "Voorbeeldwet - Wetten.nl",
+      "URL": "https://wetten.overheid.nl/BWBR0000000",
+      "Omschrijving": "Voorbeeld van hoe je een wet toevoegt aan het systeem",
+      "Scope": "NL"
+    },
+    {
+      "Categorie": "Wetgeving – lokaal",
+      "Topic": "Lokale Verordening",
+      "Bron (naam)": "Gemeente Voorbeeld Verordening",
+      "URL": "https://lokaleregelgeving.overheid.nl/...",
+      "Omschrijving": "Voorbeeld van een lokale verordening",
+      "Scope": "Gemeente"
+    }
+  ]
+} 

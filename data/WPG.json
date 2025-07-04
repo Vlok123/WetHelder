@@ -1,0 +1,3 @@
+{
+  "fout": "Fout bij verwerken van /mnt/data/WPG.xml: 'NoneType' object has no attribute 'strip'"
+}

@@ -1,0 +1,29 @@
+{
+  "wetNaam": "wet_particuliere_beveiliging",
+  "citeertitel": "wet_particuliere_beveiliging",
+  "intitule": "",
+  "url": "https://wetten.overheid.nl/",
+  "categorie": "Wetgeving – nationaal",
+  "scope": "NL",
+  "laatstGewijzigd": "2025-07-04",
+  "artikelen": [
+    {
+      "artikelNr": "1",
+      "tekst": "In deze wet wordt verstaan onder: Onze Minister: Onze Minister van Veiligheid en Justitie. beveiligingsorganisatie: particuliere organisatie gericht op het verrichten van beveiligingswerkzaamheden.",
+      "wetNaam": "wet_particuliere_beveiliging",
+      "bron": "wet_particuliere_beveiliging"
+    },
+    {
+      "artikelNr": "2",
+      "tekst": "Het is verboden zonder vergunning van Onze Minister beveiligingswerkzaamheden of recherchewerkzaamheden te verrichten. Verbod zonder vergunning beveiligings- of recherchewerkzaamheden te verrichten of aan te bieden.",
+      "wetNaam": "wet_particuliere_beveiliging",
+      "bron": "wet_particuliere_beveiliging"
+    }
+  ],
+  "metadata": {
+    "bronFormaat": "BWB",
+    "verwerkingsDatum": "2025-07-04",
+    "optimizedVersion": "1.0",
+    "aantalArtikelen": 2
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "wetNaam": "wet_middelen_gebruik",
+  "citeertitel": "wet_middelen_gebruik",
+  "intitule": "",
+  "url": "https://wetten.overheid.nl/",
+  "categorie": "Wetgeving – nationaal",
+  "scope": "NL",
+  "laatstGewijzigd": "2025-07-04",
+  "artikelen": [
+    {
+      "artikelNr": "1",
+      "tekst": "Het is verboden geweld toe te passen onder invloed van middelen. Een functionaris past geen geweld toe indien hij onder invloed is van een middel dat de uitvoering beïnvloedt.",
+      "wetNaam": "wet_middelen_gebruik",
+      "bron": "wet_middelen_gebruik"
+    }
+  ],
+  "metadata": {
+    "bronFormaat": "BWB",
+    "verwerkingsDatum": "2025-07-04",
+    "optimizedVersion": "1.0",
+    "aantalArtikelen": 1
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "wetNaam": "Wetboek van Strafrecht",
+  "citeertitel": "Wetboek van Strafrecht",
+  "intitule": "Wet van 3 maart 1881",
+  "url": "https://wetten.overheid.nl/BWBR0001854/",
+  "categorie": "Wetgeving – nationaal",
+  "scope": "NL",
+  "laatstGewijzigd": "2024-01-01",
+  "artikelen": [
+    {
+      "nr": "1",
+      "titel": "Geen feit is strafbaar dan uit kracht van een daaraan voorafgegane wettelijke strafbepaling",
+      "tekst": "Geen feit is strafbaar dan uit kracht van een daaraan voorafgegane wettelijke strafbepaling.",
+      "boek": "Boek 1",
+      "titeldeel": "Algemene bepalingen",
+      "hoofdstuk": null,
+      "paragraaf": null,
+      "leden": [
+        {
+          "nr": 1,
+          "tekst": "Geen feit is strafbaar dan uit kracht van een daaraan voorafgegane wettelijke strafbepaling."
+        }
+      ],
+      "keywords": ["legaliteitsbeginsel", "nullum crimen", "strafbaarheid", "wettelijke bepaling"],
+      "gerelateerdeArtikelen": ["artikel 16"],
+      "toelichting": "Het legaliteitsbeginsel: strafbaarheid vereist voorafgaande wettelijke bepaling."
+    },
+    {
+      "nr": "47",
+      "titel": "Doodslag",
+      "tekst": "Hij die opzettelijk een ander van het leven berooft, wordt, als schuldig aan doodslag, gestraft met gevangenisstraf van ten hoogste vijftien jaren of geldboete van de vijfde categorie.",
+      "boek": "Boek 2",
+      "titeldeel": "Misdrijven tegen het leven gericht",
+      "hoofdstuk": "Titel XIX",
+      "paragraaf": null,
+      "leden": [
+        {
+          "nr": 1,
+          "tekst": "Hij die opzettelijk een ander van het leven berooft, wordt, als schuldig aan doodslag, gestraft met gevangenisstraf van ten hoogste vijftien jaren of geldboete van de vijfde categorie."
+        }
+      ],
+      "keywords": ["doodslag", "opzet", "leven berooft", "gevangenisstraf", "vijftien jaren"],
+      "gerelateerdeArtikelen": ["artikel 289", "artikel 287"],
+      "toelichting": "Doodslag: opzettelijk iemand van het leven beroven. Onderscheid met moord (art. 289) is de voorbedachte rade.",
+      "strafmaat": {
+        "gevangenisstraf": "maximaal 15 jaar",
+        "geldboete": "categorie 5"
+      }
+    },
+    {
+      "nr": "289",
+      "titel": "Moord",
+      "tekst": "Hij die opzettelijk en met voorbedachte rade een ander van het leven berooft, wordt, als schuldig aan moord, gestraft met levenslange gevangenisstraf of tijdelijke van ten hoogste dertig jaren of geldboete van de vijfde categorie.",
+      "boek": "Boek 2",
+      "titeldeel": "Misdrijven tegen het leven gericht", 
+      "hoofdstuk": "Titel XIX",
+      "paragraaf": null,
+      "leden": [
+        {
+          "nr": 1,
+          "tekst": "Hij die opzettelijk en met voorbedachte rade een ander van het leven berooft, wordt, als schuldig aan moord, gestraft met levenslange gevangenisstraf of tijdelijke van ten hoogste dertig jaren of geldboete van de vijfde categorie."
+        }
+      ],
+      "keywords": ["moord", "opzet", "voorbedachte rade", "levenslang", "dertig jaren"],
+      "gerelateerdeArtikelen": ["artikel 47", "artikel 287"],
+      "toelichting": "Moord: doodslag met voorbedachte rade. Zwaarste delict uit het Wetboek van Strafrecht.",
+      "strafmaat": {
+        "gevangenisstraf": "levenslang of maximaal 30 jaar",
+        "geldboete": "categorie 5"
+      }
+    }
+  ],
+  "metadata": {
+    "aantalArtikelen": 570,
+    "bronFormaat": "BWB",
+    "verwerkingsDatum": "2024-07-04",
+    "optimizedVersion": "1.0"
+  }
+} 

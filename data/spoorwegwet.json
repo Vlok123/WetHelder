@@ -1,0 +1,37 @@
+{
+  "wetgeving": {
+    "basiswet": {
+      "citeertitel": "Spoorwegwet",
+      "artikel": [
+        {
+          "kop": {
+            "nr": "1"
+          },
+          "al": "In deze wet en de daarop berustende bepalingen wordt verstaan onder:",
+          "lid": [
+            {
+              "lidnr": "1",
+              "al": "aangemelde instantie: conformiteitsbeoordelingsinstantie die overeenkomstig artikel 37 van de interoperabiliteitsrichtlijn is aangemeld bij de Europese Commissie."
+            },
+            {
+              "lidnr": "2",
+              "al": "aangewezen instantie: conformiteitsbeoordelingsinstantie die op grond van artikel 26v, eerste lid, door Onze Minister is aangewezen."
+            }
+          ]
+        },
+        {
+          "kop": {
+            "nr": "2"
+          },
+          "al": "Deze wet is van toepassing op bij koninklijk besluit aangewezen hoofdspoorwegen en op bijzondere spoorwegen.",
+          "lid": [
+            {
+              "lidnr": "1",
+              "al": "Deze wet is van toepassing op als zodanig bij koninklijk besluit aangewezen hoofdspoorwegen en op bijzondere spoorwegen."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
