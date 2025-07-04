@@ -1,5 +1,4 @@
 import OpenAI from 'openai'
-import { loadOfficialSources, searchOfficialSources } from "./officialSources"
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
