@@ -58,7 +58,7 @@ interface OptimizedSource {
 // Cache variables
 let cachedSources: OptimizedSource[] = []
 let lastLoadTime = 0
-const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes - Cache restored after successful fix
 
 // Fast loader for optimized JSON files
 export async function loadOptimizedJsonSources(): Promise<OptimizedSource[]> {
