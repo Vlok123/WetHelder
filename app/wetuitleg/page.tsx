@@ -347,7 +347,7 @@ function WetUitlegPage() {
                     Dit maakt WetHelder betrouwbaarder dan algemene AI-modellen voor juridische vragen.
                   </p>
                 </div>
-                <div className="ml-4">
+                <div className="ml-4 hidden lg:block">
                   <WettenOverzicht />
                 </div>
               </div>
@@ -432,7 +432,7 @@ function WetUitlegPage() {
                             variant="ghost"
                             size="sm"
                             onClick={() => copyToClipboard(message.text)}
-                            className="h-6 w-6 p-0"
+                            className="h-6 w-6 p-0 hidden md:flex"
                           >
                             <Copy className="h-3 w-3" />
                           </Button>
