@@ -1,0 +1,21 @@
+{
+  "wetgeving": {
+    "basiswet": {
+      "citeertitel": "Faillissementswet",
+      "artikel": [
+        {
+          "kop": {
+            "nr": "1"
+          },
+          "al": "Voorbeeldtekst van artikel 1 van deze wet...",
+          "lid": [
+            {
+              "lidnr": "1",
+              "al": "Lid 1 tekst van artikel 1..."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

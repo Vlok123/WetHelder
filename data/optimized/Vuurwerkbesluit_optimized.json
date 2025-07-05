@@ -1,0 +1,23 @@
+{
+  "wetNaam": "Vuurwerkbesluit",
+  "citeertitel": "Vuurwerkbesluit",
+  "intitule": "",
+  "url": "https://wetten.overheid.nl/",
+  "categorie": "Wetgeving – nationaal",
+  "scope": "NL",
+  "laatstGewijzigd": "2025-07-05",
+  "artikelen": [
+    {
+      "artikelNr": "1",
+      "tekst": "Voorbeeldtekst van artikel 1 van deze wet... Lid 1 tekst van artikel 1...",
+      "wetNaam": "Vuurwerkbesluit",
+      "bron": "Vuurwerkbesluit"
+    }
+  ],
+  "metadata": {
+    "bronFormaat": "BWB",
+    "verwerkingsDatum": "2025-07-05",
+    "optimizedVersion": "1.0",
+    "aantalArtikelen": 1
+  }
+}

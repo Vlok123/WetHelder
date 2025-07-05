@@ -71,7 +71,7 @@ const wettenDatabase: WetInfo[] = [
   {
     naam: 'Politiewet 2012',
     afkorting: 'Politiewet',
-    artikelen: 75,
+    artikelen: 144,
     categorie: 'Bestuursrecht',
     beschrijving: 'Organisatie en taken van de politie',
     volledigBeschikbaar: true
@@ -84,8 +84,32 @@ const wettenDatabase: WetInfo[] = [
     beschrijving: 'Instructies voor politie en opsporingsambtenaren',
     volledigBeschikbaar: true
   },
+  {
+    naam: 'Gemeentewet',
+    afkorting: 'Gemeentewet',
+    artikelen: 279,
+    categorie: 'Bestuursrecht',
+    beschrijving: 'Organisatie en bevoegdheden van gemeenten',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet veiligheidsregio\'s',
+    afkorting: 'Wvr',
+    artikelen: 62,
+    categorie: 'Bestuursrecht',
+    beschrijving: 'Organisatie van veiligheidsregio\'s en rampenbestrijding',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Vreemdelingenwet 2000',
+    afkorting: 'Vw 2000',
+    artikelen: 150,
+    categorie: 'Bestuursrecht',
+    beschrijving: 'Toelating, verblijf en uitzetting van vreemdelingen',
+    volledigBeschikbaar: true
+  },
   
-  // Burgerlijk recht
+  // Burgerlijk recht  
   {
     naam: 'Burgerlijk Wetboek Boek 1',
     afkorting: 'BW 1',
@@ -184,6 +208,46 @@ const wettenDatabase: WetInfo[] = [
     beschrijving: 'Boetes en administratieve handhaving',
     volledigBeschikbaar: true
   },
+  {
+    naam: 'Reglement voertuigen',
+    afkorting: 'RV',
+    artikelen: 60,
+    categorie: 'Verkeerswet',
+    beschrijving: 'Technische eisen aan voertuigen',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wegenwet',
+    afkorting: 'Wegenwet',
+    artikelen: 45,
+    categorie: 'Verkeerswet',
+    beschrijving: 'Aanleg en beheer van wegen',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Spoorwegwet',
+    afkorting: 'Spoorwegwet',
+    artikelen: 75,
+    categorie: 'Verkeerswet',
+    beschrijving: 'Spoorwegvervoer en spoorbeheer',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Scheepvaartverkeerswet',
+    afkorting: 'Svw',
+    artikelen: 55,
+    categorie: 'Verkeerswet',
+    beschrijving: 'Scheepvaartverkeer en binnenvaartwegen',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet personenvervoer 2000',
+    afkorting: 'Wp 2000',
+    artikelen: 80,
+    categorie: 'Verkeerswet',
+    beschrijving: 'Taxi- en busvervoer',
+    volledigBeschikbaar: true
+  },
   
   // Speciale wetten
   {
@@ -215,7 +279,7 @@ const wettenDatabase: WetInfo[] = [
     afkorting: 'WID',
     artikelen: 5,
     categorie: 'Speciale wetten',
-    beschrijving: 'ID-plicht en legitimatie',
+    beschrijving: 'Verplichting tot identificatie',
     volledigBeschikbaar: true
   },
   {
@@ -227,53 +291,369 @@ const wettenDatabase: WetInfo[] = [
     volledigBeschikbaar: true
   },
   {
-    naam: 'Wet dieren',
-    afkorting: 'Wet dieren',
-    artikelen: 159,
-    categorie: 'Speciale wetten',
-    beschrijving: 'Dierenwelzijn en dierenmishandeling',
-    volledigBeschikbaar: true
-  },
-  {
-    naam: 'Wet publieke gezondheid',
-    afkorting: 'WPG',
-    artikelen: 106,
-    categorie: 'Speciale wetten',
-    beschrijving: 'Volksgezondheid en preventie',
-    volledigBeschikbaar: true
-  },
-  {
     naam: 'Wet forensische zorg',
-    afkorting: 'WFZ',
+    afkorting: 'Wfz',
     artikelen: 34,
     categorie: 'Speciale wetten',
     beschrijving: 'Forensische geestelijke gezondheidszorg',
     volledigBeschikbaar: true
   },
   {
-    naam: 'Wet op de lijkbezorging',
-    afkorting: 'WLB',
-    artikelen: 82,
-    categorie: 'Speciale wetten',
-    beschrijving: 'Begraven, cremeren, lijkschouwing',
-    volledigBeschikbaar: true
-  },
-  {
     naam: 'Wet verplichte geestelijke gezondheidszorg',
-    afkorting: 'WvGGZ',
+    afkorting: 'Wvggz',
     artikelen: 136,
     categorie: 'Speciale wetten',
     beschrijving: 'Gedwongen opname en behandeling',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet op de lijkbezorging',
+    afkorting: 'Wlb',
+    artikelen: 82,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Overlijden, lijkschouwing en begrafenis',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet dieren',
+    afkorting: 'Wd',
+    artikelen: 159,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Dierenwelzijn en diergeneeskunde',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet publieke gezondheid',
+    afkorting: 'Wpg',
+    artikelen: 106,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Infectieziekten en gevaarlijke stoffen',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet Bibob',
+    afkorting: 'Bibob',
+    artikelen: 35,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Bevordering integriteitsbeoordelingen openbaar bestuur',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet openbare manifestaties',
+    afkorting: 'Wom',
+    artikelen: 25,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Demonstraties en bijeenkomsten',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet ter voorkoming van witwassen en financiering van terrorisme',
+    afkorting: 'Wwft',
+    artikelen: 30,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Anti-witwas en terrorismefinanciering',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet maatschappelijke ondersteuning',
+    afkorting: 'Wmo',
+    artikelen: 45,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Maatschappelijke ondersteuning en zorg',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet middelen gebruik',
+    afkorting: 'Wmg',
+    artikelen: 15,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Genotmiddelen en middelenmisbruik',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet particuliere beveiliging',
+    afkorting: 'Wpb',
+    artikelen: 20,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Particuliere beveiligingsorganisaties',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'AVG',
+    afkorting: 'AVG',
+    artikelen: 99,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Algemene Verordening Gegevensbescherming',
+    volledigBeschikbaar: true
+  },
+  
+  // Belastingrecht
+  {
+    naam: 'Algemene wet inzake rijksbelastingen',
+    afkorting: 'AWR',
+    artikelen: 80,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Algemene regels voor belastingen',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Invorderingswet 1990',
+    afkorting: 'IW 1990',
+    artikelen: 70,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Invordering van belastingen',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Toeslagenwet',
+    afkorting: 'TW',
+    artikelen: 35,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Zorgtoeslag, huurtoeslag en kinderopvangtoeslag',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet op belastingen van rechtsverkeer',
+    afkorting: 'WBR',
+    artikelen: 25,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Overdrachtsbelasting en registratierecht',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet op de accijns',
+    afkorting: 'Wet Accijns',
+    artikelen: 45,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Accijnzen op alcohol, tabak en energie',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet op de belasting van personenauto\'s en motorrijwielen',
+    afkorting: 'BPM',
+    artikelen: 30,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Belasting op nieuwe personenauto\'s',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet op de dividendbelasting 1965',
+    afkorting: 'Wet DB 1965',
+    artikelen: 20,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Belasting op dividenden',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet op de inkomstenbelasting 2001',
+    afkorting: 'Wet IB 2001',
+    artikelen: 85,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Inkomstenbelasting voor natuurlijke personen',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet op de kansspelbelasting',
+    afkorting: 'Wet KSB',
+    artikelen: 25,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Belasting op kansspelen',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet op de loonbelasting 1964',
+    afkorting: 'Wet LB 1964',
+    artikelen: 40,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Loonbelasting en premies volksverzekeringen',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet op de motorrijtuigenbelasting',
+    afkorting: 'Wet MRB',
+    artikelen: 35,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Motorrijtuigenbelasting',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet op de omzetbelasting 1968',
+    afkorting: 'Wet OB 1968',
+    artikelen: 55,
+    categorie: 'Speciale wetten',
+    beschrijving: 'BTW (omzetbelasting)',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet waardering onroerende zaken',
+    afkorting: 'Wet WOZ',
+    artikelen: 30,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Waardering van onroerende zaken voor belasting',
+    volledigBeschikbaar: true
+  },
+  
+  // Politie & Handhaving
+  {
+    naam: 'Aanwijzing handelwijze geweldsaanwending politieambtenaar',
+    afkorting: 'Aanwijzing Geweld',
+    artikelen: 15,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Geweldsaanwending door politie',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Aanwijzing opsporingsbevoegdheden',
+    afkorting: 'Aanwijzing OB',
+    artikelen: 20,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Opsporingsbevoegdheden en -methoden',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Aanwijzing rechtsbijstand politieverhoor',
+    afkorting: 'Aanwijzing RB',
+    artikelen: 12,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Rechtsbijstand tijdens verhoor',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Besluit alcohol',
+    afkorting: 'Besluit Alcohol',
+    artikelen: 25,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Alcoholonderzoeken en ademtests',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Besluit bewapening en uitrusting politie',
+    afkorting: 'BBUP',
+    artikelen: 18,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Bewapening en uitrusting van politie',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Besluit buitengewoon opsporingsambtenaar',
+    afkorting: 'Besluit BOA',
+    artikelen: 30,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Buitengewoon opsporingsambtenaren (BOA\'s)',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Besluit politiegegevens',
+    afkorting: 'BPG',
+    artikelen: 22,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Verwerking van politiegegevens',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Regeling politieklachtenprocedure',
+    afkorting: 'RPP',
+    artikelen: 15,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Klachten tegen politie',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Regeling wapens en munitie',
+    afkorting: 'RWM',
+    artikelen: 40,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Uitvoeringsregels wapenwetgeving',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Regeling bloed- en urineonderzoek',
+    afkorting: 'Regeling BUO',
+    artikelen: 10,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Bloed- en urineonderzoek bij verdachten',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Richtlijn artikel 8 WVW',
+    afkorting: 'Richtlijn art. 8',
+    artikelen: 8,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Rijvaardigheid en geschiktheid',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Arbeidsomstandighedenwet',
+    afkorting: 'Arbo-wet',
+    artikelen: 1,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Veiligheid en gezondheid op de werkplek',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Elektriciteitswet 1998',
+    afkorting: 'E-wet 1998',
+    artikelen: 1,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Elektriciteitsvoorziening en energiemarkt',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Faillissementswet',
+    afkorting: 'Fw',
+    artikelen: 1,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Faillissement en surseance van betaling',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Geneesmiddelenwet',
+    afkorting: 'Gnw',
+    artikelen: 1,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Regulering van geneesmiddelen',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Gezondheidswet',
+    afkorting: 'Gw',
+    artikelen: 1,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Gezondheidszorg en volksgezondheid',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Visserijwet 1963',
+    afkorting: 'Visserijwet',
+    artikelen: 1,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Visserij en aquacultuur',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Vuurwerkbesluit',
+    afkorting: 'VWB',
+    artikelen: 1,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Vuurwerk en pyrotechnische artikelen',
+    volledigBeschikbaar: true
+  },
+  {
+    naam: 'Wet milieubeheer',
+    afkorting: 'Wm',
+    artikelen: 1,
+    categorie: 'Speciale wetten',
+    beschrijving: 'Milieubescherming en -regulering',
     volledigBeschikbaar: true
   },
   
   // Lokaal recht
   {
     naam: 'APV Nijmegen',
-    afkorting: 'APV',
+    afkorting: 'APV Nijmegen',
     artikelen: 377,
     categorie: 'Lokaal recht',
-    beschrijving: 'Algemene Plaatselijke Verordening Nijmegen',
+    beschrijving: 'Algemene Plaatselijke Verordening gemeente Nijmegen',
     volledigBeschikbaar: true
   }
 ]
