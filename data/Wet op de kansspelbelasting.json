@@ -1,0 +1,21 @@
+{
+  "wetgeving": {
+    "basiswet": {
+      "citeertitel": "Wet op de kansspelbelasting",
+      "artikel": [
+        {
+          "kop": {
+            "nr": "1"
+          },
+          "al": "Voorbeeldtekst van het eerste artikel...",
+          "lid": [
+            {
+              "lidnr": "1",
+              "al": "Lid 1 tekst van voorbeeldartikel..."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

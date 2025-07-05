@@ -1,0 +1,23 @@
+{
+  "wetNaam": "Wet op de kansspelbelasting",
+  "citeertitel": "Wet op de kansspelbelasting",
+  "intitule": "",
+  "url": "https://wetten.overheid.nl/",
+  "categorie": "Wetgeving – nationaal",
+  "scope": "NL",
+  "laatstGewijzigd": "2025-07-05",
+  "artikelen": [
+    {
+      "artikelNr": "1",
+      "tekst": "Voorbeeldtekst van het eerste artikel... Lid 1 tekst van voorbeeldartikel...",
+      "wetNaam": "Wet op de kansspelbelasting",
+      "bron": "Wet op de kansspelbelasting"
+    }
+  ],
+  "metadata": {
+    "bronFormaat": "BWB",
+    "verwerkingsDatum": "2025-07-05",
+    "optimizedVersion": "1.0",
+    "aantalArtikelen": 1
+  }
+}
