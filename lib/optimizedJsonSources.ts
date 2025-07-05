@@ -5,6 +5,7 @@ import path from 'path'
 interface OptimizedArtikel {
   nr?: string
   nummer?: string  // Support both formats
+  artikelNr?: string // Support new optimized format
   titel: string
   tekst: string
   boek?: string | null
@@ -54,8 +55,8 @@ interface OptimizedSource {
   'Scope': string
 }
 
-// Cache for loaded sources
-let cachedSources: OptimizedSource[] | null = null
+// Cache variables
+let cachedSources: OptimizedSource[] = []
 let lastLoadTime = 0
 const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 
@@ -63,9 +64,8 @@ const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 export async function loadOptimizedJsonSources(): Promise<OptimizedSource[]> {
   const now = Date.now()
   
-  // Return cached data if still valid
-  if (cachedSources && (now - lastLoadTime) < CACHE_DURATION) {
-    console.log(`🚀 Using cached optimized sources: ${cachedSources.length} items`)
+  // Check cache first
+  if (cachedSources.length > 0 && (now - lastLoadTime) < CACHE_DURATION) {
     return cachedSources
   }
   
@@ -97,8 +97,8 @@ export async function loadOptimizedJsonSources(): Promise<OptimizedSource[]> {
         
         // Convert each artikel to source format - support both old and new format
         wetData.artikelen.forEach((artikel) => {
-          // Get article number from either 'nr' or 'nummer' field
-          const articleNumber = artikel.nr || artikel.nummer || 'Unknown'
+          // Get article number from multiple possible fields (support all formats)
+          const articleNumber = artikel.nr || artikel.nummer || artikel.artikelNr || 'Unknown'
           
           const beschrijving = artikel.titeldeel 
             ? `${artikel.titeldeel} - Artikel ${articleNumber}: ${artikel.tekst}`
@@ -396,9 +396,12 @@ export function getOptimizedPerformanceStats(): {
   sourcesCount: number
   lastLoadTime: Date | null
 } {
+  const now = Date.now()
+  const cacheHit = cachedSources.length > 0 && (now - lastLoadTime) < CACHE_DURATION
+  
   return {
-    cacheHit: cachedSources !== null && (Date.now() - lastLoadTime) < CACHE_DURATION,
-    sourcesCount: cachedSources?.length || 0,
+    cacheHit,
+    sourcesCount: cachedSources.length,
     lastLoadTime: lastLoadTime > 0 ? new Date(lastLoadTime) : null
   }
 }
