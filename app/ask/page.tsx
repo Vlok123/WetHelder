@@ -579,7 +579,7 @@ function AskPageContent() {
                 <Sparkles className="h-5 w-5 text-blue-600" />
                 Juridische Assistent
               </h1>
-              <p className="text-sm text-gray-600 mt-1">Stel je juridische vraag en krijg direct een betrouwbaar antwoord</p>
+              <p className="text-sm text-gray-600 mt-1 hidden md:block">Stel je juridische vraag en krijg direct een betrouwbaar antwoord</p>
             </div>
             
             {/* Quick actions */}
@@ -610,9 +610,9 @@ function AskPageContent() {
         {/* Empty state */}
         {messages.length === 0 && (
           <div className="py-12">
-            {/* Rate limit notification */}
+            {/* Rate limit notification - Hidden on mobile */}
             {!session && remainingQuestions !== null && (
-              <div className={`mb-6 p-4 rounded-lg border-l-4 ${
+              <div className={`mb-6 p-4 rounded-lg border-l-4 hidden md:block ${
                 remainingQuestions === 0 
                   ? 'bg-red-50/50 border-l-red-400 border-red-100' 
                   : 'bg-slate-50/50 border-l-slate-400 border-slate-100'
@@ -647,8 +647,8 @@ function AskPageContent() {
               </div>
             )}
 
-            {/* Wets-gebaseerd kader */}
-            <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+            {/* Wets-gebaseerd kader - Hidden on mobile */}
+            <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg hidden md:block">
               <div className="flex items-start gap-3">
                 <CheckCircle className="h-5 w-5 text-emerald-600 mt-0.5 flex-shrink-0" />
                 <div className="flex-1">
@@ -677,8 +677,8 @@ function AskPageContent() {
               </div>
             </div>
 
-            {/* Welcome message */}
-            <div className="text-center mb-8">
+            {/* Welcome message - Hidden on mobile */}
+            <div className="text-center mb-8 hidden md:block">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
                 <MessageSquare className="h-8 w-8 text-white" />
               </div>
@@ -688,8 +688,8 @@ function AskPageContent() {
               </p>
             </div>
 
-            {/* Quick starter questions */}
-            <div className="grid gap-3 max-w-2xl mx-auto mb-8">
+            {/* Quick starter questions - Hidden on mobile */}
+            <div className="grid gap-3 max-w-2xl mx-auto mb-8 hidden md:block">
               <h3 className="text-sm font-medium text-gray-900 mb-3">Populaire vragen:</h3>
               {[
                 { question: "Mag de politie mijn telefoon controleren?", profession: "algemeen" },
@@ -710,8 +710,8 @@ function AskPageContent() {
               ))}
             </div>
 
-            {/* Disclaimer - Subtiel ontwerp */}
-            <div className="bg-gray-50/50 rounded-lg p-4 border border-gray-200/50">
+            {/* Disclaimer - Hidden on mobile */}
+            <div className="bg-gray-50/50 rounded-lg p-4 border border-gray-200/50 hidden md:block">
               <div className="flex gap-3">
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
@@ -727,6 +727,17 @@ function AskPageContent() {
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* Mobile-only simplified welcome */}
+            <div className="text-center py-8 md:hidden">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl mx-auto mb-4 flex items-center justify-center">
+                <MessageSquare className="h-6 w-6 text-white" />
+              </div>
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">Stel je juridische vraag</h2>
+              <p className="text-sm text-gray-600 px-4">
+                Gebaseerd op Nederlandse wetgeving
+              </p>
             </div>
           </div>
         )}
@@ -748,7 +759,7 @@ function AskPageContent() {
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-sm font-medium text-blue-900">Je vraag</span>
                         {message.profession && (
-                          <Badge variant="secondary" className="text-xs bg-white/80">
+                          <Badge variant="secondary" className="text-xs bg-white/80 hidden sm:inline-flex">
                             {professionConfig[message.profession as keyof typeof professionConfig]?.label}
                           </Badge>
                         )}
@@ -784,7 +795,7 @@ function AskPageContent() {
                               variant="ghost"
                               size="sm"
                               onClick={() => shareResponse(message.question, message.answer)}
-                              className="h-8 w-8 p-0 hover:bg-gray-200"
+                              className="h-8 w-8 p-0 hover:bg-gray-200 hidden sm:inline-flex"
                               title="Deel antwoord"
                             >
                               <Share2 className="h-3 w-3" />
@@ -793,7 +804,7 @@ function AskPageContent() {
                               variant="ghost"
                               size="sm"
                               onClick={() => window.open(`/contact/fout?vraag=${encodeURIComponent(message.question)}&antwoord=${encodeURIComponent(message.answer.substring(0, 200))}...`, '_blank')}
-                              className="h-8 w-8 p-0 hover:bg-gray-200 text-orange-600"
+                              className="h-8 w-8 p-0 hover:bg-gray-200 text-orange-600 hidden sm:inline-flex"
                               title="Fout melden"
                             >
                               <AlertTriangle className="h-3 w-3" />
@@ -862,8 +873,8 @@ function AskPageContent() {
               </Button>
             </div>
 
-            {/* Options row */}
-            <div className="flex items-center justify-between">
+            {/* Options row - Hidden on mobile */}
+            <div className="flex items-center justify-between hidden md:flex">
               <div className="flex-1 min-w-0 mr-4">
                 <Select value={profession} onValueChange={(value) => setProfession(value as Profession)}>
                   <SelectTrigger className="h-9 bg-gray-50 border-gray-200 rounded-lg">
@@ -893,15 +904,42 @@ function AskPageContent() {
                 <span>nieuwe regel</span>
               </div>
             </div>
+
+            {/* Mobile-only simplified profession selector */}
+            <div className="flex items-center gap-2 md:hidden">
+              <Select value={profession} onValueChange={(value) => setProfession(value as Profession)}>
+                <SelectTrigger className="h-9 bg-gray-50 border-gray-200 rounded-lg text-sm">
+                  <SelectValue placeholder="Beroep" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(professionConfig).map(([key, config]) => {
+                    const IconComponent = config.icon
+                    return (
+                      <SelectItem key={key} value={key}>
+                        <div className="flex items-center gap-2">
+                          <IconComponent className="h-4 w-4" />
+                          <span>{config.label}</span>
+                        </div>
+                      </SelectItem>
+                    )
+                  })}
+                </SelectContent>
+              </Select>
+              
+              <div className="flex items-center gap-1 text-xs text-gray-500">
+                <kbd className="px-1.5 py-0.5 bg-gray-100 rounded text-gray-600">Enter</kbd>
+                <span>verzend</span>
+              </div>
+            </div>
           </form>
           
-          {/* Beta Disclaimer */}
-          <div className="mt-3">
+          {/* Beta Disclaimer - Hidden on mobile */}
+          <div className="mt-3 hidden md:block">
             <BetaDisclaimer variant="chat" />
           </div>
           
-          {/* Juridische Informatie Disclaimer */}
-          <div className="mt-2 px-3 py-2 bg-blue-50/30 rounded-lg border border-blue-100">
+          {/* Juridische Informatie Disclaimer - Hidden on mobile */}
+          <div className="mt-2 px-3 py-2 bg-blue-50/30 rounded-lg border border-blue-100 hidden md:block">
             <div className="flex items-start gap-2 text-xs text-blue-700">
               <Info className="h-3 w-3 text-blue-600 mt-0.5 flex-shrink-0" />
               <div className="leading-relaxed">

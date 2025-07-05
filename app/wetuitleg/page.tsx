@@ -329,13 +329,13 @@ function WetUitlegPage() {
             <Scale className="h-8 w-8 text-blue-600" />
             Wetuitleg
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 hidden md:block">
             Snelle juridische uitleg van Nederlandse wetsartikelen
           </p>
         </div>
 
-        {/* Wets-gebaseerd kader */}
-        <div className="mb-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+        {/* Wets-gebaseerd kader - Hidden on mobile */}
+        <div className="mb-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg hidden md:block">
           <div className="flex items-start gap-3">
             <CheckCircle2 className="h-5 w-5 text-emerald-600 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
@@ -364,9 +364,9 @@ function WetUitlegPage() {
           </div>
         </div>
 
-        {/* Rate limit info */}
+        {/* Rate limit info - Hidden on mobile */}
         {!session && remainingQuestions !== null && (
-          <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+          <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg hidden md:block">
             <p className="text-sm text-amber-800">
               {remainingQuestions === 0 ? (
                 <>
@@ -393,7 +393,7 @@ function WetUitlegPage() {
             <div className="text-center py-12">
               <Scale className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500">Stel een vraag over Nederlandse wetgeving</p>
-              <p className="text-sm text-gray-400 mt-2">
+              <p className="text-sm text-gray-400 mt-2 hidden md:block">
                 Bijvoorbeeld: &quot;Wat zegt artikel 318 Sr?&quot; of &quot;Leg artikel 27 Sv uit&quot;
               </p>
             </div>
@@ -413,7 +413,7 @@ function WetUitlegPage() {
                 }`}>
                   {message.isUser ? (
                     <div>
-                      <div className="text-xs opacity-75 mb-1">
+                      <div className="text-xs opacity-75 mb-1 hidden md:block">
                         {message.timestamp.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
                       </div>
                       <p className="text-sm">{message.text}</p>
@@ -423,7 +423,7 @@ function WetUitlegPage() {
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-medium text-gray-900">WetHelder</span>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-500 hidden md:inline">
                             {message.timestamp.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
                           </span>
                         </div>
@@ -466,8 +466,8 @@ function WetUitlegPage() {
         <Card className="sticky bottom-4 shadow-lg">
           <CardContent className="p-4">
             <form onSubmit={handleSubmit} className="space-y-3">
-              {/* Profession Selector */}
-              <div className="flex items-center gap-3">
+              {/* Profession Selector - Hidden on mobile */}
+              <div className="flex items-center gap-3 hidden md:flex">
                 <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
                   Profiel:
                 </label>
@@ -534,9 +534,54 @@ function WetUitlegPage() {
                   )}
                 </Button>
               </div>
+
+              {/* Mobile-only controls */}
+              <div className="flex items-center gap-2 md:hidden">
+                <Select value={profession} onValueChange={(value: Profession) => setProfession(value)}>
+                  <SelectTrigger className="flex-1">
+                    <SelectValue>
+                      {(() => {
+                        const IconComponent = professionConfig[profession].icon
+                        return (
+                          <div className="flex items-center gap-2">
+                            <IconComponent className="h-4 w-4" />
+                            {professionConfig[profession].label}
+                          </div>
+                        )
+                      })()}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(professionConfig).map(([key, config]) => {
+                      const IconComponent = config.icon
+                      return (
+                        <SelectItem key={key} value={key}>
+                          <div className="flex items-center gap-2">
+                            <IconComponent className="h-4 w-4" />
+                            {config.label}
+                          </div>
+                        </SelectItem>
+                      )
+                    })}
+                  </SelectContent>
+                </Select>
+                
+                {messages.length > 0 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={clearMessages}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
               
+              {/* Desktop-only extra info */}
               {messages.length > 0 && (
-                <div className="flex justify-between items-center">
+                <div className="justify-between items-center hidden md:flex">
                   <Button
                     type="button"
                     variant="outline"
@@ -555,13 +600,13 @@ function WetUitlegPage() {
               )}
             </form>
             
-            {/* Beta Disclaimer */}
-            <div className="mt-4">
+            {/* Beta Disclaimer - Hidden on mobile */}
+            <div className="mt-4 hidden md:block">
               <BetaDisclaimer variant="wetuitleg" />
             </div>
             
-            {/* Juridische Informatie Disclaimer */}
-            <div className="mt-3 px-3 py-2 bg-blue-50/30 rounded-lg border border-blue-100">
+            {/* Juridische Informatie Disclaimer - Hidden on mobile */}
+            <div className="mt-3 px-3 py-2 bg-blue-50/30 rounded-lg border border-blue-100 hidden md:block">
               <div className="flex items-start gap-2 text-xs text-blue-700">
                 <Info className="h-3 w-3 text-blue-600 mt-0.5 flex-shrink-0" />
                 <div className="leading-relaxed">
