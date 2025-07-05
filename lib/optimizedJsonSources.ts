@@ -221,7 +221,7 @@ export async function searchOptimizedJsonSources(query: string): Promise<{
       const sourceText = `${source['Bron (naam)']} ${source['Omschrijving']} ${source['Topic']}`.toLowerCase()
       
       // Direct article number match (highest priority)
-      if (articleNumber && source['Bron (naam)'].toLowerCase().includes(`artikel ${articleNumber}`)) {
+      if (articleNumber && source['Bron (naam)'].toLowerCase().includes(`artikel ${articleNumber.toLowerCase()}`)) {
         score += 100
         
         // Enhanced law type bonus with comprehensive synonyms
@@ -261,14 +261,10 @@ export async function searchOptimizedJsonSources(query: string): Promise<{
       const article = articleMatch[1]
       const law = lawHint
       
-      if (law === 'sr' || queryLower.includes('strafrecht')) {
-        if (article === '447e') {
-          suggestion = 'Artikel 447e bestaat niet in het Wetboek van Strafrecht. Bedoelde u ID-plicht? Zie artikel 8 Politiewet 2012.'
-        }
-      }
-      
       if (queryLower.includes('id') || queryLower.includes('identiteit')) {
-        suggestion = 'Voor ID-plicht zie artikel 8 van de Politiewet 2012.'
+        if (law !== 'sr' && law !== 'strafrecht') {
+          suggestion = 'Voor ID-plicht zie ook artikel 447e Wetboek van Strafrecht of artikel 8 Politiewet 2012.'
+        }
       }
     }
     
@@ -481,7 +477,7 @@ export async function getExactArticle(articleNumber: string, lawType?: string): 
     // Find exact match
     for (const pattern of searchPatterns) {
       const exactMatch = optimizedSources.find(source => 
-        source['Bron (naam)'].includes(pattern)
+        source['Bron (naam)'].toLowerCase().includes(pattern.toLowerCase())
       )
       
       if (exactMatch) {
